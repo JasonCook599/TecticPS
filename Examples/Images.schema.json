@@ -1,0 +1,113 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema",
+    "title": "Images",
+    "description": "A list of images to generate for various services",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "Logo": {
+            "$ref": "#/definitions/images"
+        },
+        "Banner": {
+            "$ref": "#/definitions/images"
+        },
+        "Brandmark": {
+            "$ref": "#/definitions/images"
+        }
+    },
+    "definitions": {
+        "images": {
+            "type": "array",
+            "items": {
+                "type": "object",
+                "additionalProperties": false,
+                "properties": {
+                    "Name": {
+                        "type": "string",
+                        "description": "Where will this image be used?"
+                    },
+                    "Dimensions": {
+                        "type": "string",
+                        "description": "Dimension sent to ImageMagick",
+                        "pattern": "^(\\d*)?(x?)(\\d*)(<|>?)(\\^?)$"
+                    },
+                    "FileSize": {
+                        "type": "string",
+                        "description": "Output file size",
+                        "pattern": "^([1-9]\\d*)(\\.\\d*)?(Y|Z|E|P|T|G|M|K|k)?(B|b)$"
+                    },
+                    "SupportedFormats": {
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "pattern": "^\\..*$"
+                        }
+                    },
+                    "OutExtension": {
+                        "type": "string",
+                        "description": "Output extension/format",
+                        "pattern": "^\\..*$"
+                    },
+                    "Trim": {
+                        "type": "boolean",
+                        "description": "Trim the image?"
+                    },
+                    "Mode": {
+                        "type": "string",
+                        "description": "What mode should we use for cropping?",
+                        "enum": [
+                            "Crop",
+                            "Pad",
+                            "None"
+                        ]
+                    },
+                    "Gravity": {
+                        "type": "string",
+                        "description": "Where should we position the crop?",
+                        "enum": [
+                            "NorthWest",
+                            "Noth",
+                            "NorthEast",
+                            "West",
+                            "Center",
+                            "East",
+                            "SouthWest",
+                            "South",
+                            "SouthEast"
+                        ]
+                    },
+                    "Reference": {
+                        "description": "Where did you find these settings?",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "format": "uri"
+                        }
+                    },
+                    "Destination": {
+                        "description": "What type of image is this? Generic? Web? Application?",
+                        "type": "array",
+                        "items": {
+                            "type": "string",
+                            "enum": [
+                                "Application",
+                                "Generic",
+                                "Web",
+                                "Preview",
+                                "Other"
+                            ]
+                        }
+                    }
+                },
+                "required": [
+                    "Name"
+                ]
+            },"uniqueKeys": [
+                "/Name"
+              ]
+        }
+    }
+}
