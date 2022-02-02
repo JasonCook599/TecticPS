@@ -1965,7 +1965,7 @@ foreach ($lan in $ethernet) {
 	#$expireTime = [datetime]::ParseExact($lan.DHCPLeaseExpires,'yyyyMMddHHmmss.000000-300',$null)
 	$expireTime = $lan.DHCPLeaseExpires
 	$expireTimeFormated = Get-Date -Date $expireTime -Format F
-	$expireTimeUntil = New-TimeSpan �Start (Get-Date) �End $expireTime
+	$expireTimeUntil = New-TimeSpan –Start (Get-Date) –End $expireTime
 	$days = [Math]::Floor($expireTimeUntil.TotalDays)
 	$hours = [Math]::Floor($expireTimeUntil.TotalHours) - $days * 24
 	$minutes = [Math]::Floor($expireTimeUntil.TotalMinutes) - $hours * 60
@@ -4435,8 +4435,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUkXg47ebeH6RonJl5HRuRtSMl
-# jaKggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUMIakBOd+tPmr0TDYqhGiIoOm
+# a1Oggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4520,17 +4520,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFLZAkKQOvpPdk6vUN9XGAGFqtcpM
-# MA0GCSqGSIb3DQEBAQUABIICAKmPO6cNoqgTQVIYugxZMW4wSXwlDS8rcIdI4j4A
-# Fnim7aGQnxWzBKzT01RVAGsVbniV68V6pl4ICb4Ne10lSqq8s9RDHTzBzOMmPP3t
-# 1tfVOQ8nXYPU7u3Ye1WOBZU6+CiE0YKunEHoBiOLxN7x2qHtN+kwIjGKpehjFVhG
-# ax6a+D7z8v4om068RGTqdMkEcY0XOyf0GvZqr4wPGIAE918SXlfb2xeXmrFbmBag
-# qs4C81y9Mj5h13UQH9SafPIVToQEU/9Htx3IAuew7nyZhEnQXM+D0B9BqTusJ120
-# 9P8lhh1qfqHQrE3uy4e/hJdsBen082E9PW3Y2oAVdIm89jvtvcxZ1uvNz0Ap8JcH
-# 6veKKJHK2Wr6Eo44bwo2Kv8A65tG4Pj543PW5Br0n1FcYcaExWKL4MSOHlDMyMwV
-# ETB8U7KzEGHuSlBoa6F+saje+Se4nCG1EAOxUU9QepveeoEPP4LUwT2KUmPNrziS
-# /9E6o9nbAWvCFoVvWGKO6xOV4cy3O+4vSSp+5Y3/wtjtEHqGpT9KcXhobTbZpX0x
-# npNJaD9qAZoN95N7ruwu44DqhZ0xai0GJ8PbmIg5dWo8XM5DnHN4QFGdirF2AQ9r
-# Uu5BvCP4PBMuvtbWW9jQT0XbXcCgK2wQfWyktGC4b30Q942nvbMY1E0e/GTovwil
-# bXhY
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFAiUzPuD7UB91dH7iTSjh9j6fRqm
+# MA0GCSqGSIb3DQEBAQUABIICACun8Nc4GfifYF5gAU0vwW1noWcGz9pankroVJx6
+# aw+17o+9g4lq6OPP0LG0n/gv9YFvJAoU+Rxx18xw+CSGew/BA2DFQvyLEIDEujDs
+# heS+G8w9DwmKqqbfnLsW//heD0nD3j3avj53TxmWfNuE/OAC5H/cKO1jRU2AAbW1
+# 6sEixuPqVk9L1GEjSrFxNhums/C1TZP2o81KjyajccPaiN12HNYYKYz2qf/gXMt6
+# JwbtosSCXZiiHNaEf8dHGFHAh9b0SHI71umblVJORdvJyF8x8+LR2Csg5nmNTCCK
+# 5PU8Lx2qQ3O7MTvWyWlrr0k/U5Ky3USNqIhigrs+pc5Ipk/RJcgI8Wx3ftcMho+B
+# fP8vNbkCe5QDS4guWEXLt6i/uiQbm9S+Z6BkG8fxkIkHCO9zxaSA7EjdBbRdUOyB
+# qP2Q+RQgOLMLVzBX9x7osz4P99XT7lyxMh51oKFVQ3BO5f+6G1sgjknO2EfgP3Mp
+# XjRiQbYVlxQrusWictPYJMkW4NwBHp6zQ8pjGIv7qUxyNPRFB9ig7v2TTXNLuHEE
+# 9lziPZlsIoWtwDteMpdQmHTdFkpJ6TgpPH9d5ZbI5AgESfxxlTZ8zQ3nUDd7+chP
+# HVUjkr6sjWJJcGTO/9nmXY4UQVc1QQpDMgHJfuv41RJ1fbeZIt3h4rIlzx1P4M5Z
+# Iqeq
 # SIG # End signature block
