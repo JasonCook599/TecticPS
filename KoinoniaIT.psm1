@@ -145,7 +145,7 @@ try {
 catch { Write-Verbose "Not running command from a module." }
 
 try {
-    $ScriptPath = ((Get-Item $Invocation.InvocationName).DirectoryName)
+    $ScriptPath = ((Get-Item $Invocation.InvocationName -ErrorAction SilentlyContinue).DirectoryName)
     $ModuleRoot = Split-Path -Path $ScriptPath -Parent
     Test-Path -ErrorAction Stop -Path $ModuleRoot | Out-Null
     Write-Verbose "Running command from a script."
@@ -3935,6 +3935,35 @@ End {
     [void][TokenAdjuster]::RemovePrivilege("SeTakeOwnershipPrivilege")     
 }
 }
+function Set-Path {
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+    [Parameter(Mandatory = $true)][ValidateScript({ Test-Path -Path $_ -PathType Container })][string]$Path,
+    [switch]$Machine,
+    [switch]$Force,
+    [int]$MaxLength = 1024
+)
+. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+
+if ($Machine) {
+    Write-Verbose "Adding `"$Path`" to system PATH"
+    Test-Admin -Throw
+    $Registry = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
+}
+else { 
+    Write-Verbose "Adding `"$Path`" to user PATH"
+    $Registry = "Registry::HKCU\Environment\" 
+}
+
+$NewPath = (Get-ItemProperty -Path $Registry -Name PATH).Path + ";" + $Path
+
+Write-Verbose "PATH length is $($NewPath.length)"
+if ($NewPath.length -gt $MaxLength -and (-not $Force)) {
+    throw "Path is longer than $MaxLength characters. Paths this long may not behave as expected. Run with -Force to override."
+}
+
+Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
+}
 function Set-WindowsAccountAvatar {
 <# 
 
@@ -4406,8 +4435,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUQlRk7AHGJqSqdAO+CsCP5IFm
-# skqggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUkXg47ebeH6RonJl5HRuRtSMl
+# jaKggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4491,17 +4520,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFMMt5D+xmPpGzEjmszMM3xfoJjQL
-# MA0GCSqGSIb3DQEBAQUABIICAFMrWG2itv8Salq/sdjJnCk/9wumPC/As8P7nzza
-# lU1M1+n8ZPgeHQygjkt+zlAewyD1bbGvzQjsuBNInhgpljuLtP+Igx618MD7/+0j
-# e/m5Ij1spU4zVp1lvF+SR5ZYuhQSv8k2Bm5d++f5oj6j1drpdz2TAzre/rxV4nnB
-# G2wsRs7K7KI1cbMOuhm+dyNgWX91Tm4JRvWU/x44o3Lw7GKQLCOdldf99UwCrTIh
-# cZVnZquvp5R23pAToINM118Il0HEnK8o70T/A6IqbCJ2dq+6VOTXLzg9jD05A5OQ
-# UBUwElW9PWhwfgjgU/nlx6N+1a3cMFqMO+OcO3JfEadrQ9r0mv2N+IbMNseg/VEj
-# vmmPBN3euNrMqTDW8UqAaRMVBNJvjV4seoOS8JZ8fgDJId/ECea7rdvIhQLIpGAt
-# kYjKCcvYfGhs6jd/ASdhiINV7gmmk6wVLEmRcBrbOEhVsKbcVW/NUkS5EQ7hCVhm
-# yOy/EVgSipfcyENcF2EoVCZ3dcYpKW3IHe2qAPNAbGMCl/XpznFdutwCDu6q/KV0
-# 4V9JbiHaZxnuoTW0hJYVoMt8I9Cxk4jSjnN0gjJWsaqK29CTXZFnjDQLguVOf9kn
-# hKMwA8bw2hcOAa6mD+hSHq2mQQv3EkD7lksC1YsQCY10ZVlseQHNmGfssvCCUrAz
-# wtUF
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFLZAkKQOvpPdk6vUN9XGAGFqtcpM
+# MA0GCSqGSIb3DQEBAQUABIICAKmPO6cNoqgTQVIYugxZMW4wSXwlDS8rcIdI4j4A
+# Fnim7aGQnxWzBKzT01RVAGsVbniV68V6pl4ICb4Ne10lSqq8s9RDHTzBzOMmPP3t
+# 1tfVOQ8nXYPU7u3Ye1WOBZU6+CiE0YKunEHoBiOLxN7x2qHtN+kwIjGKpehjFVhG
+# ax6a+D7z8v4om068RGTqdMkEcY0XOyf0GvZqr4wPGIAE918SXlfb2xeXmrFbmBag
+# qs4C81y9Mj5h13UQH9SafPIVToQEU/9Htx3IAuew7nyZhEnQXM+D0B9BqTusJ120
+# 9P8lhh1qfqHQrE3uy4e/hJdsBen082E9PW3Y2oAVdIm89jvtvcxZ1uvNz0Ap8JcH
+# 6veKKJHK2Wr6Eo44bwo2Kv8A65tG4Pj543PW5Br0n1FcYcaExWKL4MSOHlDMyMwV
+# ETB8U7KzEGHuSlBoa6F+saje+Se4nCG1EAOxUU9QepveeoEPP4LUwT2KUmPNrziS
+# /9E6o9nbAWvCFoVvWGKO6xOV4cy3O+4vSSp+5Y3/wtjtEHqGpT9KcXhobTbZpX0x
+# npNJaD9qAZoN95N7ruwu44DqhZ0xai0GJ8PbmIg5dWo8XM5DnHN4QFGdirF2AQ9r
+# Uu5BvCP4PBMuvtbWW9jQT0XbXcCgK2wQfWyktGC4b30Q942nvbMY1E0e/GTovwil
+# bXhY
 # SIG # End signature block
