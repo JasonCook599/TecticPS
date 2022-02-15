@@ -296,23 +296,33 @@ param (
   [ValidateScript( { Test-Path -Path $_ })][string]$Path = (Get-Location),
   [string]$Filter = "*.ps*1",
   [ValidateScript( { Test-Certificate $_ })][System.Security.Cryptography.X509Certificates.X509Certificate]$Certificate = ((Get-ChildItem cert:currentuser\my\ -CodeSigningCert | Sort-Object NotBefore -Descending)[0]),
-  [string]$Name = "Signed by " + (([ADSISearcher]"(&(objectCategory=User)(SAMAccountName=$env:username))").FindOne().Properties).company,
-  [string]$Url
+  [string]$Description = "Signed by " + (([ADSISearcher]"(&(objectCategory=User)(SAMAccountName=$env:username))").FindOne().Properties).company,
+  [string]$SigntoolPath = "signtool.exe",
+  [switch]$Append,
+  [string]$Url,
+  [string]$Algorithm = "SHA256"
 )
 . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
 
 Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
-  if ($PSCmdlet.ShouldProcess("$_.Name", "Add-Signature $($Certificate.Subject)")) {
-    If (([System.IO.Path]::GetExtension($_.FullName) -like ".ps*1")) { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $Certificate }
-    elseif ([System.IO.Path]::GetExtension($_.FullName) -eq ".exe") {
-      $signString = 'Signtool.exe sign /a /d "' + $Name 
-      if ($Url) { $Signtool += '" /du "' + $Url + '" ' }
-      $signString += $Exe
-      Write-Verbose "Signing $($_.Name): $signString"
-      & $signString      
-    } 
-    else { Write-Error "We don't know how to handle this file type: ($([System.IO.Path]::GetExtension($_.Name))" }
-  }
+  If (([System.IO.Path]::GetExtension($_.FullName) -like ".ps*1")) { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $Certificate }
+  elseif ([System.IO.Path]::GetExtension($_.FullName) -eq ".exe" -or [System.IO.Path]::GetExtension($_.FullName) -eq ".cat") {
+    $Arguments = @("sign")
+    if ($Append) { $Arguments += "/as" }
+    if ($Url) { $Arguments += "/du `"$Url`"" }
+    if ($Description) { $Arguments += "/d `"$Description`"" }
+    if ($Algorithm) { $Arguments += "/fd `"$Algorithm`"" }
+    $Arguments += "/i `"$(($Certificate.Issuer -split ", " | ConvertFrom-StringData).CN)`"" # Issuer
+    $Arguments += "/n `"$(($Certificate.SubjectName.Name -split ", " | ConvertFrom-StringData).CN)`"" # Subject Name
+    $Arguments += "/sha1 $($Certificate.Thumbprint)"
+    $Arguments += $_.FullName
+    Write-Verbose "Running $SigntoolPath $($Arguments -join " ")"
+    If ($PSCmdlet.ShouldProcess($_.FullName, "Add-Signature using $($Certificate.Thumbprint)")) {
+      Start-Process -NoNewWindow -Wait -FilePath $SigntoolPath -ArgumentList $Arguments
+    }
+  } 
+  else { Write-Error "We don't know how to handle this file type: ($([System.IO.Path]::GetExtension($_.Name))" }
+  
 }
 }
 function Backup-MySql {
@@ -1452,6 +1462,9 @@ ForEach-Object {
 function Get-AdminCount {
 Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Select-Object name, AdminCount
 }
+function Get-BiosProductKey {
+return (Get-WmiObject -query ‘select * from SoftwareLicensingService’).OA3xOriginalProductKey
+}
 function Get-BitlockerStatus {
 <#
 .SYNOPSIS
@@ -1965,7 +1978,7 @@ foreach ($lan in $ethernet) {
 	#$expireTime = [datetime]::ParseExact($lan.DHCPLeaseExpires,'yyyyMMddHHmmss.000000-300',$null)
 	$expireTime = $lan.DHCPLeaseExpires
 	$expireTimeFormated = Get-Date -Date $expireTime -Format F
-	$expireTimeUntil = New-TimeSpan –Start (Get-Date) –End $expireTime
+	$expireTimeUntil = New-TimeSpan �Start (Get-Date) �End $expireTime
 	$days = [Math]::Floor($expireTimeUntil.TotalDays)
 	$hours = [Math]::Floor($expireTimeUntil.TotalHours) - $days * 24
 	$minutes = [Math]::Floor($expireTimeUntil.TotalMinutes) - $hours * 60
@@ -2409,7 +2422,7 @@ param(
 )
 . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
 
-Test-Admin -Warn -Message = "You do not have Administrator rights to run this script! This may not work correctly.",
+Test-Admin -Warn -Message "You do not have Administrator rights to run this script! This may not work correctly." | Out-Null
 Invoke-WebRequest -OutFile $Path -Uri $Uri -ErrorAction SilentlyContinue
 }
 function Grant-Matching {
@@ -4435,8 +4448,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUMIakBOd+tPmr0TDYqhGiIoOm
-# a1Oggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU96OI1dF3ioWen6VKQ/nITBhe
+# VwWggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4520,17 +4533,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFAiUzPuD7UB91dH7iTSjh9j6fRqm
-# MA0GCSqGSIb3DQEBAQUABIICACun8Nc4GfifYF5gAU0vwW1noWcGz9pankroVJx6
-# aw+17o+9g4lq6OPP0LG0n/gv9YFvJAoU+Rxx18xw+CSGew/BA2DFQvyLEIDEujDs
-# heS+G8w9DwmKqqbfnLsW//heD0nD3j3avj53TxmWfNuE/OAC5H/cKO1jRU2AAbW1
-# 6sEixuPqVk9L1GEjSrFxNhums/C1TZP2o81KjyajccPaiN12HNYYKYz2qf/gXMt6
-# JwbtosSCXZiiHNaEf8dHGFHAh9b0SHI71umblVJORdvJyF8x8+LR2Csg5nmNTCCK
-# 5PU8Lx2qQ3O7MTvWyWlrr0k/U5Ky3USNqIhigrs+pc5Ipk/RJcgI8Wx3ftcMho+B
-# fP8vNbkCe5QDS4guWEXLt6i/uiQbm9S+Z6BkG8fxkIkHCO9zxaSA7EjdBbRdUOyB
-# qP2Q+RQgOLMLVzBX9x7osz4P99XT7lyxMh51oKFVQ3BO5f+6G1sgjknO2EfgP3Mp
-# XjRiQbYVlxQrusWictPYJMkW4NwBHp6zQ8pjGIv7qUxyNPRFB9ig7v2TTXNLuHEE
-# 9lziPZlsIoWtwDteMpdQmHTdFkpJ6TgpPH9d5ZbI5AgESfxxlTZ8zQ3nUDd7+chP
-# HVUjkr6sjWJJcGTO/9nmXY4UQVc1QQpDMgHJfuv41RJ1fbeZIt3h4rIlzx1P4M5Z
-# Iqeq
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFEqn1h0IoYv40DFhHFvF82q718Bg
+# MA0GCSqGSIb3DQEBAQUABIICALcZ82myPItB6rZ8Bwu2UABBIxX3NdLUhuoNgmsY
+# BtFK+TMawFMAa/JFzlf6rb8OrqW80U8R+XBHEabl1FSBDxvjHDB0pRUSIfb7fPop
+# KpREqxZ5x7+dJxlXB9zqnJzq0Mxg3GCfBCuHK1aBLAchw/9KT2G0UepCd0Oo7L87
+# Ea4AylN/fABAYj0+8XZJn4RuxpA0P9ojvEujR3nHkkdsIlZ+nFDltaxh6oCdUwZW
+# em8sw8URmuMmBtJ2bO5KZbmNiHhYEhA4xQMyRv4M3E97VCaGttgDeieVCcIKdOAK
+# a79zcl9oXhEXBjB6KK4BGczwEGJJjv3/qxB+49ZvaScy0j+++kN65Dtf5tiHgMuH
+# /8g3TyfyXfuj2XXhnBLyX4gA9nTiiwrW4F3zV1JlwvpJMDQCRlEIH4enKXM6GFCf
+# 1ZM8s17XORxo5cuw18eSgutHZFPT/ubHLSxIZcvKym/X2xkedRvfT1y2UeQ+AL8x
+# 302pnB0iHpadGxLsGpWgoCPIN6Enyd348Yp2JyipE96R5fnNEyrGoNdKk3egJrJu
+# qeOdYYTFQh8Y9Fi5WNd4aIOuGUy2d39snRM9rkTVYYnM7vo5PoTTgC6IrogvEOX5
+# T24U+I1Pw8CVQNrGznyQApUCdkCufgwvU4gylZRsBOKN5GcHlwCT7mmnB9PGrpc+
+# Mgoi
 # SIG # End signature block
