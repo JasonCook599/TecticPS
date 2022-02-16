@@ -1463,7 +1463,7 @@ function Get-AdminCount {
 Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Select-Object name, AdminCount
 }
 function Get-BiosProductKey {
-return (Get-WmiObject -query ‘select * from SoftwareLicensingService’).OA3xOriginalProductKey
+return (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey
 }
 function Get-BitlockerStatus {
 <#
@@ -3440,6 +3440,7 @@ if ($All) {
 }
 [System.Collections.ArrayList]$Results = @()
 $UPN | ForEach-Object {
+    $count++ ; Progress -Index $count -Total $UPN.count -Activity "Resetting Invite Redemption" -Name $_
     If ($PSCmdlet.ShouldProcess("$_", "Reset-InviteRedemption")) {
         $AzureAdUser = Get-AzureADUser -objectID $_
         $MsGraphUser = (New-Object Microsoft.Open.MSGraph.Model.User -ArgumentList $AzureAdUser.ObjectId)
@@ -4122,8 +4123,7 @@ function Test-Scripts {
 Param(
     [string]$foo,
     [string]$bar = "bar",
-    [string]$baz = "bazziest",
-    [string]$Test = { (If ($Testing) { $Testing } else { "failed test" } ) }
+    [string]$baz = "bazziest"
 )
 $MyInvocation
 . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
@@ -4448,8 +4448,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU96OI1dF3ioWen6VKQ/nITBhe
-# VwWggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUV2qZvhV56I5JhoJfB4WffBw9
+# Sd2ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4533,17 +4533,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFEqn1h0IoYv40DFhHFvF82q718Bg
-# MA0GCSqGSIb3DQEBAQUABIICALcZ82myPItB6rZ8Bwu2UABBIxX3NdLUhuoNgmsY
-# BtFK+TMawFMAa/JFzlf6rb8OrqW80U8R+XBHEabl1FSBDxvjHDB0pRUSIfb7fPop
-# KpREqxZ5x7+dJxlXB9zqnJzq0Mxg3GCfBCuHK1aBLAchw/9KT2G0UepCd0Oo7L87
-# Ea4AylN/fABAYj0+8XZJn4RuxpA0P9ojvEujR3nHkkdsIlZ+nFDltaxh6oCdUwZW
-# em8sw8URmuMmBtJ2bO5KZbmNiHhYEhA4xQMyRv4M3E97VCaGttgDeieVCcIKdOAK
-# a79zcl9oXhEXBjB6KK4BGczwEGJJjv3/qxB+49ZvaScy0j+++kN65Dtf5tiHgMuH
-# /8g3TyfyXfuj2XXhnBLyX4gA9nTiiwrW4F3zV1JlwvpJMDQCRlEIH4enKXM6GFCf
-# 1ZM8s17XORxo5cuw18eSgutHZFPT/ubHLSxIZcvKym/X2xkedRvfT1y2UeQ+AL8x
-# 302pnB0iHpadGxLsGpWgoCPIN6Enyd348Yp2JyipE96R5fnNEyrGoNdKk3egJrJu
-# qeOdYYTFQh8Y9Fi5WNd4aIOuGUy2d39snRM9rkTVYYnM7vo5PoTTgC6IrogvEOX5
-# T24U+I1Pw8CVQNrGznyQApUCdkCufgwvU4gylZRsBOKN5GcHlwCT7mmnB9PGrpc+
-# Mgoi
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFHUSR4K6JOKDMzN7bJN9/AFccgyj
+# MA0GCSqGSIb3DQEBAQUABIICAJ2MveS8Vmn3iErMENDj7dlh4PVM8kDX7MzCLzlG
+# 2+JRkV0pFab9VQe8mcaTBQkzqAl+4Df1WVIn11MlH9ctkNIqzy5HxOF4zjilxY11
+# 6RtjUbDqUR131zioAoswONo3Mie49qKLMl+BKMgCoiYGSeyUAXdGztRZ1N46H+xG
+# bJUBr1eEWSd07LxhyIfOmeHMyQf0vfaj09YFKkwheK1KT7fqHsKZ+UhHffOyuwFG
+# vDorXvELvKhscsg9ROTMumyeUC+/CpqlhazFr+YUXWl4swKIMOIhKAMehQfxJtEJ
+# DY13hTr+UBLRkOukmhypeQYSNb6YKFqgBetfwzN/gQS/4fVwb6CrEco2DvJC4yvX
+# VlNuZa8LZI+jsgoqn0RuBeQfrAoSuyW75Dx8anEAkJfwwo5Lkc7HyEfTDCjzZWqa
+# yPYOGs+qdwEOPqhGFxs9H/OuT+nfFu1ozWvFwc28rinHSBGA1HtZu2f5Cdh0yn/u
+# nERRvszgMtxK01wDjIhb4yi1m9KzVMeIi6W7iC2z3AILZ9YfWOVOddcEL7TAohMZ
+# +IqA+vErmXxJjsYnbx8XcjiehzKF6TL5hKpQPVUcIQWEiNemMtF5bg6MB+VZDJlh
+# lvOAxPUiLMVBzbU2NxGtzGgt0qj5SPcMQg2S4uD1VjC+04F5Lpcy+vPEQBR8tfBy
+# fTHx
 # SIG # End signature block
