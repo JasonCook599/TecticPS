@@ -32,20 +32,20 @@ Copyright = '(c) 2022 ***REMOVED***. All rights reserved.'
 # Description of the functionality provided by this module
 # Description = ''
 
-# Minimum version of the PowerShell engine required by this module
+# Minimum version of the Windows PowerShell engine required by this module
 # PowerShellVersion = ''
 
-# Name of the PowerShell host required by this module
+# Name of the Windows PowerShell host required by this module
 # PowerShellHostName = ''
 
-# Minimum version of the PowerShell host required by this module
+# Minimum version of the Windows PowerShell host required by this module
 # PowerShellHostVersion = ''
 
 # Minimum version of Microsoft .NET Framework required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
 # DotNetFrameworkVersion = ''
 
 # Minimum version of the common language runtime (CLR) required by this module. This prerequisite is valid for the PowerShell Desktop edition only.
-# ClrVersion = ''
+# CLRVersion = ''
 
 # Processor architecture (None, X86, Amd64) required by this module
 # ProcessorArchitecture = ''
@@ -158,8 +158,8 @@ PrivateData = @{
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUh3XUyQIxkFlXcQX463MpL2GG
-# S12ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUoJOd3da/4vAMbKuijLnhZzpW
+# aJWggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -243,17 +243,17 @@ PrivateData = @{
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFB8hkYLmHYqknpOC2nN340vbhtNG
-# MA0GCSqGSIb3DQEBAQUABIICAItGrz2ZDrNNL9ngojLyEjEIPvMDzLI9r/hLLFrR
-# 8s2NNKsr4yjdH3n0JNdNw/ikfbzwv4UtVo42Qnik9PnXd+gW6jr1+KmsPa8s4tLM
-# A7KxnfzziJJkVxKCrltMpL0RaIsyAeO5FveE7JJVpOuv4E8+DjE7emoBBpKjBm4N
-# Sf2Fb1UmzVGKbJun/TXGgVznKx8oL/pBbaKKooDkfKk8HaujR8T3l/s2YVg4S7I7
-# buw6LLKLJyfJhHeKfA2NQZCDVAfT+QnTcFzUl6skku3DFqG6B8iPxFhUh1qoq1nV
-# 65bC1rZPN+hghl+Gzmw5+RcRKuKp4x7/Yvp7ZNu60ivasowaKuD/rCg271lTU97u
-# u9aQFfk1u4Y1qli6tJBb3Lke9f9Y8O6Hnu9r3Z/1C1Md2raa/rDKUmpWeg7s5fuO
-# Wao1Awo66hsN3lS0XqNtrSGsyh3e6qrenUQ6zV/x0/35XtFfsZoO+bSMJ7k//blB
-# jCw9ACmhXJnmo/+X0CXCzy93ja9QUoHyUSu+JpvwC9pGtnNkYKAMf86yxnrhtcWh
-# txMi9aYrnJYeanUBKcZegHdGYFCNh1niwnu31o9ERjYP2j2Thp+sEUq4fEO5AHlz
-# knxWRKwHhxaMbe3UlgTCnm+IBHozf84e1IXc4gdArdXbretK6tZAqOyy/pPNi30I
-# NSZ0
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFJBcffa47mz7aq0lZ3CJTL7goV/F
+# MA0GCSqGSIb3DQEBAQUABIICACtqj9LG+0j0O0AXRycqRRp6WoLF/lqJsarMNffd
+# BYLZnvzXuq5mfJqFHpJ7FJYc3mh2LcNEeRQ5Ufgn4uem0A5wicM8Y9WnYCP9/VOS
+# 3Y92Lbqih1axeB1h2MB5mTzB3vQ8DfU+d/oxeb9QFIOLOumgJS1+3VbHFIMCR44P
+# l9iEikKsaVKE+UAZBqfYu0tPtYjZT7ECmCpv4SeorQiCfZIrEi0XqJzDBW6IJcd4
+# 9v8IKV97/05EtgRDnaHosXRIJExIz6BNzsAFzQzNclL3p6AKom24SDokUA9roxRx
+# dHZ57kj9/24CBmmUCx7CZQBEzHQLiegZNHnefVDJGxxY4cRXX4Y+WyezyRfkc6Ua
+# 51OSl25zdzkaX3+BVafVZRp9aN4D7UkujRvPE94cRvZ984o57I9aZXnzowtqa6xX
+# j5pPqCByjjhmJceUxfW8I9N3YIxU1PfU/gelUBGyv4EDPMCk98v+SxnNhXEFbq98
+# GzMtY5+6m3EeysxX64szZLugIAOndnsS6Le7pyOKFxAdf9+60eC3S0rN5JE3oons
+# Ag+Xl+HocFBOzvLD2oesPbvJuOHTCYSbahgPBy7l7SntFKrmVe1oPcgOwuPp1Rm4
+# quQCLeuOJUH3DSXQ9gxB8pB1siGksrODb4bJZpbt0KLd7Nn+7VojIT1YkiTXbJHn
+# wEF5
 # SIG # End signature block

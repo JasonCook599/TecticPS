@@ -1975,7 +1975,7 @@ foreach ($lan in $ethernet) {
 	#$expireTime = [datetime]::ParseExact($lan.DHCPLeaseExpires,'yyyyMMddHHmmss.000000-300',$null)
 	$expireTime = $lan.DHCPLeaseExpires
 	$expireTimeFormated = Get-Date -Date $expireTime -Format F
-	$expireTimeUntil = New-TimeSpan –Start (Get-Date) –End $expireTime
+	$expireTimeUntil = New-TimeSpan �Start (Get-Date) �End $expireTime
 	$days = [Math]::Floor($expireTimeUntil.TotalDays)
 	$hours = [Math]::Floor($expireTimeUntil.TotalHours) - $days * 24
 	$minutes = [Math]::Floor($expireTimeUntil.TotalMinutes) - $hours * 60
@@ -2597,32 +2597,33 @@ param (
 )
 . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
 
-If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Office $Version")) {
-    If ( $Version -eq "2007" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath "2007 Pro Plus SP2\setup.exe" }
-    ElseIf ( $Version -eq "2010" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2010 Pro Plus SP2\setup.exe' }
-    ElseIf ( $Version -eq "2013" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2013 Pro Plus SP1 x86 x64\setup.exe' }
-    ElseIf ( $Version -eq "2016" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2016 Pro Plus x86 41353\setup.exe' }
-    ElseIf ( $Version -eq "2019" ) {
-        if ($Options = "Visio") { $ConfigFile = "***REMOVED***-2019-ProPlus-Visio.xml" }
-        if ($Options = "x86") { $ConfigFile = "***REMOVED***-2019-ProPlus-Default.xml" }
-        if ($Options = "Standard") { $ConfigFile = "***REMOVED***-2019-Standard-Default.xml" }
-        else { $ConfigFile = "***REMOVED***-2019-ProPlus-32-Default.xml" }
-        $Exe = Join-Path -Path $InstallerPath -ChildPath 'Office Deployment Tool\setup.exe'
-        $ConfigPath = Join-Path (Split-Path -Path $Exe -Parent) -ChildPath $ConfigFile
-        if (Test-Path -Path $ConfigPath -PathType Leaf) {
-            $Arguments = "/$Mode '$ConfigPath'"
-        }
-        else { throw "Cannot find config file at $ConfigPath" }
+If ( $Version -eq "2007" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath "2007 Pro Plus SP2\setup.exe" }
+ElseIf ( $Version -eq "2010" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2010 Pro Plus SP2\setup.exe' }
+ElseIf ( $Version -eq "2013" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2013 Pro Plus SP1 x86 x64\setup.exe' }
+ElseIf ( $Version -eq "2016" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2016 Pro Plus x86 41353\setup.exe' }
+ElseIf ( $Version -eq "2019" ) {
+    if ($Options = "Visio") { $ConfigFile = "***REMOVED***-2019-ProPlus-Visio.xml" }
+    if ($Options = "x86") { $ConfigFile = "***REMOVED***-2019-ProPlus-Default.xml" }
+    if ($Options = "Standard") { $ConfigFile = "***REMOVED***-2019-Standard-Default.xml" }
+    else { $ConfigFile = "***REMOVED***-2019-ProPlus-32-Default.xml" }
+    $Exe = Join-Path -Path $InstallerPath -ChildPath 'Office Deployment Tool\setup.exe'
+    $ConfigPath = Join-Path (Split-Path -Path $Exe -Parent) -ChildPath $ConfigFile
+    if (Test-Path -Path $ConfigPath -PathType Leaf) {
+        $Arguments = "/$Mode `"$ConfigPath`""
     }
-    if (Test-Path -Path $Exe -PathType Leaf) {
-        $Message = "Installing Office $Version"
-        if ($ConfigFile) { $Message += " with $ConfigFile" }
+    else { throw "Cannot find config file at $ConfigPath" }
+}
+if (Test-Path -Path $Exe -PathType Leaf) {
+    if ($Mode = "download") { $Message = "Downloading" } else { $Message = "Installing" }
+    $Message += " Office $Version"
+    if ($ConfigFile) { $Message += " with $ConfigFile" }
+    If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", $Message)) {
         Write-Output $Message 
         Write-Verbose "$Exe $Arguments"
-        # Start-Process -FilePath $Exe -NoNewWindow -Wait -ArgumentList $Arguments
+        Start-Process -FilePath $Exe -NoNewWindow -Wait -ArgumentList $Arguments
     }
-    else { throw "Cannot find installer at $Exe" }
 }
+else { throw "Cannot find installer at $Exe" }
 }
 function Invoke-TickleMailRecipients {
 <#
@@ -4427,8 +4428,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUE1b1xNF//k7UHa+XobgddP/D
-# tPeggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUtuUKXTBewoGFayprhVjegyR/
+# CyWggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4512,17 +4513,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFGHSi/u2W/s7pFonZPehY+LdYM/L
-# MA0GCSqGSIb3DQEBAQUABIICAMQFZzjrheuI9WslJ3OnPerfbqqwpQxrlQ7XjKox
-# m9P+hablEe41GNfCeIY+LSt0vq9tfhcWOr9vZL3V8vDrcZvO9xTylzGXT+8N4MGU
-# Hiv140+Db4IIKF7GgXKMd4sYHYmWcb61zIsDo6+Dqs9DXgdEkc4omUg392U4pzlt
-# p2gnnK2sZgn0Q69cNLA1iOZtVJG8fRW3V8Qvmet5sJHBm90uSOSaoYDB1PBVjX17
-# zqTo+RuL6r67Od3v2cWmISC2E4X+JkFDVaUgFfuNOkJaN3QuaaUYy9nnb8iFyJVs
-# P3NQ7BSvLT4JnytQps1eKyyuqxxTEHhZXnDY5GFDRWpsJenxeoDnXWkzA6cAMNiG
-# tA0/UpNu6Hc93WiBJHiwwtuAdx67JfZvJ0Nu9o7cfFQXJxOc+pDqoucERpxt3LWu
-# 5oeDlB5frk0sIwN5jjKz5s1j1jGl0CbQ8UjbpQ7XYCNSVrJy2QOqoesqM6N7xjYs
-# zpPWe8Vp2MjvdM3Ov3FPm/EcvkzwB+69T9mymQm/vH7QW5U4GjOC5Fdt6IcfUd5J
-# 3sXcREkb/erxJqmq5mu9ChLomC8F/jh5mG1qm4F4WI6vBhfUaafdZq2bpWM8Yu24
-# NuGiigKt8dEp0JEKaYfbOKGJ+BqE/f/ABwW/rHaZARWOitXgLLHPrpwSRaTgotAK
-# gcNn
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFMtP0c2V4Fjzj190FOVy2/3yQD2+
+# MA0GCSqGSIb3DQEBAQUABIICAJmSs02pQ/YuDCDjJ5bWKchx/gn/PwXTULEGxRYX
+# SN9DKFv2FP1WfyN8giD2YahBzIIZU5qoCb+giIQhLSCryA/4BQULRBdtH9c0vUlC
+# hBDfDPldhKcGAWlybhDCc7hQlqKkn94RWqN18YmLBoQk6RhvlGbZhwzy69Dg2f3l
+# hBgkWEDYV4y92669uvp51bhhppdD3LL8H7FzX06+/K62AZkmkKijiHHs7sAysk4i
+# 9wVuzPNVVpfV5eYo2hvBDZdUgpeFuFoK+GNgUBlqKwZlfzWperO8FSGDhtW/t/mR
+# IIGY6MyZEPXXHK4L5GgmnZJ/crzHd9SdwjKDbC7hG5DfOYBadKfS6qIH8mAxXq+m
+# QbsxL+qtTqGWZXeosewlbfg59CRrnDwXDBoYY+mR4/MJ9RzgLjAn1qiZfjM+BE4F
+# UqWROc38oSjU+mx9hRpZBJGM74Ya4ptIETiEoUsBTzyyltURCipENos2FPHrGboI
+# Nn+OT25SRL2cwY9c9nJUA6QMCaIklf6xHWhpMxY5NSbUI6jYsVqD61XbRQb2ji6g
+# UkDynjYlWT/QtmyhGc3r7KXeGspxFKwTYLEhGrcKCdKg/sKR6R8uY57ll7z7Z9EF
+# EVLWwVMARcqWEniPEKZy7EcbbQEk9oRNnQA6HLOWKobLknisgSez5HkSjdYi2zvO
+# gjVj
 # SIG # End signature block
