@@ -928,15 +928,12 @@ param(
 . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
 
 if (-not $Json) {throw "Json file not found."}
-$json
-Break
 ForEach ($Image in $Path) {
-	$Formats = (Get-Content -Path $script:json | ConvertFrom-Json).$Type
+	$Formats = (Get-Content -Path $Json | ConvertFrom-Json).$Type
 	$count1++; $count2 = 0
 	If ($Destination) { $Formats = $Formats | Where-Object Destination -Contains $Destination }
 	$Formats | ForEach-Object {
 		$count2++; Progress -Index $count2 -Total ([math]::Max(1, $Formats.count)) -Activity "Resizing $count1 of $($Path.count): $($Image.Name)" -Name $_.Name
-		Start-Sleep -Milliseconds 500
 		If ($PSCmdlet.ShouldProcess("$($Image.FullName) > $($_.Name)", "Convert-Image")) {
 			Convert-Image -Force:$Force -Path $Image.FullName -OutPath $OutPath -Dimensions $_.Dimensions  -Suffix ("_" + $_.Name) -Trim:$_.Trim -OutExtension $_.OutExtension -FileSize $_.FileSize -Mode $_.Mode
 		} 
@@ -4448,8 +4445,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUV2qZvhV56I5JhoJfB4WffBw9
-# Sd2ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUZkiLXw5SH7NmCAZSUWy9k/by
+# 8Uqggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4533,17 +4530,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFHUSR4K6JOKDMzN7bJN9/AFccgyj
-# MA0GCSqGSIb3DQEBAQUABIICAJ2MveS8Vmn3iErMENDj7dlh4PVM8kDX7MzCLzlG
-# 2+JRkV0pFab9VQe8mcaTBQkzqAl+4Df1WVIn11MlH9ctkNIqzy5HxOF4zjilxY11
-# 6RtjUbDqUR131zioAoswONo3Mie49qKLMl+BKMgCoiYGSeyUAXdGztRZ1N46H+xG
-# bJUBr1eEWSd07LxhyIfOmeHMyQf0vfaj09YFKkwheK1KT7fqHsKZ+UhHffOyuwFG
-# vDorXvELvKhscsg9ROTMumyeUC+/CpqlhazFr+YUXWl4swKIMOIhKAMehQfxJtEJ
-# DY13hTr+UBLRkOukmhypeQYSNb6YKFqgBetfwzN/gQS/4fVwb6CrEco2DvJC4yvX
-# VlNuZa8LZI+jsgoqn0RuBeQfrAoSuyW75Dx8anEAkJfwwo5Lkc7HyEfTDCjzZWqa
-# yPYOGs+qdwEOPqhGFxs9H/OuT+nfFu1ozWvFwc28rinHSBGA1HtZu2f5Cdh0yn/u
-# nERRvszgMtxK01wDjIhb4yi1m9KzVMeIi6W7iC2z3AILZ9YfWOVOddcEL7TAohMZ
-# +IqA+vErmXxJjsYnbx8XcjiehzKF6TL5hKpQPVUcIQWEiNemMtF5bg6MB+VZDJlh
-# lvOAxPUiLMVBzbU2NxGtzGgt0qj5SPcMQg2S4uD1VjC+04F5Lpcy+vPEQBR8tfBy
-# fTHx
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFA+59zj6uN8XgHh69KlTWx6iCdu/
+# MA0GCSqGSIb3DQEBAQUABIICAIlWhvQK4qdNGPKZxBtpWY6JTM3gIl74ErGXAbWq
+# 98jDHgeEeMeAbGl1+mX8nkz3YoDCVuLYXOX3K+X/ftbZ98Q7/DPG82fM8R/U3e5M
+# 9JJNFouhiTk5X0qvyCD/828B10y9XTQgI8Fi5nMEM+qSXzPeU+YQID8sW27l7DcE
+# hzbOhwoTW5PXpZlVbBp1N9PMYR1h6jCFPfhH2wMOuJkqdbiO66z85oZRH8oBFyM5
+# pc4kclS8Yp9cbMQXrMw7iHymAmzQac1nDKRpcoUb7L87n5tgakCRRV/FkCDSR5sS
+# adGAbYPv2eegAPhY8iiLtTRAmHBF2cXSLmr5vWv0d/ZZVGZsy6ImswyoCs9r13OC
+# CIIip3iF/3YnrcTEddAM2BKtgcPaxG1fPqcirD2LU4FZQ68Z43CFOjm34GjX8J56
+# bXp/sY5tJpPoIkllx+H/gg3Q3GLrM6SsJWJowGk7Oi9IfEdquqcLcAlfery9Y1Yc
+# nP+YAiSccIj/qWL30DO9ZJwFCD5/1d4kPAOo3rQ1xYLp2CofOX11dgM8QlqZGkgS
+# OKVxsCl9CnyxFS0f1Nw+Y0jo7mysVqCcxk+s7DIu/uca17qYQmita77W6Mo6piFX
+# qpqmQeGgV4sUQt9PRaAOiE9L2b06OnPdwy5HkNs3TnpxHq5RhHhKZMCOFuEtU8ei
+# /sK5
 # SIG # End signature block
