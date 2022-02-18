@@ -1975,7 +1975,7 @@ foreach ($lan in $ethernet) {
 	#$expireTime = [datetime]::ParseExact($lan.DHCPLeaseExpires,'yyyyMMddHHmmss.000000-300',$null)
 	$expireTime = $lan.DHCPLeaseExpires
 	$expireTimeFormated = Get-Date -Date $expireTime -Format F
-	$expireTimeUntil = New-TimeSpan �Start (Get-Date) �End $expireTime
+	$expireTimeUntil = New-TimeSpan –Start (Get-Date) –End $expireTime
 	$days = [Math]::Floor($expireTimeUntil.TotalDays)
 	$hours = [Math]::Floor($expireTimeUntil.TotalHours) - $days * 24
 	$minutes = [Math]::Floor($expireTimeUntil.TotalMinutes) - $hours * 60
@@ -2590,56 +2590,38 @@ function Install-MicrosoftOffice {
     #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [string]$Version,
-    [string]$InstallerPath
+    [ValidateSet(2019, 2016, 2013, 2010, 2007)][string]$Version,
+    [ValidateSet("Visio", "x86", "Standard", $null)]$Options,
+    [string]$InstallerPath,
+    [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
 )
 . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
 
 If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Office $Version")) {
-    If ( $Version -eq "2007" ) {
-        Write-Output "Installing Office 2007"
-        $run = $InstallerPath + '2007 Pro Plus SP2\setup.exe'
-        Start-Process -FilePath $run -NoNewWindow -Wait
-    }
-    ElseIf ( $Version -eq "2010" ) {
-        Write-Output "Installing Office 2010"
-        $run = $InstallerPath + '2010 Pro Plus SP2\setup.exe'
-        Start-Process -FilePath $run -NoNewWindow -Wait
-    }
-    ElseIf ( $Version -eq "2013" ) {
-        Write-Output "Installing Office 2013"
-        $run = $InstallerPath + '2013 Pro Plus SP1 x86 x64\setup.exe'
-        Start-Process -FilePath $run -NoNewWindow -Wait
-    }
-    ElseIf ( $Version -eq "2016" ) {
-        Write-Output "Installing Office 2016"
-        $run = $InstallerPath + '2016 Pro Plus x86 41353\setup.exe'
-        Start-Process -FilePath $run -NoNewWindow -Wait
-    }
+    If ( $Version -eq "2007" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath "2007 Pro Plus SP2\setup.exe" }
+    ElseIf ( $Version -eq "2010" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2010 Pro Plus SP2\setup.exe' }
+    ElseIf ( $Version -eq "2013" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2013 Pro Plus SP1 x86 x64\setup.exe' }
+    ElseIf ( $Version -eq "2016" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2016 Pro Plus x86 41353\setup.exe' }
     ElseIf ( $Version -eq "2019" ) {
-        Write-Output "Installing Office 2019"
-        $run = $InstallerPath + 'Office Deployment Tool\setup.exe'
-        $Arguments = "/configure `"" + $InstallerPath + "Office Deployment Tool\***REMOVED***-2019-ProPlus-Default.xml"
-        Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
+        if ($Options = "Visio") { $ConfigFile = "***REMOVED***-2019-ProPlus-Visio.xml" }
+        if ($Options = "x86") { $ConfigFile = "***REMOVED***-2019-ProPlus-Default.xml" }
+        if ($Options = "Standard") { $ConfigFile = "***REMOVED***-2019-Standard-Default.xml" }
+        else { $ConfigFile = "***REMOVED***-2019-ProPlus-32-Default.xml" }
+        $Exe = Join-Path -Path $InstallerPath -ChildPath 'Office Deployment Tool\setup.exe'
+        $ConfigPath = Join-Path (Split-Path -Path $Exe -Parent) -ChildPath $ConfigFile
+        if (Test-Path -Path $ConfigPath -PathType Leaf) {
+            $Arguments = "/$Mode '$ConfigPath'"
+        }
+        else { throw "Cannot find config file at $ConfigPath" }
     }
-    ElseIf ( $Version -eq "201932" ) {
-        Write-Output "Installing Office 2019 32 bit"
-        $run = $InstallerPath + 'Office Deployment Tool\setup.exe'
-        $Arguments = "/configure `"" + $InstallerPath + "Office Deployment Tool\***REMOVED***-2019-ProPlus-32-Default.xml"
-        Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
+    if (Test-Path -Path $Exe -PathType Leaf) {
+        $Message = "Installing Office $Version"
+        if ($ConfigFile) { $Message += " with $ConfigFile" }
+        Write-Output $Message 
+        Write-Verbose "$Exe $Arguments"
+        # Start-Process -FilePath $Exe -NoNewWindow -Wait -ArgumentList $Arguments
     }
-    ElseIf ( $Version -eq "2019Visio" ) {
-        Write-Output "Installing Office & Visio 2019"
-        $run = $InstallerPath + 'Office Deployment Tool\setup.exe'
-        $Arguments = "/configure `"" + $InstallerPath + "Office Deployment Tool\***REMOVED***-2019-ProPlus-Visio.xml"
-        Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
-    }
-    ElseIf ( $Version -eq "2019Sandard" ) {
-        Write-Output "Installing Office 2019"
-        $run = $InstallerPath + 'Office Deployment Tool\setup.exe'
-        $Arguments = "/configure `"" + $InstallerPath + "Office Deployment Tool\***REMOVED***-2019-Standard-Default.xml"
-        Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
-    }
+    else { throw "Cannot find installer at $Exe" }
 }
 }
 function Invoke-TickleMailRecipients {
@@ -4445,8 +4427,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUZkiLXw5SH7NmCAZSUWy9k/by
-# 8Uqggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUE1b1xNF//k7UHa+XobgddP/D
+# tPeggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4530,17 +4512,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFA+59zj6uN8XgHh69KlTWx6iCdu/
-# MA0GCSqGSIb3DQEBAQUABIICAIlWhvQK4qdNGPKZxBtpWY6JTM3gIl74ErGXAbWq
-# 98jDHgeEeMeAbGl1+mX8nkz3YoDCVuLYXOX3K+X/ftbZ98Q7/DPG82fM8R/U3e5M
-# 9JJNFouhiTk5X0qvyCD/828B10y9XTQgI8Fi5nMEM+qSXzPeU+YQID8sW27l7DcE
-# hzbOhwoTW5PXpZlVbBp1N9PMYR1h6jCFPfhH2wMOuJkqdbiO66z85oZRH8oBFyM5
-# pc4kclS8Yp9cbMQXrMw7iHymAmzQac1nDKRpcoUb7L87n5tgakCRRV/FkCDSR5sS
-# adGAbYPv2eegAPhY8iiLtTRAmHBF2cXSLmr5vWv0d/ZZVGZsy6ImswyoCs9r13OC
-# CIIip3iF/3YnrcTEddAM2BKtgcPaxG1fPqcirD2LU4FZQ68Z43CFOjm34GjX8J56
-# bXp/sY5tJpPoIkllx+H/gg3Q3GLrM6SsJWJowGk7Oi9IfEdquqcLcAlfery9Y1Yc
-# nP+YAiSccIj/qWL30DO9ZJwFCD5/1d4kPAOo3rQ1xYLp2CofOX11dgM8QlqZGkgS
-# OKVxsCl9CnyxFS0f1Nw+Y0jo7mysVqCcxk+s7DIu/uca17qYQmita77W6Mo6piFX
-# qpqmQeGgV4sUQt9PRaAOiE9L2b06OnPdwy5HkNs3TnpxHq5RhHhKZMCOFuEtU8ei
-# /sK5
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFGHSi/u2W/s7pFonZPehY+LdYM/L
+# MA0GCSqGSIb3DQEBAQUABIICAMQFZzjrheuI9WslJ3OnPerfbqqwpQxrlQ7XjKox
+# m9P+hablEe41GNfCeIY+LSt0vq9tfhcWOr9vZL3V8vDrcZvO9xTylzGXT+8N4MGU
+# Hiv140+Db4IIKF7GgXKMd4sYHYmWcb61zIsDo6+Dqs9DXgdEkc4omUg392U4pzlt
+# p2gnnK2sZgn0Q69cNLA1iOZtVJG8fRW3V8Qvmet5sJHBm90uSOSaoYDB1PBVjX17
+# zqTo+RuL6r67Od3v2cWmISC2E4X+JkFDVaUgFfuNOkJaN3QuaaUYy9nnb8iFyJVs
+# P3NQ7BSvLT4JnytQps1eKyyuqxxTEHhZXnDY5GFDRWpsJenxeoDnXWkzA6cAMNiG
+# tA0/UpNu6Hc93WiBJHiwwtuAdx67JfZvJ0Nu9o7cfFQXJxOc+pDqoucERpxt3LWu
+# 5oeDlB5frk0sIwN5jjKz5s1j1jGl0CbQ8UjbpQ7XYCNSVrJy2QOqoesqM6N7xjYs
+# zpPWe8Vp2MjvdM3Ov3FPm/EcvkzwB+69T9mymQm/vH7QW5U4GjOC5Fdt6IcfUd5J
+# 3sXcREkb/erxJqmq5mu9ChLomC8F/jh5mG1qm4F4WI6vBhfUaafdZq2bpWM8Yu24
+# NuGiigKt8dEp0JEKaYfbOKGJ+BqE/f/ABwW/rHaZARWOitXgLLHPrpwSRaTgotAK
+# gcNn
 # SIG # End signature block
