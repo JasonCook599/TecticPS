@@ -2602,10 +2602,10 @@ ElseIf ( $Version -eq "2010" ) { $Exe = Join-Path -Path $InstallerPath -ChildPat
 ElseIf ( $Version -eq "2013" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2013 Pro Plus SP1 x86 x64\setup.exe' }
 ElseIf ( $Version -eq "2016" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2016 Pro Plus x86 41353\setup.exe' }
 ElseIf ( $Version -eq "2019" ) {
-    if ($Options = "Visio") { $ConfigFile = "***REMOVED***-2019-ProPlus-Visio.xml" }
-    if ($Options = "x86") { $ConfigFile = "***REMOVED***-2019-ProPlus-Default.xml" }
-    if ($Options = "Standard") { $ConfigFile = "***REMOVED***-2019-Standard-Default.xml" }
-    else { $ConfigFile = "***REMOVED***-2019-ProPlus-32-Default.xml" }
+    if ($Options -eq "Visio") { $ConfigFile = "***REMOVED***-2019-ProPlus-Visio.xml" }
+    if ($Options -eq "x86") { $ConfigFile = "***REMOVED***-2019-ProPlus-32-Default.xml" }
+    if ($Options -eq "Standard") { $ConfigFile = "***REMOVED***-2019-Standard-Default.xml" }
+    else { $ConfigFile = "***REMOVED***-2019-ProPlus-Default.xml" }
     $Exe = Join-Path -Path $InstallerPath -ChildPath 'Office Deployment Tool\setup.exe'
     $ConfigPath = Join-Path (Split-Path -Path $Exe -Parent) -ChildPath $ConfigFile
     if (Test-Path -Path $ConfigPath -PathType Leaf) {
@@ -4428,8 +4428,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUI1TqkLVJyMRsE7LMnPyEdcqQ
-# G7Wggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUj467qSnfT9rH7pWwzj2vcIyt
+# Pgaggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4513,17 +4513,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFIozBfRrV0TL2fvq20v5Sg5Y+0/x
-# MA0GCSqGSIb3DQEBAQUABIICADFs+Q/tmFrrd+VCx5SUqZqDjFL4D3Ro26qn5gDP
-# 9iGZE6x/CZ4pbhqcBHTR6S6PbZydwx457ZPLpO2927WJ2GJPvWk/TJRuuzzz6fTf
-# iGXbwKsQ/q0+9XA9uE06AqrOtLtAauy6V0YiC3J3wYKc3wWJC+mKNb0ecmhkA+j6
-# w/asrozwaeLvOLsyKexiff9CA66/3XETBUxjtCJlU1LZ23D4kX44qm7apiEqqw4s
-# bdK3TOrOL+KZpkq+CP/Q7/KaOLBE7m1BvYlSJzbPTzx/71pCyUZziDh/nV/s0kle
-# T0P1/x9DdbISsq27XzmzfAL4kW/+wyRugCIW1b+Xb4FAxgeYeawYVL/dIjFxsVsp
-# PSN5vjB2mLonJtyBZz35837+yE/pgtWFGVuCBGUu//Iua0bIQFzYqaBCUqoXue2b
-# C8EEjezqX3mc+PeyaFyeuKK3lkhANTyYh/Pb6W3KFAD0kzihEKBclaOj8i/Qmwop
-# QoW8jijMEVZAowPSdWKOMAz8MCmlPzuoVbQUlpAxaDN3j8tkTd2SXYrD594CGyDk
-# UV1ox1eyEAmPmZLAN7FvqGm+DaYc1NVVFdHcIZLkZTji+aW9EpJ4OSy73HPtD4FE
-# Bjxx9CUrMzKR5kSMYz+z8eMZ0mrpQMzMa7/r0/9zp0UUANh7u21TFPBQxK9nX1HL
-# VKwM
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFJAxeZ9gNKRKXTYMhEooH65n8hbZ
+# MA0GCSqGSIb3DQEBAQUABIICADbAU+Iy58jLB/bF+VVcqN0NB1Z86Spqs9ZXiZVK
+# lu7VGk0XnXSh8IeXs5SCoGnZRnlhdP1Tot9X22JKssbtrHUF2oXB2FgEnf1+fgoE
+# 9jZPg5cSxIvXguhVDVwJRrp8Kydo//P+r+vSnv0ne4kdC/sYtonAdkt/pw7wgRY3
+# pBNqs4PNRZomvDQLGiqc8TjJF9URnDcbHuuw6o7rK+8Io/j1v7bNAR0v+igwe4TS
+# llGXLBhV5LPLhla9BWz4rHAoyOIS7Yq3bRL4I6lzL56QiLu2QBd2bfswbD0eG/5P
+# 9seQgS1BGXcL5sLrqeo4Ho/lD8c87UB0kVZ3xdsuUXBr2iVrbJt550upeeACSZ30
+# 7yzjtcUOTQkRHtXtg/onQpEnJc9tE02kCq+v8sEoIBqP13XRDc5j42dxVw3rR7MH
+# KXOPoHf3Vib2R2ikyJmHZC84sr3/E9McZ0GUW0nWPizFjA7unxQXlc9UpqGfDwIY
+# GtyXKeoOx43yP6J0asl295FWqCMAAo19HupTv2VTjuK2cahbjj0NJcUjLHxBBQ5M
+# U+TXgVXPjChCbWr8B6pEaoH+uPXFcafnic8++37NCKU0d6s44tHPDdSDN2bYsnve
+# iUDN7MSczJ1Cmwly/88wHitOHB9pFXhR/hmVK/QZ2vlGhyjleKPZB/oRzMlcK2yp
+# JhSv
 # SIG # End signature block
