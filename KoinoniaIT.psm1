@@ -2613,6 +2613,7 @@ ElseIf ( $Version -eq "2019" ) {
     }
     else { throw "Cannot find config file at $ConfigPath" }
 }
+else { Write-Error "Version not found. Please spesify a valid version." }
 if (Test-Path -Path $Exe -PathType Leaf) {
     if ($Mode -eq "download") { $Message = "Downloading" } else { $Message = "Installing" }
     $Message += " Office $Version"
@@ -4428,8 +4429,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUj467qSnfT9rH7pWwzj2vcIyt
-# Pgaggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUOkoVx2MFnEJfW1sN0C5jNhIN
+# dpGggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4513,17 +4514,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFJAxeZ9gNKRKXTYMhEooH65n8hbZ
-# MA0GCSqGSIb3DQEBAQUABIICADbAU+Iy58jLB/bF+VVcqN0NB1Z86Spqs9ZXiZVK
-# lu7VGk0XnXSh8IeXs5SCoGnZRnlhdP1Tot9X22JKssbtrHUF2oXB2FgEnf1+fgoE
-# 9jZPg5cSxIvXguhVDVwJRrp8Kydo//P+r+vSnv0ne4kdC/sYtonAdkt/pw7wgRY3
-# pBNqs4PNRZomvDQLGiqc8TjJF9URnDcbHuuw6o7rK+8Io/j1v7bNAR0v+igwe4TS
-# llGXLBhV5LPLhla9BWz4rHAoyOIS7Yq3bRL4I6lzL56QiLu2QBd2bfswbD0eG/5P
-# 9seQgS1BGXcL5sLrqeo4Ho/lD8c87UB0kVZ3xdsuUXBr2iVrbJt550upeeACSZ30
-# 7yzjtcUOTQkRHtXtg/onQpEnJc9tE02kCq+v8sEoIBqP13XRDc5j42dxVw3rR7MH
-# KXOPoHf3Vib2R2ikyJmHZC84sr3/E9McZ0GUW0nWPizFjA7unxQXlc9UpqGfDwIY
-# GtyXKeoOx43yP6J0asl295FWqCMAAo19HupTv2VTjuK2cahbjj0NJcUjLHxBBQ5M
-# U+TXgVXPjChCbWr8B6pEaoH+uPXFcafnic8++37NCKU0d6s44tHPDdSDN2bYsnve
-# iUDN7MSczJ1Cmwly/88wHitOHB9pFXhR/hmVK/QZ2vlGhyjleKPZB/oRzMlcK2yp
-# JhSv
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFOKGi6aSMJCq/TvBSZs/7JPA89Cx
+# MA0GCSqGSIb3DQEBAQUABIICAFXUHbWeJThLr40wiAUWQO9G7SPImdie2bQFhdwn
+# xx9gFaGriOhPrwoBtcEBU8j4E4wWEATRuFdAvfYbJBnO89sCM5Yk6o0kS+g7KndQ
+# Sro5+W88ST06xMgNKp+49C9FlLtacVXukQ5BMgFEOc0dOZd6eaQOglF5L1DRwoSG
+# OYoQgEzJXwKswDQMmhRM0K4D2yCXhIKtaQi0kQ7zMNbGpKc6aY9s6CDrQXDhOvYd
+# +pqfcU5e0Me+GcFO2GASG2jtjRPPwkG3DZbH/Hvde1r319fWihrMuvYZxhDRZyIa
+# HoCBJIvieJQnjGMRAbWCsPZfYdJFYA3KcG2Wz5eF3Txn7IG0Bgm4QOyhLVu3UXl+
+# oAmu5ulNIgSRwstOfS2sWlrBrdmWDRlCKKAM9An04eDfGNKA8WvD/wZcIQYqhT0X
+# 0omwLDmbOCW9nbgyqOfAp2ISfwLryQa8oWKgKSvxpZ4PbytwmGhS4WK2WsAZw5ki
+# OltJ9ofnzlMC4nvFpAyKFeivGm77VrUXz1GV2CnVBEf2qPN/DT2Odd+X59bqKNAZ
+# SLFn5xIUlGCbjNLZnsvZoa1LdRXLDWA3Kg/RYlS5Ypj1vDdoALcsrhMCfwCUiPbl
+# 08vqeU+xapcGNsf10JJwy2QrF796Fj9YwKTncWu6htwuEh58r+hztkHQsBcpnMD1
+# Q6QX
 # SIG # End signature block
