@@ -1,4 +1,6 @@
-$***REMOVED***It = @{}
-$***REMOVED***It["VerbNoun"] = @{
-  Paramater = "Value"
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "")]
+$***REMOVED***It = @{
+  VerbNoun = @{
+    Paramater = "Value"
+  }
 }
