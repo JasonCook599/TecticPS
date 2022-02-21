@@ -1,7 +1,6 @@
 {
     "$schema": "./Images.schema.json",
-    "Logo": [
-        {
+    "Logo": [{
             "Name": "AAD_Branding_Banner",
             "Dimensions": "280x60>",
             "FileSize": "10KB",
@@ -301,8 +300,7 @@
             ]
         }
     ],
-    "Banner": [
-        {
+    "Banner": [{
             "Name": "AAD_Branding_Background",
             "OutExtension": ".jpg",
             "Dimensions": "1920x1080>^",
@@ -631,8 +629,7 @@
             ]
         }
     ],
-    "Brandmark": [
-        {
+    "Brandmark": [{
             "Name": "AAD_Branding_Square",
             "Dimensions": "240x240>",
             "FileSize": "10KB",

@@ -927,7 +927,7 @@ param(
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-if (-not $Json) {throw "Json file not found."}
+if (-not $Json) { throw "Json file not found." }
 ForEach ($Image in $Path) {
 	$Formats = (Get-Content -Path $Json | ConvertFrom-Json).$Type
 	$count1++; $count2 = 0
@@ -1423,7 +1423,7 @@ param(
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-if (-not $Template) {throw "You must spesify the templates to search for."}
+if (-not $Template) { throw "You must spesify the templates to search for." }
 
 Import-Module PSPKI # https://github.com/PKISolutions/PSPKI
 $Templates | Foreach-Object {
@@ -4428,8 +4428,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU+oOsOIEC66KGA+tKbYC3BwdH
-# oZCggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUI1TqkLVJyMRsE7LMnPyEdcqQ
+# G7Wggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4513,17 +4513,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFCV2MwoEkdnIQDqFCE5oEW3fRWbX
-# MA0GCSqGSIb3DQEBAQUABIICAMHpSPvKbP3Bo/aW5j8iPmFHbliZEbspHM8bEOic
-# 50fIQ6otLeNDBrHh2fZLN1FLKzB+cs6OcYLZqZaC0s2ztx2A8eeVXEWKyzprS9ew
-# auJI/uxBZ4BUuSfsTncRyogif/E6TWH7cNnJmg2OcB5DsSU7PdKeiE/vLrqIkeao
-# JHgbABmHsRxD7ysIQnnLO8m2mXwIRNSWujZvjz/k1nMWNy6xSQXpQtXUwkNKsM51
-# xsnbUjnAfCMPUTAX2n38VXdJ+mhjBGbKFY9p8S4hyQOPTZuf6BNmvt4JdjTkevHk
-# x0UfE84PnkBjmZXKUK5g8XCaAs70V3W11OLPkOkLPwWQPnzD+Y8QZ9wqc0ZNTEI3
-# 5HQtKk1r42YWcAFdpyAfQ3ekbWI0Tp6Rhq5/j/JBy2Ys2rws+l/ZtB8zoq7SMhdK
-# 6PI6d69+wMFnHsRWvzzCh5Thk14aN+0w3EOs3JUId38DHCyflCgTnU4pgIe2Tgpu
-# om14ebX8kKJuLzrzcpwoCA1T7rpLqj18930fpLe2l6Ls/wwiD1fHZxpZiKH9DjHd
-# H61ZHBhYMn5cKYj8cEgRbWEeq2uzVuKU2KVfACGF/6e4TmYIyTx4uuaSdFFno8aT
-# G/ef5hREMwR/iNggDYEpSLDFrkkqbmU+H+j5XUAE69yy1Nyr0DIHwNNJXlE0c7TB
-# z+58
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFIozBfRrV0TL2fvq20v5Sg5Y+0/x
+# MA0GCSqGSIb3DQEBAQUABIICADFs+Q/tmFrrd+VCx5SUqZqDjFL4D3Ro26qn5gDP
+# 9iGZE6x/CZ4pbhqcBHTR6S6PbZydwx457ZPLpO2927WJ2GJPvWk/TJRuuzzz6fTf
+# iGXbwKsQ/q0+9XA9uE06AqrOtLtAauy6V0YiC3J3wYKc3wWJC+mKNb0ecmhkA+j6
+# w/asrozwaeLvOLsyKexiff9CA66/3XETBUxjtCJlU1LZ23D4kX44qm7apiEqqw4s
+# bdK3TOrOL+KZpkq+CP/Q7/KaOLBE7m1BvYlSJzbPTzx/71pCyUZziDh/nV/s0kle
+# T0P1/x9DdbISsq27XzmzfAL4kW/+wyRugCIW1b+Xb4FAxgeYeawYVL/dIjFxsVsp
+# PSN5vjB2mLonJtyBZz35837+yE/pgtWFGVuCBGUu//Iua0bIQFzYqaBCUqoXue2b
+# C8EEjezqX3mc+PeyaFyeuKK3lkhANTyYh/Pb6W3KFAD0kzihEKBclaOj8i/Qmwop
+# QoW8jijMEVZAowPSdWKOMAz8MCmlPzuoVbQUlpAxaDN3j8tkTd2SXYrD594CGyDk
+# UV1ox1eyEAmPmZLAN7FvqGm+DaYc1NVVFdHcIZLkZTji+aW9EpJ4OSy73HPtD4FE
+# Bjxx9CUrMzKR5kSMYz+z8eMZ0mrpQMzMa7/r0/9zp0UUANh7u21TFPBQxK9nX1HL
+# VKwM
 # SIG # End signature block

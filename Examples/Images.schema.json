@@ -105,9 +105,10 @@
                 "required": [
                     "Name"
                 ]
-            },"uniqueKeys": [
+            },
+            "uniqueKeys": [
                 "/Name"
-              ]
+            ]
         }
     }
 }
