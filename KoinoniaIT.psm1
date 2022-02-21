@@ -235,7 +235,7 @@ param (
   [int]$MaxHeight,
   [switch]$Preview
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ChildItem -File -Path $Path | ForEach-Object {
   If (!$Format) { $Format = [System.IO.Path]::GetExtension($_.Name) }
@@ -257,7 +257,7 @@ param (
     [string]$EmailAddress,
     [switch]$SetPrimary
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Add = $EmailAddress }
 If ($SetPrimary) { Set-UnifiedGroup -Identity $GroupName -PrimarySmtpAddress  $EmailAddress }
 }
@@ -302,7 +302,7 @@ param (
   [string]$Url,
   [string]$Algorithm = "SHA256"
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
   If (([System.IO.Path]::GetExtension($_.FullName) -like ".ps*1")) { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $Certificate }
@@ -378,7 +378,7 @@ param(
   [switch]$NoTrim,
   [Int]$Copies = 10 #Number of copies to keep
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Write-Verbose "Get only names of the databases folders"
 $sqlDbDirList = Get-ChildItem -path $mySqlData | Where-Object { $_.PSIsContainer } | Select-Object Name
@@ -427,7 +427,7 @@ Copyright (c) ***REMOVED*** 2022
 param(
   [string]$ComputerName
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Invoke-Command -ComputerName $ComputerName -ScriptBlock {
   Write-Verbose "Stopping spooler service."
@@ -542,7 +542,7 @@ param(
 	[switch]$Disconnect
 )
 
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tennant. Do not include `".onmicrosoft.com`"" }
 While (-NOT $UPN) { $UPN = Read-Host -Prompt "Enter your User Principal Name (UPN)" }
@@ -711,7 +711,7 @@ param(
 	[switch]$Force,
 	[ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$Magick = ((Get-Command magick).Source)
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
 	Write-Error "magick.exe is not available in your PATH."
@@ -793,7 +793,7 @@ param(
   [string]$Suffix,
   [string]$Filter = "*.pfx"
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $count = 1; $PercentComplete = 0;
 $Certificates = Get-ChildItem -File -Path $Path -Filter $Filter
@@ -925,7 +925,7 @@ param(
 	[string]$Prefix,
 	[switch]$All
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if (-not $Json) {throw "Json file not found."}
 ForEach ($Image in $Path) {
@@ -1074,7 +1074,7 @@ param (
   [array]$NoSharepoint = (Get-ADGroupMember -Recursive -Identity "Office 365-No Sharepoint" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName),
   [array]$NoExchange = (Get-ADGroupMember -Recursive -Identity "Office 365-No Exchange" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName)
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 [System.Collections.ArrayList]$Results = @()
 $count = 1; $PercentComplete = 0;
@@ -1245,7 +1245,7 @@ https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/LICENSE
 
 
 param([string]$vmName)
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if ([string]::IsNullOrEmpty($vmName)) {
     Write-Host "No VM name passed"
@@ -1421,7 +1421,7 @@ param(
   $Date = (Get-Date),
   $Templates
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if (-not $Template) {throw "You must spesify the templates to search for."}
 
@@ -1483,7 +1483,7 @@ Copyright (c) ***REMOVED*** 2022
 param (
   [ValidateScript( { Test-Path $_ })][string]$Drive = $env:SystemDrive
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If (!(Test-Path $Drive)) {
   Write-Error "$Drive is not valid. Please choose a valid path."
@@ -1543,7 +1543,7 @@ Param(
     [string]$CroppedPath = $Path + "\Cropped\",
     [string]$ResultsFile
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Results = @()
 
@@ -1795,7 +1795,7 @@ param(
     [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path = ".\AD.csv",
     [array]$Filter = "ipphone -like " * "}"
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ADUser -Properties name, ipPhone, Company, Title, Department, DistinguishedName -Filter $Filter | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, ipPhone, Company, Title, Department | Sort-Object -Property Company, name | Export-Csv -NoTypeInformation -Path $Path
 }
@@ -1917,7 +1917,7 @@ param(
     [string]$SearchBase ,
     [string]$Filter = "*"
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If ($SearchBase) { $Result = Get-ADUser -Properties $Properties -Filter $Filter -SearchBase $SearchBase | Where-Object Enabled -eq $true }
 else { $Result = Get-ADUser -Properties $Properties -Filter $Filter | Where-Object Enabled -eq $true }
@@ -2008,7 +2008,7 @@ param (
     [string]$ForestName = (Get-ADForest).Name,
     $Domains = (Get-AdForest -Identity $ForestName | Select-Object -ExpandProperty Domains)
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 try {
     ## Find all domains in the forest
@@ -2069,7 +2069,7 @@ param(
   [switch]$Before,
   [switch]$After
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Message "You are not running this script with Administrator rights. Some events may be missing." | Out-Null
 
@@ -2107,7 +2107,7 @@ param(
   [string]$ComputerList,
   [string]$ReportFile
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Function Get-SystemInfo($ComputerSystem) {
   If (-NOT (Test-Connection -ComputerName $ComputerSystem -Count 1 -ErrorAction SilentlyContinue)) {
@@ -2212,7 +2212,7 @@ param (
 	$StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a spesific date to use as stale
 	[switch]$GetLastSignIn
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 <# #Requires -Modules MSAL.PS #>
 Import-Module MSAL.PS 
@@ -2311,7 +2311,7 @@ param(
   [string]$ComputerList,
   [string]$ReportFile
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Function Get-SystemInfo($ComputerSystem) {
   If (-NOT (Test-Connection -ComputerName $ComputerSystem -Count 1 -ErrorAction SilentlyContinue)) {
@@ -2417,7 +2417,7 @@ param(
     [string]$Path = "C:\Windows\Web\Wallpaper\Windows\CurrentBackground.jpg",
     [Parameter(Mandatory = $true)][string]$Uri
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Warn -Message "You do not have Administrator rights to run this script! This may not work correctly." | Out-Null
 Invoke-WebRequest -OutFile $Path -Uri $Uri -ErrorAction SilentlyContinue
@@ -2460,7 +2460,7 @@ param(
 	[string]$AccessRights = 'FullControl',
 	[string]$Domain = $Env:USERDOMAIN 
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Write-Debug "Importing NTFSSecurity module"
 <# #Requires -Module NTFSSecurity #>
@@ -2508,7 +2508,7 @@ Copyright (c) ***REMOVED*** 2022
 param (
     [ValidatePattern("^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+([a-zA-Z0-9-]{2,63})$", ErrorMessage = "{0} is not a valid domain name.")][Parameter(Mandatory = $true)][string]$DomainsAllowedToLogin
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Add-Type -AssemblyName System.Drawing
 Add-Type -AssemblyName PresentationFramework
@@ -2595,7 +2595,7 @@ param (
     [string]$InstallerPath,
     [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If ( $Version -eq "2007" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath "2007 Pro Plus SP2\setup.exe" }
 ElseIf ( $Version -eq "2010" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2010 Pro Plus SP2\setup.exe' }
@@ -2653,7 +2653,7 @@ param(
   $MailUsers = (Get-MailUser -Resultsize Unlimited),
   $DistributionGroups = (Get-DistributionGroup -Resultsize Unlimited)
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 foreach ($Mailbox in $Mailboxes) {
   $count1++ ; Progress -Index $count1 -Total $Mailboxes.count -Activity "Tickling mailboxes. Step 1 of 3" -Name $Mailbox.alias
@@ -2675,7 +2675,7 @@ param (
   $length = 1,
   $characters = "abcdefghiklmnoprstuvwxyzABCDEFGHKLMNOPRSTUVWXYZ1234567890!@#$%^&*()_+-=[]\{}|;:,./<>?"
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 $random = 1..$length | ForEach-Object { Get-Random -Maximum $characters.length }
 $private:ofs = ""
 return [String]$characters[$random]
@@ -2684,7 +2684,7 @@ function New-RandomPassword {
 param (
   $length = 14
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $LengthAlpha = $Length - 4
 $LengthLower = [math]::Max(0, $LengthAlpha / 2)
@@ -2709,7 +2709,7 @@ Param
     [Parameter(position = 0)] $Hosts,
     [Parameter] $ToCsv
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 #Funtion to make space so that formatting looks good
 Function MakeSpace($l, $Maximum) {
     $space = ""
@@ -2885,7 +2885,7 @@ param (
   [string]$GroupName,
   [string]$EmailAddress
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Remove = $EmailAddress }
 }
 function Remove-OldFolders {
@@ -2918,7 +2918,7 @@ param (
   [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
   [Int]$Keep = 10
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ChildItem $Path -Directory | Sort-Object CreationTime -Descending | Select-Object -Skip $Keep | ForEach-Object {
   If ($PSCmdlet.ShouldProcess("$_", "Trim-Folder -Keep $Keep")) {
@@ -2938,7 +2938,7 @@ function Remove-OldModuleVersions {
 param(
     [array]$Modules = (Get-InstalledModule)
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 foreach ($Module in $Modules) {
     $count++ ; Progress -Index $count -Total $Modules.count -Activity "Uninstalling old versions of $($Module.Name). [latest is $($Module.Version)]" -Name $Image.Name -ErrorAction SilentlyContinue
     $Installed = Get-InstalledModule -Name $Module.Name -AllVersions
@@ -2961,7 +2961,7 @@ param([string]$Path,
     [switch]$Subtree,
     [string]$LogFile,
     [switch]$help)
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 function funHelp() {
     Clear-Host
@@ -3285,7 +3285,7 @@ Copyright (c) ***REMOVED*** 2022
 param (
   [string]$Drive = $env:SystemDrive
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 $Files = "install.exe", "install.res.1028.dll", "install.res.1031.dll", "install.res.1033.dll", "install.res.1036.dll", "install.res.1040.dll", "install.res.1041.dll", "install.res.1042.dll", "install.res.2052.dll", "install.res.3082.dll", "vcredist.bmp", "globdata.ini", "install.ini", "eula.1028.txt", "eula.1031.txt", "eula.1033.txt", "eula.1036.txt", "eula.1040.txt", "eula.1041.txt", "eula.1042.txt", "eula.2052.txt", "eula.3082.txt", "VC_RED.MSI", "VC_RED.cab"
 Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContinue }
 }
@@ -3407,7 +3407,7 @@ param(
     [switch]$All
     
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 $SkipSendingInvitation = -not $SkipSendingInvitation
 $SkipResettingRedemtion = -not $SkipResettingRedemtion
 
@@ -3578,7 +3578,7 @@ Resize the image to 30% of its original size and save it to a new file.
 Author: Patrick Lambert - http://dendory.net
 #>
 Param([Parameter(Mandatory = $true)][string]$InputFile, [string]$OutputFile, [int32]$Width, [int32]$Height, [int32]$Scale, [Switch]$Display)
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Add-Type -AssemblyName System.Drawing
 
@@ -3644,7 +3644,7 @@ param(
   [string]$File = ".\Password.txt",
   [string]$User
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 $credential = Get-Credential $User
 $credential.Password | ConvertFrom-SecureString | Set-Content $File
 }
@@ -3682,7 +3682,7 @@ Param(
     [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
     [array]$Users = (Get-ChildItem $Path -File)
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 Test-Admin -Warn -Message "You are not running this script as an administrator. It may not work as expected." | Out-null
 foreach ($User in $Users) {
     $count++ ; Progress -Index $count -Total $Users.count -Activity "Setting users photos." -Name [System.IO.Path]::GetFileNameWithoutExtension($User.Name)
@@ -3937,7 +3937,7 @@ param (
     [switch]$Force,
     [int]$MaxLength = 1024
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if ($Machine) {
     Write-Verbose "Adding `"$Path`" to system PATH"
@@ -4009,7 +4009,7 @@ param (
   [string]$Url,
   [string]$Arguments = "--kiosk " + $Url
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 while ($true) {
   If (-Not (Get-Process | Select-Object Path | Where-Object Path -eq $Path)) { Start-Process -FilePath $Path -ArgumentList $Arguments }
   Start-Sleep -Seconds 5
@@ -4040,7 +4040,7 @@ Copyright (c) ***REMOVED*** 2022
 param (
   [string[]]$SearchLocations = @("\\print\PCClient\win", "C:\Cache")
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $SearchLocations | ForEach-Object {
   Write-Verbose "Searching in $_"
@@ -4091,7 +4091,7 @@ param (
   [switch]$Warn,
   [switch]$Throw
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 If (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Return $True }
 else {
   If ($Warn) { Write-Warning $Message }
@@ -4106,7 +4106,7 @@ Param(
     [string]$baz = "bazziest"
 )
 $MyInvocation
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Write-Output "params"
 write-output "foo: $foo"
@@ -4149,7 +4149,7 @@ param(
   [array]$ServerList = "localhost"
   #[array]$ServerList = @("amsterdam.voip.ms", "atlanta.voip.ms", "atlanta2.voip.ms", "chicago.voip.ms", "chicago2.voip.ms", "chicago3.voip.ms", "chicago4.voip.ms", "dallas.voip.ms", "dallas2.voip.ms", "denver.voip.ms", "denver2.voip.ms", "houston.voip.ms", "houston2.voip.ms", "london.voip.ms", "losangeles.voip.ms", "losangeles2.voip.ms", "melbourne.voip.ms", "montreal.voip.ms", "montreal2.voip.ms", "montreal3.voip.ms", "montreal4.voip.ms", "montreal5.voip.ms", "montreal6.voip.ms", "montreal7.voip.ms", "montreal8.voip.ms", "newyork.voip.ms", "newyork2.voip.ms", "newyork3.voip.ms", "newyork4.voip.ms", "newyork5.voip.ms", "newyork6.voip.ms", "newyork7.voip.ms", "newyork8.voip.ms", "paris.voip.ms", "sanjose.voip.ms", "sanjose2.voip.ms", "seattle.voip.ms", "seattle2.voip.ms", "seattle3.voip.ms", "tampa.voip.ms", "tampa2.voip.ms", "toronto.voip.ms", "toronto2.voip.ms", "toronto3.voip.ms", "toronto4.voip.ms", "toronto5.voip.ms", "toronto6.voip.ms", "toronto7.voip.ms", "toronto8.voip.ms", "vancouver.voip.ms", "vancouver2.voip.ms", "washington.voip.ms", "washington2.voip.ms") #Get the list of servers into an array
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 function Progress {
   param(
     [int]$Index,
@@ -4265,7 +4265,7 @@ param (
     $BranchName = "",
     [switch]$Force
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
     If ($PSCmdlet.ShouldProcess($_.Name, "Update-PKI")) {
         $NewHash = (Get-FileHash $_.FullName).Hash
@@ -4288,7 +4288,7 @@ param (
     $Path 
 
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ADUser -Filter * -SearchBase $Path | Set-ADUser -Enabled $false
 [System.Collections.ArrayList]$Results = @()
@@ -4418,7 +4418,7 @@ param(
     [string]$Key = "y",
     [string]$Message = "Press $Key to continue, any other key to abort."
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Response = Read-Host $Message
 If ($Response -ne $Key) { Break }
@@ -4428,8 +4428,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU4MwbLKJYllnzVitbpV4d7Ej5
-# 7faggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU+oOsOIEC66KGA+tKbYC3BwdH
+# oZCggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4513,17 +4513,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFAxFOvcF3yhaSTMnYeniOGpG5mo8
-# MA0GCSqGSIb3DQEBAQUABIICADK706S9tWGpUYIsKkYm3v6xaePEGzVmn64MyTFa
-# SGAQs2PYhCcVj1kn+g0Vf1q43QecD7iqJVq9TDmmLubaq4rnArLRkkAG582DiebI
-# ikM+jBs/FFaK+e7O8FkDtBo2miYtz3bfH2eIMPVE/IT5HhbYoArxxMMhSWn4YuRi
-# YWstvOzc5p0ha+CHtHcWaYWQ1VIaD5mHinH000JxbFhT5f7cVIZVFg7OMoxomFWt
-# nqqZVjR7VjCEjBOfzgp9tmDS3zzpZxPOeFcIMMTdLu5zb3TznAFLYCZIuPqXbhBe
-# MUnUFwsbj40pSAj+XN8cVPMOUaayqifwAk4Azppx9CgxFjpo88UKR4Wx+dABqxn5
-# hVFF/5p+UTBlvE33IXU2ptYLXgPbCg4G1yLS21OSYQuffjAvsfU+92v7Inb6Lu79
-# qLynvREUwiqaI7HPwTIYlGKYAydUL/S2GjBtiaCOqDF5WcaMfmppuqbDAiTw1/8H
-# GH4048vC5ltAARkoJ5Wiwg253Xqdq392sKy2XLCVe0NBHoRkfxFtqxUp8kHR1Vgg
-# XtkNdBfDPg59bW1zQVv7Au7EV9rWQxdgaJd2V/7b6dOTwWNt10qh3Ip/Tq4B/cI8
-# m/trdzLrNu4E5TbuOKmRCCAynyxaOmT25C1S5THG2E9kWF0WnfS+QCjtmT5qz3BP
-# xj+j
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFCV2MwoEkdnIQDqFCE5oEW3fRWbX
+# MA0GCSqGSIb3DQEBAQUABIICAMHpSPvKbP3Bo/aW5j8iPmFHbliZEbspHM8bEOic
+# 50fIQ6otLeNDBrHh2fZLN1FLKzB+cs6OcYLZqZaC0s2ztx2A8eeVXEWKyzprS9ew
+# auJI/uxBZ4BUuSfsTncRyogif/E6TWH7cNnJmg2OcB5DsSU7PdKeiE/vLrqIkeao
+# JHgbABmHsRxD7ysIQnnLO8m2mXwIRNSWujZvjz/k1nMWNy6xSQXpQtXUwkNKsM51
+# xsnbUjnAfCMPUTAX2n38VXdJ+mhjBGbKFY9p8S4hyQOPTZuf6BNmvt4JdjTkevHk
+# x0UfE84PnkBjmZXKUK5g8XCaAs70V3W11OLPkOkLPwWQPnzD+Y8QZ9wqc0ZNTEI3
+# 5HQtKk1r42YWcAFdpyAfQ3ekbWI0Tp6Rhq5/j/JBy2Ys2rws+l/ZtB8zoq7SMhdK
+# 6PI6d69+wMFnHsRWvzzCh5Thk14aN+0w3EOs3JUId38DHCyflCgTnU4pgIe2Tgpu
+# om14ebX8kKJuLzrzcpwoCA1T7rpLqj18930fpLe2l6Ls/wwiD1fHZxpZiKH9DjHd
+# H61ZHBhYMn5cKYj8cEgRbWEeq2uzVuKU2KVfACGF/6e4TmYIyTx4uuaSdFFno8aT
+# G/ef5hREMwR/iNggDYEpSLDFrkkqbmU+H+j5XUAE69yy1Nyr0DIHwNNJXlE0c7TB
+# z+58
 # SIG # End signature block

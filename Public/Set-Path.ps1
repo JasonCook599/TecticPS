@@ -5,7 +5,7 @@ param (
     [switch]$Force,
     [int]$MaxLength = 1024
 )
-. (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if ($Machine) {
     Write-Verbose "Adding `"$Path`" to system PATH"
@@ -28,8 +28,8 @@ Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUWuJMZYARBNJZCVLJqurgfNHp
-# AfWggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUuvQ8ZT6ELm7eVZzfHySuPhh1
+# 6jqggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -113,17 +113,17 @@ Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFJ3qeVYRUdls+I8D4/v9ogZuxfHb
-# MA0GCSqGSIb3DQEBAQUABIICANhU/2O8G6mU8amn9stgHkPFPsv+tU64Ir1CSLgs
-# o1mmUEUSkIOIkkXrtsWzxeXg31XN4bZSOJBOGLr4Kyrzrv1rSOOQvp3kXTUI7eSw
-# vqm6YyB5FZ5yU5IDBFYFCUDSr9Hsg7XChA3cp0lYfSmr+ukbQ3yWC18imvpnsn3k
-# H+ek8pkzvAa2ASFxvKVAQ0XKyumttosrg3voQogmMekPaig7H+m8spMP8IyVE8cv
-# WSh5IvRj7zJyis/zm/QxQYZ2juxiJcSGRKOSYRKyYS9uoUgbyO/6LxNczWk0eBlL
-# f6cQGysHt3OsnIFx0AXdDqPFC1WLpq3qBx0dGTQ0hj4X901kOZgB4N6vtW63Rb2v
-# rTxE0W9SfgZrgHapXwSKXUUevKxgL+dEUWxTHPOSb/hKQKUa0eZEmtRCzXuZIMyr
-# InPc6iVxc8CDqjlnrpGzgcsZPHZ1cLZ8TDi2lSh7EcvP0GOK8ySMhPAJWWYBNT4v
-# PGtJP9tRxeleVqmLMFe5kgTmfjsNA1ZFNR78hbJrUbLueTqQ4kGleTtXvxBkpanW
-# 48GmgWYSQHQSliBg0vZpuDW8ukVj4lJ5J1Haup/642B8lJB+icNY/5Z1InEyjxXI
-# umuesSNbxJXRTNygHrGUairsnkgIc8y4IlgfqQthtj24n793eQzTTp0XHMb4DIIY
-# Rd0O
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFMP4YLyFfplO/5WtgBGJEFafYett
+# MA0GCSqGSIb3DQEBAQUABIICALTaxnUVJl0c5BSR1ouQpXOmRYX51xo+qnXfn/IO
+# 77chLWvGgDYf319/Kg1OI+GfjsjO6NAkSDig+Ubrs4oF4s7GKCPRFsFMdUSCJVDy
+# vjfHfxszXAfqBG6wRs32M7wOI+h41RRMEbhst5WaRKNdzGBTmNE3bLwXF/Mg3LoN
+# b65zAnFec6QgglujjqNLnuXGDf/uvGhVOaPJxvbu9MXrlcbaiT7SfABNlztRQb1n
+# jEK4Q6+TJM99rtASFMvNWPnCZUcDgaAIw1r3myScEvC0T0I+6nDx6wTCUbQO+aBE
+# IHVyHTZFPAFicI0syG04VSDbrxQmJr+TyzEpKEcQEoYim0y3qKo3rZzyRRnyoyTA
+# Zo8oG//fBF9Q0uD4eiyA+Ifdqys+BzPbsHv+x4wdsqwKb0FuJdioXBJZAJuSaZvB
+# XpMVvSbJekVlgIyHLnRH3OjMynBymlngfudmNkSexLHwUF2yeujbXzCLG7u384ox
+# 1k8PNebxA4QfTAOYXnHzI6fa7bRyiitgmxyrP275/KBwYMWSu7KucYDlGQY78Axm
+# diyECJbLODv3gZF9ps50KwCUuj4/MUHQYoKfKRih/6/kBPBcmfgtqHP0BCWilZto
+# xd49ZwefhAT2rWXEwcdNd208ZU6vgUx5AkGp3wPvzSDkHf9a6Qkx4/0nVuZ+e7Tl
+# c601
 # SIG # End signature block
