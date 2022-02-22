@@ -190,6 +190,27 @@ param(
 ) 
 if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentComplete $PercentComplete }
 }
+function Add-AllowedDmaDevices {
+param(
+    $ComputerInfo = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object Manufacturer, Model),
+    $Path = "HKLM:\SYSTEM\CurrentControlSet\Control\DmaSecurity\AllowedBuses",
+    $Parent = (Split-Path $Path -Parent),
+    $AllDevices = @{
+        Lenovo = @{
+            "20T6002LUS" = @{
+                "PCI Express Root Port A" = "PCI\VEN_1022&DEV_1634"
+                "PCI Express Root Port B" = "PCI\VEN_1022&DEV_1635"
+                "PCI standard ISA bridge" = "PCI\VEN_1022&DEV_790E"
+            }
+        }
+    },
+    $AllowedDevices = $AllDevices.$($ComputerInfo.Manufacturer).$($ComputerInfo.Model)
+)
+
+foreach ($Device in $AllowedDevices.GetEnumerator()) {
+    New-ItemProperty -Path $Path -Name $Device.Name -Value $Device.Value -PropertyType "String" -Force -WhatIf
+}
+}
 function Add-BluredPillarBars {
 <#
 .SYNOPSIS
@@ -4100,6 +4121,48 @@ else {
   Return $False
 }
 }
+function Test-DmaDevices {
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+    $File = "DmaDevices.txt",
+    $LastDeviceFile = ("$([System.IO.Path]::GetFileNameWithoutExtension($File))-last.txt"),
+    [ValidateSet("RemoveFirst", "AddLast", "AddAll", "Export", "Reset")][string]$Action,
+    $Path = "HKLM:\SYSTEM\CurrentControlSet\Control\DmaSecurity\AllowedBuses",
+    $Parent = (Split-Path $Path -Parent)
+)
+If ($(Test-Path -Path $Parent) -eq $False) { New-Item $Parent }
+If ($(Test-Path -Path $Path) -eq $False) { New-Item $Path }
+function ParseInstanceId {
+    param([Parameter(Mandatory = $true, ValueFromPipeline = $true)][string[]]$Id)
+    return ($Id -replace '&SUBSYS.*', '' -replace '\s+PCI\\', '"="PCI\\') 
+}
+
+if ($Action -contains "AddAll" -or $Action -contains "Export") {
+    Get-PnpDevice -InstanceId PCI\* | ForEach-Object { 
+        $i++
+        $Name = $_.FriendlyName + " " + $i
+        if ($Action -contains "AddAll") { New-ItemProperty $Path -PropertyType "String" -Force -Name $Name -Value (ParseInstanceId $_.InstanceId) }
+        if ($Action -contains "Export") { Add-Content -Path $File -Value $Name }
+    }
+}
+if ($Action -contains "RemoveFirst") {
+    $CurrentDevice = (Get-Content $File -First 1)
+    Write-Host $CurrentDevice
+    Write-Host $LastDeviceFile
+    Remove-ItemProperty $Path -Name $CurrentDevice -Force
+    Set-Content -Path $LastDeviceFile -Value $CurrentDevice
+    Get-Content $File | Select-Object -Skip 1 | Set-Content $File  
+
+}
+if ($Action -contains "AddLast") {
+    Get-PnpDevice -FriendlyName $([regex]::Match((Get-Content $LastDeviceFile), "^(.*)( \d*)$").captures.groups[1].value) | ForEach-Object {
+        $i++
+        $Name = $_.FriendlyName + " " + $i
+        New-ItemProperty $Path -PropertyType "String" -Force -Name $Name -Value (ParseInstanceId $_.InstanceId)
+    }   
+}
+if ($Action -contains "Reset") { Remove-ItemProperty $Path -Name "*" }
+}
 function Test-Scripts {
 Param(
     [string]$foo,
@@ -4429,8 +4492,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUOkoVx2MFnEJfW1sN0C5jNhIN
-# dpGggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU0HhN2TMWI0kP/4OgKxh09E2N
+# v2Cggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4514,17 +4577,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFOKGi6aSMJCq/TvBSZs/7JPA89Cx
-# MA0GCSqGSIb3DQEBAQUABIICAFXUHbWeJThLr40wiAUWQO9G7SPImdie2bQFhdwn
-# xx9gFaGriOhPrwoBtcEBU8j4E4wWEATRuFdAvfYbJBnO89sCM5Yk6o0kS+g7KndQ
-# Sro5+W88ST06xMgNKp+49C9FlLtacVXukQ5BMgFEOc0dOZd6eaQOglF5L1DRwoSG
-# OYoQgEzJXwKswDQMmhRM0K4D2yCXhIKtaQi0kQ7zMNbGpKc6aY9s6CDrQXDhOvYd
-# +pqfcU5e0Me+GcFO2GASG2jtjRPPwkG3DZbH/Hvde1r319fWihrMuvYZxhDRZyIa
-# HoCBJIvieJQnjGMRAbWCsPZfYdJFYA3KcG2Wz5eF3Txn7IG0Bgm4QOyhLVu3UXl+
-# oAmu5ulNIgSRwstOfS2sWlrBrdmWDRlCKKAM9An04eDfGNKA8WvD/wZcIQYqhT0X
-# 0omwLDmbOCW9nbgyqOfAp2ISfwLryQa8oWKgKSvxpZ4PbytwmGhS4WK2WsAZw5ki
-# OltJ9ofnzlMC4nvFpAyKFeivGm77VrUXz1GV2CnVBEf2qPN/DT2Odd+X59bqKNAZ
-# SLFn5xIUlGCbjNLZnsvZoa1LdRXLDWA3Kg/RYlS5Ypj1vDdoALcsrhMCfwCUiPbl
-# 08vqeU+xapcGNsf10JJwy2QrF796Fj9YwKTncWu6htwuEh58r+hztkHQsBcpnMD1
-# Q6QX
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFNZklN0+6+a+FYblxJ2IOtVWsR/9
+# MA0GCSqGSIb3DQEBAQUABIICACFxO3rcIpQMYEMMxzPW71dZtu5zxH/ZTmn7iJOj
+# GaLmG34GIpEIpA7MSgWzp2LTZH6ku353qyZmiFCCVif/n6n7ZEnVlhMiKCliDY+K
+# TTYabNbJ+uq3wD7IP15zFNRVfk41zTDOMS/EM3Fof85KyFeSQ+ZiquwRU174xf/T
+# Iojk7YLdsGaLLCw3nun8rWRJoPFuVhnWCWZVRKSNjj8a1PQ0ZjCEpywbTPoARbca
+# asupUhWuFv3OV8btTmHm5jSKuCgadX40oqUtUa77iUAy8Dh5CIB7ZNNODBHSo+wt
+# VJ/JKx+FIKprOu5Y9yOQ+xZvHjD0xTBfOiIZCCREAZ1iO/wAw47J2fjEPwI0wN1S
+# gDLmMySFNP9y8c6MpBVYd//gzT4uDjQpbkKF3c0NqI1UehR2FOYE9LB25KDhgAUW
+# K/RlWQrS/FVAvbLqrLhPtEyYN4zmSxhKQOo1f7qpXCw+MCyXtOzMjmd6R9E3LV1y
+# 82Om2deJScGlAr3xKkhERSw4uDkzMfzJzKi6A2yGCjRBl3+LRWCswU710iFTM5Jb
+# tywTaTTQdp1rouCrPOZiS6zJUJOKP8jhp+KoCn+ORNeEMR63hyEs88oM12zKagP0
+# n/WvVA6tvLSpidi5ut2WcY2UTqgNcveTQj+TQNP6NTH63CuENc2EwcCVibHeA5eV
+# lw7X
 # SIG # End signature block
