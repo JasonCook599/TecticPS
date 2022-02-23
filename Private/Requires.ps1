@@ -12,6 +12,7 @@ If (Get-Module -ListAvailable -Name $Name) { Write-Verbose "$Name is already ins
     if ($choice -eq "Y" -or $Force) { 
         try { Install-Module $Name -WhatIf }
         catch { throw "Failed to install required module." }
+        Import-Module $Name
     }
     else { throw "Required module wasn't installed" }   
 }
@@ -19,8 +20,8 @@ If (Get-Module -ListAvailable -Name $Name) { Write-Verbose "$Name is already ins
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU+O47vZJfCnjdPBFPaLBB/7EZ
-# 76qggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUXf6imyGiWhkM7MXywneoPzBb
+# xJOggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -104,17 +105,17 @@ If (Get-Module -ListAvailable -Name $Name) { Write-Verbose "$Name is already ins
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFKL0eMWMpX7++MCLsPNsS/FndOBL
-# MA0GCSqGSIb3DQEBAQUABIICAA74HQ0lFMb4ot9lKS20FQGQIBSDxASYwoDn6RbJ
-# wahXvlBgfqseospYiycVJufdos4a9fUprV3eABC35KLDtWDxNFhf/KHYM/lzqTqV
-# Suoo0YaVFn/z/gD/xrIRo4sTBJqDHX06pQ5G2JeT11gcXT4vsLnPEVE4enycdn7i
-# yy058hNO61uG4dE/KuzSd/qfXx3fgu5I2/Nf3y6VSuGWG9pxrglvrvLZQJtULNmy
-# IjM/WQ1FhzCbLyb0qumzER2Lkq8coh9J5ObRgsz5nwM1CaCcBjeEN2gtBNjxNaAd
-# 8wXQkhxIkaCXZzAL1KOXB65kVajEcRIunfpXCmCmyWxkRqcoUR9Kz8cXbPafEST3
-# 5jqjTmSMfCNZlP2jrzKZazwx5BMJvC1deU9w5hdmAW7EprEodhO9X/5XNJfrmr4p
-# 9JsjD2U6S/EMj2MZ+lVb9OnKQVu67/k5//jkA41JogtV1pQ0A3QOwXLDo0dVAeZg
-# /aNXyR2FE7IRWEgB4kGC0ISbcgB9twe/FHOKnDwTEEOBlOrwwm959iN8KOxtBBe0
-# WhUjiRuRTKlmgcyJbQyyZzyB1tSoDNSpKV5iEx7eGVuyF1WomCPdIu/y5C+i43Bq
-# nroQU8f1oILgcXLYpEW9FyAzqzdm2dJ31GcIhOcSIh0wadswdV0F2F9OcEbdfV7r
-# svK8
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFPHuLGxpfQHbBvkUbyP/d1oGfF2H
+# MA0GCSqGSIb3DQEBAQUABIICADoxJMuVX78ClY1XviNdlOWoCXjTmBxhZyzvggey
+# F47kMy4QwxGvm/3LgzST18ORGXTld4ILyWxb1pGeYww2yaKgE+q0tfZI1LkPvUFo
+# 9g3eEERgWPr1UNfbqrjtm8TYFlZSv3IcB8INGEU97hqTkFW8+djjfFiV3mqwB91H
+# R8eynlfh4gvRibi/c0TcAkGokvG+Tvgea1o+NswD2lqoeV88k5hiPEK/CUyvPbCx
+# XQz7XWCLAvb19onzare4Gzx+Dz+xN4+t9vVPc1PIQYbfyrY+PXs6CJoPHPcQVMoH
+# CJOq55oaYttfNa3LEDKn2t6X4aeTDfugHom4zAJHMTfp3FTEJzoxJWcHJiLgU5T6
+# ciK5PgUZJPEa93RkxjkoS4osWynvERxp1IuUOoW76C4A8ufrqXo+lCAqe+QOoJQ1
+# 8ZgcZjRHrguB3pubj6yiZG/hF3pUCCLxdf23dLjGiAsOPMwiKURvRwS4RNwjszV1
+# sHgwF9Ol/8h2rSG51zdCy1W2mnyEkRv/LXKNP+2Ir4Bhwo6XEA+aM9wuf49cfc2w
+# D7dfwvEc6HgaS5eWhg8klMaxNKsFpwPMfpVBk037rNDAnM+pspfwRIa/0oYTjMV5
+# Jr/so+v/ZH9yiXrnnjS3ykIQAPCONCr9y/jDmeo5PKE61Y683tpdFEPyq8VaNEgm
+# Q1Tk
 # SIG # End signature block

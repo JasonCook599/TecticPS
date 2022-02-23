@@ -205,6 +205,7 @@ If (Get-Module -ListAvailable -Name $Name) { Write-Verbose "$Name is already ins
     if ($choice -eq "Y" -or $Force) { 
         try { Install-Module $Name -WhatIf }
         catch { throw "Failed to install required module." }
+        Import-Module $Name
     }
     else { throw "Required module wasn't installed" }   
 }
@@ -1461,15 +1462,22 @@ param(
   $Date = (Get-Date),
   $Templates
 )
-Requires PSPKI
+Requires PSPKI # https://github.com/PKISolutions/PSPKI
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-if (-not $Templates) { throw "You must spesify the templates to search for." }
-
-Import-Module PSPKI # https://github.com/PKISolutions/PSPKI
+if (-not $Templates) { throw "You must specify the templates to search for." }
 $Templates | Foreach-Object {
+  Write-Verbose "Searching for $_"
   Get-IssuedRequest -CertificationAuthority $CertificationAuthority -Property RequestID, RawCertificate, Request.RequesterName, CertificateTemplate -Filter "NotAfter -ge $Date", "CertificateTemplate -eq $_" | ForEach-Object { 
-    Set-Content -Path (Join-Path -Path  $Path -ChildPath ("\" + $_.RequestID + "-" + $_.CommonName + ".crt")) -Value ("-----BEGIN CERTIFICATE-----`n" + $_.RawCertificate + "-----END CERTIFICATE-----") 
+    $OutPath = Join-Path -Path $Path -ChildPath ("$($_.RequestID)-$($_.CommonName).crt")
+    Write-Verbose "Found $($_.RequestID)-$($_.CommonName). Writing to $OutPath"
+    Set-Content -Path $OutPath -Value ("-----BEGIN CERTIFICATE-----`n" + $_.RawCertificate + "-----END CERTIFICATE-----")
+    
+    $OutPath = (Get-Item $OutPath).FullName # Needed for use with PS drives
+    $Thumbprint = (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 $OutPath).Thumbprint
+    $Destination = Join-Path -Path (Split-Path -Path $OutPath -Parent) -ChildPath ("\$($_.RequestID)-$($_.CommonName)-$Thumbprint.crt")
+    Write-Verbose "Moving file from $OutPath to $Destination"
+    Move-Item -Path $OutPath -Destination $Destination
   }
 }
 }
@@ -4512,8 +4520,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUzLwJFO54s/B8jnW0ft/+xzQN
-# jP+ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUnKyDD9V+/wAQqaa0qHdtF+ai
+# nD6ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4597,17 +4605,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFP4ajP4vXMfRQqkftCrJKkgsrVvJ
-# MA0GCSqGSIb3DQEBAQUABIICACf2c3Xh+18KyRQ4oytV1/qDym6asCMBxU1oj5Jw
-# 41qSrqjSnN9kbn6S++UAeD2mF28CXyDgen8E7L8c70dMWQOyotTMhtdJA+NV2LI0
-# Iy5Y3KKHa69egns4nIPnRHm9oiPqSr3V7BCW4+pYSWaDmHXHXz1EZ9rR/al4ia2E
-# eiW5CZZ+adPZHXtcNFcEWPZRDGSh08Vlp8d5MH/B99/uowWVxV4XiYftGmTTtIhE
-# J6h5ivEoFK+Ca0SLy8ycoa9KOFKneGMxgSOiZYuXd29pVgI0qpy+MjSTM2JZF6Aj
-# BwtYVAi0AYAppwAvIp8CjQj1mclUFfSeydi7pVRXqRW2jnMC24hh32KyZEARjfJc
-# HapuaJC8odpZL8TdI8h8knfIGnbR7rxzm33lbI9/ybltLnsdGpgWGU/akTS2Dezz
-# WlYWzl0x2bVsJ0RQ/C8N8Ip23/JfeqFk78wNkC/ZUdMpzPcrICbgaDDLdS+1X+E1
-# 9LlC90l4qfbG973A9s8dPt5DgIHHphxGQWRYVPdMytTLrnb4dTQpjSvrgpoQbXM8
-# C7gAGQ/GprGws1LDxyHDh2OEKCvGmvlMeE4gN7rmTRnWkjNoAK7eICtUVHd5zljU
-# wVCj0J3fyBQlcpGuQFo9pS28isDd+ZW97AtS/l7HabVEE+u+yWaDw27aNI9Z4TV1
-# qBrf
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFBOUWBkrvfDIYbhGPUC4MHO2fkqQ
+# MA0GCSqGSIb3DQEBAQUABIICAHv52RDnaCtYcP2xjosPY0fCtWhfCOkia8B7M7Fl
+# 9LFN3MvWKaVJfMy1Xu0OVyjQSJhRwVB0PwfIvWevgC8EOmVhZ+BeX0txeUdVFmXO
+# hhFNU0oK0jI3lXgtcqoj33MoVJzlu9/J7rndIsU1sI7xZadpSz55ge0YwMofUiq9
+# QJWZW1ScfWT3Jf54Pk5V5Cc1SRAqWqiZKhrUh4FheTFOeODSBSIHk2eD00v28zp8
+# adj/fOGSouJ6Ynve+AJpb51g6HQatUTRpiu2YZxlBLrrc4bZcSxsU/nD4FBeLc3e
+# eIokRFbhpRiIIt70Jb81LI9313fv4nb3LOaMQmALSiCTqygCm6cfRlazPy3lMNcn
+# EdwEN4Lg9rax9jlHN3pWoQTDavJN7/6cCXzkr7kq8ygy8KyMZuabu4sVk4zCDSQo
+# ctBXZDr/oWk4XYGFoYamCXqmWnNzIOZZKcddKJfc7exEs8BurSkhwXn6DIaXQqmY
+# AD+5V4H6MCxE7jumSmJQjqmjOCG/0FJX4bo5TX6Ss8Q10yDflS2CCgwJPX9EQLtX
+# bTq97Zw5iKFt6AWj/DAhfxPXPJBQChGBH4PRr2PQ+HEli17bmQMoK1vVr1nkdB2m
+# y91/NLIL18zbhRY5m0HAdQOW82sybX+k0PjsiLSjeYWUmbelarIFx+J4erYuCoco
+# gK//
 # SIG # End signature block
