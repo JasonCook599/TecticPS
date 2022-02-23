@@ -190,6 +190,25 @@ param(
 ) 
 if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentComplete $PercentComplete }
 }
+function Requires {
+param(
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string[]]$Name,
+    [string]$AltName,
+    [switch]$Force
+)
+
+Write-Verbose "Installing $Name Module if missing"
+
+If (Get-Module -ListAvailable -Name $Name) { Write-Verbose "$Name is already installed." } else {
+    if (-Not $Force) { $choice = Read-Host -Prompt "Module '$Name' is not installed but is required. Install? (Y)" }
+    else { Write-Output "Module '$Name' is not installed. Installing now." }
+    if ($choice -eq "Y" -or $Force) { 
+        try { Install-Module $Name -WhatIf }
+        catch { throw "Failed to install required module." }
+    }
+    else { throw "Required module wasn't installed" }   
+}
+}
 function Add-AllowedDmaDevices {
 param(
     $ComputerInfo = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object Manufacturer, Model),
@@ -1442,9 +1461,10 @@ param(
   $Date = (Get-Date),
   $Templates
 )
+Requires PSPKI
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-if (-not $Template) { throw "You must spesify the templates to search for." }
+if (-not $Templates) { throw "You must spesify the templates to search for." }
 
 Import-Module PSPKI # https://github.com/PKISolutions/PSPKI
 $Templates | Foreach-Object {
@@ -4492,8 +4512,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUCPsQ/geUjFqjm+GopA6J3toH
-# Wdqggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUzLwJFO54s/B8jnW0ft/+xzQN
+# jP+ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4577,17 +4597,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFExH0Jl7dy7Cle2qRfx/YVpsxIkE
-# MA0GCSqGSIb3DQEBAQUABIICAJHeogI/PIBp9MK7Z6fGIMov3aibzXEa64kHo4LO
-# 3+ZBcrinQDp07Qq6ehdrDTDd9vpxcMuoXrXYtI4qOtSvDV1ng5ZYHFfYuCb0U03Z
-# ze6VlqEWx37THAee6deb4FBBwUO/fHsDrKZ/7NRaKyT3G85zoENeIzjLfzLFvhQM
-# 8qjs6TYuRJxI4ydBqUDxBcrpWUT6Xkyv1vxatfgnoy9mvDfC+MOqp4LOE0T3Mtrw
-# G3N7LkSwqRPWWxQHLwpB2AP0HBECgakRXL83Sg/idgD5yQP1Zwj4IO13XeYKEAUQ
-# g9tCeQTygAal+A0hTUcigtuX83Zo0xep6fEVbheZTNf/EzwUW15HcntSxr3P3/bl
-# F1BoHFknxxfg1WRGUor71gjPxln/STrshyu1NTBmaEUEtq8i/JM/q2zENBtHne2e
-# f9KdlVjjB44NFnQM/rk/a5//htwmPxQa1eUh+j5kZoiHxorntL1bxfzzKU4zv/k5
-# eRj5JHs3MiBXhMgiHNcCSVjnMnHLtkaEekMeJnP+TiZ0JBFkB7yfCjKL9dNo+N2K
-# BvVLbZKxAM9o+0eowgk82MlP2qN419Igf/t501c74UNZRGjRS5EVvM20LLLrRwSW
-# 4AZ1lzPfyzuZSw5vtFJ0dqFWoWPVx+xD9rW1pwasCjgdd6RiE0js+pF4TYXbjhsU
-# GN/z
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFP4ajP4vXMfRQqkftCrJKkgsrVvJ
+# MA0GCSqGSIb3DQEBAQUABIICACf2c3Xh+18KyRQ4oytV1/qDym6asCMBxU1oj5Jw
+# 41qSrqjSnN9kbn6S++UAeD2mF28CXyDgen8E7L8c70dMWQOyotTMhtdJA+NV2LI0
+# Iy5Y3KKHa69egns4nIPnRHm9oiPqSr3V7BCW4+pYSWaDmHXHXz1EZ9rR/al4ia2E
+# eiW5CZZ+adPZHXtcNFcEWPZRDGSh08Vlp8d5MH/B99/uowWVxV4XiYftGmTTtIhE
+# J6h5ivEoFK+Ca0SLy8ycoa9KOFKneGMxgSOiZYuXd29pVgI0qpy+MjSTM2JZF6Aj
+# BwtYVAi0AYAppwAvIp8CjQj1mclUFfSeydi7pVRXqRW2jnMC24hh32KyZEARjfJc
+# HapuaJC8odpZL8TdI8h8knfIGnbR7rxzm33lbI9/ybltLnsdGpgWGU/akTS2Dezz
+# WlYWzl0x2bVsJ0RQ/C8N8Ip23/JfeqFk78wNkC/ZUdMpzPcrICbgaDDLdS+1X+E1
+# 9LlC90l4qfbG973A9s8dPt5DgIHHphxGQWRYVPdMytTLrnb4dTQpjSvrgpoQbXM8
+# C7gAGQ/GprGws1LDxyHDh2OEKCvGmvlMeE4gN7rmTRnWkjNoAK7eICtUVHd5zljU
+# wVCj0J3fyBQlcpGuQFo9pS28isDd+ZW97AtS/l7HabVEE+u+yWaDw27aNI9Z4TV1
+# qBrf
 # SIG # End signature block
