@@ -334,7 +334,7 @@ Copyright (c) ***REMOVED*** 2022
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-  [ValidateScript( { Test-Path -Path $_ })][string]$Path = (Get-Location),
+  [ValidateScript( { Test-Path -Path $_[0] })][array]$Path = (Get-Location),
   [string]$Filter = "*.ps*1",
   [ValidateScript( { Test-Certificate $_ })][System.Security.Cryptography.X509Certificates.X509Certificate]$Certificate = ((Get-ChildItem cert:currentuser\my\ -CodeSigningCert | Sort-Object NotBefore -Descending)[0]),
   [string]$Description = "Signed by " + (([ADSISearcher]"(&(objectCategory=User)(SAMAccountName=$env:username))").FindOne().Properties).company,
@@ -356,7 +356,7 @@ Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
     $Arguments += "/i `"$(($Certificate.Issuer -split ", " | ConvertFrom-StringData).CN)`"" # Issuer
     $Arguments += "/n `"$(($Certificate.SubjectName.Name -split ", " | ConvertFrom-StringData).CN)`"" # Subject Name
     $Arguments += "/sha1 $($Certificate.Thumbprint)"
-    $Arguments += $_.FullName
+    $Arguments += "`"$($_.FullName)`""
     Write-Verbose "Running $SigntoolPath $($Arguments -join " ")"
     If ($PSCmdlet.ShouldProcess($_.FullName, "Add-Signature using $($Certificate.Thumbprint)")) {
       Start-Process -NoNewWindow -Wait -FilePath $SigntoolPath -ArgumentList $Arguments
@@ -2645,6 +2645,7 @@ param (
     [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+while (!$InstallerPath) {$InstallerPath = Read-Host -Prompt "Enter the installer path."}
 if (!(Test-Path $InstallerPath)) {throw "Installer path is not valid"}
 
 If ( $Version -eq "2007" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath "2007 Pro Plus SP2\setup.exe" }
@@ -4521,8 +4522,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUnKyDD9V+/wAQqaa0qHdtF+ai
-# nD6ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUdYQVENnRWrTj700gmxXS465H
+# 8jKggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4606,17 +4607,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFBOUWBkrvfDIYbhGPUC4MHO2fkqQ
-# MA0GCSqGSIb3DQEBAQUABIICAHv52RDnaCtYcP2xjosPY0fCtWhfCOkia8B7M7Fl
-# 9LFN3MvWKaVJfMy1Xu0OVyjQSJhRwVB0PwfIvWevgC8EOmVhZ+BeX0txeUdVFmXO
-# hhFNU0oK0jI3lXgtcqoj33MoVJzlu9/J7rndIsU1sI7xZadpSz55ge0YwMofUiq9
-# QJWZW1ScfWT3Jf54Pk5V5Cc1SRAqWqiZKhrUh4FheTFOeODSBSIHk2eD00v28zp8
-# adj/fOGSouJ6Ynve+AJpb51g6HQatUTRpiu2YZxlBLrrc4bZcSxsU/nD4FBeLc3e
-# eIokRFbhpRiIIt70Jb81LI9313fv4nb3LOaMQmALSiCTqygCm6cfRlazPy3lMNcn
-# EdwEN4Lg9rax9jlHN3pWoQTDavJN7/6cCXzkr7kq8ygy8KyMZuabu4sVk4zCDSQo
-# ctBXZDr/oWk4XYGFoYamCXqmWnNzIOZZKcddKJfc7exEs8BurSkhwXn6DIaXQqmY
-# AD+5V4H6MCxE7jumSmJQjqmjOCG/0FJX4bo5TX6Ss8Q10yDflS2CCgwJPX9EQLtX
-# bTq97Zw5iKFt6AWj/DAhfxPXPJBQChGBH4PRr2PQ+HEli17bmQMoK1vVr1nkdB2m
-# y91/NLIL18zbhRY5m0HAdQOW82sybX+k0PjsiLSjeYWUmbelarIFx+J4erYuCoco
-# gK//
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFHvGw4Ek6LTeCUiC631biSN7K1Yn
+# MA0GCSqGSIb3DQEBAQUABIICAMpDeuqxft0Uv/oYroxu02cdvchezUQsSEU6B9xh
+# RcREIm8PBCx+MlmusQzyd2gR4/+yLUInGZv1JMbEZkaOXRfayaOtLGrrlNa13RDG
+# qzzKKBMXyfjppSJJA7DIR3fQ82MlkCwYP4lYQ7R/Ft5Y7RW6ZVpSNhiWhUlIl+4x
+# 4k7HUQeOnRqpXeWpAFkUmiz6KAUzUR3LDRnPBEyPiTRkflZ4cG9246VrhKHjLln4
+# en3hemIUWSTgBLiYpW/n0mPHr6BVOeMxNffur7sqbLUr4FL3LRz6FBT20jPCDTni
+# XlMF4R0RxtyuFOVBdcIHQ4cM0uL/BdvXPFj+D0UsPhepezyyR22YhUtIquhp3v64
+# uJMp9WkZ7tlv7250dpKpZEQ22l4UHVOuFFCHMzE6MP4Vt8/f5SwkbvY7x/NqH40d
+# GlW313JSqFXRCxuo3OZ7pt5U21ZvnoZtgoeILC/imZ1kNbYb5UcdQ8npELTlFZ6I
+# dDlDHGTPe0wsy9paAU5gdbxGvqoFupTu87s7rXp8wlxgplToxkbTjFQZKEF0IVNa
+# NDYNRsESwKj/n2jsoAIrfh41EQRcQpe9XfIQ8dxaXJxn+8BpRNZ3Ru2seoEo1X1h
+# OFtrvU9JaQLCUWtEToB5LgsLhsbeVX1IbsI9Fu9jYyxkqjMj2GADbNdZgvhOVMXq
+# Esx0
 # SIG # End signature block
