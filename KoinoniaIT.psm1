@@ -2645,6 +2645,7 @@ param (
     [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+if (!(Test-Path $InstallerPath)) {throw "Installer path is not valid"}
 
 If ( $Version -eq "2007" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath "2007 Pro Plus SP2\setup.exe" }
 ElseIf ( $Version -eq "2010" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2010 Pro Plus SP2\setup.exe' }
