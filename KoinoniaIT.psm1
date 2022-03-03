@@ -2722,6 +2722,25 @@ foreach ($DistributionGroup in $DistributionGroups) {
   Set-DistributionGroup $DistributionGroup.alias -SimpleDisplayName $DistributionGroup.SimpleDisplayName -WarningAction silentlyContinue
 }
 }
+function Measure-AverageDuration {
+param(
+    [string]$Command,
+    [string]$Name = $Command,
+    [ValidateRange(1, [int]::MaxValue)][int] $Times = 100
+)
+
+1..$Times | ForEach-Object {
+    Write-Progress -Id 1 -Activity $Name -PercentComplete $_
+    $Duration += (Measure-Command {
+        pwsh -noprofile -command $Command
+    }).TotalMilliseconds 
+}
+Write-Progress -id 1 -Activity $Name -Completed
+return @{
+        Average = $Duration/100
+        Total = $Duration
+    }
+}
 function New-RandomCharacters {
 param (
   $length = 1,
@@ -4522,8 +4541,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUdYQVENnRWrTj700gmxXS465H
-# 8jKggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUoLnkQvC+Cps+bS8/90edZpKf
+# qIeggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4607,17 +4626,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFHvGw4Ek6LTeCUiC631biSN7K1Yn
-# MA0GCSqGSIb3DQEBAQUABIICAMpDeuqxft0Uv/oYroxu02cdvchezUQsSEU6B9xh
-# RcREIm8PBCx+MlmusQzyd2gR4/+yLUInGZv1JMbEZkaOXRfayaOtLGrrlNa13RDG
-# qzzKKBMXyfjppSJJA7DIR3fQ82MlkCwYP4lYQ7R/Ft5Y7RW6ZVpSNhiWhUlIl+4x
-# 4k7HUQeOnRqpXeWpAFkUmiz6KAUzUR3LDRnPBEyPiTRkflZ4cG9246VrhKHjLln4
-# en3hemIUWSTgBLiYpW/n0mPHr6BVOeMxNffur7sqbLUr4FL3LRz6FBT20jPCDTni
-# XlMF4R0RxtyuFOVBdcIHQ4cM0uL/BdvXPFj+D0UsPhepezyyR22YhUtIquhp3v64
-# uJMp9WkZ7tlv7250dpKpZEQ22l4UHVOuFFCHMzE6MP4Vt8/f5SwkbvY7x/NqH40d
-# GlW313JSqFXRCxuo3OZ7pt5U21ZvnoZtgoeILC/imZ1kNbYb5UcdQ8npELTlFZ6I
-# dDlDHGTPe0wsy9paAU5gdbxGvqoFupTu87s7rXp8wlxgplToxkbTjFQZKEF0IVNa
-# NDYNRsESwKj/n2jsoAIrfh41EQRcQpe9XfIQ8dxaXJxn+8BpRNZ3Ru2seoEo1X1h
-# OFtrvU9JaQLCUWtEToB5LgsLhsbeVX1IbsI9Fu9jYyxkqjMj2GADbNdZgvhOVMXq
-# Esx0
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFHoWZNiFQ/2gT6eO2n+KT6FWUPpU
+# MA0GCSqGSIb3DQEBAQUABIICAL7Ww/61ELHFe/oL5vumUajDec31QZRF2cFgfHmr
+# ZTnUqlTyj/kYLPPW4NqeWJ1e178WwrNhF6TVtfsqB5fliTlfT4TE+oejEPu7MOVo
+# MA7uWam6XAOQKYxi9minIFhz6oP7xoks5zH2UR0PGPVx6GNwrfXeT+TH3YwsfAeP
+# d8tH3DKRRK8iM9e81pYaaz5RAXqHbhjt/tb6jz5G0hbiKppMJeQCUO0IJRXyaVR2
+# s3n4gJLZ20a6PgvlJjeaVQfWujV5OVmvOkb1L5BMXw55av+TsdMT3KID7ZfETxoK
+# dlbW3/4t3zNL0OWjAoZL5l6hv+xDpNJvAil5nEKOpKpX9doxKAEbnrrdLmYtR7g0
+# yoi0Cp8Ggcl62hUpQk0YkzUMyHm77DR2G8RRt9EyNdvF0ZsWGSWPqzTn6KNuRuGt
+# srMC9bVJDAoy6D1MKQdggpUcjeNKKQzds4GNCTzUyF5vbzYoiBaxY7BGaugl88Q+
+# r/04RN32VcQ6CYUIcdXnVxxzHmc5IIEYMZE6yBC3bgbIHqxN/FVsdPV9g8rxXVq8
+# /MhMZkj5P4ZuvVRjaZ3YQC3/ieFZO9XsNu6RwaTgytAQn/2Dg5JUwyyPH0VlGMwh
+# EEtQHwpvkvcFG980wY+8tu5Ei1CMF7ybF9h6RABsoQjBMZTCFJnHda7EfqYXk2d6
+# RGq3
 # SIG # End signature block
