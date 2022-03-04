@@ -311,40 +311,150 @@ if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentC
 }
 function Requires {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 2.0.1
+
 .GUID f8ca5dd1-fef2-4024-adc9-124a3007870a
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
+
+
+
+
+
 
 <#
+.SYNOPSIS
+Used to specify required modules and prompt to install if missing.
+
 .DESCRIPTION
-Used to specified required modules. Will prompt to install if missing.
+Used to specify required modules and prompt to install if missing. The primary purpose for the creation of this is to allow the loading of a module even if the requirements of spesific scripts or functions are not met.
+
+This mimicks the #Requires format however has a limited feature set. Notable differences or limitations are listed below. Contributions are welcome to address these limitations.
+    - It is only possible to check if a module has been installed. You cannot check for spesific versions.
+    - The PSEdition paramater has been renamed to PSEditonName as the former is reserved.
+    - This does not support the following parameters: Assembly, PSSnapin, ShellId
+
+.PARAMETER Modules
+An array of PowerShell modules that the script requires. Unlike a #Requires statement, you cannot specify version numbers.
+
+If the required modules aren't in the current session, PowerShell imports them. If the modules can't be imported, PowerShell prompt to install. If the installation fails or is declined, the check fails.
+
+.PARAMETER Version
+Specifies the minimum version of PowerShell that the script requires. Enter a major version number and optional minor version number.
+
+.PARAMETER PSEditionName
+Specifies a PowerShell edition that the script requires. Valid values are Core for PowerShell and Desktop for Windows PowerShell.
+
+.PARAMETER RunAsAdministrator
+the PowerShell session in which you're running the script must be started with elevated user rights. The RunAsAdministrator parameter is ignored on a non-Windows operating system. The RunAsAdministrator parameter was introduced in PowerShell 4.0.
+
+.PARAMETER Warn
+If specified, a warning will be thrown when a check fails. By default, a terminating error will be thrown.
+
+.PARAMETER Force
+If specified, missing modules will be installed without prompting.
+
+.PARAMETER FailedInstallMessage
+The message to show for a failed module installation.
+
+.PARAMETER SkippedInstallMessage
+The message to show for a skipped module installation.
+
+.PARAMETER PsVersionMessage
+The message to show for an invalid PowerShell version.
+
+.PARAMETER PSEditionMessage
+The message to show for an invalid PowerShell edition.
+
+.NOTES
+Credits    : Some text from Microsoft's official documentation. Available under Creative Commons Attribution 4.0 International License.
+
+.LINK
+https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_requires?view=powershell-7.2
+
+.LINK
+https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/reference/7.2/Microsoft.PowerShell.Core/About/about_Requires.md
 #>
 param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string[]]$Name,
-    [string]$AltName,
-    [switch]$Force
+    [Parameter(ValueFromPipeline = $true)][array]$Modules,
+    [string]$Version,
+    [ValidateSet("Core", "Desktop")][string]$PSEditionName,
+    [switch]$RunAsAdministrator,
+    [switch]$Warn,
+    [switch]$Force,
+    [string]$FailedInstallMessage = "Failed to install required module.",
+    [string]$SkippedInstallMessage = "Installation of the required mdoule was skiped",
+    [string]$PsVersionMessage = "Powershell $Version is required. You have $($PSVersionTable.PSVersion)",
+    [string]$PSEditionMessage = "You are running the $($PSVersionTable.PSEdition) edition. $PsEditionName is required."
 )
+<# 
+#Requires -PSSnapin <PSSnapin-Name> [-Version <N>[.<n>]]
+#Requires -ShellId <ShellId> -PSSnapin <PSSnapin-Name> [-Version <N>[.<n>]]
+#>
 
-Write-Verbose "Installing $Name Module if missing"
+try { [version]$Version = $Version } 
+catch {
+    try { $Version = [version]::New($Version, 0) } 
+    catch { throw "$Version is not a valid version" } 
+}
 
-If (Get-Module -ListAvailable -Name $Name) { Write-Verbose "$Name is already installed." } else {
-    if (-Not $Force) { $choice = Read-Host -Prompt "Module '$Name' is not installed but is required. Install? (Y)" }
-    else { Write-Output "Module '$Name' is not installed. Installing now." }
-    if ($choice -eq "Y" -or $Force) { 
-        try { Install-Module $Name -WhatIf }
-        catch { throw "Failed to install required module." }
-        Import-Module $Name
+function Fail {
+    param(
+        [Parameter(ValueFromPipeline = $true)][string]$Message
+    )
+    if ($Warn) { Write-Warning $Message } else { throw $Message } 
+}
+
+if ($Modules) {
+    foreach ($Module in $Modules) {
+        If (Get-Module -ListAvailable -Name $Module) { Import-Module $Module } else {
+            if (-Not $Force) { $choice = Read-Host -Prompt "Module '$Module' is not available but is required. Install? (Y)" }
+            else { Write-Output "'$Module' is not installed. Installing now." }
+    
+            if ($choice -eq "Y" -or $Force) { 
+                try { Install-Module $Module -WhatIf }
+                catch { Fail $FailedInstallMessage }
+                Import-Module $Module
+            }
+            else { Fail $SkippedInstallMessage }
+        }
     }
-    else { throw "Required module wasn't installed" }   
+
+}
+
+if ($Version -gt $PSVersionTable.PSVersion) { Fail $PsVersionMessage } 
+if ($PSEditionName -and $PSEditionName -ne $PSVersionTable.PSEdition) { Fail $PSEditionMessage }
+if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
+    if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
 }
 }
 function Add-AllowedDmaDevices {
@@ -787,18 +897,45 @@ Invoke-Command -ComputerName $ComputerName -ScriptBlock {
 }
 function Connect-Office365 {
 <#PSScriptInfo
-.VERSION 2.1.0
+
+.VERSION 2.1.1
+
 .GUID ab066274-cee5-401d-99ff-1eeced8ca9af
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
+
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -928,13 +1065,13 @@ Else {
 	}
 	If ($SharepointOnline) {
 		Write-Verbose "$me Connecting to Sharepoint Online"
-		Import-Module Microsoft.Online.SharePoint.PowerShell | Write-Verbose
+		Requires Microsoft.Online.SharePoint.PowerShell
 		If ($BasicAuth) { Connect-SPOService -Url https://$Tenant-admin.sharepoint.com -Credential $Credential | Write-Verbose }
 		Else { Connect-SPOService -Url https://$Tenant-admin.sharepoint.com | Write-Verbose }
 	}
 	If ($SkypeForBusinessOnline) {
 		Write-Verbose "$me Connecting to Skype For Business Online"
-		Import-Module SkypeOnlineConnector | Write-Verbose
+		Requires SkypeOnlineConnector
 		If ($BasicAuth) { $sfboSession = New-CsOnlineSession -Credential $Credential | Write-Verbose }
 		Else { $sfboSession = New-CsOnlineSession -UserName $UPN }
 		Import-PSSession $sfboSession | Write-Verbose
@@ -1642,7 +1779,7 @@ Which VM should nesting be enabled for?
 Enable-NestedVm -VmName MyVM
 
 .NOTES
-Credits    : Created by  Drew Cross at Microsoft. Available under Creative Commons Attribution 4.0 International License.
+Credits    : Created by Drew Cross at Microsoft. Available under Creative Commons Attribution 4.0 International License.
 
 .LINK
 https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/hyperv-tools/Nested/Enable-NestedVm.ps1
@@ -1810,18 +1947,45 @@ Write-Host 'Invalid input'
 }
 function Export-MatchingCertificates {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 31c7075a-49f8-4f99-ad29-aa9d83ab8dc3
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
+
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -1852,7 +2016,7 @@ param(
   $Date = (Get-Date),
   $Templates
 )
-Requires PSPKI # https://github.com/PKISolutions/PSPKI
+Requires -Modules PSPKI
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if (-not $Templates) { throw "You must specify the templates to search for." }
@@ -2796,19 +2960,45 @@ foreach ($result in $results) {
 }
 function Get-StaleAADGuestAccounts {
 <#PSScriptInfo
-.VERSION 1.1.0
+
+.VERSION 1.1.1
+
 .GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
 
-.AUTHOR
-Jason Cook
-Darren J Robinson
+.AUTHOR Jason Cook Darren J Robinson
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
+
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -2848,8 +3038,7 @@ param (
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-<# #Requires -Modules MSAL.PS #>
-Import-Module MSAL.PS 
+Requires -Modules MSAL.PS
 
 $StaleGuests = GetAADSignIns -date $StaleDate | Select-Object | Where-Object { $_.userType -eq 'Guest' }
 Write-Host -ForegroundColor Green "$($StaleGuests.count) Guest accounts haven't signed in since $($StaleDate)"
@@ -3102,18 +3291,45 @@ Invoke-WebRequest -OutFile $Path -Uri $Uri -ErrorAction SilentlyContinue
 }
 function Grant-Matching {
 <#PSScriptInfo
-.VERSION 1.0.5
+
+.VERSION 1.0.6
+
 .GUID 8e42dd4d-c91c-420c-99f5-7b233590ae2c
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
+
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -3121,7 +3337,8 @@ This powershell script will grant NTFS permissions on folders where the username
 
 .DESCRIPTION
 This powershell script will grant NTFS permissions on folders where the username and folder name match. It accepts three parameters, AccessRights, Domain, and Folder.
-This script required the NTFSSecurity module: https://github.com/raandree/NTFSSecurity
+This script requires the NTFSSecurity module: https://github.com/raandree/NTFSSecurity
+
 .LINK
 https://github.com/raandree/NTFSSecurity
 
@@ -3137,9 +3354,6 @@ This can be used to select a folder in which to run these commands on. If unspec
 .EXAMPLE
 .\Grant-Matching.ps1 -AccessRights FullControl -Folder C:\Users
 Grant-Matching: Granting DOMAIN\user FullControl on C:\Users\user
-
-.NOTES
-Requires   : NTFSSecurity module | https://github.com/raandree/NTFSSecurity
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -3149,9 +3363,7 @@ param(
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-Write-Debug "Importing NTFSSecurity module"
-<# #Requires -Module NTFSSecurity #>
-Import-Module NTFSSecurity
+Requires -Modules NTFSSecurity
 
 foreach ($UserFolder in $Path) {
 	$Account = $Domain + '\' + $UserFolder
@@ -3813,24 +4025,43 @@ Get-ChildItem $Path -Directory | Sort-Object CreationTime -Descending | Select-O
 }
 function Remove-OldModuleVersions {
 <#PSScriptInfo
-.VERSION 0.0.1
+
+.VERSION 0.0.2
+
 .GUID 975b5e06-eee0-461b-9b98-49351c762dcd
 
-.DESCRIPTION
-Basic function to remove old PowerShell modules which are installed
+.AUTHOR Jason Cook Luke Murray (Luke.Geek.NZ)
 
-.AUTHOR
-Jason Cook
-Luke Murray (Luke.Geek.NZ)
+.COMPANYNAME ***REMOVED***
 
-.COMPANYNAME
-***REMOVED***
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-#>
-#requires -Version 2.0 -Modules PowerShellGet
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
 <#
-.SYNOPSIS
-Basic function to remove old PowerShell modules which are installed
+.DESCRIPTION
+Removes old version of installed PowerShell modules. Usefull for cleaning up after module updates.
 
 .LINK
 https://luke.geek.nz/powershell/remove-old-powershell-modules-versions-using-powershell/
@@ -3839,6 +4070,7 @@ https://luke.geek.nz/powershell/remove-old-powershell-modules-versions-using-pow
 param(
     [array]$Modules = (Get-InstalledModule)
 )
+Requires -Version 2.0 -Modules PowerShellGet
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 foreach ($Module in $Modules) {
     $count++ ; Progress -Index $count -Total $Modules.count -Activity "Uninstalling old versions of $($Module.Name). [latest is $($Module.Version)]" -Name $Image.Name -ErrorAction SilentlyContinue
@@ -4286,18 +4518,39 @@ Get-ADUser -Filter * -Properties ipPhone, mail, telephoneNumber | Where-Object m
 }
 function Repair-VmPermissions {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 8bd63288-3b9f-44dc-bc34-c25aea4b5452
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
 
 <# 
 .DESCRIPTION
@@ -4306,34 +4559,8 @@ This will repair VM permission to allow the VM to start.
 .LINK
 https://foxdeploy.com/2016/04/05/fix-hyper-v-account-does-not-have-permission-error/
 #>
-#Import the NTFSSecurity Module, if not available, prompt to download it
-If ((Get-Module).Name -notcontains 'NTFSSecurity') {
-    Write-Warning "This script depends on the NTFSSecurity Module, by MSFT"
-    if ($PSVersionTable.PSVersion.Major -ge 4) {
-        Write-Output "This script can attempt to download this module for you..."
-        $DownloadMod = Read-host "Continue (y/n)?"
- 
-        if ($DownloadMod.ToUpper() -like "Y*") {
-            find-module NTFSSecurity | Install-Module
-        }
-        else {
-            #User responded No, end
-            Write-Warning "Please download the NTFSSecurity module and continue"
-            break
-        }
- 
-    }
-    else {
-        #Not running PowerShell v4 or higher
-        Write-Warning "Please download the NTFSSecurity module and continue"
-        break
-    }
-}
-else {
-    #Import the module, as it exists
-    Import-Module NTFSSecurity
- 
-}
+
+Requires -Modules NTFSSecurity
  
 $VMs = Get-VM
 ForEach ($VM in $VMs) {
@@ -5833,8 +6060,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUqwNMXRgIDXoM7vu2QoAtQ3Zd
-# +sqggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUZ7sMfLhOXeD7CrGeG+v+lMBk
+# Hvaggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -5918,17 +6145,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFHwNNbPgtjIx7YiDFHA6yLNyuBDD
-# MA0GCSqGSIb3DQEBAQUABIICAKG12rlod5o3BT6N5xZWv37yposwBnLXc2WC7gfB
-# rAqATFpbYQ+Q7YS/4mkshV/+UQ8xI+RQHmGXIAdyyZfOYcXtXer+DLGUlUyhembJ
-# 8ot244AR9VYkAamUpO0N1JtmTdFtnCwGU6m/jsN1UnujlRMTmxJCcwtUjB0jTdTQ
-# cbL/sxaxYGa6yJHJ+irNKUVt2vXhtMdQaITqNS60wzeT7t3xJGOMONU8TK9h6VkZ
-# N+wHaSxXiQWvRFs7ncNrMCR3kQq45sbNbWQ8cls4QkNzu/YS6ooYa6PrpfsFMMOd
-# KfAU5bSzGTkMFQ2yiLY1ea+SgmhaXjT4p9HYDUAX9i+Qb72VSB9efWsRojLIkeKu
-# 7hGrZaJOCe8tRuYyeMpRGgGbU0kFeDjq/MEILIvEt159arJq+6jCb7Th3d/6gjwU
-# mBlc+Y+m6l1IAGYmPfWdQjD8kzD3WzQ05ehqpSsIH+nwxiTG6gsnuJO8VGixdlEN
-# EFWir9DmfCtFrRAFSzVEuEgu2xBArb0k9VQ2plooC+IdkAScttUjkY3fePz8bEmz
-# SiuD9ZDUM5ASnQvGFy0h69m5S03JYHNizs3dfEeu4NhP5JOj2JladNyjxO0CGQiA
-# d+3eh2VnbTDs8WJwlgCTPph+UR9R6qS0zXoZ9f7vG5URpdoJ/G2COCIWpETNaGdi
-# ogAl
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFB8uyphT98DvnZ0kJWK3mEAKyNTT
+# MA0GCSqGSIb3DQEBAQUABIICAIc0VHHcBI3ayaQce+ByWIxlKjPVUKVWHxHocmuA
+# NU/mV1FA8bpoqywwmS27KsgNWDtKMR1QldxD38lOH3KuTnsbKGdihM9YcCYry9EZ
+# JPDgkgDm6LdER5lG/0P+vt2KkrRNk/Ld0MAsyJKvyOrzaq1C4Tugfq8IhVGRCTq6
+# YNJ7fuemIOI2+GnTaCL/D7iEqc5jawV9TJY0lQu58RRsHt/hyyf0hVSvp2sWwz56
+# k96c8XfmAzi9eKj6xhrV+Cg7pJMzKmIuL949g8NU6YlNyWridA2IrgA9M7ufzQW0
+# SW/NmAk+NxiUkm7EHb2EjRu7nKwBUMgt6ARc7IqjAvXRLNF3dhuKyifpPX0AkDDU
+# YgrAhF/FIVtQ9C2zlqYqIr5WI6s0XoVgMYCMiXdNzM1jFFZMd4bbGJTIjugQAJMB
+# Q7Z3Y4n4k9euQ4onldy5AJ2KU9ovhWi6/jr3KlAtD8I0t12YPnB8lm1s1m7aUNPG
+# jjbE7vZIVWws2FdOwBtT4Pj2+4Zx26TX9mkausE4S17AtgCbRYko/mj+wc3gKCai
+# LAnxrBj2C7vWsuwmc642pL4faI5bPGWZ/hXwaVLYGW9LDPSTvI3sKXr19Xled0yl
+# nVmjGpcKlo9AnO2J28gj3w3dVtDVLiEFYWJmyD5Ia5rzr/xkjbmmLDaXSkYO/6DY
+# PLDG
 # SIG # End signature block
