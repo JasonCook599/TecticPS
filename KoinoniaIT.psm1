@@ -1,4 +1,19 @@
 function AuthN {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID fe011093-6980-4847-aa9c-f7a7b47a3a5b
+
+.AUTHOR
+Jason Cook
+Darren J Robinson
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 Authenticate to Azure AD and receieve Access and Refresh Tokens.
@@ -10,8 +25,7 @@ Authenticate to Azure AD and receieve Access and Refresh Tokens.
 (required) Azure AD TenantID.
 
 .PARAMETER credential
-(required) ClientID and ClientSecret of the Azure AD registered application with the necessary permissions.
-
+(required) ClientID and Cli
 .EXAMPLE
 $Credential = Get-Credential
 AuthN -credential $Credential -tenantID '74ea519d-9792-4aa9-86d9-abcdefgaaa' 
@@ -30,10 +44,22 @@ try { return (Get-MsalToken -ClientId $credential.UserName -ClientSecret $creden
 catch { Write-Error $_ }
 }
 function GetAADPendingGuests {
-<#
-.SYNOPSIS
-Get AAD B2B Accounts where the inviation hasn't been accepted.
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID d2231470-2326-4498-80d2-0456b0018d0a
 
+.AUTHOR
+Jason Cook
+Darren J Robinson
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
 .DESCRIPTION
 Get AAD B2B Accounts where the inviation hasn't been accepted.
 
@@ -42,7 +68,6 @@ GetAADPendingGuests
 
 .LINK
 http://darrenjrobinson.com/
-
 #>
 [cmdletbinding()]
 param()
@@ -58,10 +83,22 @@ try {
 catch { Write-Error $_ }
 }
 function GetAADSignIns {
-<#
-.SYNOPSIS
-Get AAD Account SignIn Activity.
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID e5758f99-a57e-4bcf-af21-30e5fd176e51
 
+.AUTHOR
+Jason Cook
+Darren J Robinson
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
 .DESCRIPTION
 Get AAD Account SignIn Activity.
 
@@ -73,7 +110,6 @@ GetAADSignIns -Date "2021-01-01"
 
 .LINK
 http://darrenjrobinson.com/
-
 #>
 [cmdletbinding()]
 param(
@@ -90,10 +126,22 @@ try {
 catch { Write-Error $_ }
 }
 function GetAADUserSignInActivity {
-<#
-.SYNOPSIS
-Get AAD Account SignIn Activity.
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID b444ff47-447f-4196-90eb-08723fa0fbaf
 
+.AUTHOR
+Jason Cook
+Darren J Robinson
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
 .DESCRIPTION
 Get AAD Account SignIn Activity.
 
@@ -105,7 +153,6 @@ GetAADUserSignInActivity -ID "feeb81f9-af70-2d5a-aa8c-f035ddaabcde"
 
 .LINK
 http://darrenjrobinson.com/
-
 #>
 [cmdletbinding()]
 param(
@@ -124,6 +171,24 @@ try {
 catch { Write-Error $_ }
 }
 function InstallModule {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 10ba8c03-4333-4f67-b11b-b25fef85943b
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+Install module if not pressent.
+#>
 param($Name, $AltName) 
 Write-Verbose "$me Installing $Name Module if missing"
 If (!(Get-Module -ListAvailable -Name $Name)) {
@@ -131,6 +196,24 @@ If (!(Get-Module -ListAvailable -Name $Name)) {
 }
 }
 function LoadDefaults {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 73e8a944-8951-4a89-9a54-d51db3f9afac
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+Load default parameters for various functions.
+#>
 param(
     [Parameter(Mandatory = $true)] $Invocation, 
     $DefaultsScripts = "***REMOVED***ITDefaults.ps1"
@@ -166,6 +249,24 @@ catch { Write-Error "Error loading defaults script." }
 Write-Error "Not running as a module and can't find script path. Defaults not loaded."
 }
 function ParseGuid {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 93f9436d-928a-4cf8-a5a0-e3f3f6bdcf14
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+Parse a GUID
+#>
 param (
     [string]$String,
     [ValidateSet("N", "D", "B", "P")][string]$Format = "B"
@@ -180,6 +281,24 @@ Else {
 return $Guid.ToString($Format)
 }
 function Progress {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 93f9436d-928a-4cf8-a5a0-e3f3f6bdcf14
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+Show progress in an easier to use format
+#>
 param(
     [int]$Index,
     [int]$Total,
@@ -191,6 +310,24 @@ param(
 if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentComplete $PercentComplete }
 }
 function Requires {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID f8ca5dd1-fef2-4024-adc9-124a3007870a
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+Used to specified required modules. Will prompt to install if missing.
+#>
 param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string[]]$Name,
     [string]$AltName,
@@ -211,11 +348,43 @@ If (Get-Module -ListAvailable -Name $Name) { Write-Verbose "$Name is already ins
 }
 }
 function Add-AllowedDmaDevices {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID a684ddd1-559b-48e2-bbdf-a85a3d50d3f6
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.SYNOPSIS
+This script will Allow spesific devices to the list of Allowed Buses.
+
+.DESCRIPTION
+This script will Allow spesific devices to the list of Allowed Buses. The primary use if for automatic BitLocker encryption.
+
+.PARAMETER ComputerInfo
+The Manufacturer and Model of the current device.
+
+.PARAMETER Path
+The registry path for AllowedBuses
+
+.PARAMETER DeviceList
+A hashtable of all the address of allowed devices in the format of Manufactuer.Model.Name.
+
+.PARAMETER AllowedDevices
+An list of all the devices allowed on this spesific device.
+#>
 param(
     $ComputerInfo = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object Manufacturer, Model),
     $Path = "HKLM:\SYSTEM\CurrentControlSet\Control\DmaSecurity\AllowedBuses",
-    $Parent = (Split-Path $Path -Parent),
-    $AllDevices = @{
+    $DeviceList = @{
         Lenovo = @{
             "20YG003FUS" = @{
                 "PCI Express Root Port A" = "PCI\VEN_1022&DEV_1634"
@@ -224,14 +393,27 @@ param(
             }
         }
     },
-    $AllowedDevices = $AllDevices.$($ComputerInfo.Manufacturer).$($ComputerInfo.Model)
+    $AllowedDevices = $DeviceList.$($ComputerInfo.Manufacturer).$($ComputerInfo.Model)
 )
-
 foreach ($Device in $AllowedDevices.GetEnumerator()) {
     New-ItemProperty -Path $Path -Name $Device.Name -Value $Device.Value -PropertyType "String" -Force -WhatIf
 }
 }
 function Add-BluredPillarBars {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 6ee394c8-c592-49d5-b16c-601955ef4d2f
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script will using ImageMagick to add blurred pillar bars to a set of images.
@@ -256,14 +438,6 @@ The text that appears after the filename for each converted image. If unspesifed
 
 .PARAMETER MaxHeight
 This is the max height of the converted image. If unspesified, the current height will be used.
-
-.NOTES
-File Name  : Add-BluredPillarBars.ps1
-Version    : 1.1.1
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
-
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
@@ -273,7 +447,7 @@ param (
   [string]$Aspect = "16:9",
   [string]$Prefix = ($Aspect -Replace ":", "x") + "_",
   [string]$Suffix,
-  [int]$MaxHeight,
+  [ValidateRange(1, [int]::MaxValue)][int]$MaxHeight,
   [switch]$Preview
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
@@ -292,21 +466,124 @@ Get-ChildItem -File -Path $Path | ForEach-Object {
   $Format = $null
 }
 }
-function Add-Office365GroupEmail {
+function Add-GroupEmail {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 772c6454-68cf-42aa-89b9-dd6dc5939e1b
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.SYNOPSIS
+Add an email address to an existing Microsoft 365 group.
+
+.DESCRIPTION
+Add an email address to an existing Microsoft 365 group. You can also use this to set the primary address for the group.
+
+.PARAMETER Identity
+The identity of the group you wish to change.
+
+.PARAMETER EmailAddress
+The email address you whish to add.
+
+.PARAMETER SetPrimary
+If set, this will set the email adress you specified as the primary address for the group.
+
+.EXAMPLE
+Add-GroupEmail -Identity staff -EmailAddress staff@example.com
+#>
 param (
-    [string]$GroupName,
-    [string]$EmailAddress,
+    [string]$Identity,
+    [mailaddress]$EmailAddress,
     [switch]$SetPrimary
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Add = $EmailAddress }
-If ($SetPrimary) { Set-UnifiedGroup -Identity $GroupName -PrimarySmtpAddress  $EmailAddress }
+Set-UnifiedGroup -Identity $-Identity -EmailAddresses: @{Add = $EmailAddress }
+If ($SetPrimary) { Set-UnifiedGroup -Identity $-Identity -PrimarySmtpAddress  $EmailAddress }
+}
+function Add-Path {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID bcbc3792-1f34-4100-867c-6fcf09230520
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This will add a location to enviroment PATH.
+
+.PARAMETER Path
+The path to add.
+
+.PARAMETER Machine
+This will modify the machine path instead of the user's path.
+
+.PARAMETER Force
+This will override check of the maximum lenght.
+
+.PARAMETER MaxLenght
+The maximum supported lenght for the PATH.
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+    [Parameter(Mandatory = $true)][ValidateScript({ Test-Path -Path $_ -PathType Container })][string]$Path,
+    [switch]$Machine,
+    [switch]$Force,
+    [ValidateRange(1, [int]::MaxValue)][int]$MaxLength = 1024
+)
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+if ($Machine) {
+    Write-Verbose "Adding `"$Path`" to system PATH"
+    Test-Admin -Throw
+    $Registry = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
+}
+else { 
+    Write-Verbose "Adding `"$Path`" to user PATH"
+    $Registry = "Registry::HKCU\Environment\" 
+}
+
+$NewPath = (Get-ItemProperty -Path $Registry -Name PATH).Path + ";" + $Path
+
+Write-Verbose "PATH length is $($NewPath.length)"
+if ($NewPath.length -gt $MaxLength -and (-not $Force)) {
+    throw "Path is longer than $MaxLength characters. Paths this long may not behave as expected. Run with -Force to override."
+}
+
+Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
 }
 function Add-Signature {
-<#
-.SYNOPSIS
-This script will sign Powershell scripts with the availble code signing certificate.
+<#PSScriptInfo
+.VERSION 1.1.3
+.GUID 9be6c147-e71b-44c4-b265-1b685692e411
 
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
 .DESCRIPTION
 This script will sign Powershell scripts with the availble code signing certificate.
 
@@ -324,13 +601,6 @@ Used as the signing name when signing an executable file. If unspecified, will t
 
 .EXAMPLE
 .\Sign-Script.ps1 -All
-
-.NOTES
-File Name  : Add-Signature.ps1
-Version    : 1.1.2
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
@@ -367,10 +637,21 @@ Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
 }
 }
 function Backup-MySql {
-<#
-.SYNOPSIS
-This script will backup MySQL.
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID 401b32f3-314a-47cf-b910-04c7f2492db2
 
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
 .DESCRIPTION
 This script will backup MySQL.
 
@@ -401,14 +682,7 @@ This script will prevent trimming the number of backups to the specified number.
 This is the number of files to keep in the folder. If unspecified, it will keep 10 copies.
 
 .EXAMPLE
-Backup-MySql.ps1
-
-.NOTES
-File Name  : Backup-MySql.ps1
-Version    : 1.0.1
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
+Backup-MySql
 #>
 
 param(
@@ -417,7 +691,7 @@ param(
   [ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$ConfigFile = ".\my.cnf", #Config file
   [ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$mySqlDump = "C:\mySQL\bin\mysqldump.exe", #Patch to mysqldump.exe
   [switch]$NoTrim,
-  [Int]$Copies = 10 #Number of copies to keep
+  [ValidateRange(1, [int]::MaxValue)][int]$Copies = 10 #Number of copies to keep
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
@@ -442,28 +716,56 @@ If (!$NoTrim) {
 }
 }
 function Clear-AdminCount {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 5e42fd43-6940-434e-bb1c-aebb8ac32e44
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This script will clear the AdminAcount for all user who have it set.
+
+.LINK
+https://docs.microsoft.com/en-us/windows/win32/adschema/a-admincount
+#>
 Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Set-ADUser -Clear AdminCount
 }
 function Clear-PrintQueue {
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID 4656316e-19c9-4d45-a8cb-6c26f6548e22
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
-This script will clear all print jobs in the queue.
+This will clear all print jobs in the queue.
 
 .DESCRIPTION
-This script will delete all *.shd and .spl file in %systemroot%\system32\spool\printers\ and restart the spooler service.
+This will delete all *.shd and .spl file in %systemroot%\system32\spool\printers\ and restart the spooler service.
 
 .PARAMETER ComputerName
 This can be used to select a computer to clear the print jobs on. This option is required.
 
 .EXAMPLE
-.\Clear-PrintQueue.ps1 -ComputerName PrintServer
-
-.NOTES
-File Name  : Clear-PrintQueue.ps1
-Version    : 1.0.1
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
+Clear-PrintQueue -ComputerName PrintServer
 #>
 param(
   [string]$ComputerName
@@ -484,6 +786,20 @@ Invoke-Command -ComputerName $ComputerName -ScriptBlock {
 }
 }
 function Connect-Office365 {
+<#PSScriptInfo
+.VERSION 2.1.0
+.GUID ab066274-cee5-401d-99ff-1eeced8ca9af
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script will connect to various Office 365 services.
@@ -496,7 +812,6 @@ To connect to Sharepoint Online, you must first install "SharePoint Online Manag
 To connect to Skype for Business Online, you must first install "Skype for Business Online, Windows PowerShell Module". Instructions are availible here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/manage-skype-for-business-online-with-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=39366).
 
 To connect to Exchange Online, you must first install "Microsoft.NET Framework 4.5" or later and then either the "Windows Management Framework 3.0" or the "Windows Management Framework 4.0". Instructions without MFA are availible here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps). Instructions with MFA are availible here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps)
-
 
 .LINK
 https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell
@@ -559,13 +874,6 @@ Connects to StaffHub.
 
 .PARAMETER Disconnect
 Disconnects from supported services
-
-.NOTES
-File Name  : Connect-Office365.ps1
-Version    : 2.1.0
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 param(
 	[ValidatePattern("^[^.]+$")][string]$Tenant,
@@ -670,69 +978,78 @@ Else {
 }
 }
 function Convert-Image {
+<#PSScriptInfo
+.VERSION
+1.0.1
+
+.GUID
+717cb6fa-eb4d-4440-95e3-f00940faa21e
+
+.AUTHOR
+Jason Cook
+Another Author
+
+.COMPANYNAME
+***REMOVED***
+Another Company
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
-	.SYNOPSIS
-	This script will resize an image using ImageMagick.
+.DESCRIPTION
+This script will resize an image using ImageMagick.
 
-	.DESCRIPTION
-	This script will resize an image using ImageMagick.
+.LINK
+https://imagemagick.org/
 
-	.LINK
-	https://imagemagick.org/
+.PARAMETER Path
+This is the file or folder containing images to resize. If unspecified, it will run in the current folder.
 
-	.PARAMETER Path
-	This is the file or folder containing images to resize. If unspecified, it will run in the current folder.
+.PARAMETER Dimensions
+The dimension to which the image should be resized in WxH. You must spesify either width or height.
 
-	.PARAMETER Dimensions
-	The dimension to which the image should be resized in WxH. You must spesify either width or height.
+.PARAMETER Suffix
+The text to appear after the resized file.
 
-	.PARAMETER Suffix
-	The text to appear after the resized file.
+.PARAMETER Prefix
+The text to appear before the resized file.
 
-	.PARAMETER Prefix
-	The text to appear before the resized file.
+.PARAMETER OutExtension
+The file extension to use for the converted image. If unspecified, the existing extension will will be used.
 
-	.PARAMETER OutExtension
-	The file extension to use for the converted image. If unspecified, the existing extension will will be used.
-	
-	.PARAMETER FileSize
-	The file size of the final file. This paramater only functions when outputting to the JPEG format.
+.PARAMETER FileSize
+The file size of the final file. This paramater only functions when outputting to the JPEG format.
 
-	.PARAMETER Filter
-	Use this to limit the search to spesific files.
+.PARAMETER Filter
+Use this to limit the search to spesific files.
 
-	.PARAMETER Force
-	Use this paramater to bypass the check when overwriting an existing file.
+.PARAMETER Force
+Use this paramater to bypass the check when overwriting an existing file.
 
-	.PARAMETER Return
-	The parameter will return the Name, FullName, InputName, InputFullName for each file.
+.PARAMETER Return
+The parameter will return the Name, FullName, InputName, InputFullName for each file.
 
-	.EXAMPLE
-	Convert-Image -Dimensions 1920x1080 -Suffix _1080p
+.EXAMPLE
+Convert-Image -Dimensions 1920x1080 -Suffix _1080p
 
-	.EXAMPLE
-	Convert-Image -Path C:\Images -Dimensions 1920x1080 -Suffix _1080p -Prefix Resized_ -OutExtension jpeg -FileSize 750KB -Filter "*.jpg" -Force -Return
-	Name                          FullName
-	----                          --------
-	Resized_Image (1)_1080p.jpeg  C:\Images\Resized_Image (1)_1080p.jpeg
-	Resized_Image (2)_1080p.jpeg  C:\Images\Resized_Image (2)_1080p.jpeg
-	Resized_Image (3)_1080p.jpeg  C:\Images\Resized_Image (3)_1080p.jpeg
-	Resized_Image (4)_1080p.jpeg  C:\Images\Resized_Image (4)_1080p.jpeg
-	Resized_Image (5)_1080p.jpeg  C:\Images\Resized_Image (5)_1080p.jpeg
-	Resized_Image (6)_1080p.jpeg  C:\Images\Resized_Image (6)_1080p.jpeg
-	Resized_Image (7)_1080p.jpeg  C:\Images\Resized_Image (7)_1080p.jpeg
-	Resized_Image (8)_1080p.jpeg  C:\Images\Resized_Image (8)_1080p.jpeg
-	Resized_Image (9)_1080p.jpeg  C:\Images\Resized_Image (9)_1080p.jpeg
+.EXAMPLE
+Convert-Image -Path C:\Images -Dimensions 1920x1080 -Suffix _1080p -Prefix Resized_ -OutExtension jpeg -FileSize 750KB -Filter "*.jpg" -Force -Return
+Name                          FullName
+----                          --------
+Resized_Image (1)_1080p.jpeg  C:\Images\Resized_Image (1)_1080p.jpeg
+Resized_Image (2)_1080p.jpeg  C:\Images\Resized_Image (2)_1080p.jpeg
+Resized_Image (3)_1080p.jpeg  C:\Images\Resized_Image (3)_1080p.jpeg
+Resized_Image (4)_1080p.jpeg  C:\Images\Resized_Image (4)_1080p.jpeg
+Resized_Image (5)_1080p.jpeg  C:\Images\Resized_Image (5)_1080p.jpeg
+Resized_Image (6)_1080p.jpeg  C:\Images\Resized_Image (6)_1080p.jpeg
+Resized_Image (7)_1080p.jpeg  C:\Images\Resized_Image (7)_1080p.jpeg
+Resized_Image (8)_1080p.jpeg  C:\Images\Resized_Image (8)_1080p.jpeg
+Resized_Image (9)_1080p.jpeg  C:\Images\Resized_Image (9)_1080p.jpeg
 
-	.NOTES
-	File Name  : Convert-Image.ps1
-	Version    : 1.0.1
-	Author     : ***REMOVED***
-
-	Copyright (c) ***REMOVED*** 2019-2021
-
-	.LINK
-	https://imagemagick.org/script/command-line-processing.php#geometry
+.LINK
+https://imagemagick.org/script/command-line-processing.php#geometry
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -807,6 +1124,20 @@ ForEach ($Image in $Images) {
 Return $Results
 }
 function ConvertTo-EndpointCertificate {
+<#PSScriptInfo
+.VERSION 1.1.1
+.GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
     .SYNOPSIS
     This script will convert a PFX certificate for use with various services.
@@ -819,13 +1150,6 @@ function ConvertTo-EndpointCertificate {
 
     .PARAMETER Prefix
     This string appears before the filename for each converted certificate. If unspesified, will use the name if the file being resized.
-
-    .NOTES
-    File Name  : ConvertTo-EndpointCertificate.ps1  
-    Version    : 1.1.1
-    Author     : ***REMOVED***
-
-    Copyright (c) ***REMOVED*** 2019-2021
   #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -928,6 +1252,20 @@ ForEach ($Certificate in $Certificates) {
 }
 }
 function ConvertTo-OutputImages {
+<#PSScriptInfo
+.VERSION 1.1.0
+.GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script will resize the spesified images to the spesifications detailed in a json file.
@@ -946,13 +1284,6 @@ If specified, images will be created for all services, instead of just the commo
 
 .EXAMPLE
 ConvertTo-OutputImages
-
-.NOTES
-File Name : ConvertTo-OutputImages.ps1
-Version  : 1.1.0
-Author   : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -982,19 +1313,26 @@ ForEach ($Image in $Path) {
 }
 }
 function Disable-NetbiosTcpIp {
+<#PSScriptInfo
+.VERSION 1.1.0
+.GUID 460f5844-8755-46df-8fb5-a12fa88bf413
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script will disable Netbios TCP/IP on all interfaces.
 
 .DESCRIPTION
 This script will disable Netbios TCP/IP on all interfaces.
-
-.NOTES
-File Name  : Disable-NetbiosTcpIp.ps1
-Version    : 1.1.0
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param ()
@@ -1023,16 +1361,23 @@ $Interfaces | ForEach-Object {
 }
 }
 function Disable-SelfServicePurchase {
-<#
-.SYNOPSIS
-This script will disallows self service purchases in Microsoft 365.
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 1af7209d-520d-4d2c-90f4-de3bc5cf2f48
 
-.NOTES
-File Name  : Disable-SelfServicePurchase.ps1
-Version    : 1.0.0
-Author     : ***REMOVED***
+.AUTHOR
+Jason Cook
 
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
 Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This script will disallows self service purchases in Microsoft 365.
 
 .LINK
 https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/commerce/subscriptions/allowselfservicepurchase-powershell.md
@@ -1040,10 +1385,26 @@ https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/co
 Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase | ForEach-Object { Update-MSCommerceProductPolicy -PolicyId AllowSelfServicePurchase -ProductId $_.ProductID -Enabled $false }
 }
 function Enable-LicenseOptions {
-<#
-.SYNOPSIS
+<#PSScriptInfo
+.VERSION 1.3.0
+.GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
+
+.AUTHOR
+Jason Cook
+Roman Zarka | Microsoft Services
+
+.DESCRIPTION
 This script enable the spesified license options in Microsoft 365.
 
+.COMPANYNAME
+***REMOVED***
+Microsoft Services
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
 .DESCRIPTION
 This script enable the spesified license options in Microsoft 365.
 
@@ -1084,19 +1445,16 @@ An array of users which will have Exchange disabled.
 Enable-LicenseOptions
 
 .NOTES
-File Name  : Enable-LicenseOptions.ps1
-Version    : 1.3.0
-Author     : Roman Zarka | Microsoft Services and ***REMOVED***
-Licence    : Creative Commons Attribution-ShareAlike 4.0 International License | https://creativecommons.org/licenses/by-sa/4.0/
-
-by Roman Zarka | Microsoft Services
-Copyright (c) ***REMOVED*** 2022
+Credits    : Created by Roman Zarka at Microsoft. Available under Creative Commons Attribution 4.0 International License.
 
 .LINK
 https://blogs.technet.microsoft.com/zarkatech/2012/12/05/bulk-enable-office-365-license-options/
 
 .LINK
 https://docs.microsoft.com/en-us/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide
+
+.LINK
+.LICENSEURI https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/LICENSE
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
@@ -1258,8 +1616,23 @@ Exchange        EXCHANGE_S_STANDARD
 If ($Return) { Return $Results }
 }
 function Enable-NestedVm {
+<#PSScriptInfo
+.VERSION 1.3.0
+.GUID 528bfa6d-27a7-4612-9092-faae014e3917
+
+.AUTHOR
+Jason Cook
+Drew Cross | Microsoft Services
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
-.SYNOPSIS
+.DESCRIPTION
 Checks VM for nesting comatability and configures if not properly setup.
 
 .PARAMETER VMName
@@ -1269,12 +1642,7 @@ Which VM should nesting be enabled for?
 Enable-NestedVm -VmName MyVM
 
 .NOTES
-File Name  : Enable-NestedVm.ps1
-Version    : 1.3.0
-Author     : Drew Cross | Microsoft Services and ***REMOVED***
-Credits    : Created by Microsoft. Availables under Creative Commons Attribution 4.0 International License.
-
-Copyright (c) ***REMOVED*** 2022
+Credits    : Created by  Drew Cross at Microsoft. Available under Creative Commons Attribution 4.0 International License.
 
 .LINK
 https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/hyperv-tools/Nested/Enable-NestedVm.ps1
@@ -1441,16 +1809,38 @@ if ($char.StartsWith('N')) {
 Write-Host 'Invalid input'
 }
 function Export-MatchingCertificates {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 31c7075a-49f8-4f99-ad29-aa9d83ab8dc3
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
+This script will fetch all certificates matching the chosen template.
+
+.DESCRIPTION
 This script will fetch all certificates matching the chosen template. Usefull for adding certificate to Trusted Publishers.
 
-.NOTES
-File Name  : Export-MatchingCertificates.ps1
-Version    : 1.0.0
-Author     : ***REMOVED***
+.PARAMETER Path
+The location the certificates will be exported to.
 
-Copyright (c) ***REMOVED*** 2022
+.PARAMETER CertificationAuthority
+The servername of the certification authority which issued the certificates.
+
+.PARAMETER Date
+Filter based on expiry date. By default, the current date will be used.
+
+.PARAMETER Templates
+A list of the templates to search for.
 
 .LINK
 https://github.com/PKISolutions/PSPKI
@@ -1482,16 +1872,23 @@ $Templates | Foreach-Object {
 }
 }
 function Find-EmptyOu {
-<#
-.SYNOPSIS
-This script will find all empty organizational units.
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID a1800752-6b26-44fe-8056-573c7434ff1d
 
-.NOTES
-File Name  : Find-EmptyOu.ps1
-Version    : 1.0.0
-Author     : ***REMOVED***
+.AUTHOR
+Jason Cook
 
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
 Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This script will find all empty organizational units.
 #>
 Get-ADOrganizationalUnit -filter * -Properties Description -PipelineVariable pv |
 Select-Object DistinguishedName, Name, Description,
@@ -1506,12 +1903,65 @@ ForEach-Object {
 }
 }
 function Get-AdminCount {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 11e3b42b-44ff-41e2-b70d-2ec61685f52f
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This script will list all users with the AdminAcount attribute set.
+
+.LINK
+https://docs.microsoft.com/en-us/windows/win32/adschema/a-admincount
+#>
 Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Select-Object name, AdminCount
 }
 function Get-BiosProductKey {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 8ccdb627-b33f-4be2-b6e0-f9cb992ee398
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+Return the product key stored in the UEFI bios.
+#>
 return (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey
 }
 function Get-BitlockerStatus {
+<#PSScriptInfo
+.VERSION 1.1.1
+.GUID 674855a4-1cd1-43b7-8e41-fea3bc501f61
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This commands checks the Bitlocker status and returns it in a human readable format.
@@ -1521,13 +1971,6 @@ This commands checks the Bitlocker status and returns it in a human readable for
 
 .PARAMETER Drive
 The drive to check for protection on. If unspesified, the System Drive will be used.
-
-.NOTES
-File Name  : Get-BitlockerStatus.ps1
-Version    : 1.1.1
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 param (
   [ValidateScript( { Test-Path $_ })][string]$Drive = $env:SystemDrive
@@ -1548,6 +1991,21 @@ switch ((Get-WmiObject -Namespace ROOT\CIMV2\Security\Microsoftvolumeencryption 
 $protectans
 }
 function Get-ExchangePhoto {
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID 10b98a61-ebf3-499f-847f-4aa18b41a9dd
+
+.AUTHOR
+Jason Cook
+Rajeev Buggaveeti
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This will download all profile photos from Office 365.
@@ -1571,15 +2029,7 @@ The directory where cropped photos will be saved to.
 A csv file to save the results to.
 
 .EXAMPLE
-Get-O365Photos
-
-.NOTES
-File Name  : Get-ExchangePhoto.ps1
-Version    : 1.0.1
-Author     : Rajeev Buggaveeti and ***REMOVED***
-
-by Rajeev Buggaveeti
-Copyright (c) ***REMOVED*** 2022
+Get-ExchangePhotos
 
 .LINK
 https://blogs.technet.microsoft.com/rajbugga/2017/05/16/picture-sync-from-office-365-to-ad-powershell-way/
@@ -1636,6 +2086,21 @@ If ($ResultsFile) { $Results | Export-CSV $ResultsFile -NoTypeInformation -Encod
 Return $Results
 }
 function Get-FirmwareType {
+<#PSScriptInfo
+.VERSION 1.1.0
+.GUID d15ce592-4b3e-4d42-82b6-d4a2dd5f15f2
+
+.AUTHOR
+Jason Cook
+Chris Warwick
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022.
+#>
+
 <#
 .SYNOPSIS
 This script shows three methods to determine the underlying system firmware (BIOS) type - either UEFI or Legacy BIOS.
@@ -1660,23 +2125,20 @@ returns an enum (integer) indicating the underlying firmware type.
 
 Chris Warwick, @cjwarwickps,  September 2013
 
-
 .EXAMPLE
 Get-FirmwareType
 
 .NOTES
-File Name  : Get-FirmwareType.ps1
-Version    : 1.1.0
-Author     : Chris Warwick and ***REMOVED***
-Credits    : Copyright (c) 2015 Chris Warwick. Released under the MIT License.
-
-Copyright (c) ***REMOVED*** 2022
+Credits    : Created by ChrisWarwick. Available under MIT License | https://opensource.org/licenses/MIT
 
 .LINK
 https://github.com/ChrisWarwick/GetUEFI/blob/master/GetFirmwareBIOSorUEFI.psm1
 
 .LINK
 https://github.com/ChrisWarwick/GetUEFI/blob/master/LICENSE
+
+.LINK
+https://opensource.org/licenses/MIT
  #>
 
 (Select-String 'Detected boot environment' C:\Windows\Panther\setupact.log -AllMatches ).line -replace '.*:\s+'
@@ -1705,7 +2167,6 @@ GetFirmwareEnvironmentVariableA with SetLastError=true and use Marshal.GetLastWi
 Note: The GetFirmwareEnvironmentVariable API requires the SE_SYSTEM_ENVIRONMENT_NAME privilege.  In the Security 
 Policy editor this equates to "User Rights Assignment": "Modify firmware environment values" and is granted to 
 Administrators by default.  Because we don't actually read any variables this permission appears to be optional.
-
 #>
 
 Function IsUEFI {
@@ -1780,7 +2241,6 @@ typedef enum _FIRMWARE_TYPE {
 
 Once again, this API call can be called in .Net via P/Invoke.  Rather than defining an enum the function below 
 just returns an unsigned int.
-
 #>
 
 
@@ -1839,33 +2299,66 @@ Function Get-BiosType {
 }
 }
 function Get-ipPhone {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 51e2066f-785d-4ab1-b889-904c387fb2f9
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+Export all ipPhone information.
+
+.PARAMETER Path
+The location to export to.
+
+.PARAMETER Filter
+How to filter the AD query. By default, it will filter out any user which doesn't have the ipPhone attribute set.
+
+.LINK
+https://docs.microsoft.com/en-us/windows/win32/adschema/a-admincount
+#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-    [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path = ".\AD.csv",
+    [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path,
     [array]$Filter = "ipphone -like " * "}"
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-Get-ADUser -Properties name, ipPhone, Company, Title, Department, DistinguishedName -Filter $Filter | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, ipPhone, Company, Title, Department | Sort-Object -Property Company, name | Export-Csv -NoTypeInformation -Path $Path
+$Results = Get-ADUser -Properties name, ipPhone, Company, Title, Department, DistinguishedName -Filter $Filter | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, ipPhone, Company, Title, Department | Sort-Object -Property Company, name
+if ($Path) {$Results | Export-Csv -NoTypeInformation -Path $Path}
+return $Results
 }
 function Get-MailboxAddresses {
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID f3ba5497-54b4-4b33-8c6f-33a678f5551c
+
+.AUTHOR
+Jason Cook
+Laeeq Qazi - www.HostingController.com
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script will get all email addresses for the organization.
 
 .DESCRIPTION
 This script will get all email addresses for the organization. It is based on the answer located here: https://social.technet.microsoft.com/Forums/exchange/en-US/a234ba3b-37b4-4333-8954-5f46885c5e20/how-to-list-email-addresses-and-aliases-for-each-user?forum=exchangesvrgenerallegacy
-
-.LINK
-https://social.technet.microsoft.com/Forums/exchange/en-US/a234ba3b-37b4-4333-8954-5f46885c5e20/how-to-list-email-addresses-and-aliases-for-each-user?forum=exchangesvrgenerallegacy
-
-.NOTES
-File Name  : Get-MailboxAddresses.ps1
-Version    : 1.0.1
-Author     : ***REMOVED***
-Author     : Laeeq Qazi - www.HostingController.com
-
-Copyright (c) ***REMOVED*** 2022
 
 .LINK
 https://social.technet.microsoft.com/Forums/exchange/en-US/a234ba3b-37b4-4333-8954-5f46885c5e20/how-to-list-email-addresses-and-aliases-for-each-user?forum=exchangesvrgenerallegacy
@@ -1886,16 +2379,30 @@ Get-Mailbox | ForEach-Object {
 }
 }
 function Get-MemoryType {
+<#PSScriptInfo
+.VERSION 1.1.3
+.GUID 4625bce9-661a-4a70-bb4e-46ea09333f33
+
+.AUTHOR
+Jason Cook
+Microsoft
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script will output the amount of memory and the type using WMI information. 
 
 .DESCRIPTION
 This script will output the amount of memory and the type using WMI information. Type information is taken from here: https://msdn.microsoft.com/en-us/library/aa394347(v=vs.85).aspx
-.LINK
-https://msdn.microsoft.com/en-us/library/aa394347(v=vs.85).aspx
 
-.EXAMPLE Get-MemoryType
+.EXAMPLE
+Get-MemoryType
 moduleCapacityMB : {8192, 8192}
 moduleCapacityGB : {8, 8}
 totalCapacityMB  : 16384
@@ -1904,12 +2411,10 @@ Dimm             : {24, 24}
 DimmType         : DDR3
 
 .NOTES
-File Name  : Get-MemoryType.ps1
-Version    : 1.1.3
-Author     : ***REMOVED***
 Credits    : Created by Microsoft. Available under Creative Commons Attribution 4.0 International License.
 
-Copyright (c) ***REMOVED*** 2022
+.LINK
+https://msdn.microsoft.com/en-us/library/aa394347(v=vs.85).aspx
 
 .LINK
 https://github.com/MicrosoftDocs/win32/blob/docs/desktop-src/CIMWin32Prov/win32-physicalmemory.md
@@ -1959,6 +2464,37 @@ $Result = [PSCustomObject]@{
 Return $Result
 }
 function Get-MpfEmails {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e
+
+.DESCRIPTION
+This script will output the email addresses needed for the scan to email function on MFPs.
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+#>
+
+<#
+.SYNOPSIS
+This script will output the email addresses needed for the scan to email function on MFPs.
+
+.PARAMETER Path
+The location where the results will be exported to.
+
+.PARAMETER Properties
+The properties to export.
+
+.PARAMETER SearchBase
+The base OU to search from.
+
+.PARAMETER Filter
+How should the AD results be filtered?
+#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path = ".\AD.csv",
@@ -1978,6 +2514,21 @@ $Result | Export-Csv -NoTypeInformation -Path $Path
 Return $Result
 }
 function Get-NewIP {
+<#PSScriptInfo
+.VERSION 1.01
+.GUID 9eea8e22-18f9-4cf7-b019-602c7d71dcf8
+
+.AUTHOR
+Jason Cook
+Aman Dhally - amandhally@gmail.com
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022. Copyright (c) Aman Dhally 04-04-2012
+#>
+
 <#
 .SYNOPSIS
 This powershell script will renew DHCP leaces on all network interfaces with DHCP enabled.
@@ -1993,16 +2544,6 @@ https://newdelhipowershellusergroup.blogspot.ca/2012/04/ip-address-release-renew
 Get-NewIP: Flushing IP addresses for Intel(R) Dual Band Wireless-AC 8260
 Get-NewIP: Renewing IP Addresses
 Get-NewIP: Lease on 192.168.2.18 fe80::24b7:e4ab:2901:6688 expires in 21 hours 2935 minutes on May 2, 2017 9:44:03 AM
-
-.NOTES
-File Name  : Get-NewIP.ps1
-Version    : 1.01
-Author     : Aman Dhally - amandhally@gmail.com
-Author     : ***REMOVED***
-
-Copyright (c) Aman Dhally 04-04-2012
-Copyright (c) ***REMOVED*** 2022
-
 
 .LINK
 http://www.amandhally.net/blog
@@ -2037,21 +2578,29 @@ foreach ($lan in $ethernet) {
 }
 }
 function Get-OrphanedGPO {
-<#
-.SYNOPSIS
-This script will find all orphaned GPOs.
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID 4ec63b79-6484-43eb-90f8-bef7e2642564
 
-.NOTES
-File Name  : Get-OrphanedGPO.ps1
-Version    : 1.0.1
-Author     : ***REMOVED***
+.AUTHOR
+Jason Cook
 
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
 Copyright (c) ***REMOVED*** 2022
+#>
+
+
+<#
+.DESCRIPTION
+This script will find all orphaned GPOs.
 
 .LINK
 https://4sysops.com/archives/find-orphaned-active-directory-gpos-in-the-sysvol-share-with-powershell/
 #>
-    
+
 [CmdletBinding()]
 param (
     [string]$ForestName = (Get-ADForest).Name,
@@ -2083,6 +2632,20 @@ catch {
 }
 }
 function Get-RecentEvents {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 05dad3a6-57cf-4747-b3bd-57bc12b7628e
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script will search the event log for events a specified number of minutes before or after a given time.
@@ -2105,13 +2668,6 @@ The number of minutes from now to begin the search. This paramater is required.
    Index Time          EntryType   Source                 InstanceID Message
    ----- ----          ---------   ------                 ---------- -------
    31568 Sep 05 12:18  Information Service Control M...   1073748864 The start type of the Background Intelligent Transfer Service service was changed from auto start to demand start.
-
-.NOTES
-File Name  : Get-RecentEvents.ps1
-Version    : 1.0.0
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 param(
   [Parameter(Mandatory = $true)][string]$Time,
@@ -2127,6 +2683,20 @@ ElseIf ($After -eq $True) { Get-EventLog System -After (Get-Date).AddMinutes($Ti
 Else { Write-Error "You must specify either -Before or -After" }
 }
 function Get-SecureBoot {
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID 421f45c1-3a42-4c17-83a8-bb109f412a19
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script with gather information about  Secure Boot from the specified marchines.
@@ -2140,17 +2710,10 @@ This can be used to select a text file with a list of computers to run this comm
 .PARAMETER ReportFile
 This can be used to export the results to a CSV file.
 
-.EXAMPLE Get-TPMInfo.ps1
-System Information for: XXXX
+.EXAMPLE
+Get-TPMInfo
+System Information for: localhost
 Secure Boot Status: TRUE
-
-
-.NOTES
-File Name  : Get-SecureBoot.ps1
-Version    : 1.0.1
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 param(
   [string]$ComputerList,
@@ -2187,6 +2750,21 @@ Else { Get-SystemInfo -ComputerSystem $env:COMPUTERNAME }
 If ($ReportFile) { $Report | Export-Csv $ReportFile }
 }
 function Get-Spns {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 086f7358-170c-4f90-ab37-9b06888cd963
+
+.DESCRIPTION
+List all SPNs in Active Directory
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+#>
+
 <# 
 .LINK
 https://social.technet.microsoft.com/wiki/contents/articles/18996.active-directory-powershell-script-to-list-all-spns-used.aspx
@@ -2217,41 +2795,48 @@ foreach ($result in $results) {
 }
 }
 function Get-StaleAADGuestAccounts {
+<#PSScriptInfo
+.VERSION 1.1.0
+.GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
+
+.AUTHOR
+Jason Cook
+Darren J Robinson
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
-	.SYNOPSIS
-	FIND State/Dormant B2B Accounts and Stale/Dormant B2B Guest Invitations
+.SYNOPSIS
+FIND State/Dormant B2B Accounts and Stale/Dormant B2B Guest Invitations
 
-	.DESCRIPTION
-	Get all AAD Accounts which haven't signed in, in the last XX Days, or haven't accepted a B2B Guest Invitation in last XX Days. This is based on the blog post from Darren Robinson.
+.DESCRIPTION
+Get all AAD Accounts which haven't signed in, in the last XX Days, or haven't accepted a B2B Guest Invitation in last XX Days. This is based on the blog post from Darren Robinson.
 
-    .LINK
-    https://blog.darrenjrobinson.com/finding-stale-azure-ad-b2b-guest-accounts-based-on-lastsignindatetime/
+.LINK
+https://blog.darrenjrobinson.com/finding-stale-azure-ad-b2b-guest-accounts-based-on-lastsignindatetime/
 
-	.PARAMETER TenantId
-	Microsoft 365 Tenant ID
+.PARAMETER TenantId
+Microsoft 365 Tenant ID
 
-	.PARAMETER Credential
-	Registered AAD App ID and Secret
+.PARAMETER Credential
+Registered AAD App ID and Secret
 
-	.PARAMETER StaleDays
-	Number of days over which an Azure AD Account that hasn't signed in is considered stale'
+.PARAMETER StaleDays
+Number of days over which an Azure AD Account that hasn't signed in is considered stale'
 
-	.PARAMETER StaleDate
-	Spesify a date to use as stale before which all sign ins are considered stale. This overrides the StaleDays oparameter
+.PARAMETER StaleDate
+Spesify a date to use as stale before which all sign ins are considered stale. This overrides the StaleDays oparameter
 
-	.PARAMETER GetLastSignIn
-	Should we find the last sign in date for stale users? This will take longer to process
+.PARAMETER GetLastSignIn
+Should we find the last sign in date for stale users? This will take longer to process
 
-	.EXAMPLE
-	Get-StaleAADGuestAccounts
-
-	.NOTES
-	File Name  : Get-StaleAADGuestAccounts.ps1
-	Version    : 1.1.0
-	Author     : Darren Robinson
-    Author     : ***REMOVED***
-
-	Copyright (c) ***REMOVED*** 2021-2022
+.EXAMPLE
+Get-StaleAADGuestAccounts
 #>
 
 param (
@@ -2299,6 +2884,20 @@ $StaleAndPendingGuests | Add-Member MemberSet PSStandardMembers $PSStandardMembe
 return $StaleAndPendingGuests
 }
 function Get-TermsOfUse {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 7c954769-1a02-4bbb-b1e0-8e9ea3dbb0c8
+
+.DESCRIPTION
+Get AAD Terms of Use details.
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+#>
 <# #Requires -Module AzureADPreview #>
 [System.Collections.ArrayList]$Results = @()
 
@@ -2314,11 +2913,23 @@ Get-AzureADAuditDirectoryLogs -Filter "loggedByService eq 'Terms Of Use'" | ForE
   }
   $Results += $Result
 }
-
-$Return = $true
-If ($Return) { Return $Results }
+return $Results
 }
 function Get-TpmInfo {
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID 14062539-2775-4450-bb0b-a3406d1db091
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script with gather information about TPM and Secure Boot from the spesified marchines.
@@ -2348,13 +2959,6 @@ Operating System: Microsoft Windows 10 Pro, Service Pack: 0
 Total Memory in Gigabytes: 15.8858337402344
 User logged In: XXXX\XXXX
 Last Reboot: 08/31/2018 17:23:03
-
-.NOTES
-File Name  : Get-TpmInfo.ps1
-Version    : 1.0.1
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 param(
   [string]$ComputerList,
@@ -2462,9 +3066,34 @@ Else { Get-SystemInfo -ComputerSystem $env:COMPUTERNAME }
 If ($ReportFile) { $Report | Export-Csv $ReportFile }
 }
 function Get-Wallpaper {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
+
+.DESCRIPTION
+Download the latest wallpaper and add to the system wallpaper folder.
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+#>
+
+<#
+.SYNOPSIS
+Download the latest wallpaper and add to the system wallpaper folder.
+
+.PARAMETER Path
+The location the file will be downloaded to.
+
+.PARAMETER Uri
+The location from from which to download the wallpaper.
+#>
 param(
     [string]$Path = "C:\Windows\Web\Wallpaper\Windows\CurrentBackground.jpg",
-    [Parameter(Mandatory = $true)][string]$Uri
+    [Parameter(Mandatory = $true)][uri]$Uri
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
@@ -2472,6 +3101,20 @@ Test-Admin -Warn -Message "You do not have Administrator rights to run this scri
 Invoke-WebRequest -OutFile $Path -Uri $Uri -ErrorAction SilentlyContinue
 }
 function Grant-Matching {
+<#PSScriptInfo
+.VERSION 1.0.5
+.GUID 8e42dd4d-c91c-420c-99f5-7b233590ae2c
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This powershell script will grant NTFS permissions on folders where the username and folder name match.
@@ -2496,12 +3139,7 @@ This can be used to select a folder in which to run these commands on. If unspec
 Grant-Matching: Granting DOMAIN\user FullControl on C:\Users\user
 
 .NOTES
-File Name  : Grant-Matching.ps1
-Version    : 1.0.5
 Requires   : NTFSSecurity module | https://github.com/raandree/NTFSSecurity
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -2524,12 +3162,47 @@ foreach ($UserFolder in $Path) {
 }
 }
 function Initialize-OneDrive {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 983e1108-74f9-41a5-8de9-f12145fbeffc
+
+.DESCRIPTION
+This will remove and reinstall OneDrive.
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+#>
+
+<#
+.SYNOPSIS
+This will remove and reinstall OneDrive.
+#>
 Write-Verbose "Uninstalling OneDrive..."
 Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow -Wait -Args "/uninstall"
 Write-Verbose "Installing OneDrive..."
 Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 }
 function Install-GCPW {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 24dd6c1f-cc9a-44a4-b8e8-dd831d7a51b4
+
+.AUTHOR
+Jason Cook
+Google
+
+.COMPANYNAME
+***REMOVED***
+Google
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script downloads Google Credential Provider for Windows from https://tools.google.com/dlpage/gcpw/, then installs and configures it. Windows administrator access is required to use the script.
@@ -2542,15 +3215,8 @@ Set the following key to the domains you want to allow users to sign in from.
 
 For example: Install-GCPW -DomainsAllowedToLogin "acme1.com,acme2.com"
 
-.NOTES
-File Name  : Install-GCPW.ps1
-Version    : 1.0.0
-Author     : Google & ***REMOVED***
-
 .LINK
 https://support.google.com/a/answer/9250996?hl=en
-
-Copyright (c) ***REMOVED*** 2022
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -2614,29 +3280,39 @@ else {
 }
 }
 function Install-MicrosoftOffice {
+<#PSScriptInfo
+.VERSION 1.2.1
+.GUID 12bacb17-e597-4588-8a86-0e05142301b6
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
-    .SYNOPSIS
-    This script will install the specified version of Microsoft Office on the local machine.
+.SYNOPSIS
+This script will install the specified version of Microsoft Office on the local machine.
 
-    .DESCRIPTION
-    This script will install the specified version of Microsoft Office on the local machine.
+.DESCRIPTION
+This script will install the specified version of Microsoft Office on the local machine.
 
-    .PARAMETER Version
-    Specifes the version of Office to install. If unspecified, Office 2019 64 bit will be installed.
+.PARAMETER Version
+Specifes the version of Office to install. If unspecified, Office 2019 64 bit will be installed.
 
-    .EXAMPLE Install-MicrosoftOffice
+.EXAMPLE 
+Install-MicrosoftOffice
 
-    .EXAMPLE Install-MicrosoftOffice -Version 2019Visio
+.EXAMPLE
+Install-MicrosoftOffice -Version 2019Visio
 
-    .EXAMPLE Install-MicrosoftOffice -Version 201932
-
-    .NOTES
-    File Name  : Install-MicrosoftOffice.ps1
-    Version    : 1.2.1
-    Author     : ***REMOVED***
-
-    Copyright (c) ***REMOVED*** 2019-2021
-    #>
+.EXAMPLE
+Install-MicrosoftOffice -Version 201932
+#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [ValidateSet(2019, 2016, 2013, 2010, 2007)][string]$Version,
@@ -2645,8 +3321,8 @@ param (
     [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-while (!$InstallerPath) {$InstallerPath = Read-Host -Prompt "Enter the installer path."}
-if (!(Test-Path $InstallerPath)) {throw "Installer path is not valid"}
+while (!$InstallerPath) { $InstallerPath = Read-Host -Prompt "Enter the installer path." }
+if (!(Test-Path $InstallerPath)) { throw "Installer path is not valid" }
 
 If ( $Version -eq "2007" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath "2007 Pro Plus SP2\setup.exe" }
 ElseIf ( $Version -eq "2010" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2010 Pro Plus SP2\setup.exe' }
@@ -2678,6 +3354,21 @@ if (Test-Path -Path $Exe -PathType Leaf) {
 else { throw "Cannot find installer at $Exe" }
 }
 function Invoke-TickleMailRecipients {
+<#PSScriptInfo
+.VERSION 1.2.2
+.GUID ece98adc-3c44-4a02-a254-d4e7f2888f4f
+
+.AUTHOR
+Jason Cook
+Joseph Palarchio
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 Address Lists in Exchange Online do not automatically populate during provisioning and there is no "Update-AddressList" cmdlet.  This script "tickles" mailboxes, mail users and distribution groups so the Address List populates.
@@ -2689,16 +3380,8 @@ Usage: Additional information on the usage of this script can found at the follo
 
 Disclaimer:  This script is provided AS IS without any support. Please test in a lab environment prior to production use.  
 
-.EXTERNALHELP
+.LINK
 http://blogs.perficient.com/microsoft/?p=25536
-
-.NOTES
-File Name  : Invoke-TickleMailRecipients.ps1
-Version    : 1.2.2
-Author:      Joseph Palarchio   
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 param(
   $Mailboxes = (Get-Mailbox -Resultsize Unlimited),
@@ -2723,35 +3406,114 @@ foreach ($DistributionGroup in $DistributionGroups) {
 }
 }
 function Measure-AverageDuration {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID f4c6b8ab-e5d2-4967-b803-a410619bd191
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This will run the specified command several times and report the average duration for execution.
+
+.PARAMETER Command
+The command that will be run.
+
+.PARAMETER Times
+How many times the command will be repeated
+
+.PARAMETER Name
+The name or description to use in the progress bar.
+#>
 param(
     [string]$Command,
-    [string]$Name = $Command,
-    [ValidateRange(1, [int]::MaxValue)][int] $Times = 100
+    [ValidateRange(1, [int]::MaxValue)][int]$Times = 100,
+    [string]$Name = $Command
+    
 )
 
 1..$Times | ForEach-Object {
     Write-Progress -Id 1 -Activity $Name -PercentComplete $_
     $Duration += (Measure-Command {
-        pwsh -noprofile -command $Command
-    }).TotalMilliseconds 
+            pwsh -noprofile -command $Command
+        }).TotalMilliseconds 
 }
 Write-Progress -id 1 -Activity $Name -Completed
 return @{
-        Average = $Duration/100
-        Total = $Duration
-    }
+    Average = $Duration / 100
+    Total   = $Duration
+}
 }
 function New-RandomCharacters {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 9f443ca7-e536-40ee-a774-7d94c5d3c569
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This will return random characters.
+
+.PARAMETER Lenght
+The number of characters to return.
+
+.PARAMETER Characters
+A string of characters to use.
+#>
 param (
-  $length = 1,
-  $characters = "abcdefghiklmnoprstuvwxyzABCDEFGHKLMNOPRSTUVWXYZ1234567890!@#$%^&*()_+-=[]\{}|;:,./<>?"
+  [ValidateRange(1, [int]::MaxValue)][int]$Length = 1,
+  $Characters = "abcdefghiklmnoprstuvwxyzABCDEFGHKLMNOPRSTUVWXYZ1234567890!@#$%^&*()_+-=[]\{}|;:,./<>?"
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-$random = 1..$length | ForEach-Object { Get-Random -Maximum $characters.length }
+$Random = 1..$Length | ForEach-Object { Get-Random -Maximum $Characters.length }
 $private:ofs = ""
-return [String]$characters[$random]
+return [String]$Characters[$Random]
 }
 function New-RandomPassword {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.SYNOPSIS
+This will return a random password.
+
+.DESCRIPTION
+This will return a random password. The format of the password will be half lowercase, half uppercase, two numbers, and two symbols.
+
+.PARAMETER Lenght
+The lenght of the password to return.
+
+.PARAMETER Characters
+A string of characters to use.
+#>
 param (
   $length = 14
 )
@@ -2767,14 +3529,27 @@ $Password += Get-RandomCharacters -length 2 -characters "!@#$%^&*()_+-=[]\{}|;:,
 Return $Password
 }
 function Ping-Hosts {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 0603a3ee-bff9-464a-aa86-44903c476fe9
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <# 
+.DESCRIPTION
+Ping a list of hosts
+
 .LINK
 https://geekeefy.wordpress.com/2015/07/16/powershell-fancy-test-connection/
 #>
-
-#Function Ping-Host
-
-#Parameter Definition
 Param
 (
     [Parameter(position = 0)] $Hosts,
@@ -2847,6 +3622,20 @@ while ($true) {
 }
 }
 function Remove-CachedWallpaper {
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID 2a1c91e6-58fd-4f37-9daf-370b954c31e4
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script removes the caches wallpaper.
@@ -2855,46 +3644,72 @@ This script removes the caches wallpaper.
 This script removes the caches wallpaper by deleting %appdata%\Microsoft\Windows\Themes\TranscodedWallpaper
 
 .EXAMPLE
-.\Remove-CachedWallpaper.ps1
-
-.NOTES
-File Name  : Remove-CachedWallpaper.ps1
-Version    : 1.0.1
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
+Remove-CachedWallpaper
 #>
-
+[CmdletBinding(SupportsShouldProcess = $true)]
+param ()
 Remove-Item "$Env:appdata\Microsoft\Windows\Themes\TranscodedWallpaper" -ErrorAction SilentlyContinue
 Remove-Item "$Env:appdata\Microsoft\Windows\Themes\CachedFiles\*.*" -ErrorAction SilentlyContinue
 }
+function Remove-GroupEmail {
+param (
+  [string]$GroupName,
+  [string]$EmailAddress
+)
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Remove = $EmailAddress }
+}
 function Remove-MailboxOrphanedSids {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID fc0d9531-8d08-4b67-8247-7ade678c2d31
+
+.AUTHOR
+Jason Cook
+CarlosDZRZ
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
-	Remove Mailbox Orphaned_SIDs Access Control Lists (ACLs) and Access Control Entries (ACEs)
+Remove Mailbox Orphaned_SIDs Access Control Lists (ACLs) and Access Control Entries (ACEs)
+
 .DESCRIPTION
-	Remove Mailbox Orphaned_SIDs Access Control Lists (ACLs) and Access Control Entries (ACEs)
+Remove Mailbox Orphaned_SIDs Access Control Lists (ACLs) and Access Control Entries (ACEs)
+
 .PARAMETER  Alias
-    The Alias parameter specifies the alias (mail nickname) of the user.
+The Alias parameter specifies the alias (mail nickname) of the user.
+
 .PARAMETER  PathFolder
-	Specifies a path to log folder location.The default location is $env:USERPROFILE+'\EXCH_RemoveSIDs\'
+Specifies a path to log folder location.The default location is $env:USERPROFILE+'\EXCH_RemoveSIDs\'
+
 .EXAMPLE
-	Remove-MailboxOrphaned_SIDs -Alias test_mailbox
+Remove-MailboxOrphaned_SIDs -Alias test_mailbox
+
 .EXAMPLE
-	Get-Mailbox test_mailbox | Remove-MailboxOrphaned_SIDs	
+Get-Mailbox test_mailbox | Remove-MailboxOrphaned_SIDs	
+
 .EXAMPLE
-	$mailboxes = Get-Mailbox -ResultSize 0
-	$mailboxes | Remove-MailboxOrphaned_SIDs
+$mailboxes = Get-Mailbox -ResultSize 0
+$mailboxes | Remove-MailboxOrphaned_SIDs
+
 .OUTPUTS
-	Log file.
+Log file.
+
 .NOTES
-    Name: Remove-MailboxOrphaned_SIDs
-    Author: CarlosDZRZ
-    DateCreated: 04/08/2016
+Date Created: 04/08/2016
+
 .LINK
-	https://technet.microsoft.com/es-es/library/aa998218(v=exchg.160).aspx
-	https://technet.microsoft.com/en-us/library/hh360993.aspx
-	
+https://technet.microsoft.com/es-es/library/aa998218(v=exchg.160).aspx
+
+.LINK
+https://technet.microsoft.com/en-us/library/hh360993.aspx
+
 #>
 [CmdletBinding()]
 Param
@@ -2951,15 +3766,21 @@ End {
 	$stream.close()
 }
 }
-function Remove-Office365GroupEmail {
-param (
-  [string]$GroupName,
-  [string]$EmailAddress
-)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Remove = $EmailAddress }
-}
 function Remove-OldFolders {
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID cb98c8e9-cb35-4db2-9fe8-33afb9eb2272
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script will trim the spesified folder to the number of items specified.
@@ -2974,20 +3795,13 @@ This can be used to select a folder in which to run these commands on. If unspec
 This is the number of files to keep in the folder. If unspecified, it will keep 10 copies.
 
 .EXAMPLE
-.\Trim-Folder.ps1 -Folder C:\Backups\ -Copies 10
-
-.NOTES
-File Name  : Remove-OldFolders.ps1
-Version    : 1.0.1
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
+Remove-OldFolders -Folder C:\Backups\ -Keep 10
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
   [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
-  [Int]$Keep = 10
+  [ValidateRange(1, [int]::MaxValue)][int]$Keep = 10
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
@@ -2998,12 +3812,28 @@ Get-ChildItem $Path -Directory | Sort-Object CreationTime -Descending | Select-O
 }
 }
 function Remove-OldModuleVersions {
+<#PSScriptInfo
+.VERSION 0.0.1
+.GUID 975b5e06-eee0-461b-9b98-49351c762dcd
+
+.DESCRIPTION
+Basic function to remove old PowerShell modules which are installed
+
+.AUTHOR
+Jason Cook
+Luke Murray (Luke.Geek.NZ)
+
+.COMPANYNAME
+***REMOVED***
+
+#>
 #requires -Version 2.0 -Modules PowerShellGet
 <#
-    Author: Luke Murray (Luke.Geek.NZ)
-    Version: 0.1
-    Purpose: Basic function to remove old PowerShell modules which are installed
-    https://luke.geek.nz/powershell/remove-old-powershell-modules-versions-using-powershell/
+.SYNOPSIS
+Basic function to remove old PowerShell modules which are installed
+
+.LINK
+https://luke.geek.nz/powershell/remove-old-powershell-modules-versions-using-powershell/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -3022,6 +3852,25 @@ foreach ($Module in $Modules) {
 }
 }
 function Remove-UserPASSWD_NOTREQD {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 6309e154-81f6-4bd1-aff7-deaea3274934
+
+.DESCRIPTION
+Search for user accounts with "ADS_UF_PASSWD_NOTREQD" enabled and remove the flag
+
+.AUTHOR
+Jason Cook
+Robin Granberg (robin.granberg@microsoft.com)
+
+.COMPANYNAME
+***REMOVED***
+
+#>
+
+<#
+TODO Build better help
+#>
 ################################################################################################
 #
 #
@@ -3326,6 +4175,20 @@ else {
 }
 }
 function Remove-VsResistInstallFiles {
+<#PSScriptInfo
+.VERSION 1.1.2
+.GUID 0775cf89-1a99-44ec-ac4e-7c80c95d87a2
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script removes the files leftover from a VCRedist from VC++ 2008 install.
@@ -3340,17 +4203,10 @@ https://support.microsoft.com/en-ca/help/950683/vcredist-from-vc-2008-installs-t
 The drive from which to remove the files. If unspesified, the System Drive is used.
 
 .EXAMPLE
-.\Clean-VCRedist.ps1
+Clean-VCRedist
 
 .EXAMPLE
-.\Clean-VCRedist.ps1 -Drive D
-
-.NOTES
-File Name  : Remove-VsResistInstallFiles.ps1
-Version    : 1.1.2
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
+Clean-VCRedist.ps1 -Drive D
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
@@ -3361,6 +4217,36 @@ $Files = "install.exe", "install.res.1028.dll", "install.res.1031.dll", "install
 Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContinue }
 }
 function Repair-Attributes {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.SYNOPSIS
+Repair attributes for user in Active Directory.
+
+.DESCRIPTION
+Repair attributes for user in Active Directory. The following actions will be performed.
+ - Remove legacy Exchange attributes
+ - Remove legacy proxy addresses
+ - Remove proxy addresses if only one proxy address exists.
+ - Clear mailNickname if mail attribute is empty.
+ - Set mailNickname to SamAccountName
+ - Set title to mail attirubte for shared mailboxes. This is used for better display in SharePoint.
+ - Clear telephoneNumber attribute if mail atrribute is empty
+ - Set telephoneNumber attribute to main line and extension, if present.
+#>
+<# TODO Add paramateres to limit which actions are performed.#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param ()
 Write-Verbose "Removing legacy attributes for users"
@@ -3399,10 +4285,27 @@ Write-Verbose "Set telephoneNumber attribute to main line with extension if ipPh
 Get-ADUser -Filter * -Properties ipPhone, mail, telephoneNumber | Where-Object mail -ne $null | Where-Object ipPhone -ne $null | ForEach-Object { $telephoneNumber = "+1 5197447447 x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) ; Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = $telephoneNumber } }
 }
 function Repair-VmPermissions {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 8bd63288-3b9f-44dc-bc34-c25aea4b5452
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <# 
+.DESCRIPTION
+This will repair VM permission to allow the VM to start.
+
 .LINK
 https://foxdeploy.com/2016/04/05/fix-hyper-v-account-does-not-have-permission-error/
- #>
+#>
 #Import the NTFSSecurity Module, if not available, prompt to download it
 If ((Get-Module).Name -notcontains 'NTFSSecurity') {
     Write-Warning "This script depends on the NTFSSecurity Module, by MSFT"
@@ -3459,23 +4362,77 @@ ForEach ($VM in $VMs) {
 }
 }
 function Reset-CSC {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID a4176bef-cf00-42a8-b097-8c9be952931c
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This will reset the CSC (offline files) cache.
+#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param ()
 Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\CSC\Parameters\ -Name FormatDatabase -Value 1 -Type DWord
 }
 function Reset-InviteRedepmtion {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 8697df26-a171-4f10-9929-fbff1e58ab4b
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
- https://docs.microsoft.com/en-us/azure/active-directory/external-identities/reset-redemption-status
- #>
+.DESCRIPTION
+This will reset the invite status for guest AAD users.
+
+.PARAMETER All
+If specified, all guest users will be processed.
+
+.PARAMETER Email
+The email addresses to process. This can be omitted if spesifing UPNs.
+
+.PARAMETER UPN
+The UPNs to process. By default, it will generate for the email addresses specified.
+
+.PARAMETER RedirectURL
+The URL to redirect users to after sucessfull invite redeption.
+
+.PARAMETER SkipSendingInvitation
+Whether to skip sekping the invitation.
+
+.PARAMETER SkipResettingRedeption
+Whether to skip resetting the redeption status.
+
+.LINK
+https://docs.microsoft.com/en-us/azure/active-directory/external-identities/reset-redemption-status
+#>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
+    [switch]$All,
     [array]$Email,
     [array]$UPN = ($Email.replace("@", "_") + "#EXT#@" + ((Get-AzureADTenantDetail).VerifiedDomains | Where-Object Initial -eq $true).Name),
     [Uri]$RecirectURL = "http://myapps.microsoft.com",
     [boolean]$SkipSendingInvitation,
-    [boolean]$SkipResettingRedemtion,
-    [switch]$All
+    [boolean]$SkipResettingRedemtion
     
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
@@ -3503,11 +4460,35 @@ $UPN | ForEach-Object {
 Return $Results
 }
 function Reset-WindowsUpdate {
+<#PSScriptInfo
+.VERSION 1.20.0
+.GUID b4f15462-2ab3-45e5-b2e2-ecb649f1f1a6
+
+.DESCRIPTION
+This script will reset all of the Windows Updates components to DEFAULT SETTINGS.
+
+.AUTHOR
+Jason Cook
+Ryan Nemeth
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+.RELEASENOTES
+V1.00, 05/21/2015 - Initial version
+V1.10, 09/22/2016 - Fixed bug with call to sc.exe
+V1.20, 11/13/2017 - Fixed environment variables
+#>
+
 <#
 .SYNOPSIS
-Reset-WindowsUpdate.ps1 - Resets the Windows Update components
+Resets the Windows Update components
 
-.DESCRIPTION 
+.DESCRIPTION
+
+
 This script will reset all of the Windows Updates components to DEFAULT SETTINGS.
 
 .OUTPUTS
@@ -3517,17 +4498,11 @@ Results are printed to the console. Future releases will support outputting to a
 Written by: Ryan Nemeth
 
 Find me on:
-
 * My Blog:	http://www.geekyryan.com
 * Twitter:	https://twitter.com/geeky_ryan
 * LinkedIn:	https://www.linkedin.com/in/ryan-nemeth-b0b1504b/
 * Github:	https://github.com/rnemeth90
 * TechNet:  https://social.technet.microsoft.com/profile/ryan%20nemeth/
-
-Change Log
-V1.00, 05/21/2015 - Initial version
-V1.10, 09/22/2016 - Fixed bug with call to sc.exe
-V1.20, 11/13/2017 - Fixed environment variables
 #>
 
 
@@ -3625,6 +4600,21 @@ wuauclt /resetauthorization /detectnow
 Write-Host "Process complete. Please reboot your computer."
 }
 function Resize-Image {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 144cbae4-8208-4df5-a801-42316e9db97e
+
+.AUTHOR
+Jason Cook
+Patrick Lambert - http://dendory.net
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 Resize-Image resizes an image file
@@ -3646,7 +4636,7 @@ Resize-Image -InputFile "C:\kitten.jpg" -Scale 30 -OutputFile "C:\kitten2.jpg"
 Resize the image to 30% of its original size and save it to a new file.
 
 .LINK
-Author: Patrick Lambert - http://dendory.net
+http://dendory.net
 #>
 Param([Parameter(Mandatory = $true)][string]$InputFile, [string]$OutputFile, [int32]$Width, [int32]$Height, [int32]$Scale, [Switch]$Display)
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
@@ -3686,40 +4676,60 @@ if ($OutputFile -ne "") {
 Export-ModuleMember Resize-Image
 }
 function Save-Password {
-<#
-.SYNOPSIS
-This script will install the neccesary applications and services on a given machine.
+<#PSScriptInfo
+.VERSION 1.0.1
+.GUID 70496d42-6d10-460f-9e42-132a6b70e09d
 
+.AUTHOR
+Jason Cook
+Vincent Christiansen - vincent@sameie.com
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
 .DESCRIPTION
-Will prompt you for username and password, and will encrypt (to hash) the password to a txt file. This will only be the password. And you must dump the file to the location where you are going to get it from in the other script. Based on this post: http://www.sameie.com/2017/10/05/create-hashed-password-file-for-powershell-use/
+This will store a password to the specified file.
+
+.PARAMETER Path
+The location the password will be stored.
+
+.EXAMPLE
+Store-Password
+
+.EXAMPLE
+Store-Password -Path .\Password.txt
 
 .LINK
 http://www.sameie.com/2017/10/05/create-hashed-password-file-for-powershell-use/
-
-.PARAMETER File
-If specified, Avast will be installed.
-
-.EXAMPLE Store-Password.ps1
-
-.EXAMPLE Store-Password.ps1 -File .\Password.txt
-
-.NOTES
-File Name  : Save-Password.ps1
-Version    : 1.0.1
-Author     : Vincent Christiansen - vincent@sameie.com
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
 param(
-  [string]$File = ".\Password.txt",
-  [string]$User
+  [string]$Path = ".\Password.txt",
+  [pscredential]$credential = (Get-Credential)
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-$credential = Get-Credential $User
-$credential.Password | ConvertFrom-SecureString | Set-Content $File
+$Credential.Password | ConvertFrom-SecureString | Set-Content $Path
 }
 function Set-AdPhoto {
+<#PSScriptInfo
+.VERSION 1.1.0
+.GUID 5dcbac67-cebe-4cb8-bf95-8ad720c25e72
+
+.AUTHOR
+Jason Cook
+Rajeev Buggaveeti 
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This will set Active Directory thumbnailPhoto from matching files in the specified directory.
@@ -3734,16 +4744,7 @@ The directory where photos will be pulled from.
 Array of users to run the command against. If unspesified, it will run against all files in the specified directory.
 
 .EXAMPLE
-Get-O365Photos
-
-.NOTES
-File Name  : Set-AdPhoto.ps1
-Version    : 1.1.0
-Author     : Rajeev Buggaveeti 
-Author     : ***REMOVED***
-
-by Rajeev Buggaveeti
-Copyright (c) ***REMOVED*** 2022
+Set-AdPhoto
 
 .LINK
 https://blogs.technet.microsoft.com/rajbugga/2017/05/16/picture-sync-from-office-365-to-ad-powershell-way/
@@ -3782,6 +4783,21 @@ foreach ($User in $Users) {
 }
 }
 function Set-Owner {
+<#PSScriptInfo
+.VERSION 1.1.0
+.GUID fb1d15b5-4681-4f99-90d6-1fd44ed4219b
+
+.AUTHOR
+Jason Cook
+Boe Prox
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
     Changes owner of a file or folder to another user or group.
@@ -3799,15 +4815,6 @@ function Set-Owner {
 
 .PARAMETER Recurse
     Recursively set ownership on subfolders and files beneath given folder.
-
-.NOTES
-File Name  : Set-Owner.ps1
-Version    : 1.1.0
-Author     : Boe Prox
-Author     : ***REMOVED***
-
-by Boe Prox
-Copyright (c) ***REMOVED*** 2022
 
 .EXAMPLE
     Set-Owner -Path C:\temp\test.txt
@@ -4000,48 +5007,31 @@ End {
     [void][TokenAdjuster]::RemovePrivilege("SeTakeOwnershipPrivilege")     
 }
 }
-function Set-Path {
-[CmdletBinding(SupportsShouldProcess = $true)]
-param (
-    [Parameter(Mandatory = $true)][ValidateScript({ Test-Path -Path $_ -PathType Container })][string]$Path,
-    [switch]$Machine,
-    [switch]$Force,
-    [int]$MaxLength = 1024
-)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
-if ($Machine) {
-    Write-Verbose "Adding `"$Path`" to system PATH"
-    Test-Admin -Throw
-    $Registry = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
-}
-else { 
-    Write-Verbose "Adding `"$Path`" to user PATH"
-    $Registry = "Registry::HKCU\Environment\" 
-}
-
-$NewPath = (Get-ItemProperty -Path $Registry -Name PATH).Path + ";" + $Path
-
-Write-Verbose "PATH length is $($NewPath.length)"
-if ($NewPath.length -gt $MaxLength -and (-not $Force)) {
-    throw "Path is longer than $MaxLength characters. Paths this long may not behave as expected. Run with -Force to override."
-}
-
-Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
-}
 function Set-WindowsAccountAvatar {
-<# 
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 240b7f82-8102-45be-9080-2cf28a7c5b3d
 
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
 Sets windows account avatar from data in Active Directory.
+
 .LINK
 http://woshub.com/how-to-set-windows-user-account-picture-from-active-directory/#h2_2
 
 .LINK
 https://www.codetwo.com/admins-blog/use-active-directory-user-photos-windows-10/
 #>
-
-
-
 
 [CmdletBinding(SupportsShouldProcess = $true)]Param()
 function Test-Null($InputObject) { return !([bool]$InputObject) }
@@ -4074,19 +5064,72 @@ If ((Test-Null $ADuser_photo) -eq $false) {
 }
 }
 function Start-KioskApp {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID fb250771-93be-4da0-a4ec-edad2ccf7476
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+#>
+
+<# 
+.SYNOPSIS
+This will run a kiosk app.
+
+.DESCRIPTION
+This will run a kiosk app. Primarily, this is used to launch a web brower however can be used to launch any application. It will periodically check if the app is running and restart if it has been closed.
+
+.PARAMETER Path
+The location of the program to run.
+
+.PARAMETER Url
+The url to open. By default, this it designed to launch a web browser.
+
+.PARAMETER Arguments
+The argumnets to be passed to the program.
+
+.PARAMETER Sleep
+How long to sleep before checking that the app is running.
+
+.LINK
+http://woshub.com/how-to-set-windows-user-account-picture-from-active-directory/#h2_2
+
+.LINK
+https://www.codetwo.com/admins-blog/use-active-directory-user-photos-windows-10/
+#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
   [ValidateScript({ Test-Path $_ -PathType Leaf })][string]$Path = ${env:ProgramFiles(x86)} + "\Microsoft\Edge\Application\msedge.exe", #"\Google\Chrome\Application\chrome.exe",
   [string]$Url,
-  [string]$Arguments = "--kiosk " + $Url
+  [array]$Arguments = "--kiosk $($Url)",
+  [ValidateRange(1, [int]::MaxValue)][int]$Sleep = 5
+  
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 while ($true) {
   If (-Not (Get-Process | Select-Object Path | Where-Object Path -eq $Path)) { Start-Process -FilePath $Path -ArgumentList $Arguments }
-  Start-Sleep -Seconds 5
+  Start-Sleep -Seconds $Sleep
 }
 }
 function Start-PaperCutClient {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 090b7063-ddf4-4e5f-91ab-24127dec0d57
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script will run the PaperCut client.
@@ -4097,16 +5140,11 @@ This script will run the PaperCut client. It will first check the network locati
 .PARAMETER SearchLocations
 Specifies the folders to search for the client in.
 
-.EXAMPLE .\Start-PaperCutClient
+.EXAMPLE
+Start-PaperCutClient
 
-.EXAMPLE .\Start-PaperCutClient.ps1 -SearchLocations "\\print\PCClient\win","C:\Cache"
-
-.NOTES
-File Name  : Start-PaperCutClient.ps1
-Version    : 1.0.0
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
+.EXAMPLE
+Start-PaperCutClient -SearchLocations "\\print\PCClient\win","C:\Cache"
 #>
 param (
   [string[]]$SearchLocations = @("\\print\PCClient\win", "C:\Cache")
@@ -4131,6 +5169,34 @@ $SearchLocations | ForEach-Object {
 }
 }
 function Stop-ForKey {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 9b9dfb07-a7ea-4afd-94ab-74a5bf2ee340
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.SYNOPSIS
+This will break if the spesified key it press. Otherwise, it will continue.
+
+.DESCRIPTION
+This script will run the PaperCut client. It will first check the network location and fall back to the local cache is that fails.
+
+.PARAMETER Key
+The key that this will listen for.
+
+.EXAMPLE
+Stop-ForKey -Key q
+Press q to abort, any other key to continue.: q
+#>
 param (
   $Key
 )
@@ -4138,6 +5204,20 @@ $Response = Read-Host "Press $Key to abort, any other key to continue."
 If ($Response -eq $Key) { Break }
 }
 function Test-Admin {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID d96e4855-2468-4294-8475-4b954ad009dd
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This will test is the we are running as an addministrator.
@@ -4145,37 +5225,88 @@ This will test is the we are running as an addministrator.
 .DESCRIPTION
 This will test is the we are running as an addministrator. If will return True or False.
 
+.PARAMETER Message
+The message that will be shown to the user. The message is only shown when -Warn or -Throw are specified.
+
+.PARAMETER Warn
+The script will present a waiting if not running as an admin.
+
+.PARAMETER Thow
+The script will throw if not running as an admin.
+
 .EXAMPLE
 Test-Admin
 False
-
-.NOTES
-File Name  : Test-Admin.ps1
-Version    : 1.0.0
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
 #>
-
 param (
   [string]$Message = "You do not have Administrator rights to run this script!`nPlease re-run this script as an Administrator!",
   [switch]$Warn,
   [switch]$Throw
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-If (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { Return $True }
+If (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { return $true }
 else {
   If ($Warn) { Write-Warning $Message }
   If ($Throw) { Throw $Message }
-  Return $False
+  return $false
 }
 }
 function Test-DmaDevices {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID a2d15653-e7ac-4246-b3a4-adf73af11a06
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This is used to test which DMA devices are blocking automatic BitLocker encryption.
+
+.PARAMETER File
+The text file where the list of devices will be saved.
+
+.PARAMETER LastDeviceFile
+The text file where the last modified device will be saved.
+
+.PARAMETER Action
+An array of actions to run.
+    RemoveFirst: Remove the first entry from the list of allowed buses.
+    AddLast: Re-add the most recently removed device to the list of allowed buses.
+    AddAll: Add all devices to the list of allowed buses.
+    Export: Export the list of all device to $File
+    Reset: Remove all devices from the list of allowed buses.
+
+.PARAMETER Path
+The registry path for allowed buses.
+
+.PARAMETER Parent
+The parent of $Path
+
+.EXAMPLE
+Test-DmaDevices -Action Export,AddAll
+
+.EXAMPLE
+Test-DmaDevices -Action RemoveFirst
+
+.EXAMPLE
+Test-DmaDevices -Action AddLast
+
+.EXAMPLE
+Test-DmaDevices -Action Reset
+#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     $File = "DmaDevices.txt",
     $LastDeviceFile = ("$([System.IO.Path]::GetFileNameWithoutExtension($File))-last.txt"),
-    [ValidateSet("RemoveFirst", "AddLast", "AddAll", "Export", "Reset")][string]$Action,
+    [ValidateSet("RemoveFirst", "AddLast", "AddAll", "Export", "Reset")][array]$Action,
     $Path = "HKLM:\SYSTEM\CurrentControlSet\Control\DmaSecurity\AllowedBuses",
     $Parent = (Split-Path $Path -Parent)
 )
@@ -4212,7 +5343,61 @@ if ($Action -contains "AddLast") {
 }
 if ($Action -contains "Reset") { Remove-ItemProperty $Path -Name "*" }
 }
+function Test-ScriptMetadata {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID a0017a8d-5a3d-49a1-9c7f-5e0dbb5ee7d8
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This is used to validate the existence of metadata on the individual scripts
+#>
+[System.Collections.ArrayList]$Results = @()
+$SourceScripts = Get-ChildItem -Path *.ps1 -ErrorAction SilentlyContinue -Recurse | Where-Object { ($_.Name -ne "psakefile.ps1") -and ($_.Name -ne "***REMOVED***ITDefaults.ps1") -and ($_.Name -ne "Profile.ps1") }
+$SourceScripts | ForEach-Object {
+    try { $Info = Test-ScriptFileInfo  $_.FullName } catch { $Info = $false ; Write-Verbose "$_.Name does not have a valid PSScriptInfo block" }
+    try { $Description = (Get-Help $_.FullName).Description } catch { $Description = $false ; Write-Verbose "$_.Name does not have a valid help block" }
+    if ($Info) { $Info = $true } else { $Info = $False }
+    if ($Description) { $Description = $true } else { $Description = $False }
+
+    $Result = [PSCustomObject]@{
+        File        = $_.Name
+        Info        = $Info
+        Description = $Description
+    }
+    $Results += $Result
+}
+return $Results
+}
 function Test-Scripts {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID dd50132f-8bc5-4825-918d-9fd0afd3f36b
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+Used to test LoadDefaults and ensure defaults parameters are being loaded correctly.
+#>
 Param(
     [string]$foo,
     [string]$bar = "bar",
@@ -4228,6 +5413,20 @@ write-output "baz: $baz"
 write-output "test: $test"
 }
 function Test-VoipMs {
+<#PSScriptInfo
+.VERSION 1.2.2
+.GUID 17fff57c-cce9-4977-a26d-aeded706a85f
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script will test the VoIP.ms servers to find one with the lowest latency.
@@ -4238,29 +5437,18 @@ This script will test the VoIP.ms servers to find one with the lowest latency. I
 .PARAMETER ServerList
 The fallback server list used when API credentials are not spesified. You can also pass in a custom list of servers.
 
-.NOTES
-Usage: Copy and paste the following code into a powershell window
-To run it from a command prompt, save this file with extension ps1. Then run Powershell.exe -file "pathtothisscript.ps1"
-
-File Name  : Test-VoipMs.ps1
-Version    : 1.2.0
-Author     : ***REMOVED***
-
-Copyright (c) ***REMOVED*** 2022
-
 .LINK
 https://wiki.voip.ms/article/Choosing_Server
 #>
 
-
+<# TODO use credential/secure string for $username and $password #>
 param(
-  <#   [string]$Username = "kcf.it@***REMOVED***",
-  [string]$Password = "Open123!", #>
+  [string]$Username = "kcf.it@***REMOVED***",
+  [string]$Password = "Open123!",
   [string]$Country = "*",
   [switch]$Fax,
   [ValidateRange(0, [int]::MaxValue)][int]$Retries = 5,
-  [array]$ServerList = "localhost"
-  #[array]$ServerList = @("amsterdam.voip.ms", "atlanta.voip.ms", "atlanta2.voip.ms", "chicago.voip.ms", "chicago2.voip.ms", "chicago3.voip.ms", "chicago4.voip.ms", "dallas.voip.ms", "dallas2.voip.ms", "denver.voip.ms", "denver2.voip.ms", "houston.voip.ms", "houston2.voip.ms", "london.voip.ms", "losangeles.voip.ms", "losangeles2.voip.ms", "melbourne.voip.ms", "montreal.voip.ms", "montreal2.voip.ms", "montreal3.voip.ms", "montreal4.voip.ms", "montreal5.voip.ms", "montreal6.voip.ms", "montreal7.voip.ms", "montreal8.voip.ms", "newyork.voip.ms", "newyork2.voip.ms", "newyork3.voip.ms", "newyork4.voip.ms", "newyork5.voip.ms", "newyork6.voip.ms", "newyork7.voip.ms", "newyork8.voip.ms", "paris.voip.ms", "sanjose.voip.ms", "sanjose2.voip.ms", "seattle.voip.ms", "seattle2.voip.ms", "seattle3.voip.ms", "tampa.voip.ms", "tampa2.voip.ms", "toronto.voip.ms", "toronto2.voip.ms", "toronto3.voip.ms", "toronto4.voip.ms", "toronto5.voip.ms", "toronto6.voip.ms", "toronto7.voip.ms", "toronto8.voip.ms", "vancouver.voip.ms", "vancouver2.voip.ms", "washington.voip.ms", "washington2.voip.ms") #Get the list of servers into an array
+  [array]$ServerList = @("amsterdam.voip.ms", "atlanta.voip.ms", "atlanta2.voip.ms", "chicago.voip.ms", "chicago2.voip.ms", "chicago3.voip.ms", "chicago4.voip.ms", "dallas.voip.ms", "dallas2.voip.ms", "denver.voip.ms", "denver2.voip.ms", "houston.voip.ms", "houston2.voip.ms", "london.voip.ms", "losangeles.voip.ms", "losangeles2.voip.ms", "melbourne.voip.ms", "montreal.voip.ms", "montreal2.voip.ms", "montreal3.voip.ms", "montreal4.voip.ms", "montreal5.voip.ms", "montreal6.voip.ms", "montreal7.voip.ms", "montreal8.voip.ms", "newyork.voip.ms", "newyork2.voip.ms", "newyork3.voip.ms", "newyork4.voip.ms", "newyork5.voip.ms", "newyork6.voip.ms", "newyork7.voip.ms", "newyork8.voip.ms", "paris.voip.ms", "sanjose.voip.ms", "sanjose2.voip.ms", "seattle.voip.ms", "seattle2.voip.ms", "seattle3.voip.ms", "tampa.voip.ms", "tampa2.voip.ms", "toronto.voip.ms", "toronto2.voip.ms", "toronto3.voip.ms", "toronto4.voip.ms", "toronto5.voip.ms", "toronto6.voip.ms", "toronto7.voip.ms", "toronto8.voip.ms", "vancouver.voip.ms", "vancouver2.voip.ms", "washington.voip.ms", "washington2.voip.ms") #Get the list of servers into an array
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 function Progress {
@@ -4276,7 +5464,7 @@ function Progress {
 }
 
 if ($Username) {
-  #$ApiServers = (Invoke-RestMethod -Uri ("https://voip.ms/api/v1/rest.php?api_username=" + $Username + "&api_password=" + $Password + "&method=getServersInfo")).servers
+  $ApiServers = (Invoke-RestMethod -Uri ("https://voip.ms/api/v1/rest.php?api_username=" + $Username + "&api_password=" + $Password + "&method=getServersInfo")).servers
   If ($Fax) {
     $Servers = ($ApiServers | Where-Object server_hostname -Like fax*).server_hostname
   }
@@ -4324,6 +5512,20 @@ write-host "`r`n The server with the best ping is: $bestserver at $bestping ms`r
 Pause
 }
 function Uninstall-MicrosoftTeams {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 81af22bb-f7a1-42a0-8570-1ac57f49e6bf
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
 <#
 .SYNOPSIS
 This script allows you to uninstall the Microsoft Teams app and remove Teams directory for a user.
@@ -4349,26 +5551,54 @@ if ($decision -eq 0) {
 else { Break }
 }
 function Update-AadSsoKey {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 324df81c-9595-4025-b826-08aff404f533
+
+.DESCRIPTION
+This script will preform a roll over of Azure SSO Kerberos key. Run this script on the server running Azure AD Connect.
+
+.AUTHOR
+Jason Cook, Wybe Smits
+http://www.wybesmits.nl
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+.RELEASENOTES
+    * 1.0 - initial release 15/04/2019
+#>
+
 <#
 .SYNOPSIS
-    This script will preform a roll over of Azure SSO Kerberos key.
-    Run this script on the server running Azure AD Connect.
-.DESCRIPTION
-    https://docs.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-sso-faq#how-can-i-roll-over-the-kerberos-decryption-key-of-the-azureadssoacc-computer-account
-.NOTES
-    File Name: AzureAD_SSOKeyRollover.ps1
-	Version: 1.0
-	Version History:
-		* 1.0 - initial release 
-	Last Update: 15/04/2019
-	Author   : Wybe Smits, http://www.wybesmits.nl
-    !! Provided as-is with no warranties, use at your own risk !!
+This script will preform a roll over of Azure SSO Kerberos key. Run this script on the server running Azure AD Connect.
+
+.LINK
+https://docs.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-sso-faq#how-can-i-roll-over-the-kerberos-decryption-key-of-the-azureadssoacc-computer-account
 #>
 Import-Module $Env:ProgramFiles'\Microsoft Azure Active Directory Connect\AzureADSSO.psd1d'
 New-AzureADSSOAuthenticationContext #Office 365 Global Admin
 Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domain Admin credentials" -UserName ($env:USERDOMAIN + "\" + $env:USERNAME))
 }
 function Update-PKI {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 8f760b1c-0ccc-43b7-bfed-9370fa84b7f8
+
+.DESCRIPTION
+Upload CRLs to GitHub if changed.
+
+.AUTHOR
+Jason Cook
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+.COMPANYNAME
+***REMOVED***
+
+#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     $Path = "./",
@@ -4390,6 +5620,24 @@ Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
 }
 }
 function Update-UsersAcademyStudents {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 4fc14578-f8eb-4ae2-8e39-77c0f197cff8
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+Automatically update Academy student users.
+#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [ValidateScript( { Test-Path $_ })][string] $UserPath = ".\Students.csv",
@@ -4454,6 +5702,25 @@ Search-ADAccount -AccountDisabled -SearchBase $Path | ForEach-Object {
 Return $Results
 }
 function Update-UsersStaff {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 120db2ff-3cb8-43ea-aa2c-f044ff52c144
+
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+Automatically update staff users.
+#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [ValidateScript( { Test-Path $_ })][string] $UserPath = ".\Staff.csv",
@@ -4527,6 +5794,31 @@ $Users | ForEach-Object {
 Return $Results
 }
 function Wait-ForKey {
+<#PSScriptInfo
+.VERSION 1.0.0
+.GUID 3642a129-3370-44a1-94ad-85fb88de7a6b
+
+.AUTHOR
+Jason Cook
+
+.COMPANYNAME
+***REMOVED***
+
+.COPYRIGHT
+Copyright (c) ***REMOVED*** 2022
+#>
+
+<#
+.DESCRIPTION
+This will continue if the spesified key it press. Otherwise, it will break.
+
+.PARAMETER Key
+The key that this will listen for.
+
+.EXAMPLE
+Wait-ForKey -Key c
+Press c to continue, any other key to abort.: c
+#>
 param(
     [string]$Key = "y",
     [string]$Message = "Press $Key to continue, any other key to abort."
@@ -4541,8 +5833,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUoLnkQvC+Cps+bS8/90edZpKf
-# qIeggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUqwNMXRgIDXoM7vu2QoAtQ3Zd
+# +sqggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -4626,17 +5918,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFHoWZNiFQ/2gT6eO2n+KT6FWUPpU
-# MA0GCSqGSIb3DQEBAQUABIICAL7Ww/61ELHFe/oL5vumUajDec31QZRF2cFgfHmr
-# ZTnUqlTyj/kYLPPW4NqeWJ1e178WwrNhF6TVtfsqB5fliTlfT4TE+oejEPu7MOVo
-# MA7uWam6XAOQKYxi9minIFhz6oP7xoks5zH2UR0PGPVx6GNwrfXeT+TH3YwsfAeP
-# d8tH3DKRRK8iM9e81pYaaz5RAXqHbhjt/tb6jz5G0hbiKppMJeQCUO0IJRXyaVR2
-# s3n4gJLZ20a6PgvlJjeaVQfWujV5OVmvOkb1L5BMXw55av+TsdMT3KID7ZfETxoK
-# dlbW3/4t3zNL0OWjAoZL5l6hv+xDpNJvAil5nEKOpKpX9doxKAEbnrrdLmYtR7g0
-# yoi0Cp8Ggcl62hUpQk0YkzUMyHm77DR2G8RRt9EyNdvF0ZsWGSWPqzTn6KNuRuGt
-# srMC9bVJDAoy6D1MKQdggpUcjeNKKQzds4GNCTzUyF5vbzYoiBaxY7BGaugl88Q+
-# r/04RN32VcQ6CYUIcdXnVxxzHmc5IIEYMZE6yBC3bgbIHqxN/FVsdPV9g8rxXVq8
-# /MhMZkj5P4ZuvVRjaZ3YQC3/ieFZO9XsNu6RwaTgytAQn/2Dg5JUwyyPH0VlGMwh
-# EEtQHwpvkvcFG980wY+8tu5Ei1CMF7ybF9h6RABsoQjBMZTCFJnHda7EfqYXk2d6
-# RGq3
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFHwNNbPgtjIx7YiDFHA6yLNyuBDD
+# MA0GCSqGSIb3DQEBAQUABIICAKG12rlod5o3BT6N5xZWv37yposwBnLXc2WC7gfB
+# rAqATFpbYQ+Q7YS/4mkshV/+UQ8xI+RQHmGXIAdyyZfOYcXtXer+DLGUlUyhembJ
+# 8ot244AR9VYkAamUpO0N1JtmTdFtnCwGU6m/jsN1UnujlRMTmxJCcwtUjB0jTdTQ
+# cbL/sxaxYGa6yJHJ+irNKUVt2vXhtMdQaITqNS60wzeT7t3xJGOMONU8TK9h6VkZ
+# N+wHaSxXiQWvRFs7ncNrMCR3kQq45sbNbWQ8cls4QkNzu/YS6ooYa6PrpfsFMMOd
+# KfAU5bSzGTkMFQ2yiLY1ea+SgmhaXjT4p9HYDUAX9i+Qb72VSB9efWsRojLIkeKu
+# 7hGrZaJOCe8tRuYyeMpRGgGbU0kFeDjq/MEILIvEt159arJq+6jCb7Th3d/6gjwU
+# mBlc+Y+m6l1IAGYmPfWdQjD8kzD3WzQ05ehqpSsIH+nwxiTG6gsnuJO8VGixdlEN
+# EFWir9DmfCtFrRAFSzVEuEgu2xBArb0k9VQ2plooC+IdkAScttUjkY3fePz8bEmz
+# SiuD9ZDUM5ASnQvGFy0h69m5S03JYHNizs3dfEeu4NhP5JOj2JladNyjxO0CGQiA
+# d+3eh2VnbTDs8WJwlgCTPph+UR9R6qS0zXoZ9f7vG5URpdoJ/G2COCIWpETNaGdi
+# ogAl
 # SIG # End signature block
