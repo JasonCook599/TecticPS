@@ -3259,9 +3259,6 @@ function Get-Wallpaper {
 .VERSION 1.0.0
 .GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
 
-.DESCRIPTION
-Download the latest wallpaper and add to the system wallpaper folder.
-
 .AUTHOR
 Jason Cook
 
@@ -3271,7 +3268,7 @@ Jason Cook
 #>
 
 <#
-.SYNOPSIS
+.DESCRIPTION
 Download the latest wallpaper and add to the system wallpaper folder.
 
 .PARAMETER Path
