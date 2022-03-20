@@ -5289,16 +5289,39 @@ If ((Test-Null $ADuser_photo) -eq $false) {
 }
 function Start-KioskApp {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID fb250771-93be-4da0-a4ec-edad2ccf7476
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
 
 <# 
 .SYNOPSIS
@@ -5318,12 +5341,6 @@ The argumnets to be passed to the program.
 
 .PARAMETER Sleep
 How long to sleep before checking that the app is running.
-
-.LINK
-http://woshub.com/how-to-set-windows-user-account-picture-from-active-directory/#h2_2
-
-.LINK
-https://www.codetwo.com/admins-blog/use-active-directory-user-photos-windows-10/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
@@ -6057,8 +6074,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUZ7sMfLhOXeD7CrGeG+v+lMBk
-# Hvaggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUsppGdXX3HpVVR9MF7rTMGCZ6
+# +i+ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -6142,17 +6159,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFB8uyphT98DvnZ0kJWK3mEAKyNTT
-# MA0GCSqGSIb3DQEBAQUABIICAIc0VHHcBI3ayaQce+ByWIxlKjPVUKVWHxHocmuA
-# NU/mV1FA8bpoqywwmS27KsgNWDtKMR1QldxD38lOH3KuTnsbKGdihM9YcCYry9EZ
-# JPDgkgDm6LdER5lG/0P+vt2KkrRNk/Ld0MAsyJKvyOrzaq1C4Tugfq8IhVGRCTq6
-# YNJ7fuemIOI2+GnTaCL/D7iEqc5jawV9TJY0lQu58RRsHt/hyyf0hVSvp2sWwz56
-# k96c8XfmAzi9eKj6xhrV+Cg7pJMzKmIuL949g8NU6YlNyWridA2IrgA9M7ufzQW0
-# SW/NmAk+NxiUkm7EHb2EjRu7nKwBUMgt6ARc7IqjAvXRLNF3dhuKyifpPX0AkDDU
-# YgrAhF/FIVtQ9C2zlqYqIr5WI6s0XoVgMYCMiXdNzM1jFFZMd4bbGJTIjugQAJMB
-# Q7Z3Y4n4k9euQ4onldy5AJ2KU9ovhWi6/jr3KlAtD8I0t12YPnB8lm1s1m7aUNPG
-# jjbE7vZIVWws2FdOwBtT4Pj2+4Zx26TX9mkausE4S17AtgCbRYko/mj+wc3gKCai
-# LAnxrBj2C7vWsuwmc642pL4faI5bPGWZ/hXwaVLYGW9LDPSTvI3sKXr19Xled0yl
-# nVmjGpcKlo9AnO2J28gj3w3dVtDVLiEFYWJmyD5Ia5rzr/xkjbmmLDaXSkYO/6DY
-# PLDG
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFIrbZaif+thHcmgNw/0kK/Dyjwa4
+# MA0GCSqGSIb3DQEBAQUABIICAI2QCGWvIS8vyEbxlScvTTedhS2bJtENGNCoTLF+
+# wNs88PnuZt++U8+tpBQRKZpHR/04RJtp3CfEUe4hwmeyyCSU62t3qRPIwOsURVO5
+# au9T0I6TXVZ/yP+3C9hWNnLCoTCg0mTCsIBX0oap2aNo309UtB+aYsU+qxOmDKNP
+# UEX8i9WjmdyEyo+0WGSLtbW+i8sI7k2P5csQBQMLxuIqJgCZmoJu9IMnEec+Bslp
+# hAenWkGaBDeEAs3j45bLsgYMlzKy1fZCaX4XYwqbvl4E4vSruZgHNSDaIyBJevBC
+# AsNJfjWzSCwcQIJC0+G4/tE1yrdyqyRjgMZXXC1ByX0izNK8A4vqLEX/LF+NXx68
+# MYNQe1yJ7/u4d0am2kUGt6HSZEUmHsGxv+0mZQhcYWtipKiT+HzQa0iwMDm6W2Qo
+# kaf0RQKarp3pruTLwAv9Am6Lg4o9yhNp1ekEyHjBbIsBI+uss0/airfuI0PFpIk7
+# yLyLIQnLlG3jmk6wyvKudVBzD6J7GbwtAl58xxD5mBmp11SGLD66NiRdG/Yv0FOk
+# HZEas1cbB5hFO9d3H0nx62uY6ZbNI6hCs9dO6nTsvs5AIEWD0YrzX20kUiHEe9E7
+# TqsmUyYNiwIfi13+pwhTrBZ0XzCPFm7lPm1vBjFa3ogw6+CMXQYHWjf0rEe8dhsc
+# YtAg
 # SIG # End signature block
