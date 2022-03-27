@@ -50,7 +50,7 @@ Test-Admin -Throw | Out-Null
 
 Get-BitLockerVolume
 
-while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 1000) {
+while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
     Clear-Host
     (Get-Date).DateTime
     Get-BitLockerVolume | Format-Table
