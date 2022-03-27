@@ -3256,16 +3256,39 @@ If ($ReportFile) { $Report | Export-Csv $ReportFile }
 }
 function Get-Wallpaper {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -5287,6 +5310,66 @@ If ((Test-Null $ADuser_photo) -eq $false) {
   Catch { Write-Error "Check permissions to files or registry." }
 }
 }
+function Show-BitlockerEncryptionStatus {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
+<#
+.DESCRIPTION
+Show the BitLocker status until all drives are encrypted.
+
+.PARAMETER Sleep
+The lenght of time to sleep between checks.
+#>
+param(
+    [ValidateRange(0, [Int32]::MaxValue)][Int32]$Sleep = 5
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+Test-Admin -Throw | Out-Null
+
+Get-BitLockerVolume
+
+while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 1000) {
+    Clear-Host
+    (Get-Date).DateTime
+    Get-BitLockerVolume | Format-Table
+    Start-Sleep -Seconds $Sleep
+}
+}
 function Start-KioskApp {
 <#PSScriptInfo
 
@@ -6074,8 +6157,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUsppGdXX3HpVVR9MF7rTMGCZ6
-# +i+ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUheR7Z8wr69UL4gA3A6lfhX+m
+# 5uiggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -6159,17 +6242,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFIrbZaif+thHcmgNw/0kK/Dyjwa4
-# MA0GCSqGSIb3DQEBAQUABIICAI2QCGWvIS8vyEbxlScvTTedhS2bJtENGNCoTLF+
-# wNs88PnuZt++U8+tpBQRKZpHR/04RJtp3CfEUe4hwmeyyCSU62t3qRPIwOsURVO5
-# au9T0I6TXVZ/yP+3C9hWNnLCoTCg0mTCsIBX0oap2aNo309UtB+aYsU+qxOmDKNP
-# UEX8i9WjmdyEyo+0WGSLtbW+i8sI7k2P5csQBQMLxuIqJgCZmoJu9IMnEec+Bslp
-# hAenWkGaBDeEAs3j45bLsgYMlzKy1fZCaX4XYwqbvl4E4vSruZgHNSDaIyBJevBC
-# AsNJfjWzSCwcQIJC0+G4/tE1yrdyqyRjgMZXXC1ByX0izNK8A4vqLEX/LF+NXx68
-# MYNQe1yJ7/u4d0am2kUGt6HSZEUmHsGxv+0mZQhcYWtipKiT+HzQa0iwMDm6W2Qo
-# kaf0RQKarp3pruTLwAv9Am6Lg4o9yhNp1ekEyHjBbIsBI+uss0/airfuI0PFpIk7
-# yLyLIQnLlG3jmk6wyvKudVBzD6J7GbwtAl58xxD5mBmp11SGLD66NiRdG/Yv0FOk
-# HZEas1cbB5hFO9d3H0nx62uY6ZbNI6hCs9dO6nTsvs5AIEWD0YrzX20kUiHEe9E7
-# TqsmUyYNiwIfi13+pwhTrBZ0XzCPFm7lPm1vBjFa3ogw6+CMXQYHWjf0rEe8dhsc
-# YtAg
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFCSXEcyrMQmro8HhN+aVcXgcEbns
+# MA0GCSqGSIb3DQEBAQUABIICAGDCl5cn/8qGqSXXxHzNfsR3sXhE70r526An+fzy
+# wsjlNa1lXK8u/DoPyDghbBqecLXxYLCYkXun1vbj77H6J1CTA+pjxL7yzQkT7lJf
+# 22Lssv1GrbBptwr0wooxtebu9Y3REzbFoPfVyXvXjHbg3oW662qCPEcIsH096rlG
+# jf0sAKt7Kdm3oCLG3EAy7edgtAcTzFRhiW8vBxTKOBR79R05ktBe9fJYBjRUjMeH
+# AJ4+3M05fs8smdzaY83b+X6JHg6Xca4KJ6mCm2N6c62hZxiPSL2UlP5Eov++njNm
+# 0qLU9q3zOc1FrAsxkEjagzGF56FDnThOPexO+hZNUAh/tbsQQxxOTCt003o3LfjX
+# talkpuocGZ8tyLEVgzyjBUw/0GtFiDvrCv5RDd+VFoEujpiWBVWw3Za85z/bPJZs
+# c4XvqQQU5s/R0IhqDqpCTu7rN0fWHBn5stlQefVx/0hggLKwVqnA1kHhWXTfqiiw
+# p0HfGJfcaxePerKZHXfqnlYR1XJX/1pz/lRUR6VuAznK3IQsV21gGTbIVe6kFb9B
+# FT7KfmIGtaPZzxX6A/TGTS1fy9f+KyCbRcCs0H5YzRpJGZS7sWd3sojw4fym/GTZ
+# FXJmWweewtHsdjwwEZO2fr5FXigBgEPE8aH3TPaeCX3eKtPFNxzYB7k6BLI0ORUL
+# MEHz
 # SIG # End signature block
