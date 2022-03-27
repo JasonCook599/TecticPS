@@ -5313,7 +5313,7 @@ If ((Test-Null $ADuser_photo) -eq $false) {
 function Show-BitlockerEncryptionStatus {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
 
@@ -5346,6 +5346,8 @@ function Show-BitlockerEncryptionStatus {
 
 
 
+
+
 <#
 .DESCRIPTION
 Show the BitLocker status until all drives are encrypted.
@@ -5364,9 +5366,10 @@ Test-Admin -Throw | Out-Null
 Get-BitLockerVolume
 
 while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
+    $Result = Get-BitLockerVolume | Format-Table
     Clear-Host
     (Get-Date).DateTime
-    Get-BitLockerVolume | Format-Table
+    $Result
     Start-Sleep -Seconds $Sleep
 }
 }
@@ -6157,8 +6160,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUBxQOCXtclr9lWSloAxd+vv2X
-# YNaggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUafpc5Ue2vhvV4ywJwfaLiTCS
+# 1w6ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -6242,17 +6245,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFJPuJFi27sCTh+wIq717sTHRWTNe
-# MA0GCSqGSIb3DQEBAQUABIICABFnKG3gJpU6GZBefNsQLUkqiYniLqyXAEXI3N51
-# Oh4WrrGCph/MtWJWpar/O/KKub4r4Tfm5LkcBfX6Wk98ZEFHuEJqVN0I6icyXxyC
-# 1Ac8SBXBWsgG8F+C6u2HxYmLVo96rQh2IR4QygspY+glrEOVBJNmcgqM6E3eklQ+
-# 9vj1D018fKQSDQhB71uYklgFP5Xq3Y4RopXearCGQK31Bf/IhviJ9J5HoEqsr0KB
-# Y6Jm1E5eps8+3sO29EpSQ3AWm2OT76cAxm+7y9fGd1weXn31oWFzxbsbQmWDj/vY
-# yzNvs2JEw5lsHe3e/zoQLOd1kOwE3w25ganrqvhsx0XUtf/hlFrQw0qadPHsMPTX
-# wdsiHUZn0lg6qpFD1vGJcJpQS4pyF9tNYmkieIfBPSt7mTE82akDYjMsfXK8sU7c
-# ZeBxdL4xZ+nWJ2N3E+xZWnCzR9QBGNNAlB6t1iTCCVNBUcgMgQpQ2UCuNBswCi65
-# QlOvgtK8SlRlGCtfcDEFXBcAyBdXP1VZRi/pUSl6kW6HS0WD/pHG0nW7MVzjsiBT
-# Fj8GyA0MLX7UM317J2fwPlzwCILaYbHNhjR56iNZBvgrQVdknXTu4MDqse9o2dO4
-# swqq4ntE+GzE9wyfMzhwGYSIG3cC4gO2uqJNPr9QTD0kEoH88oaysXbLqi/j2zWY
-# 4Lur
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFDQMG/7sYk7xUxgvehSJajjTW7bh
+# MA0GCSqGSIb3DQEBAQUABIICAEejPmSwEmKhiiaWeknXNlANSsumkEC49BfFM+gt
+# 7vksh4kI/I+Q0F/+BFXRySQ9f9d5xqqkdCwg/yjCA3Mz/ehL7rmgpxAFvoK5Zl8h
+# 8HMDlOZ6HHZClIs4wIPPAwx/PgzCaj0DFLqHmc6gAJxRyMxylTzhGM/fZXf3Ec0i
+# EErGfsuVJc0VhbGDXicRU8w8k9XZpu/IQ+0rkV4jAZ0OO7QRZ3+uH62RuQuc+EBs
+# z8fW/PMPtNafOcGls0GYxpWQ3xO721Q5OQ+AFrlOjcPDkAcRzr0jLP9P1wl6qDYz
+# efbsIafsSAa1LQmw25/Z+NEJ5rC5rjpEDPeumDFBjqs9dR72T92etNnV3MwvDHJt
+# y94dZV5GqLSieZupuXB31CNGDmQpAT389Hxpzw6E7roJuUZ5eq2ciA1gwx/imMp1
+# zm7wwX68dlXwiMRjCsGcUFzXMzGX+iZW/+m1Zr+OQ8e+YRBJuiLTTUkTvlPMv/L8
+# EM8rrq+nU9QbUfZCMesdQlMKHSdfx3tKV6NDWE1gdfVW4lydDnmoSIh+BqcnS2Pi
+# ApFFi+csDgqviiL6+946CUec3rU3sv/gBDowJFXNMhHz6Ljlc36WkEJKNdwQKkRy
+# FsiD+ZavP+CX5YJb7OKvYHxm3MMxlorcNOx8uV32bUTzNmYFv7ZVMUyM0MkCgXg+
+# 2Zdz
 # SIG # End signature block

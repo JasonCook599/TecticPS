@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
 
@@ -51,17 +51,18 @@ Test-Admin -Throw | Out-Null
 Get-BitLockerVolume
 
 while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
+    $Result = Get-BitLockerVolume | Format-Table
     Clear-Host
     (Get-Date).DateTime
-    Get-BitLockerVolume | Format-Table
+    $Result
     Start-Sleep -Seconds $Sleep
 }
 
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU0iVsCKZKpxMDgfQLMhx3ItZD
-# 1+Wggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUG0aF7qNoSBNt9zpb7iLp6IF5
+# 5CWggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -145,17 +146,17 @@ while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFNx3tE0Pu1nS1yEyujwUy2NVJIE5
-# MA0GCSqGSIb3DQEBAQUABIICAIwOVk2BNzvuUmY8SClVi5tbCmfUXdAMa/sMe68W
-# UUXcOMhdX9RH0MNUcZuZ2uWdKIFB2WbzfKHdHKjFyKeGfMICVvB5mtWnQmh6TDia
-# ayLuq4ZGb4NbBcvjbfkhsqAGoRx1yb16yHvq6+i4sDwmwwE4mdtQ4wU6JxIa+Elz
-# lxmKDic90kEBesQYgbgnyYbFfY68L41Quu5FCsg9MrisS0qWr9jpBMaUdnclYpxI
-# 5VCzfROswmGKzSFIUeaxhLxcHk5dsdBT6srS0cwsNdWnC790wHZVVc/sTFOfWVci
-# Ed4ViSaHN234A1oD6lQRWJLhejOUxZUapbqfFxB0nF89EVZlYBOv+qwsaCGfjIe+
-# 7rTsohVSxlom57fnUbqPK3T63954ntrxX2+CUeQ1aEroYpj1zslv6qY/ar+PtK7p
-# Z12jwEHWbTWngxvDpo1/bGp+GHqzBEfPW0CctjQbIvrOkRGt5Z/zoQ+6QJppe3CL
-# kpOHbYkfqKNAgz7qnR+V5Xj0wbdcfz5GAFqNeE3x8Hu6qYZqUyv+u8VKcA2+sK4y
-# V0JnS9JUnQJd81DUGhFeGz4EcLelO3TJ19lQZIe5/1lYzJLg1CLpmAGmIEL6hSkk
-# WNRrVRtkWm6/+CvdH/yMPFN8dowawtbXDkGmpdQeaVVrrl+ECqEprK4TMZqTtlpX
-# cf4C
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFO4ULc7V0+YlqeF6v+R0I/LW8rtu
+# MA0GCSqGSIb3DQEBAQUABIICAKZ8EJyK9CXF9ZxWSZVHpbgMvnw9NhvwZpknq/S5
+# +W7MJqbqqLVv4IyeOLPsb0BlicsnJUe2+9q/A2kxsZcFllZrhA80fS5N4W0gG2Ex
+# xbb7jRx7OzbvOOMIeoI/Ju/DEJDTCpApZVgQdPbSM4KGW9i13HwTPNxPn6x71yvG
+# Kqp/ph1ERNZdCeExwZP5BI0LaLkSOOKMe8m6fOtAqp95fvGIEq1AII5yAW7ZX2l+
+# gy0bVfCfVkVXXCwISzftmWElVu7WAvypAlanZvexLRQqxOhAEiQNZ2zvPOmEjZVu
+# J6Ke2I79B3WtOd9VmRqjdwHPSV/TgsuUvr/FD7O0WuNW3jqgwiMp/UXeMlH1Uezo
+# z4Y+l1jttt0/KrNAdNrNXpCnbK5tS+3z8PlT0dEvgXxkn4Ul+CTo9YA/7bs4izVp
+# 007ZRGImYEAUixXg0dV+eqXqmxEfeOPix1fsbA3uGcM7s3dpHdEb1XcqtrEnBsxf
+# pXK1sbDzMRu0h4n84upXoWPhg7cqrVSb+tWYXSU8ZAaHIyZzHYBU3V8HX0CRY8dr
+# c7gdDAdc9RJdgMm6Jmu2CARGaQiTM7XCAQkzVJnNvVy3E9lMK+O268LHv4N40NPQ
+# /XF2rT1w2iuOVusaUreWhUjggKijCfLqKK0Mom0xxrqokFBEUZVlPK9syd4cjwZq
+# hh3T
 # SIG # End signature block
