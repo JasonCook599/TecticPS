@@ -2,7 +2,7 @@
 
 .VERSION 1.0.2
 
-.GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
+.GUID 85c8702c-7117-4050-8629-51fc36de0cd8
 
 .AUTHOR Jason Cook
 
@@ -30,12 +30,6 @@
 .PRIVATEDATA
 
 #> 
-
-
-
-<#
-.DESCRIPTION
-Show the BitLocker status until all drives are encrypted.
 
 .PARAMETER Sleep
 The lenght of time to sleep between checks.
@@ -159,4 +153,8 @@ while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
 # Gn0NP4XI66+kftICv7RdBjBxSzAWsuwu66Rz2jaAAFqWTJCedb8PUjZ8iIL9dvYX
 # fvRAPdVnCteK3g1jaUCgMkZfaSY6P3u5AykV1a8/gaRd4aW8nTL3/+1xW8TpbuG7
 # Exc5
+# SIG # End signature block
+# NqWHrj9qwBwRzeg8/lMckKzwF09vLsLe5jkuQVhddARJ/kklJ2fiukiYwFwGEyu6
+# emKXa/LFy3f/X5YQ8zA7x0x6iDshFVNvPG80rnKzpt9m6gyuLIaAoVd2QDHLryW2
+# F+H0
 # SIG # End signature block
