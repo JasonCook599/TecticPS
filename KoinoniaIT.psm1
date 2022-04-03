@@ -3925,18 +3925,39 @@ else {
 }
 function Install-MicrosoftOffice {
 <#PSScriptInfo
-.VERSION 1.2.1
+
+.VERSION 1.2.2
+
 .GUID 12bacb17-e597-4588-8a86-0e05142301b6
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -3974,9 +3995,10 @@ ElseIf ( $Version -eq "2013" ) { $Exe = Join-Path -Path $InstallerPath -ChildPat
 ElseIf ( $Version -eq "2016" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2016 Pro Plus x86 41353\setup.exe' }
 ElseIf ( $Version -eq "2019" ) {
     if ($Options -eq "Visio") { $ConfigFile = "***REMOVED***-2019-ProPlus-Visio.xml" }
-    if ($Options -eq "x86") { $ConfigFile = "***REMOVED***-2019-ProPlus-32-Default.xml" }
-    if ($Options -eq "Standard") { $ConfigFile = "***REMOVED***-2019-Standard-Default.xml" }
+    elseif ($Options -eq "x86") { $ConfigFile = "***REMOVED***-2019-ProPlus-32-Default.xml" }
+    elseif ($Options -eq "Standard") { $ConfigFile = "***REMOVED***-2019-Standard-Default.xml" }
     else { $ConfigFile = "***REMOVED***-2019-ProPlus-Default.xml" }
+    Write-Debug "Config file: $ConfigFile"
     $Exe = Join-Path -Path $InstallerPath -ChildPath 'Office Deployment Tool\setup.exe'
     $ConfigPath = Join-Path (Split-Path -Path $Exe -Parent) -ChildPath $ConfigFile
     if (Test-Path -Path $ConfigPath -PathType Leaf) {
@@ -6773,8 +6795,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUE8LAnU8sSTn4nOX3DbBw8339
-# 4Eyggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUqG7/Jwvfw1rcSXHae9d0GxvN
+# iXCggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -6858,17 +6880,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFMQ6cxHsnOar85088oT1OquLcpCb
-# MA0GCSqGSIb3DQEBAQUABIICAI9ly9Fx8heIblV8iQTEYZbx0yrGS1zkJJUZNL5l
-# gNAUDVwgBltDFBBOlTxVs9EWATqhMcrYM3b3oOk4FnuWELaV3ZXRFdrnXJyXI1Dt
-# 5hooOC5RaZ3GvuG/fKjpJ26EsCPgNJeiBWgcSvuJ53UuLoR+FYaj7WozOatsvQcy
-# bP6gAeOhS7gfOYEixqLf7A0Pnrh1SQOeojPK2HZ6Y6hQmJ8BdTxWD54HkPIHmVRd
-# uQY3Ls+xLcrpuVq8khnlKr+TU4LxkuyezpGd9Rzcxy2SewmtAnC3UsZmFWY3xYNE
-# KyA+IdgAhWrKMkvNnIokuxmVq6au4EoJ+gWnqtoU49Z7kwB+EvXsaWuQNJWuNOEh
-# yf+4U6BcHk/xHsvJU2I/EIdUnnekHxXEJMUrYEO3Vi20V3DWsBV+KgBi4Sn/oEqf
-# g3SbrA8/ck0FjrXVQqCRhoniZHTb9wuuWsG84xzGNezQ/eu0goDH7Vux9J0HzATo
-# a8f0IQDjkfjTr3Ec+4U0Wl/Jrpb3yp/D3+ZvpejGLERHkunIvF6oCip0v0q1sJoo
-# hqGBri8C2vf7N4C/Y8isPLz9jB6T0ANqFUzxOZr4rU2BqPwoW+MqHit3Y2hZXZsB
-# D+Hk3b3g9d95FaY2D4GcyPhvk3DBXCXvcnzUBexmzzDq3t2TC0bI8RFE1D45lG5P
-# 2T5M
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFCrFFGcKGoSG0UsH0XyAO8C+T1/G
+# MA0GCSqGSIb3DQEBAQUABIICAB1n/Xf/EbPRTzcLSYJ1iVXtDNbhZ6u9ECndp02m
+# /doZBhfxTIUKicQLOunZYXMyiAAR3MOa35MnhXCJjMHEn/zEgoua4VgqwcO58lig
+# Yj5Qcck5QR8xsL0LHhbEcKyy7Wo2JTdemkj2gh0kGdovSWInwUqrETW6Vu//6KDe
+# Ml+mUuIuxUlShOt3WtwYtXKHdIo8IiYQVw2BJObk2/tAxBR6tAcc3NVBSW3emZ0x
+# 1kMqqsjH+dnKkayT4SLWrndvZ24aPKHiAE11aopmpkh96vWq03jK1pLL1ZqOYYx0
+# uaSRGrn223IC6V47wLcWxfLuYO/8BmGK/0InLuYdmRTyebGimOON9hycpQnWHY88
+# eQuu576EPy7LLBJdU/Lmt2gLc2SSjjp5vPl3ttmZtyPZ1gHIBOHvgDaJfFOWlPTd
+# aQ+MNgg28sLoG1kBy/cw98JxIvRjHjUWUzYxb261R7U0y/7j6HUehN81xHGm49kb
+# k1bK1E2GEntm5MEfCrVIJJMb8CPY7sbY1YZAxB6vvNSkoP07SX3avI7F2LVOuVaM
+# kHmrlrLjNQuNM0Kj0iJ9BXHUX+ZzA9EX5LrFI6VVI441uZBerSTvpB0XwI9h9Ald
+# 6wocnuDQRTe6ytUXezefbJqA/DhlbHYHKeYvatBk4gN5FQoKVChZcp/cGuIJdhQk
+# vN9u
 # SIG # End signature block
