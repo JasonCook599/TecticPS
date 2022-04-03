@@ -2066,6 +2066,243 @@ ForEach-Object {
     Remove-ADOrganizationalUnit -Recursive -whatif
 }
 }
+function Get-ADInfo {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 868aac51-6c72-482e-8b54-42a3c5f87596
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
+<#
+.SYNOPSIS
+The script will get information about users, groups, and computers from Active Directory.
+
+.DESCRIPTION
+The script will get information about users, groups, and computers from Active Directory.
+
+.PARAMETER ListUpn
+List the UPN for each user. Can be combined with -Filter.
+
+.PARAMETER LikeUpn
+Filters for a specific UPN. Must be used in conjunction with -ListUpn. This overrides -Filter.
+
+.PARAMETER ListHomeDirectory
+List the home directory for each user.  Can be combined with -Filter.
+
+.PARAMETER Filter
+Filters the search based on the spesified parameters.
+
+.PARAMETER ListComputerPasswords
+List the local admin password. Can be combined with -Filter.
+
+.PARAMETER UpdateUpn
+Updates the Upn. Must be used with -OldUpn and -NewUpn. Can be combined with -SearchBase
+
+.PARAMETER OldUpn
+Specifes the UPN to be changed from. If unspecified, will use "*@koinonia.local".
+
+.PARAMETER NewUpn
+Spesified the UPN to change to.  If unspecified, will use "*@***REMOVED***".
+
+.PARAMETER SearchBase
+Specifies the search base for the command.
+
+.PARAMETER ListComputers
+List the computers in the organization.  Can be combined with -Filter.
+
+.PARAMETER Export
+Export to a CSV file using the hard-coded search parameters. If no file specified, will use .\AD Users.csv
+
+.PARAMETER Sid
+Matches the specified SID to a user.
+
+.EXAMPLE
+Get-ADInfo.ps1 -listUpn
+name       UserPrincipalName
+----       -----------------
+Jane Doe   Jane.Doe@domain1.com
+John Doe   John.Doe@domain2.com
+
+.EXAMPLE
+Get-ADInfo.ps1 -listUpn -likeUpn domain2
+name       UserPrincipalName
+----       -----------------
+John Doe   John.Doe@domain2.com
+
+.EXAMPLE
+Get-ADInfo.ps1 -listHomeDirectory
+name      homeDirectory                           profilePath
+----      -------------                           -----------
+Jane Doe  \\server.domain1.com\Profile\Jane.Doe\
+John Doe  \\server.domain2.com\Profile\John.Doe\
+
+.EXAMPLE
+Get-ADInfo.ps1 -ListComputerPasswords
+name            ms-Mcs-AdmPwd
+----            -------------
+JANEDOE-LAPTOP  *TVCiN#8bMVOW
+JOHNDOE-LAPTOP  r4o1eY747KXN6Ty
+#>
+
+param(
+  [string]$Filter,
+  [switch]$ListUpn,
+  [string]$likeUpn,
+  [switch]$updateUpnSuffix,
+  [string]$oldUpnSuffix,
+  [string]$newUpnSuffix,
+  [string]$SearchBase,
+  [switch]$ListHomeDirectory,
+  [switch]$ListComputers,
+  [switch]$ListComputerPasswords,
+  [switch]$ListExtensions,
+  [switch]$Export,
+  [string]$Sid
+)
+
+$meActual = [System.IO.Path]::GetFileNameWithoutExtension($MyInvocation.MyCommand.Name)
+$me = "${meActual}:"
+$parent = Split-Path $script:MyInvocation.MyCommand.Path
+
+Function checkAdmin {
+  If (-NOT ([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    Write-Warning "You do not have Administrator rights to run this script!`nPlease re-run this script as an Administrator!"
+    Break
+		}
+}
+
+If (!(Get-Module ActiveDirectory)) { Import-Module ActiveDirectory }
+
+If ($ListUpn) {
+  If ($likeUpn) {
+    $UpnFilter = "*" + $likeUpn + "*"
+  }
+  Elseif ($Filter) {
+    $UpnFilter = $Filter
+  }
+  Else {
+    $UpnFilter = "*"
+  }
+  Write-Verbose "$me Listing all users with a UPN like $filter. Sorting by UPN"
+  Get-ADUser -Filter { UserPrincipalName -like $UpnFilter } -Properties distinguishedName, UserPrincipalName | Select-Object name, UserPrincipalName | Sort-Object -Property UserPrincipalName | Format-Table
+}
+
+If ($updateUpnSuffix) {
+  Write-Verbose "$me Setting old UPN, new UPN, and Search Base if not specified."
+  If (!$oldUpnSuffix) { $oldUpnSuffix = "@koinonia.local" }
+  $OldUpnSearch = "*" + $oldUpnSuffix
+  If (!$newUpnSuffix) { $newUpnSuffix = "@***REMOVED***" }
+  If (!$searchBase) { $searchBase = "DC=koinonia,DC=local" }
+  Write-Verbose "$me Starting update..."
+  checkAdmin
+  Write-Information -MessageData "$me Changing UPN to $newUpnSuffix for all uses with a $oldUpnSuffix UPN in $searchBase." -InformationAction Continue
+  Get-ADUser -Filter { UserPrincipalName -like $OldUpnSearch } -SearchBase $searchBase |
+  ForEach-Object {
+    $OldUpn = $_.UserPrincipalName
+    $Upn = $_.UserPrincipalName -ireplace [regex]::Escape($oldUpnSuffix), $newUpnSuffix
+    Set-ADUser -identity $_ -UserPrincipalName $Upn
+    $NewUpn = $_.UserPrincipalName
+    Write-Verbose "$me Changed $OldUpn to $NewUpn"
+  }
+}
+
+If ($ListHomeDirectory) {
+  If (!$filter) { $filter = "*" }
+  Write-Verbose "$me Listing all users with their Home Directory and Profile Path. Sorting by Home Directory"
+  Get-ADUser -Filter $filter -Properties homeDirectory, profilePath  | Select-Object name, homeDirectory, profilePath | Sort-Object -Property homeDirectory -Descending | Format-Table
+}
+
+If ($ListComputers) {
+  If (!$filter) { $filter = "*" }
+  Write-Verbose "$me Getting OS Versions"
+  Get-ADComputer -Filter * -Property Name, OperatingSystem, OperatingSystemVersion, operatingSystemServicePack | Sort-Object @{Expression = 'OperatingSystem'; Ascending = $true }, @{Expression = 'operatingSystemVersion'; Ascending = $false }, @{Expression = 'Name'; Ascending = $true } | Format-Table Name, OperatingSystem, OperatingSystemVersion, operatingSystemServicePack -Wrap -Auto
+}
+
+Function listComputerPasswords {
+  param([string]$Filter, [string]$Message)
+  If (!$filter) { $filter = "*" }
+  checkAdmin
+  Write-Information -MessageData "$Message" -InformationAction Continue
+  Get-ADComputer -Filter $Filter -Properties ms-Mcs-AdmPwd | Select-Object name, ms-Mcs-AdmPwd | Sort-Object -Property ms-Mcs-AdmPwd -Descending | Format-Table
+}
+If ($ListComputerPasswords -AND $Filter) {
+  listComputerPasswords -Message "$me Computers matching $filter." -Filter $Filter
+}
+Elseif ($ListComputerPasswords) {
+  listComputerPasswords -Message "$me Non-mac passwords." -Filter 'Name -notlike "*-DM" -and Name -notlike "*-LM" -and Enabled -eq $True'
+  listComputerPasswords -Message "$me Mac passwords." -Filter 'Name -like "*-DM" -or Name -like "*-LM" -and Enabled -eq $True'
+  listComputerPasswords -Message "$me Disabled computer accounts." -Filter 'Enabled -eq $False'
+}
+  
+
+
+If ($ListExtensions) {
+  If (!$filter) { $filter = "*" }
+  Write-Verbose "$me Getting ipPhone"
+  Get-ADUser -LDAPFilter "(ipPhone=*)" -Properties ipPhone  | Select-Object name, ipPhone | Sort-Object -Property ipPhone
+}
+
+If ($Export) {
+  #File Location
+  If ($Export) { $ExportFile = $Export }
+  If (!$ExportFile) { $ExportFile = $parent + "\AD Users.csv" }
+  Write-Verbose "$me Writing to $ExportFile"
+
+  #Set the domain to search at the Server parameter. Run powershell as a user with privilieges in that domain to pass different credentials to the command.
+  #Searchbase is the OU you want to search. By default the command will also search all subOU's. To change this behaviour, change the searchscope parameter. Possible values: Base, onelevel, subtree
+  #Ignore the filter and properties parameters
+
+  $ADUserParams = @{
+    'Server'      = 'KCFAD01.***REMOVED***.local'
+    'Searchbase'  = 'OU=_***REMOVED***,DC=***REMOVED***,DC=local'
+    'Searchscope' = 'Subtree'
+    'Filter'      = '*'
+    'Properties'  = '*'
+  }
+
+  #This is where to change if different properties are required.
+  $SelectParams = @{
+    'Property' = 'SAMAccountname', 'CN', 'title', 'DisplayName', 'Description', 'EmailAddress', 'mobilephone', @{name = 'businesscategory'; expression = { $_.businesscategory -join '; ' } }, 'office', 'officephone', 'state', 'streetaddress', 'city', 'employeeID', 'Employeenumber', 'enabled', 'lockedout', 'lastlogondate', 'badpwdcount', 'passwordlastset', 'created'
+  }
+
+  Get-ADUser @ADUserParams | Select-Object @SelectParams | Export-Csv $ExportFile
+}
+
+If ($Sid) {
+  If (!$Sid) { Write-Error "Please specify a SID using the -SID paramater" }
+  $Sid = [ADSI]"LDAP://<SID=$Sid>"
+  Write-Output $Sid
+}
+}
 function Get-AdminCount {
 <#PSScriptInfo
 .VERSION 1.0.0
@@ -3418,6 +3655,181 @@ Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow -Wait
 Write-Verbose "Installing OneDrive..."
 Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 }
+function Initialize-Workstation {
+<#PSScriptInfo
+
+.VERSION 1.2.1
+
+.GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
+<#
+.SYNOPSIS
+This script will install the neccesary applications and services on a given machine.
+
+.DESCRIPTION
+This script will install the neccesary applications and services on a given machine. It will also check for updates to third-party applications. This script will also configure certain items not able to be configured by Group Policy,
+
+.PARAMETER BitLockerProtector
+If a protector is specified, BitLocker will be enabled using that protector. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker
+
+.PARAMETER BitLockerEncryptionMethod
+Used to specify the encryption method for BitLocker. If unspecified, XtsAes256 will be used.
+
+.PARAMETER BitLockerUSB
+If the USB protector is spesified, use this to specify the USB drive to use.
+
+.PARAMETER DriveLabel
+This specifies what the drive will be labeled as. If unspecified, "Windows" will be used.
+
+.PARAMETER DriveToLabel
+This specifies which drive to label. If unspecified, the system drive will be used.
+
+.PARAMETER Ninite
+If specified, Ninite will be run and install the default third party applications.
+
+.PARAMETER InstallTo
+Specifies the defgault install device type for Ninite. Will use Ninite's default if unspecified.
+
+.PARAMETER NetFX3
+If specified, ".NET Framework 3.5 (includes .NET 2.0 and 3.0)" will be installed.
+
+.PARAMETER ProvisioningPackage
+Choose a Provisioning Package to be installed.
+
+.PARAMETER RSAT
+If specified, Remote Server Administrative Tools will be installed.
+
+.PARAMETER Office
+Specifes the version of Office to install. If unspecified, Office will not be installed.
+  
+.EXAMPLE
+Install.ps1 -BitLocker -Office 2019
+
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+  [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector,
+  [string]$Office,
+  [switch]$RSAT,
+  [string]$ProvisioningPackage,
+  [switch]$NetFX3,
+  [switch]$Ninite,
+  [string]$NiniteInstallTo = "Workstation",
+  [ValidateScript({ Test-Path $_ })][string]$BitLockerUSB,
+  [string]$BitLockerEncryptionMethod = "XtsAes256",
+  [string]$DriveLabel = "Windows",
+  [string]$DriveToLabel = ($env:SystemDrive.Substring(0, 1))
+)
+
+$meActual = [System.IO.Path]::GetFileNameWithoutExtension($MyInvocation.MyCommand.Name)
+$me = "${meActual}:"
+$parent = Split-Path $script:MyInvocation.MyCommand.Path
+
+Import-Module $parent\***REMOVED***It\***REMOVED***IT.psm1 -Force
+If (!(Test-Admin -Warn)) { Break }
+
+If ($BitLockerProtector) {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Enable-Bitlocker with `'$BitLockerProtector`' protector using $BitLockerEncryptionMethod")) {
+    If ($BitLockerProtector -eq "Disable") { Disable-BitLocker -MountPoint $env:SystemDrive }
+    Else {
+      Add-BitLockerKeyProtector -MountPoint $env:SystemDrive -RecoveryPasswordProtector
+      $BLV = Get-BitLockerVolume -MountPoint $env:SystemDrive
+      $RecoveryPassword = $BLV.KeyProtector | Where-Object KeyProtectorType -eq "RecoveryPassword"
+      Backup-BitLockerKeyProtector -MountPoint $env:SystemDrive -KeyProtectorId $RecoveryPassword.KeyProtectorId | Out-Null
+      If ($BitLockerProtector -eq "TPM") {
+        Enable-BitLocker -MountPoint $env:SystemDrive -EncryptionMethod $BitLockerEncryptionMethod -TpmProtector
+      }
+      ElseIf ($BitLockerProtector -eq "Password") {
+        $BitLockerSecurePassword = Read-Host -Prompt "Enter Password" -AsSecureString
+        Enable-BitLocker -MountPoint $env:SystemDrive -EncryptionMethod $BitLockerEncryptionMethod -PasswordProtector -Password $BitLockerSecurePassword
+      }
+      ElseIf ($BitLockerProtector -eq "Pin") {
+        $BitLockerSecurePin = Read-Host -Prompt "Enter PIN" -AsSecureString
+        Enable-BitLocker -MountPoint $env:SystemDrive -EncryptionMethod $BitLockerEncryptionMethod -TPMandPinProtector -Pin $BitLockerSecurePin 
+      }
+      ElseIf ($BitLockerProtector -eq "USB") {
+        Enable-BitLocker -MountPoint $env:SystemDrive -EncryptionMethod $BitLockerEncryptionMethod -StartupKeyProtector -StartupKeyPath $BitLockerUSB
+      }
+      Else {
+        Write-Warning "No valid protector spesified. BitLocker will NOT be enabled."
+      }
+    }
+  }
+}
+
+If ($NetFX3) {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install .NET Framework 3.5 (includes .NET 2.0 and 3.0)")) {
+    Write-Verbose "Installing .NET Framework 3.5 (includes .NET 2.0 and 3.0)"
+    Get-WindowsCapability -Online -Name NetFx3* | Add-WindowsCapability -Online
+  }
+}
+
+If ($RSAT) {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Remote Server Administrative Tools")) {
+    Write-Verbose "Install Remote Server Administrative Tools"
+    Get-WindowsCapability -Online -Name "RSAT*" | Add-WindowsCapability -Online
+  }
+}
+If ($Ninite) {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername) $NiniteInstallTo", "Install apps using Ninite")) {
+    Write-Verbose "Running Ninite"
+    & $parent\..\Ninite\Ninite.ps1 -Local -InstallTo $NiniteInstallTo
+  }
+}
+
+If ($Office) {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Office $Office")) {
+    Install-MicrosoftOffice -Version $Office
+  }
+}
+
+
+If ($ProvisioningPackage) {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage")) {
+    If (Test-Path -PathType Leaf -Path $ProvisioningPackage) { Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage }
+    else { Write-Warning "$me The provisioning file specified is not valid." }
+  }
+}
+
+If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel")) {
+  Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel
+  Write-Verbose "$me Checking for reboot."
+  Import-Module $parent\Modules\pendingreboot.0.9.0.6\pendingreboot.psm1
+  If ((Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") -or (Test-PendingReboot -SkipConfigurationManagerClientCheck).IsRebootPending) {
+    Write-Verbose "A reboot is required. Reboot now?"
+    Restart-Computer -Confirm
+  }
+}
+}
 function Install-GCPW {
 <#PSScriptInfo
 .VERSION 1.0.0
@@ -3584,6 +3996,209 @@ if (Test-Path -Path $Exe -PathType Leaf) {
     }
 }
 else { throw "Cannot find installer at $Exe" }
+}
+function Install-RSAT {
+<#PSScriptInfo
+
+.VERSION 1.2.1
+
+.GUID 44daac91-76d4-41f5-a2ab-688d548ad0d1
+
+.AUTHOR Jason Cook Martin Bengtsson
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
+
+<#
+.SYNOPSIS
+Install RSAT features for Windows 10 1809 or 1903
+    
+.DESCRIPTION
+Install RSAT features for Windows 10 1809 or 1903. All features are installed online from Microsoft Update thus the script requires Internet access
+
+.PARAMETER All
+Installs all the features within RSAT. This takes several minutes, depending on your Internet connection
+
+.PARAMETER Basic
+Installs ADDS, DHCP, DNS, GPO, ServerManager
+
+.PARAMETER ServerManager
+Installs ServerManager
+
+.PARAMETER Uninstall
+Uninstalls all the RSAT features
+
+.LINK
+https://gist.github.com/PeterUpfold/0c83c5ad0bfa821c8a6948eeef5cd932
+
+.LINK
+https://www.imab.dk
+
+.LINK
+https://twitter.com/mwbengtsson
+#> 
+
+[CmdletBinding()]
+param(
+    [parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
+    [switch]$All,
+    [parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
+    [switch]$Basic,
+    [parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
+    [switch]$ServerManager,
+    [parameter(Mandatory = $false)]
+    [ValidateNotNullOrEmpty()]
+    [switch]$Uninstall
+)
+
+if (-NOT([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+    Write-Warning -Message "The script requires elevation"
+    break
+}
+
+$1809Build = "17763"
+$1903Build = "18362"
+$WindowsBuild = (Get-WmiObject -Class Win32_OperatingSystem).BuildNumber
+#$runningDir = Split-Path -Parent $MyInvocation.MyCommand.Definition
+
+if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
+    Write-Verbose -Verbose "Running correct Windows 10 build number for installing RSAT with Features on Demand. Build number is: $WindowsBuild"
+    if ($PSBoundParameters["All"]) {
+        Write-Verbose -Verbose "Script is running with -All parameter. Installing all available RSAT features"
+        $Install = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat*" -AND $_.State -eq "NotPresent" }
+        if ($null -ne $Install) {
+            foreach ($Item in $Install) {
+                $RsatItem = $Item.Name
+                Write-Verbose -Verbose "Adding $RsatItem to Windows"
+                try {
+                    Add-WindowsCapability -Online -Name $RsatItem
+                }
+                catch [System.Exception] {
+                    Write-Verbose -Verbose "Failed to add $RsatItem to Windows"
+                    Write-Warning -Message $_.Exception.Message
+                }
+            }
+        }
+        else {
+            Write-Verbose -Verbose "All RSAT features seems to be installed already"
+        }
+    }
+
+    if ($PSBoundParameters["Basic"]) {
+        Write-Verbose -Verbose "Script is running with -Basic parameter. Installing basic RSAT features"
+        # Querying for what I see as the basic features of RSAT. Modify this if you think something is missing. :-)
+        $Install = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat.ActiveDirectory*" -OR $_.Name -like "Rsat.DHCP.Tools*" -OR $_.Name -like "Rsat.Dns.Tools*" -OR $_.Name -like "Rsat.GroupPolicy*" -AND $_.State -eq "NotPresent" }
+        if ($null -ne $Install) {
+            foreach ($Item in $Install) {
+                $RsatItem = $Item.Name
+                Write-Verbose -Verbose "Adding $RsatItem to Windows"
+                try {
+                    Add-WindowsCapability -Online -Name $RsatItem
+                }
+                catch [System.Exception] {
+                    Write-Verbose -Verbose "Failed to add $RsatItem to Windows"
+                    Write-Warning -Message $_.Exception.Message
+                }
+            }
+        }
+        else {
+            Write-Verbose -Verbose "The basic features of RSAT seems to be installed already"
+        }
+    }
+
+    if ($PSBoundParameters["ServerManager"]) {
+        Write-Verbose -Verbose "Script is running with -ServerManager parameter. Installing Server Manager RSAT feature"
+        $Install = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat.ServerManager*" -AND $_.State -eq "NotPresent" } 
+        if ($null -ne $Install) {
+            $RsatItem = $Install.Name
+            Write-Verbose -Verbose "Adding $RsatItem to Windows"
+            try {
+                Add-WindowsCapability -Online -Name $RsatItem
+            }
+            catch [System.Exception] {
+                Write-Verbose -Verbose "Failed to add $RsatItem to Windows"
+                Write-Warning -Message $_.Exception.Message ; break
+            }
+        }
+        
+        else {
+            Write-Verbose -Verbose "$RsatItem seems to be installed already"
+        }
+    }
+
+    if ($PSBoundParameters["Uninstall"]) {
+        Write-Verbose -Verbose "Script is running with -Uninstall parameter. Uninstalling all RSAT features"
+        # Querying for installed RSAT features first time
+        $Installed = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat*" -AND $_.State -eq "Installed" -AND $_.Name -notlike "Rsat.ServerManager*" -AND $_.Name -notlike "Rsat.GroupPolicy*" -AND $_.Name -notlike "Rsat.ActiveDirectory*" } 
+        if ($null -ne $Installed) {
+            Write-Verbose -Verbose "Uninstalling the first round of RSAT features"
+            # Uninstalling first round of RSAT features - some features seems to be locked until others are uninstalled first
+            foreach ($Item in $Installed) {
+                $RsatItem = $Item.Name
+                Write-Verbose -Verbose "Uninstalling $RsatItem from Windows"
+                try {
+                    Remove-WindowsCapability -Name $RsatItem -Online
+                }
+                catch [System.Exception] {
+                    Write-Verbose -Verbose "Failed to uninstall $RsatItem from Windows"
+                    Write-Warning -Message $_.Exception.Message
+                }
+            }       
+        }
+        # Querying for installed RSAT features second time
+        $Installed = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat*" -AND $_.State -eq "Installed" }
+        if ($null -ne $Installed) { 
+            Write-Verbose -Verbose "Uninstalling the second round of RSAT features"
+            # Uninstalling second round of RSAT features
+            foreach ($Item in $Installed) {
+                $RsatItem = $Item.Name
+                Write-Verbose -Verbose "Uninstalling $RsatItem from Windows"
+                try {
+                    Remove-WindowsCapability -Name $RsatItem -Online
+                }
+                catch [System.Exception] {
+                    Write-Verbose -Verbose "Failed to remove $RsatItem from Windows"
+                    Write-Warning -Message $_.Exception.Message
+                }
+            } 
+        }
+        else {
+            Write-Verbose -Verbose "All RSAT features seems to be uninstalled already"
+        }
+    }
+}
+else {
+    Write-Warning -Message "Not running correct Windows 10 build: $WindowsBuild"
+
+}
 }
 function Invoke-TickleMailRecipients {
 <#PSScriptInfo
@@ -5346,8 +5961,6 @@ function Show-BitlockerEncryptionStatus {
 
 
 
-
-
 <#
 .DESCRIPTION
 Show the BitLocker status until all drives are encrypted.
@@ -6160,8 +6773,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUafpc5Ue2vhvV4ywJwfaLiTCS
-# 1w6ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUE8LAnU8sSTn4nOX3DbBw8339
+# 4Eyggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -6245,17 +6858,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFDQMG/7sYk7xUxgvehSJajjTW7bh
-# MA0GCSqGSIb3DQEBAQUABIICAEejPmSwEmKhiiaWeknXNlANSsumkEC49BfFM+gt
-# 7vksh4kI/I+Q0F/+BFXRySQ9f9d5xqqkdCwg/yjCA3Mz/ehL7rmgpxAFvoK5Zl8h
-# 8HMDlOZ6HHZClIs4wIPPAwx/PgzCaj0DFLqHmc6gAJxRyMxylTzhGM/fZXf3Ec0i
-# EErGfsuVJc0VhbGDXicRU8w8k9XZpu/IQ+0rkV4jAZ0OO7QRZ3+uH62RuQuc+EBs
-# z8fW/PMPtNafOcGls0GYxpWQ3xO721Q5OQ+AFrlOjcPDkAcRzr0jLP9P1wl6qDYz
-# efbsIafsSAa1LQmw25/Z+NEJ5rC5rjpEDPeumDFBjqs9dR72T92etNnV3MwvDHJt
-# y94dZV5GqLSieZupuXB31CNGDmQpAT389Hxpzw6E7roJuUZ5eq2ciA1gwx/imMp1
-# zm7wwX68dlXwiMRjCsGcUFzXMzGX+iZW/+m1Zr+OQ8e+YRBJuiLTTUkTvlPMv/L8
-# EM8rrq+nU9QbUfZCMesdQlMKHSdfx3tKV6NDWE1gdfVW4lydDnmoSIh+BqcnS2Pi
-# ApFFi+csDgqviiL6+946CUec3rU3sv/gBDowJFXNMhHz6Ljlc36WkEJKNdwQKkRy
-# FsiD+ZavP+CX5YJb7OKvYHxm3MMxlorcNOx8uV32bUTzNmYFv7ZVMUyM0MkCgXg+
-# 2Zdz
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFMQ6cxHsnOar85088oT1OquLcpCb
+# MA0GCSqGSIb3DQEBAQUABIICAI9ly9Fx8heIblV8iQTEYZbx0yrGS1zkJJUZNL5l
+# gNAUDVwgBltDFBBOlTxVs9EWATqhMcrYM3b3oOk4FnuWELaV3ZXRFdrnXJyXI1Dt
+# 5hooOC5RaZ3GvuG/fKjpJ26EsCPgNJeiBWgcSvuJ53UuLoR+FYaj7WozOatsvQcy
+# bP6gAeOhS7gfOYEixqLf7A0Pnrh1SQOeojPK2HZ6Y6hQmJ8BdTxWD54HkPIHmVRd
+# uQY3Ls+xLcrpuVq8khnlKr+TU4LxkuyezpGd9Rzcxy2SewmtAnC3UsZmFWY3xYNE
+# KyA+IdgAhWrKMkvNnIokuxmVq6au4EoJ+gWnqtoU49Z7kwB+EvXsaWuQNJWuNOEh
+# yf+4U6BcHk/xHsvJU2I/EIdUnnekHxXEJMUrYEO3Vi20V3DWsBV+KgBi4Sn/oEqf
+# g3SbrA8/ck0FjrXVQqCRhoniZHTb9wuuWsG84xzGNezQ/eu0goDH7Vux9J0HzATo
+# a8f0IQDjkfjTr3Ec+4U0Wl/Jrpb3yp/D3+ZvpejGLERHkunIvF6oCip0v0q1sJoo
+# hqGBri8C2vf7N4C/Y8isPLz9jB6T0ANqFUzxOZr4rU2BqPwoW+MqHit3Y2hZXZsB
+# D+Hk3b3g9d95FaY2D4GcyPhvk3DBXCXvcnzUBexmzzDq3t2TC0bI8RFE1D45lG5P
+# 2T5M
 # SIG # End signature block
