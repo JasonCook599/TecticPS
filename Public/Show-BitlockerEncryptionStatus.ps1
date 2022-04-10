@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 85c8702c-7117-4050-8629-51fc36de0cd8
 
@@ -30,6 +30,10 @@
 .PRIVATEDATA
 
 #> 
+
+<#
+.DESCRIPTION
+Show BitLocker encryption status on a loop. Used to monitor encryption progress.
 
 .PARAMETER Sleep
 The lenght of time to sleep between checks.
