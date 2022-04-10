@@ -49,7 +49,7 @@ Test-Admin -Throw | Out-Null
 Get-BitLockerVolume
 
 while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
-    $Result = Get-BitLockerVolume | Format-Table
+    $Result = Get-BitLockerVolume  | Where-Object { $_.VolumeStatus -ne "FullyEncrypted" -and $_.VolumeStatus -ne "FullyDecrypted" } | Format-Table
     Clear-Host
     (Get-Date).DateTime
     $Result
@@ -140,6 +140,28 @@ while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
 # JDXTKkQODY4gBxrH2T9qNfHZ5SuF6zxekluWD0dhfqyljaWOIjIqXRHbqGMcrr3S
 # MqLmcnh72nO5kAIdDumQ0tQGq1sWiBn9fFRBKQosIavTWkZVyVDRDDq9rIb9GKMT
 # 1w3EwXuPdqq+APlFZ06PLOFLVAwWoaqiMruKB9owizGCAxAwggMMAgEBMG8wWDEV
+# MBMGCgmSJomT8ixkARkWBWxvY2FsMRgwFgYKCZImiZPyLGQBGRYIS29pbm9uaWEx
+# JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
+# bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
+# gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFJ07Rg5P98bQFXFAsC40dXmbi+Te
+# MA0GCSqGSIb3DQEBAQUABIICAABeLzPYPnTMR3dOOZp+mHeoxBzDUEc2APX7UbS8
+# vm+abAEtiaOziKbheAJ7FpvGVUWQnYf8Ot0pb5nz825Wru1aPTTMUTZrputSARjw
+# 2INu3EHVGvv6VTcJvZunJc2HXKWBa8lAgUTsjmIvdq/Fkqr3ASRGbjS5wiH3EypX
+# ypZUYUIGqp1k4xKPgGI/YKc8rXT1asK8v302R3J1R87gEkXyW0rP98Gk+calH67c
+# k2MKpV1Emxp6FrDL1dqWlb8+J7lW3tGVll928wwfFe8e+JH822hRzrfENlZKya8r
+# TzGsvDiID3wC/J2a/btyauGc06nW0CZEjnmDCocWuNdcPIOXa5hG45V4N+DslQ/h
+# Dqmi8xXTNncHJ/v5LJD93nj4v/djzAHbgVlKaZEmTHwqTzKzmo9RCFxCoMK+ZvQM
+# 6jifaP+/d0np+NHJbsuY79snSmIHYVS8z2Ow6TOkK/pXgwNznRDITShiZtYTazDV
+# yGars1qtcFkplKZsAo8ix/Dp9Snyj61/Rj+3bH/AQhMReINW+UGfgs7L1HvN0h80
+# Gn0NP4XI66+kftICv7RdBjBxSzAWsuwu66Rz2jaAAFqWTJCedb8PUjZ8iIL9dvYX
+# fvRAPdVnCteK3g1jaUCgMkZfaSY6P3u5AykV1a8/gaRd4aW8nTL3/+1xW8TpbuG7
+# Exc5
+# SIG # End signature block
+# NqWHrj9qwBwRzeg8/lMckKzwF09vLsLe5jkuQVhddARJ/kklJ2fiukiYwFwGEyu6
+# emKXa/LFy3f/X5YQ8zA7x0x6iDshFVNvPG80rnKzpt9m6gyuLIaAoVd2QDHLryW2
+# F+H0
+# SIG # End signature block
 # MBMGCgmSJomT8ixkARkWBWxvY2FsMRgwFgYKCZImiZPyLGQBGRYIS29pbm9uaWEx
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
