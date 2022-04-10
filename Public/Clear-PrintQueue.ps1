@@ -48,6 +48,7 @@ param(
   [string]$ComputerName
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+while (!$ComputerName) { $ComputerName = Read-Host -Prompt "Enter the Computer Name." }
 
 Invoke-Command -ComputerName $ComputerName -ScriptBlock {
   Write-Verbose "Stopping spooler service."
@@ -162,4 +163,10 @@ Invoke-Command -ComputerName $ComputerName -ScriptBlock {
 # reYdMbcvvl+s1cOVASkGkTTUcCvkWAS/36fhU5pgQCLVjKpK27vRH2gMhMCbSnjK
 # xPjDbS+A4z6vww3UH00HfgQ5NQbFyevgcPdZ0f4TJhORsHIbLzQikYX22YixC3+p
 # gGYU
+# SIG # End signature block
+# KfOd/aFPWhITDyKxQgjArYDGJW7VYOFpdvM74WnEv1Rr4IZnJ85NiWUIGB7U54Ny
+# 8i5ui6u0nO+KTOLPo43t37xYoSwPcu+3aOPFw9zwHvEny8YxnAbaAFaZUA9PxDQz
+# w3Sf7ioYwXm2VkkixUpwpsSrbkEiFvNWCgjDB7vDA0ypzwfYuYzGjIal6lbIf6Xk
+# f6o17eRCyKxDrtEtgi/RYzAZh7fWQgrun6td1ewCkkcFldet/gzLpmLQ17LQ6Y4n
+# ru+e
 # SIG # End signature block
