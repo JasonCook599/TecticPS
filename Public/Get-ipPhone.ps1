@@ -47,12 +47,12 @@ https://docs.microsoft.com/en-us/windows/win32/adschema/a-admincount
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path,
-    [array]$Filter = "ipphone -like " * "}"
+    $Filter = "ipphone -like `"*`""
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Results = Get-ADUser -Properties name, ipPhone, Company, Title, Department, DistinguishedName -Filter $Filter | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, ipPhone, Company, Title, Department | Sort-Object -Property Company, name
-if ($Path) {$Results | Export-Csv -NoTypeInformation -Path $Path}
+if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
 return $Results
 
 # SIG # Begin signature block
@@ -156,4 +156,12 @@ return $Results
 # kkNFjAYBTLfXRz6MTwJNNI0ilmP+w5DJJ1OOyJfdNaEJYt1wmZ550u8JPM17Hq5Q
 # eDUqqjU57TJI1DVyoK5vr6MYOQj6MeKf9ph+l6z7CNWjrTogrXby0iVPdj3CqRNh
 # zJsA
+# SIG # End signature block
+# rogq2szP9TJ43BOcW0eZC9QJe8RPzrL0apAwmlKDYvaL1nzK0dfq+BsBGYp8M8w7
+# EaRWoncnos/euKYfrPg+ZD8QQo7IWJ/6GQfJL7riHTjYNkV5qCSS7o7QvSK9Be52
+# T3w/uWY3GdGXQbT3QwoSBHjFtnDf5PFNWc76+6t1mzZVqad5Ih9GATQbbX439W8h
+# Ib5w/d/5K3/P/JdRepjj1DLHzhr8LWq+RAUw5X3jV8iZ4mbLtpCsjuk7e9fu9HPr
+# U2O9G/PA02kfoMBvAfj+1e01OyXW2lv0h/0NCCc/XkefVH9u8lzA1/yVzIssieLn
+# jAIuQt7Fu/bL8KMdXY5uH9SsY2YQ3XSXZPQ0Je/+28o7Er6TrYl3gZ2ZGh8Gtto0
+# Vd12
 # SIG # End signature block
