@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID f12cad80-f34f-402f-aa4a-e92d80f725a9
 
@@ -30,6 +30,8 @@
 .PRIVATEDATA
 
 #> 
+
+
 
 
 
@@ -65,13 +67,17 @@ if (-not $IgnoreHostname) {
 }
 
 Write-Verbose "Moving log files to $Path"
-Get-ChildItem -Path $EventPath -Filter "Archive-*.evtx" -File | Move-Item -Destination $Path -ErrorAction Stop
+$Files = Get-ChildItem -Path $EventPath -Filter "Archive-*.evtx" -File | Sort-Object -Property LastWriteTime
+$Files | ForEach-Object { 
+    $count++ ; Progress -Index $count -Total $Files.count -Activity "Moving archive event logs." -Name $_.Name
+    Move-Item -Path $_.FullName -Destination $Path -ErrorAction Stop
+}
 
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU/9ffb45ZXAyIcNu7voPoYTd5
-# 296ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUPR00XvVV3LZmg8oepchLB1ns
+# tryggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -155,17 +161,17 @@ Get-ChildItem -Path $EventPath -Filter "Archive-*.evtx" -File | Move-Item -Desti
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFL4TgnzkB9ZBvLTcqs0E3nenGHha
-# MA0GCSqGSIb3DQEBAQUABIICAFWX3oBhc461lNPbYHuqrMn0yaq3AjRa0nrfRgSQ
-# Oq7AhyyMDtmBv8EB/sk5Z0nhgdh9hQGmWVkuJkK6GHCMawaGFURroTFce+Sx8dKO
-# BcGTbyuqHRbNrUNfvsl2RAR68ZBdmhig6Rq3DD4yeNFI1iJhAwIInjSPkCtTmpuZ
-# v0rIqwkirLW7dDnzZiCm1/ixxsmWW4DTOu3QNNCf0V7v8xFU6X+Ug2PnXwelxyos
-# 75zp1FMuudb4cyoOw0okYP0wqBzFIdA7Tl5hM8nPGBh+qJuozkOzlTfFp70ajrRh
-# Cbab4POIMSIm5Gt+kkW3pGJcEM3mXSS96rghG1hfTpYQ+1hhjmneM93R41mVcto1
-# Z9ZfpSU38S/O/7s1IrqERayEdcQhYJBNo0IoGPCbCuLu3+AXZVFhM2AKoExrytDm
-# dx/onGDaeHfGa8/BJW3scItsnGTsy9R7I9mUKRRG8hIHA1S5tcNxNuwtN2uJdzSq
-# BMoto69bFgz78JuoMKPZjAYfQ4i3VtCx5kUorJwsboqJIodS57PEFauV3ey0Y1WX
-# pWmozzheewsolYuPmT54v/QKhFOqYptcWNTCblnWt62yc0pIZdYvPWpvi4ghge9s
-# 3w1lQ3kjiL1Gzuxo8gbt5qUg2W565wxsdgwCZxbuDOeFz1McyUcJudwh2LPCiKXm
-# Nwlw
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFLNstFsXXuqrwQf7yoV9rvp9IxrI
+# MA0GCSqGSIb3DQEBAQUABIICAFxqxmRjSO05D90cqCevMddRH1qjFYS47l80iUcv
+# SetCv/Qc5ecdWxWS9hOM8sjkzpxawsJNZLA/gS2i/ZqhrVFIu9M1VGKMLhe5FNKT
+# anJsWxl9VMUi9oz0wlL2/WJ9gugT5vIYnKjl8zXG79H6+je8+CROpl5A0mhwjptZ
+# xnJCHQkI5NEt3kNjeJSGZ3YyoOBug27Oi8k0oXngnXsiqdBEv6Xkoeqt+Hm3yE8+
+# tLlpTtnpIth/T64a0QhBgmqvOa9NdjQBM2dmGfiSrCW0fnVrAH8MPLG4Uh/fi7UE
+# 82OfjZSPsoSQrtio5XVguaPa8QOE4UZ0P40MjmlLIpJvECrgABDtBlcxPfK+OYiN
+# 9FU1DnQkI+YHa1JocKSYgvMLhVfTdiCkmOPpGEdwZzNufMg4brqtJ5W0LbTKadwN
+# mAdqXkFAGJtaIqika4hQLl71QrcIjk2AojAgfDp1FYFH26bc4R0r0oDVBfGpL9Bx
+# MyfxdclqbtC/gv7hJGQ/6k1I+a9im50sEpl8koug4K8dUx30QW2omu9BjYTIXaJF
+# yb+MrU7mVUIUjqoWQi3I6gC/rYFxZJp9GCPaUebr2Fuw4Tkx3xFgzY3b/VZU8b/N
+# dx1w0Z5SEajiKKrDc70Sue+ev5jutfuQMqAmF+I6y7eyyqtYYdfWwNt+KCCdz1AA
+# E7Dv
 # SIG # End signature block

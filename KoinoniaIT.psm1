@@ -4454,7 +4454,7 @@ return @{
 function Move-ArchiveEventLogs {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID f12cad80-f34f-402f-aa4a-e92d80f725a9
 
@@ -4484,6 +4484,8 @@ function Move-ArchiveEventLogs {
 .PRIVATEDATA
 
 #> 
+
+
 
 
 
@@ -4519,7 +4521,11 @@ if (-not $IgnoreHostname) {
 }
 
 Write-Verbose "Moving log files to $Path"
-Get-ChildItem -Path $EventPath -Filter "Archive-*.evtx" -File | Move-Item -Destination $Path -ErrorAction Stop
+$Files = Get-ChildItem -Path $EventPath -Filter "Archive-*.evtx" -File | Sort-Object -Property LastWriteTime
+$Files | ForEach-Object { 
+    $count++ ; Progress -Index $count -Total $Files.count -Activity "Moving archive event logs." -Name $_.Name
+    Move-Item -Path $_.FullName -Destination $Path -ErrorAction Stop
+}
 }
 function New-RandomCharacters {
 <#PSScriptInfo
@@ -7067,8 +7073,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUBvZNHjvhXSBDzV8gKb0allhe
-# yGyggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUZ3td3ww3wMM0jMqe9Cnk5NJG
+# CM6ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -7152,17 +7158,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFD3s6V7Pia2ds6CjhiM0ecgbG1uK
-# MA0GCSqGSIb3DQEBAQUABIICAGsqmTgvrZsOzpryVaRFXB1enmEVvYq0fu+hxuXC
-# PwA6QaCzewSvGvDM6OhY/im+EJWosG8RAEnULHn+fpKV8PL/f4AkNdz3M2D7HNZR
-# tRuV1zF1ORbkotcvTbq6aup5X0kQ6goPGUTMkUSiAc5FV1FttQ/xU6BoezrU3f8k
-# gT5JGsW/uv1YHuCzPzoG9gss4LD1j4NssJFKPebAQ5XsyamfbHOFZ8g4GN4aGX/g
-# LLnixwPbFDqsKpIxuawg5mRIVZCaLLZiDAtKAROFEliA2gPs5TC7SZ/jsmrKCf1U
-# whCauuEcAgxHx19GymxKv3UJ7osxFRvUEDbh+tVjvXnMliTv+2Yz7mRBWl3kDi+F
-# V7GxLeftnjxgmMfEr1Tmb5XgRqK1oL13U5/UKMOXN0572vWJL8l74nU9atbEmC+f
-# ECFuljmbVDWPgqrtOfvbUahGW4GqdaOyoV0qj0QPxCxhFXlAm1tEVaEOks1Ev3ki
-# pm5VRbC5ENZK6yq39j/wt2ubABuw69gTYaIvEbGd6RSQY5vc/f4VUqnlBt64P0oO
-# ekz/KL3Sl8pmFcuoQry5nkUhXTV8GuRo2fXmMJBQ3M7H9VXn9D1kxpphOUAAGMMo
-# B4WQaFfysB86yEdNFKJVjrBOj8+bhPptXnyA3PwnLppnhYt46mcsWFRGVdXOggdn
-# IWpp
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFFC0vIKrcVFaL761vTQe35+ZHYA2
+# MA0GCSqGSIb3DQEBAQUABIICAJWMJ3ZM+UhLVF6tdJWOqtDKFkdvLTMDodr3fFGZ
+# RddI3XtZa5952yTPPAdNt01rVgrn+4P5pCu0oXdLHEOUv3ZCWLd6z8YBPzTxUu5I
+# JZy/DYEPvPb/u/pdjXjtcGNbIWA1KSoleAy+3aY7qa3hn55ymza4/5KGBsA0CbI4
+# CknDf5M2Aq2L+Uh0Sxkqhe+0Jy40zItFK/+441U6CxxR/iVDIoaj3Z569YXns177
+# 6ecxtVXMHreEqTq7GG9ejh2fvrW6NHjNjffUEMmQsfhTwQvaihunXzhDVpFkYFTV
+# wpBLPr4/4NdV4x7ulgngRn9wdFW7Tr62GJcYaeSsw+PWyLKrDyxqGZCPuMWCzhCO
+# CUtZHx1dGesnklBOHeJFE1VhnccMwyLqCeRUZ+O1vCkLO+4azkQJZZL2HIzjutWj
+# RvXDt4IHAYEUWFYDxIJUynKBNVkHCe2d3pdX9GCOGW03fkM+EmowQ4Zqf/6vzCOo
+# I820hRzAV+sohek1Nom8vCRzNf088f66yHlbfQoOf5VReRCJSqZvlRD3pcsK5muI
+# sQWxrMPpVXdPyUygw/MNjyAn+bXyFBMsIiWHMnQuE+SmXK4/yRnFnIZf5+lHfZBA
+# r+kc2qrbUnnbhfkWdo5lnIFqzHx/D6q7FOhVuIst2XVlxC8OnvM1ZB25DvWQdw8e
+# 7nLZ
 # SIG # End signature block
