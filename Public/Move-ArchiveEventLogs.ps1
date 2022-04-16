@@ -65,7 +65,7 @@ if (-not $IgnoreHostname) {
 }
 
 Write-Verbose "Moving log files to $Path"
-Get-ChildItem -Path $EventPath -Recurse | Move-Item -Destination $Path -ErrorAction Stop
+Get-ChildItem -Path $EventPath -Filter "Archive-*.evtx" -File | Move-Item -Destination $Path -ErrorAction Stop
 
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
