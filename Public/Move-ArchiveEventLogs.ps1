@@ -49,7 +49,7 @@ The location log files should be moved from.
 Exclude the hostname from the path when moving the log files.
 
 .EXAMPLE
-Archive-Logs -Path \\server\logs
+Move-ArchiveEventLogs -Path \\server\logs
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
