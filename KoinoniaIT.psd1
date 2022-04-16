@@ -12,7 +12,7 @@
 RootModule = '***REMOVED***IT.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.16'
+ModuleVersion = '1.0.17'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -70,21 +70,21 @@ PowerShellVersion = '5.1'
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
 FunctionsToExport = 'Add-AllowedDmaDevices', 'Add-BluredPillarBars', 'Add-GroupEmail', 
-               'Add-Path', 'Add-Signature', 'Archive-EventLogs', 'Backup-MySql', 
-               'Clear-AdminCount', 'Clear-PrintQueue', 'Connect-Office365', 
-               'Convert-Image', 'ConvertTo-EndpointCertificate', 
-               'ConvertTo-OutputImages', 'Disable-NetbiosTcpIp', 
-               'Disable-SelfServicePurchase', 'Enable-LicenseOptions', 
-               'Enable-NestedVm', 'Export-MatchingCertificates', 'Find-EmptyOu', 
-               'Get-ADInfo', 'Get-AdminCount', 'Get-BiosProductKey', 
-               'Get-BitlockerStatus', 'Get-ExchangePhoto', 'Get-FirmwareType', 
-               'Get-ipPhone', 'Get-MailboxAddresses', 'Get-MemoryType', 
-               'Get-MfpEmails', 'Get-NewIP', 'Get-OrphanedGPO', 'Get-RecentEvents', 
-               'Get-SecureBoot', 'Get-Spns', 'Get-StaleAADGuestAccounts', 
-               'Get-TermsOfUse', 'Get-TpmInfo', 'Get-Wallpaper', 'Grant-Matching', 
-               'Initialize-OneDrive', 'Initialize-Workstation', 'Install-GCPW', 
-               'Install-MicrosoftOffice', 'Install-RSAT', 
-               'Invoke-TickleMailRecipients', 'Measure-AverageDuration', 
+               'Add-Path', 'Add-Signature', 'Backup-MySql', 'Clear-AdminCount', 
+               'Clear-PrintQueue', 'Connect-Office365', 'Convert-Image', 
+               'ConvertTo-EndpointCertificate', 'ConvertTo-OutputImages', 
+               'Disable-NetbiosTcpIp', 'Disable-SelfServicePurchase', 
+               'Enable-LicenseOptions', 'Enable-NestedVm', 
+               'Export-MatchingCertificates', 'Find-EmptyOu', 'Get-ADInfo', 
+               'Get-AdminCount', 'Get-BiosProductKey', 'Get-BitlockerStatus', 
+               'Get-ExchangePhoto', 'Get-FirmwareType', 'Get-ipPhone', 
+               'Get-MailboxAddresses', 'Get-MemoryType', 'Get-MfpEmails', 'Get-NewIP', 
+               'Get-OrphanedGPO', 'Get-RecentEvents', 'Get-SecureBoot', 'Get-Spns', 
+               'Get-StaleAADGuestAccounts', 'Get-TermsOfUse', 'Get-TpmInfo', 
+               'Get-Wallpaper', 'Grant-Matching', 'Initialize-OneDrive', 
+               'Initialize-Workstation', 'Install-GCPW', 'Install-MicrosoftOffice', 
+               'Install-RSAT', 'Invoke-TickleMailRecipients', 
+               'Measure-AverageDuration', 'Move-ArchiveEventLogs', 
                'New-RandomCharacters', 'New-RandomPassword', 'Ping-Hosts', 
                'Remove-CachedWallpaper', 'Remove-GroupEmail', 
                'Remove-MailboxOrphanedSids', 'Remove-OldFolders', 
@@ -162,8 +162,8 @@ PrivateData = @{
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUNe6P0trkEHxS4JosYvs18xjT
-# jsKggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQU5evQG03s6S9w9RwdwECU5wxY
+# qEmggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -247,17 +247,17 @@ PrivateData = @{
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFA14gk8uOMVUY/X/x1oAq9egkUes
-# MA0GCSqGSIb3DQEBAQUABIICAMdkU5FBcRAgCB/eS0jnYkp26cx8532ILpGXXYMN
-# DtNfESyJv4aijIQqItpF8+IGMdBBdDe7e/D+QJkOYzqxpkIdLL+WzrPz1NLhQkhh
-# iiecj3pdj8p5I0HljgnFTnirx68FWKjHAuXaHlsyx0hki+su+Zy7u0H+g8R8/6Xm
-# CSq0mA2fm1WaOOXDMKx9Vx2XZxCya5zHSeztWeluTcuhLoWyUZTIbO/A9FHdkXZv
-# fGroWEgFNkJWEMM7dIPlfnECovpDcz3/tRFTeYY+VB8rh7ChKLx5u2mWm6OmELhg
-# ecS45/uyATSpoG5d/7vymeM5seXHqnlBHaVYypZ6bphJNWTA47ryOTickgR99w6X
-# VWmAEjs52yjK1JdiH4J1/KaCgenHCsLzcAyTJB7QDNYf+fXiJrLjbJUpBDccbdMU
-# DVfWNehpBq0NZQZ+maHPd1AM8ym1iy7LLHwgBzaB6765MlSgAsgTQhN8bOoSs7HO
-# 6sf7wTgbCOQi1HXUitY+pAktuaY2KwymvLkEj6x6p9sb2AQbLf1xdGhNB8ZNHKlD
-# 00FFJEo2+CFSsdmtsLMZbUwkrCpOT5epP6vx7TlkRg7heajtc8+tAEj//R/4lUdq
-# b9ogoy3ney8ggUys4NnZOtmWgtoSSv8vAsVaPgF0XR5TRAuVMixkrCn1B58i9Rpg
-# aJ7K
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFGfi+QRR7XX4gL18JhRJtU2NLqZ+
+# MA0GCSqGSIb3DQEBAQUABIICALSMFaVXgEr0ISukCdWwdQ9BK4Btmjo1Pw7iQ8bJ
+# cwLQ9GLVqRtxV2bq7zFDg4IvjJ39nou2e9lun8pfa6ulbNj3hLi5wqdfpAlBr1TZ
+# LzLu9Bs8hk+UoQWutrGizRfKbgICy/sKDor77q/3QqxlxlG6EUx6g0WPr7TTZKcU
+# ZU4Ga8fPVnoxpACZ4F5ZOOZO3P74FHPhHkrhkGntFB83RTjPDoSVN/yQWni9ZF9p
+# AH0Yr4carl0pLlveWZHMGO//eQA2XM1auEDp0kNnx6jUGUtGl9yTBbJsifCLI/Nb
+# RsJOU/6tveHqkEXWsbPcKfITUePGBFdQW9c8eFYbT1tmq+3ixAyxEdcANOQCQgRH
+# +U3n/b/V/YAOO42jnp+u5jcOFQvKP2zxflPd5GD1uRjqKrRiHzic9GNGlZcZ9Wdf
+# kX44WTQ8wN0W4JngFiYd88lMTzOuYrlPtf+BvHK9sMwAyVqcs/n1OpQyKJRc5AN5
+# t0e58xRYxm4sJqiVSU6l1pgZSQRkMWT3pAEtuL1FpMH08BN2S2NrnEq4HkxHG1+0
+# eeE3JNJrruEqQMy1XsgbmVsJxRclZXgf3eY8ZOUtM4O3pRuUPi6zmjE5Rhwe105Q
+# v1MyHn+l+5YR6shB1LGzvIV2t0pecVLASe6OrwR8cjDQaHmuO7pZ0wOX7WMZj8lP
+# rNJC
 # SIG # End signature block
