@@ -746,6 +746,76 @@ Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
   
 }
 }
+function Archive-EventLogs {
+<#PSScriptInfo
+
+.VERSION 1.0.2
+
+.GUID f12cad80-f34f-402f-aa4a-e92d80f725a9
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+
+.PRIVATEDATA
+
+#> 
+
+
+
+
+
+<#
+.DESCRIPTION
+Archive Windows Event logs.
+
+.PARAMETER Path
+The location log files should be moved to.
+
+.PARAMETER EventPath
+The location log files should be moved from.
+
+.PARAMETER IgnoreHostname
+Exclude the hostname from the path when moving the log files.
+
+.EXAMPLE
+Archive-Logs -Path \\server\logs
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+    [ValidateScript({ Test-Path $_ })][string]$Path,
+    [ValidateScript({ Test-Path $_ })][string]$EventPath = (Join-Path -Path $Env:windir -ChildPath "\System32\winevt\Logs"),
+    [switch]$IgnoreHostname
+)
+
+if (-not $IgnoreHostname) {
+    $NewPath = (Join-Path -Path $Path -ChildPath $Env:computername)
+    New-Item -Path $NewPath -ItemType Directory -Force | Out-Null
+    $Path = $NewPath
+}
+
+Write-Verbose "Moving log files to $Path"
+Get-ChildItem -Path $EventPath -Recurse | Move-Item -Destination $Path -ErrorAction Stop
+}
 function Backup-MySql {
 <#PSScriptInfo
 .VERSION 1.0.1
@@ -6997,8 +7067,8 @@ If ($Response -ne $Key) { Break }
 # SIG # Begin signature block
 # MIISjwYJKoZIhvcNAQcCoIISgDCCEnwCAQExCzAJBgUrDgMCGgUAMGkGCisGAQQB
 # gjcCAQSgWzBZMDQGCisGAQQBgjcCAR4wJgIDAQAABBAfzDtgWUsITrck0sYpfvNR
-# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUAy1q8kiiNwoPwMqUwZhJMivp
-# O0+ggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
+# AgEAAgEAAgEAAgEAAgEAMCEwCQYFKw4DAhoFAAQUvkumpvNWEDgBiu5snI8Vx9LN
+# Oyyggg7pMIIG4DCCBMigAwIBAgITYwAAAAKzQqT5ohdmtAAAAAAAAjANBgkqhkiG
 # 9w0BAQsFADAiMSAwHgYDVQQDExdLb2lub25pYSBSb290IEF1dGhvcml0eTAeFw0x
 # ODA0MDkxNzE4MjRaFw0yODA0MDkxNzI4MjRaMFgxFTATBgoJkiaJk/IsZAEZFgVs
 # b2NhbDEYMBYGCgmSJomT8ixkARkWCEtvaW5vbmlhMSUwIwYDVQQDExxLb2lub25p
@@ -7082,17 +7152,17 @@ If ($Response -ne $Key) { Break }
 # JTAjBgNVBAMTHEtvaW5vbmlhIElzc3VpbmcgQXV0aG9yaXR5IDECEyIAAAx8WXmQ
 # bHCDN2EAAAAADHwwCQYFKw4DAhoFAKB4MBgGCisGAQQBgjcCAQwxCjAIoAKAAKEC
 # gAAwGQYJKoZIhvcNAQkDMQwGCisGAQQBgjcCAQQwHAYKKwYBBAGCNwIBCzEOMAwG
-# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFMqUh9/qvjLMyP4DiGWuihKSs3e9
-# MA0GCSqGSIb3DQEBAQUABIICAEA4UY3cohu/G4LaZ5KQ8dnIevaA9m631+VZMrlC
-# x0v1B8NkiFhfsIhTdkMa4SF42GVThh1s7nYUiyhrmTBJt+bKQITznnA1ZVwSk0L3
-# 2eAtRPuAYQWGLh3YiE0gVTlQS7Bue9WhgLn3WffU3hzpWpi6FHVNvyC52zhmflk/
-# ss6IlW2c0uy95//NKu71pNPOFp8wWFrvRNYGcoeCj+mUccWbKeyIE0C3ElmHCKuL
-# 2qnoZAJ+CANxYHftomKtIeJjZKdUH1e+qAXTaXSfQ2ff06LBgOULf+sePSK2gTUj
-# ENKtMH0b7kD7M/1cplyJ/zNR3xHG+jaiyHpV668gvdvSKUUp8GuL3sIInZotBs3b
-# sVvB6J+CEquA6aupcUjWGkrLVKwiIgJFUPsOBIiLGk6tQLQTOvNwX3vYgXTu/F0D
-# bz4MYhpCqK5BdjfbYKz53mud0SLO2LEkS0XoGR4Tj1k4Ef/Q7HbDMBRvgRvL85Qj
-# /n1pkTZocHPcHcVFZI6Uxtl7tlxL/5TTkUnOUZGrVIAF3/uqU8ngMncrEEdz7RGB
-# uiMrdQt5fkDnZJ6LyrfqdKpluMRm1DS+cWIX8l3eISaKkrLnI1P4G6Hxy3L2KhaH
-# fH39+3AB6wCIKtB9YDIQIna6FxVhR3p5+BimgmJNiP6MzVhwl7W8eNlGs/ByUNhq
-# JhDk
+# CisGAQQBgjcCARUwIwYJKoZIhvcNAQkEMRYEFLu4lXDSN2AttS/o9homTnwrV79L
+# MA0GCSqGSIb3DQEBAQUABIICAMygV0AIh2jVrfEs9wg18NlAoMWduno9DoMxKby6
+# MezV5sCYa5B7rYTfzsJL9ckhEWjAH67j0EurHi+JQkD8/+kIb4ip2SddF3VGKhmX
+# ZYodLprnWVmHPCC1Ed+L55RuucA08l2g6K1j1VB54dpoGgc2US91hui6Ijh2omny
+# YWJBK4xWVlin7F9T2UOX+1avkCDcoAe3WT/MelYcxTvqAg5oA2Tu39ivTxrcmpQV
+# SAXhPVAv+p0K4diW6mW3xV3AQowfoJTFnzPnglQW137harXdLwrhu8SFpz77D+at
+# 2uiJJTjaeBW1naJAd4KtVu8m4ZkYXhQdMcTCyOq0JtCccDpI+IzhNNdzw/aLeiYa
+# jl6FovYo/BYWdAtRugVNITvJhWpIAPqKxGNYHpf5bGU1djzNPsZjXhbo65eWym3q
+# 9OwM+ffqQqzrIVykLHdZ2uY4ITp5JY6XFglA7YnyUQPzh8TVB5p84CyJS3Btzfty
+# NMWCJcv/xZp5l53umZo/JhJeuInN+VFUQs2ZhVthssavppPNxSzQ8iSJd2B2Y22G
+# EiT5nGjyEQiwtdYY2O29gcmclS8yV95ADucrI7KCTWtg+BMExfAIiFMnhncDLW5O
+# K1eyGnu2IrTAQVOEb5i7R+qp9dDzrxqNStBcX/q6UtZkx1cOdE0qSbZz04w4YIHo
+# U+Fc
 # SIG # End signature block
