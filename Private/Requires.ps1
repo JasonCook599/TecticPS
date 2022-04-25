@@ -131,8 +131,11 @@ if ($Modules) {
             else { Write-Output "'$Module' is not installed. Installing now." }
     
             if ($choice -eq "Y" -or $Force) { 
-                try { Install-Module $Module -WhatIf }
-                catch { Fail $FailedInstallMessage }
+                try { Install-Module $Module }
+                catch {
+                    try { Install-Module $Module -Scope CurrentUser }
+                    catch { Fail $FailedInstallMessage } 
+                }
                 Import-Module $Module
             }
             else { Fail $SkippedInstallMessage }
