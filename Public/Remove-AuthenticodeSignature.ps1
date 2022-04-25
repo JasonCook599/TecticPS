@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 3262ca7f-d1f0-4539-9fee-90fb4580623b
 
@@ -31,16 +31,9 @@
 
 
 
-
-
-
-
-
-
 <#
 .DESCRIPTION
 This script will sign remove all authenicode signatures from a file.
-
 
 .LINK
 http://psrdrgz.github.io/RemoveAuthenticodeSignature/#:~:text=%20Removing%20Authenticode%20Signatures%20%201%20Open%20the,the%20bottom.%203%20Save%20the%20file.%20More%20
@@ -52,7 +45,6 @@ https://stackoverflow.com/questions/1928158/how-can-i-remove-signing-from-powers
 .EXAMPLE
 Remove-AuthenticodeSignature -File Script.ps1
 #>
-
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
@@ -66,3 +58,17 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
     try {
         $Content = Get-Content $FilePath
+        $SignatureLineNumber = (Get-Content $FilePath | select-string "SIG # Begin signature block").LineNumber
+            if ($null -eq $SignatureLineNumber -or $SignatureLineNumber -eq 0) {
+                Write-Warning "No signature found. Nothing to do."
+            }
+            else {
+                $Content = Get-Content $FilePath
+                $Content[0..($SignatureLineNumber - 2)] | Set-Content $FilePath
+            }
+        
+        }
+        catch {
+            Write-Error "Failed to remove signature. $($_.Exception.Message)"
+        }
+    }
