@@ -463,7 +463,7 @@ if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32
 function Add-AllowedDmaDevices {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.1
 
 .GUID a684ddd1-559b-48e2-bbdf-a85a3d50d3f6
 
@@ -491,12 +491,6 @@ function Add-AllowedDmaDevices {
 
 
 #> 
-
-
-
-
-
-
 
 
 
@@ -3115,7 +3109,7 @@ foreach ($lan in $ethernet) {
 	#$expireTime = [datetime]::ParseExact($lan.DHCPLeaseExpires,'yyyyMMddHHmmss.000000-300',$null)
 	$expireTime = $lan.DHCPLeaseExpires
 	$expireTimeFormated = Get-Date -Date $expireTime -Format F
-	$expireTimeUntil = New-TimeSpan �Start (Get-Date) �End $expireTime
+	$expireTimeUntil = New-TimeSpan -Start (Get-Date) -End $expireTime
 	$days = [Math]::Floor($expireTimeUntil.TotalDays)
 	$hours = [Math]::Floor($expireTimeUntil.TotalHours) - $days * 24
 	$minutes = [Math]::Floor($expireTimeUntil.TotalMinutes) - $hours * 60
@@ -4852,7 +4846,7 @@ while ($true) {
 function Remove-AuthenticodeSignature {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 3262ca7f-d1f0-4539-9fee-90fb4580623b
 
@@ -4883,16 +4877,9 @@ function Remove-AuthenticodeSignature {
 
 
 
-
-
-
-
-
-
 <#
 .DESCRIPTION
 This script will sign remove all authenicode signatures from a file.
-
 
 .LINK
 http://psrdrgz.github.io/RemoveAuthenticodeSignature/#:~:text=%20Removing%20Authenticode%20Signatures%20%201%20Open%20the,the%20bottom.%203%20Save%20the%20file.%20More%20
@@ -4904,7 +4891,6 @@ https://stackoverflow.com/questions/1928158/how-can-i-remove-signing-from-powers
 .EXAMPLE
 Remove-AuthenticodeSignature -File Script.ps1
 #>
-
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
