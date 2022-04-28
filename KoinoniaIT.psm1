@@ -5863,7 +5863,7 @@ Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContin
 function Repair-AdAttributes {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -5894,6 +5894,8 @@ function Repair-AdAttributes {
 
 
 
+
+
 <#
 .SYNOPSIS
 Repair attributes for user in Active Directory.
@@ -5910,7 +5912,6 @@ Repair attributes for user in Active Directory. The following actions will be pe
  - Set telephoneNumber attribute to main line and extension, if present.
 #>
 
-<# TODO Add paramateres to limit which actions are performed.#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [switch]$LegacyExchange,
@@ -5927,6 +5928,8 @@ param (
     $Properties = @("ProxyAddresses", "mail", "mailNickname", "ipPhone", "telephoneNumber"),
     [string]$SearchBase
 )
+
+while (!$DefaultPhoneNumber) { $DefaultPhoneNumber = Read-Host -Prompt "Enter the installer path." }
 
 if ($SearchBase) {
     $Users = Get-ADUser -Properties $Properties -Filter $Filter -SearchBase $SearchBase

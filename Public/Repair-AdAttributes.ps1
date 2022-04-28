@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -28,6 +28,8 @@
 
 
 #> 
+
+
 
 
 
@@ -63,6 +65,8 @@ param (
     $Properties = @("ProxyAddresses", "mail", "mailNickname", "ipPhone", "telephoneNumber"),
     [string]$SearchBase
 )
+
+while (!$DefaultPhoneNumber) { $DefaultPhoneNumber = Read-Host -Prompt "Enter the installer path." }
 
 if ($SearchBase) {
     $Users = Get-ADUser -Properties $Properties -Filter $Filter -SearchBase $SearchBase
