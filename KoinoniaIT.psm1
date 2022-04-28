@@ -2438,6 +2438,127 @@ param(
 
 return [ADSI]"LDAP://<SID=$Sid>"
 }
+function Get-AzureAdMfaStatus {
+<#PSScriptInfo
+
+.VERSION 1.0.3
+
+.GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
+
+<#
+.DESCRIPTION
+The script will get information about MFA setup from Azure Active Directory.
+
+.PARAMETER Filter
+Filters the AAD query based on the spesified parameters.
+
+.PARAMETER WhereObject
+Filters the returned results based on the spesified parameters.
+
+.PARAMETER Properties
+The properties to return from the search.
+
+.PARAMETER SortKey
+The sort key to use when sorting the results. By default, this is the first property selected.
+#>
+
+param(
+    [string]$Filter,
+    $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", @{N = "MFA Status"; E = { if ( $_.StrongAuthenticationRequirements.State -ne $null) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
+    $SortKey = $Properties[0]
+)
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+return Get-MsolUser -All  | Sort-Object $SortKey | Select-Object $Properties
+}
+function Get-AzureAdUserInfo {
+<#PSScriptInfo
+
+.VERSION 1.0.3
+
+.GUID 3af068df-1f2d-4e6b-b1a7-e18e09311471
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
+
+<#
+.DESCRIPTION
+The script will get information about users from Azure Active Directory.
+
+.PARAMETER Filter
+Filters the AAD query based on the spesified parameters.
+
+.PARAMETER WhereObject
+Filters the returned results based on the spesified parameters.
+
+.PARAMETER Properties
+The properties to return from the search.
+
+.PARAMETER SortKey
+The sort key to use when sorting the results. By default, this is the first property selected.
+#>
+
+param(
+    [string]$Filter,
+    $Properties = @("UserPrincipalName", "DisplayName", "GivenName", "Surname", "UserType", "AccountEnabled", "PhysicalDeliveryOfficeName", "TelephoneNumber", "Mobile", "Mail", "MailNickName"),
+    $WhereObject = { $_.DirSyncEnabled -ne $true },
+    $SortKey = $Properties[0]
+)
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+return Get-AzureADUser -Filter $Filter | Where-Object $WhereObject | Sort-Object $SortKey | Select-Object $Properties
+}
 function Get-BiosProductKey {
 <#PSScriptInfo
 .VERSION 1.0.0
@@ -5739,20 +5860,39 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 $Files = "install.exe", "install.res.1028.dll", "install.res.1031.dll", "install.res.1033.dll", "install.res.1036.dll", "install.res.1040.dll", "install.res.1041.dll", "install.res.1042.dll", "install.res.2052.dll", "install.res.3082.dll", "vcredist.bmp", "globdata.ini", "install.ini", "eula.1028.txt", "eula.1031.txt", "eula.1033.txt", "eula.1036.txt", "eula.1040.txt", "eula.1041.txt", "eula.1042.txt", "eula.2052.txt", "eula.3082.txt", "VC_RED.MSI", "VC_RED.cab"
 Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContinue }
 }
-function Repair-Attributes {
+function Repair-AdAttributes {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -5769,43 +5909,82 @@ Repair attributes for user in Active Directory. The following actions will be pe
  - Clear telephoneNumber attribute if mail atrribute is empty
  - Set telephoneNumber attribute to main line and extension, if present.
 #>
+
 <# TODO Add paramateres to limit which actions are performed.#>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param ()
-Write-Verbose "Removing legacy attributes for users"
-Get-ADUser -Filter *  | Sort-Object  SamAccountName, UserPrincipalName | Set-ADUser -Clear msExchMailboxGuid, msexchhomeservername, legacyexchangedn, mailNickname, msexchmailboxsecuritydescriptor, msexchpoliciesincluded, msexchrecipientdisplaytype, msexchrecipienttypedetails, msexchumdtmfmap, msexchuseraccountcontrol, msexchversion, targetAddress
-Write-Verbose "Remove legacy attributes for non-Office 365 groups"
-Get-ADGroup -Filter * | Where-Object Name -notlike "Group_*" | Sort-Object  SamAccountName, UserPrincipalName | Set-ADGroup -Clear msExchMailboxGuid, msexchhomeservername, legacyexchangedn, mailNickname, msexchmailboxsecuritydescriptor, msexchpoliciesincluded, msexchrecipientdisplaytype, msexchrecipienttypedetails, msexchumdtmfmap, msexchuseraccountcontrol, msexchversion, targetAddress
+param (
+    [switch]$LegacyExchange,
+    [switch]$LegacyProxyAddresses,
+    [switch]$ExtraProxyAddresses,
+    [switch]$ClearMailNickname,
+    [switch]$SetMailNickname,
+    [switch]$ClearTelephoneNumber,
+    [switch]$SetTelephoneNumber,
+    [string]$OnMicrosoft,
+    [string]$DefaultPhoneNumber,
+    [string]$Filter = "*",
+    $LegacyExchangeAttributes = @("msExchMailboxGuid", "msexchhomeservername", "legacyexchangedn", "mailNickname", "msexchmailboxsecuritydescriptor", "msexchpoliciesincluded", "msexchrecipientdisplaytype", "msexchrecipienttypedetails", "msexchumdtmfmap", "msexchuseraccountcontrol", "msexchversion", "targetAddress"),
+    $Properties = @("ProxyAddresses", "mail", "mailNickname", "ipPhone", "telephoneNumber"),
+    [string]$SearchBase
+)
 
-Write-Verbose "Remove legacy proxy addresses for users"
-Get-ADUser -Filter * -Properties ProxyAddresses | ForEach-Object { $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like "*@***REMOVED***CF.mail.onmicrosoft.com" }; ForEach ($proxyAddress in $Remove) { Write-Output "Removing $ProxyAddress"; Set-ADUser -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } } }
-Write-Verbose "Remove legacy proxy addresses for non-Office 365 groups"
-Get-ADGroup -Filter * -Properties ProxyAddresses | Where-Object Name -notlike "Group_*" | ForEach-Object { $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like "*@***REMOVED***CF.mail.onmicrosoft.com" }; ForEach ($proxyAddress in $Remove) { Write-Output "Removing $ProxyAddress"; Set-ADGroup -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } } }
+if ($SearchBase) {
+    $Users = Get-ADUser -Properties $Properties -Filter $Filter -SearchBase $SearchBase
+    $Groups = Get-ADGroup -Properties $Properties -Filter $Filter -SearchBase $SearchBase
+}
+else {
+    $Users = Get-ADUser -Properties $Properties -Filter $Filter
+    $Groups = Get-ADGroup -Properties $Properties -Filter $Filter
+}
 
-Write-Verbose "Remove proxy addresses if only one exists for users"
-Get-ADUser -Filter * -Properties ProxyAddresses | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADUser -Clear ProxyAddresses
-Write-Verbose "Remove proxy addresses if only one exists for non-Office 365 groups"
-Get-AdGroup -Filter * -Properties ProxyAddresses | Where-Object Name -notlike "Group_*" | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADGroup -Clear ProxyAddresses
+If ($PSCmdlet.ShouldProcess("Remove legacy exchange attributes") -and $LegacyExchange) {
+    $Users | Set-ADUser -Clear $LegacyExchangeAttributes
+    $Groups | Where-Object Name -notlike "Group_*" | Set-ADGroup -Clear $LegacyExchangeAttributes
+}
 
-Write-Verbose "Clear mailNickname if mail attribute empty for users"
-Get-ADUser -Filter * -Properties mail, mailNickname | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname }
-Write-Verbose "Clear mailNickname if mail attribute empty for non-Office 365 groups"
-Get-ADGroup -Filter * -Properties mail, mailNickname | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname }
+If ($PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes") -and $LegacyProxyAddresses) {
+    $Users | ForEach-Object {
+        $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
+        ForEach ($proxyAddress in $Remove) {
+            Write-Verbose "Removing $ProxyAddress from $($_.Name)"
+            Set-ADUser -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } 
+        }
+    }
+    $Groups | Where-Object Name -notlike "Group_*" | ForEach-Object { 
+        $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
+        ForEach ($proxyAddress in $Remove) { 
+            Write-Verbose "Removing $ProxyAddress from $($_.Name)"
+            Set-ADGroup -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } 
+        } 
+    }
 
-Write-Verbose "Set mailNickname to SamAccountName for users"
-Get-ADUser -Filter * -Properties mail, mailNickname | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } }
-Write-Verbose "Set mailNickname to SamAccountName for non-Office 365 groups"
-Get-ADGroup -Filter * -Properties mail, mailNickname | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } }
+}
+If ($PSCmdlet.ShouldProcess("Clear ProxyAddresses if only one exists") -and $ExtraProxyAddresses) {
+    $Users | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADUser -Clear ProxyAddresses
+    $Groups | Where-Object Name -notlike "Group_*" | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADGroup -Clear ProxyAddresses
+}
 
-Write-Verbose "Set title to mail attribute for general delivery mailboxes. Used to easily show address in Sharepoint"
-Get-ADUser -Filter * -SearchBase 'OU=Mailboxes,OU=Mail Objects,OU=_***REMOVED***,DC=***REMOVED***,DC=local' -Properties mail | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Title $_.mail }
-  
-Write-Verbose "Clear telephoneNumber attribute if mail atrribute is empty"
-Get-ADUser -Filter * -Properties ipPhone, mail, telephoneNumber | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber
-Write-Verbose "Set telephoneNumber attribute to main line if ipPhone attribute is empty"
-Get-ADUser -Filter * -Properties ipPhone, mail, telephoneNumber | Where-Object mail -ne $null | Where-Object ipPhone -eq $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = "+1 5197447447" } }
-Write-Verbose "Set telephoneNumber attribute to main line with extension if ipPhone attribute is present"
-Get-ADUser -Filter * -Properties ipPhone, mail, telephoneNumber | Where-Object mail -ne $null | Where-Object ipPhone -ne $null | ForEach-Object { $telephoneNumber = "+1 5197447447 x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) ; Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = $telephoneNumber } }
+If ($PSCmdlet.ShouldProcess("Clear mailNickname if mail attribute empty") -and $ClearMailNickname) {
+    $Users | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname }
+    $Groups | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname }
+}
+
+If ($PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName") -and $SetMailNickname) {
+    $Users | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } }
+    $Groups | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } }
+}
+
+If ($PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty") -and $ClearTelephoneNumber) {
+    $Users | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber
+}
+
+If ($PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension") -and $SetTelephoneNumber) {
+    $Users | Where-Object mail -ne $null | ForEach-Object { 
+        if ($_.ipphone -ne $null) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
+        else { $telephoneNumber = $DefaultPhoneNumber }
+        Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = $telephoneNumber } 
+    }
+}
 }
 function Repair-VmPermissions {
 <#PSScriptInfo
