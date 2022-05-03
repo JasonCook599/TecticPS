@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 2102c95e-5402-43a2-ba4f-356a89fff4ca
 
@@ -28,6 +28,8 @@
 
 
 #> 
+
+
 
 
 
@@ -69,4 +71,4 @@ else {
 
 
 
-return $Users | Sort-Object $SortKey | Select-Object $Properties
+return $Users # | Sort-Object $SortKey | Select-Object $Properties

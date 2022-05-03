@@ -2111,7 +2111,7 @@ ForEach-Object {
 function Get-AdComputerInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID fc558d38-77a0-4b50-bd45-9f81aaf54984
 
@@ -2144,6 +2144,8 @@ function Get-AdComputerInfo {
 
 
 
+
+
 <#
 .DESCRIPTION
 The script will get information about computers from Active Directory.
@@ -2171,13 +2173,13 @@ param(
 Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
 
 if ($SearchBase) {
-    $Users = Get-ADComputer -Filter $Filter -SearchBase $SearchBase -Properties $Properties
+    $Computers = Get-ADComputer -Filter $Filter -SearchBase $SearchBase -Properties $Properties
 }
 else {
-    $Users = Get-ADComputer -Filter $Filter -Properties $Properties
+    $Computers = Get-ADComputer -Filter $Filter -Properties $Properties
 }
 
-return $Users | Sort-Object $SortKey | Select-Object $Properties
+return $Computers # | Sort-Object $SortKey | Select-Object $Properties
 }
 function Get-ADInfo {
 <#PSScriptInfo
@@ -2319,7 +2321,7 @@ Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Select-Object
 function Get-AdUserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 2102c95e-5402-43a2-ba4f-356a89fff4ca
 
@@ -2347,6 +2349,8 @@ function Get-AdUserInfo {
 
 
 #> 
+
+
 
 
 
@@ -2388,7 +2392,7 @@ else {
 
 
 
-return $Users | Sort-Object $SortKey | Select-Object $Properties
+return $Users # | Sort-Object $SortKey | Select-Object $Properties
 }
 function Get-AdUserSid {
 <#PSScriptInfo

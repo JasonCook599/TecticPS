@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID fc558d38-77a0-4b50-bd45-9f81aaf54984
 
@@ -33,6 +33,8 @@
 
 
 
+
+
 <#
 .DESCRIPTION
 The script will get information about computers from Active Directory.
@@ -60,10 +62,10 @@ param(
 Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
 
 if ($SearchBase) {
-    $Users = Get-ADComputer -Filter $Filter -SearchBase $SearchBase -Properties $Properties
+    $Computers = Get-ADComputer -Filter $Filter -SearchBase $SearchBase -Properties $Properties
 }
 else {
-    $Users = Get-ADComputer -Filter $Filter -Properties $Properties
+    $Computers = Get-ADComputer -Filter $Filter -Properties $Properties
 }
 
-return $Users | Sort-Object $SortKey | Select-Object $Properties
+return $Computers # | Sort-Object $SortKey | Select-Object $Properties
