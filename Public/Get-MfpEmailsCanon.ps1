@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID ce6000db-e45d-4622-804c-c45eaa20a737
 
@@ -28,6 +28,8 @@
 
 
 #> 
+
+
 
 
 
@@ -66,12 +68,12 @@ $Results = @()
 $Index = 200
 $Users | ForEach-Object {
     $Index++
-    [PSCustomObject]@{
+    $Result = [PSCustomObject]@{
         objectclass   = "email"
         cn            = $_.DisplayName
         cnread        = $_.DisplayName
         subdbid       = 1
-        # mailaddress   = $_.mail;
+        mailaddress   = $_.mail
         protocol      = "smtp"
         indxid        = $Index
         enablepartial = "off"
