@@ -12,7 +12,7 @@
 RootModule = '***REMOVED***IT.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.0.31'
+ModuleVersion = '1.0.32'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -80,9 +80,9 @@ FunctionsToExport = 'Add-AllowedDmaDevices', 'Add-BluredPillarBars', 'Add-GroupE
                'Get-AzureAdMfaStatus', 'Get-AzureAdUserInfo', 'Get-BiosProductKey', 
                'Get-BitlockerStatus', 'Get-ExchangePhoto', 'Get-FirmwareType', 
                'Get-GroupMembershipReport', 'Get-ipPhone', 'Get-LapsInfo', 
-               'Get-MailboxAddresses', 'Get-MemoryType', 'Get-MfpEmailsCanon', 
-               'Get-MfpEmailsKonicaMinolta', 'Get-NewIP', 'Get-OrphanedGPO', 
-               'Get-RecentEvents', 'Get-SecureBoot', 'Get-Spns', 
+               'Get-MailboxAddresses', 'Get-MemoryType', 'Get-MfpEmailsCanonAbk', 
+               'Get-MfpEmailsCanonCsv', 'Get-MfpEmailsKonicaMinolta', 'Get-NewIP', 
+               'Get-OrphanedGPO', 'Get-RecentEvents', 'Get-SecureBoot', 'Get-Spns', 
                'Get-StaleAADGuestAccounts', 'Get-TermsOfUse', 'Get-TpmInfo', 
                'Get-UserInfo', 'Get-Wallpaper', 'Grant-Matching', 
                'Initialize-OneDrive', 'Initialize-Workstation', 'Install-GCPW', 
