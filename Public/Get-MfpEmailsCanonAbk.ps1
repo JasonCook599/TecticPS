@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 01fdecd7-47c1-4691-bc07-15f93ce2cf1a
 
@@ -28,6 +28,8 @@
 
 
 #> 
+
+
 
 
 
@@ -74,9 +76,9 @@ else {
 
 $Index = 200
 $Results = "# Canon AddressBook version: 1
-# CharSet: WCP1252
-# SubAddressBookName: Cambridge Users
-# DB Version: 0x0108"
+`# CharSet: WCP1252
+`# SubAddressBookName: Cambridge Users
+`# DB Version: 0x0108"
 
 
 $Users | ForEach-Object {
