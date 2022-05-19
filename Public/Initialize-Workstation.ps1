@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.7
+.VERSION 1.2.8
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -10,26 +10,26 @@
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
 
-.PRIVATEDATA
-
 #> 
+
+
 
 <#
 .SYNOPSIS
@@ -38,8 +38,24 @@ This script will install the neccesary applications and services on a given mach
 .DESCRIPTION
 This script will install the neccesary applications and services on a given machine. It will also check for updates to third-party applications. This script will also configure certain items not able to be configured by Group Policy,
 
+.PARAMETER Action
+An array of actions to run.
+    Rename: Rename the computer. Use -HostNamePrefix to set a prefix.
+    LabelDrive: Label the drive, by default, the $env:SystemDrive will be labelled "Windows". Use -DriveToLabel to change the drive and -DriveLabel to change the label.
+    ProvisioningPackage: Install a provisioning package. Use -ProvisioningPackage to select the appropriate pacakge.
+    JoinDomain: Join the current computer to a domain. Specify the domain with -Domain
+    BitLocker: Enable BitLocker. You can overridde the defaults using -BitLockerProtector and -BitlockerEncryptionMethod. 
+    Office: Install Microsoft Office. You can override the version using -Office.
+    RSAT: Install Remote Server Administration Tools.
+    NetFX3: Install .Net 3.0
+    Ninte: Run Ninite.
+    Reboot: Reboot the machine.
+
+.PARAMETER HostNamePrefix
+The prefix to use for the hostname.
+
 .PARAMETER BitLockerProtector
-If a protector is specified, BitLocker will be enabled using that protector. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker
+Enable BitLocker using the spesified protector. If unspecified, TPM will be used. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker
 
 .PARAMETER BitLockerEncryptionMethod
 Used to specify the encryption method for BitLocker. If unspecified, XtsAes256 will be used.
@@ -63,25 +79,24 @@ Specifies the defgault install device type for Ninite. Will use Ninite's default
 If specified, ".NET Framework 3.5 (includes .NET 2.0 and 3.0)" will be installed.
 
 .PARAMETER ProvisioningPackage
-Choose a Provisioning Package to be installed.
+The path to the Provisioning Package to be installed.
 
 .PARAMETER RSAT
 If specified, Remote Server Administrative Tools will be installed.
 
-.PARAMETER Office
+.PARAMETER OfficeVersion
 Specifes the version of Office to install. If unspecified, Office will not be installed.
-  
-.EXAMPLE
-Install.ps1 -BitLocker -Office 2019
 
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-  [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector,
-  [string]$Office,
-  [switch]$RSAT,
-  [string]$ProvisioningPackage,
-  [switch]$NetFX3,
+  [int]$Step,
+  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "RSAT", "NetFX3", "Ninite", "Reboot")][array]$Action,
+  [string]$HostNamePrefix,
+  [string]$Domain,
+  [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector = "TPM",
+  [string]$OfficeVersion = "2019",
+  [ValidateScript({ Test-Path $_ })][string]$ProvisioningPackage,
   [switch]$Ninite,
   [string]$NiniteInstallTo = "Workstation",
   [ValidateScript({ Test-Path $_ })][string]$BitLockerUSB,
@@ -90,14 +105,32 @@ param(
   [string]$DriveToLabel = ($env:SystemDrive.Substring(0, 1))
 )
 
-$meActual = [System.IO.Path]::GetFileNameWithoutExtension($MyInvocation.MyCommand.Name)
-$me = "${meActual}:"
 $parent = Split-Path $script:MyInvocation.MyCommand.Path
 
-Import-Module $parent\***REMOVED***It\***REMOVED***IT.psm1 -Force
 If (!(Test-Admin -Warn)) { Break }
+Requires ***REMOVED***IT
 
-If ($BitLockerProtector) {
+if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "JoinDomain", "Reboot") }
+if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Reboot") }
+
+if ($Action -contains "Rename") { Set-ComputerName -Prefix $HostNamePrefix }
+
+if ($Action -contains "LabelDrive") {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel")) {
+    Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel
+  }
+}
+
+if ($Action -contains "ProvisioningPackage" -or $ProvisioningPackage) {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage")) {
+    If (Test-Path -PathType Leaf -Path $ProvisioningPackage) { Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage }
+    else { Write-Warning "The provisioning file specified is not valid." }
+  }
+}
+
+if ($Action -contains "JoinDomain") { Add-Computer -DomainName $DomainName -JoinDomain }
+
+if ($Action -contains "BitLocker") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Enable-Bitlocker with `'$BitLockerProtector`' protector using $BitLockerEncryptionMethod")) {
     If ($BitLockerProtector -eq "Disable") { Disable-BitLocker -MountPoint $env:SystemDrive }
     Else {
@@ -126,46 +159,42 @@ If ($BitLockerProtector) {
   }
 }
 
-If ($NetFX3) {
+if ($Action -contains "Office") {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Office $OfficeVersion")) {
+    Install-MicrosoftOffice -Version $OfficeVersion
+  }
+}
+
+if ($Action -contains "RSAT") {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Remote Server Administrative Tools")) {
+    Write-Verbose "Install Remote Server Administrative Tools"
+    Get-WindowsCapability -Online -Name "RSAT*" | Add-WindowsCapability -Online
+  }
+}
+
+if ($Action -contains "NetFX3") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install .NET Framework 3.5 (includes .NET 2.0 and 3.0)")) {
     Write-Verbose "Installing .NET Framework 3.5 (includes .NET 2.0 and 3.0)"
     Get-WindowsCapability -Online -Name NetFx3* | Add-WindowsCapability -Online
   }
 }
 
-If ($RSAT) {
-  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Remote Server Administrative Tools")) {
-    Write-Verbose "Install Remote Server Administrative Tools"
-    Get-WindowsCapability -Online -Name "RSAT*" | Add-WindowsCapability -Online
-  }
-}
-If ($Ninite) {
+
+
+if ($Action -contains "Ninite") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername) $NiniteInstallTo", "Install apps using Ninite")) {
     Write-Verbose "Running Ninite"
     & $parent\..\Ninite\Ninite.ps1 -Local -InstallTo $NiniteInstallTo
   }
 }
 
-If ($Office) {
-  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Office $Office")) {
-    Install-MicrosoftOffice -Version $Office
-  }
-}
-
-
-If ($ProvisioningPackage) {
-  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage")) {
-    If (Test-Path -PathType Leaf -Path $ProvisioningPackage) { Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage }
-    else { Write-Warning "$me The provisioning file specified is not valid." }
-  }
-}
-
-If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel")) {
-  Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel
-  Write-Verbose "$me Checking for reboot."
-  Import-Module $parent\Modules\pendingreboot.0.9.0.6\pendingreboot.psm1
-  If ((Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") -or (Test-PendingReboot -SkipConfigurationManagerClientCheck).IsRebootPending) {
-    Write-Verbose "A reboot is required. Reboot now?"
-    Restart-Computer -Confirm
-  }
+Write-Verbose "Checking for reboot."
+Import-Module $parent\Modules\pendingreboot.0.9.0.6\pendingreboot.psm1
+If ( `
+    $Reboot `
+    -or (Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") `
+    -or (Test-PendingReboot -SkipConfigurationManagerClientCheck).IsRebootPending
+) {
+  Write-Verbose "A reboot is required. Reboot now?"
+  Restart-Computer -Confirm
 }

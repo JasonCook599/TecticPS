@@ -3246,7 +3246,7 @@ Return $Result
 function Get-MfpEmailsCanonAbk {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 01fdecd7-47c1-4691-bc07-15f93ce2cf1a
 
@@ -3274,6 +3274,8 @@ function Get-MfpEmailsCanonAbk {
 
 
 #> 
+
+
 
 
 
@@ -3320,6 +3322,9 @@ else {
 
 $Index = 200
 $Results = "# Canon AddressBook version: 1
+`# CharSet: WCP1252
+`# SubAddressBookName: Cambridge Users
+`# DB Version: 0x0108"
 
 
 $Users | ForEach-Object {
@@ -4442,7 +4447,7 @@ Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 function Initialize-Workstation {
 <#PSScriptInfo
 
-.VERSION 1.2.7
+.VERSION 1.2.8
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -4452,26 +4457,26 @@ function Initialize-Workstation {
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
 
-.PRIVATEDATA
-
 #> 
+
+
 
 <#
 .SYNOPSIS
@@ -4480,8 +4485,24 @@ This script will install the neccesary applications and services on a given mach
 .DESCRIPTION
 This script will install the neccesary applications and services on a given machine. It will also check for updates to third-party applications. This script will also configure certain items not able to be configured by Group Policy,
 
+.PARAMETER Action
+An array of actions to run.
+    Rename: Rename the computer. Use -HostNamePrefix to set a prefix.
+    LabelDrive: Label the drive, by default, the $env:SystemDrive will be labelled "Windows". Use -DriveToLabel to change the drive and -DriveLabel to change the label.
+    ProvisioningPackage: Install a provisioning package. Use -ProvisioningPackage to select the appropriate pacakge.
+    JoinDomain: Join the current computer to a domain. Specify the domain with -Domain
+    BitLocker: Enable BitLocker. You can overridde the defaults using -BitLockerProtector and -BitlockerEncryptionMethod. 
+    Office: Install Microsoft Office. You can override the version using -Office.
+    RSAT: Install Remote Server Administration Tools.
+    NetFX3: Install .Net 3.0
+    Ninte: Run Ninite.
+    Reboot: Reboot the machine.
+
+.PARAMETER HostNamePrefix
+The prefix to use for the hostname.
+
 .PARAMETER BitLockerProtector
-If a protector is specified, BitLocker will be enabled using that protector. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker
+Enable BitLocker using the spesified protector. If unspecified, TPM will be used. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker
 
 .PARAMETER BitLockerEncryptionMethod
 Used to specify the encryption method for BitLocker. If unspecified, XtsAes256 will be used.
@@ -4505,25 +4526,24 @@ Specifies the defgault install device type for Ninite. Will use Ninite's default
 If specified, ".NET Framework 3.5 (includes .NET 2.0 and 3.0)" will be installed.
 
 .PARAMETER ProvisioningPackage
-Choose a Provisioning Package to be installed.
+The path to the Provisioning Package to be installed.
 
 .PARAMETER RSAT
 If specified, Remote Server Administrative Tools will be installed.
 
-.PARAMETER Office
+.PARAMETER OfficeVersion
 Specifes the version of Office to install. If unspecified, Office will not be installed.
-  
-.EXAMPLE
-Install.ps1 -BitLocker -Office 2019
 
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-  [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector,
-  [string]$Office,
-  [switch]$RSAT,
-  [string]$ProvisioningPackage,
-  [switch]$NetFX3,
+  [int]$Step,
+  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "RSAT", "NetFX3", "Ninite", "Reboot")][array]$Action,
+  [string]$HostNamePrefix,
+  [string]$Domain,
+  [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector = "TPM",
+  [string]$OfficeVersion = "2019",
+  [ValidateScript({ Test-Path $_ })][string]$ProvisioningPackage,
   [switch]$Ninite,
   [string]$NiniteInstallTo = "Workstation",
   [ValidateScript({ Test-Path $_ })][string]$BitLockerUSB,
@@ -4532,14 +4552,32 @@ param(
   [string]$DriveToLabel = ($env:SystemDrive.Substring(0, 1))
 )
 
-$meActual = [System.IO.Path]::GetFileNameWithoutExtension($MyInvocation.MyCommand.Name)
-$me = "${meActual}:"
 $parent = Split-Path $script:MyInvocation.MyCommand.Path
 
-Import-Module $parent\***REMOVED***It\***REMOVED***IT.psm1 -Force
 If (!(Test-Admin -Warn)) { Break }
+Requires ***REMOVED***IT
 
-If ($BitLockerProtector) {
+if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "JoinDomain", "Reboot") }
+if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Reboot") }
+
+if ($Action -contains "Rename") { Set-ComputerName -Prefix $HostNamePrefix }
+
+if ($Action -contains "LabelDrive") {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel")) {
+    Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel
+  }
+}
+
+if ($Action -contains "ProvisioningPackage" -or $ProvisioningPackage) {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage")) {
+    If (Test-Path -PathType Leaf -Path $ProvisioningPackage) { Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage }
+    else { Write-Warning "The provisioning file specified is not valid." }
+  }
+}
+
+if ($Action -contains "JoinDomain") { Add-Computer -DomainName $DomainName -JoinDomain }
+
+if ($Action -contains "BitLocker") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Enable-Bitlocker with `'$BitLockerProtector`' protector using $BitLockerEncryptionMethod")) {
     If ($BitLockerProtector -eq "Disable") { Disable-BitLocker -MountPoint $env:SystemDrive }
     Else {
@@ -4568,48 +4606,44 @@ If ($BitLockerProtector) {
   }
 }
 
-If ($NetFX3) {
+if ($Action -contains "Office") {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Office $OfficeVersion")) {
+    Install-MicrosoftOffice -Version $OfficeVersion
+  }
+}
+
+if ($Action -contains "RSAT") {
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Remote Server Administrative Tools")) {
+    Write-Verbose "Install Remote Server Administrative Tools"
+    Get-WindowsCapability -Online -Name "RSAT*" | Add-WindowsCapability -Online
+  }
+}
+
+if ($Action -contains "NetFX3") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install .NET Framework 3.5 (includes .NET 2.0 and 3.0)")) {
     Write-Verbose "Installing .NET Framework 3.5 (includes .NET 2.0 and 3.0)"
     Get-WindowsCapability -Online -Name NetFx3* | Add-WindowsCapability -Online
   }
 }
 
-If ($RSAT) {
-  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Remote Server Administrative Tools")) {
-    Write-Verbose "Install Remote Server Administrative Tools"
-    Get-WindowsCapability -Online -Name "RSAT*" | Add-WindowsCapability -Online
-  }
-}
-If ($Ninite) {
+
+
+if ($Action -contains "Ninite") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername) $NiniteInstallTo", "Install apps using Ninite")) {
     Write-Verbose "Running Ninite"
     & $parent\..\Ninite\Ninite.ps1 -Local -InstallTo $NiniteInstallTo
   }
 }
 
-If ($Office) {
-  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Office $Office")) {
-    Install-MicrosoftOffice -Version $Office
-  }
-}
-
-
-If ($ProvisioningPackage) {
-  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage")) {
-    If (Test-Path -PathType Leaf -Path $ProvisioningPackage) { Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage }
-    else { Write-Warning "$me The provisioning file specified is not valid." }
-  }
-}
-
-If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel")) {
-  Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel
-  Write-Verbose "$me Checking for reboot."
-  Import-Module $parent\Modules\pendingreboot.0.9.0.6\pendingreboot.psm1
-  If ((Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") -or (Test-PendingReboot -SkipConfigurationManagerClientCheck).IsRebootPending) {
-    Write-Verbose "A reboot is required. Reboot now?"
-    Restart-Computer -Confirm
-  }
+Write-Verbose "Checking for reboot."
+Import-Module $parent\Modules\pendingreboot.0.9.0.6\pendingreboot.psm1
+If ( `
+    $Reboot `
+    -or (Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") `
+    -or (Test-PendingReboot -SkipConfigurationManagerClientCheck).IsRebootPending
+) {
+  Write-Verbose "A reboot is required. Reboot now?"
+  Restart-Computer -Confirm
 }
 }
 function Install-GCPW {
@@ -5179,6 +5213,76 @@ $Files | ForEach-Object {
     Move-Item -Path $_.FullName -Destination $Path -ErrorAction Stop
 }
 }
+function New-Password {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
+
+<#
+.DESCRIPTION
+This will return a random password which meets Active Directory's complexity requirements.
+.PARAMETER Lenght
+The lenght of the password to return. The default is 8 characters.
+
+.PARAMETER Symbols
+The number of symbols to include in the password. The default is 2 symbols.
+
+.LINK
+http://woshub.com/generating-random-password-with-powershell/
+
+.LINK
+https://docs.microsoft.com/en-us/dotnet/api/system.web.security.membership.generatepassword?view=netframework-4.8
+
+#>
+param (
+  [int]$Lenght = 8,
+  [int]$Symbols = 2
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+Add-Type -AssemblyName System.Web
+
+do {
+  $Password = [System.Web.Security.Membership]::GeneratePassword($Lenght, $Symbols)
+  If (     ($Password -cmatch "[A-Z\p{Lu}\s]") `
+      -and ($Password -cmatch "[a-z\p{Ll}\s]") `
+      -and ($Password -match "[\d]") `
+      -and ($Password -match "[^\w]")
+  ) { $Complex = $True }
+} While (-not $Complex)
+
+return $Password
+}
 function New-RandomCharacters {
 <#PSScriptInfo
 .VERSION 1.0.0
@@ -5212,48 +5316,6 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 $Random = 1..$Length | ForEach-Object { Get-Random -Maximum $Characters.length }
 $private:ofs = ""
 return [String]$Characters[$Random]
-}
-function New-RandomPassword {
-<#PSScriptInfo
-.VERSION 1.0.0
-.GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
-
-.AUTHOR
-Jason Cook
-
-.COMPANYNAME
-***REMOVED***
-
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
-
-<#
-.SYNOPSIS
-This will return a random password.
-
-.DESCRIPTION
-This will return a random password. The format of the password will be half lowercase, half uppercase, two numbers, and two symbols.
-
-.PARAMETER Lenght
-The lenght of the password to return.
-
-.PARAMETER Characters
-A string of characters to use.
-#>
-param (
-  $length = 14
-)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
-$LengthAlpha = $Length - 4
-$LengthLower = [math]::Max(0, $LengthAlpha / 2)
-$LengthUpper = [math]::Max(0, $LengthAlpha - $LengthLower)
-$Password = Get-RandomCharacters -length $LengthLower -characters "abcdefghiklmnoprstuvwxyz"
-$Password += Get-RandomCharacters -length $LengthUpper -characters "ABCDEFGHKLMNOPRSTUVWXYZ"
-$Password += Get-RandomCharacters -length 2 -characters "1234567890"
-$Password += Get-RandomCharacters -length 2 -characters "!@#$%^&*()_+-=[]\{}|;:,./<>?"
-Return $Password
 }
 function Ping-Hosts {
 <#PSScriptInfo
@@ -6734,6 +6796,74 @@ foreach ($User in $Users) {
     }
     else { Write-Warning "User `"$account`" does not exist. Skipping." }
 }
+}
+function Set-ComputerName {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 0e319076-a254-46aa-948c-203373b9e47d
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
+
+
+
+
+
+
+
+<#
+.DESCRIPTION
+This script will rename the computer based on the prefix and serial number.
+
+.PARAMETER Prefix
+The prefix to use for the computer name.
+
+.PARAMETER Serial
+The serial nubmer to use for the computer name.
+
+.PARAMETER PrefixLenght
+The lenght of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
+
+.PARAMETER NewName
+The new name to use for the computer.
+#>
+
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+    [string]$Prefix,
+    [string]$Serial = (Get-WmiObject win32_bios).Serialnumber,
+    $PrefixLenght = ($(15 - $Serial.length), $Prefix.Length | Measure-Object -Minimum ).Minimum,
+    $NewName = $Prefix.Substring(0, $PrefixLenght) + $Serial
+)
+
+Write-Verbose "Renaming computer to `'$NewName`'"
+Rename-Computer -NewName $NewName
 }
 function Set-Owner {
 <#PSScriptInfo

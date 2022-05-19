@@ -1,40 +1,68 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
 
 <#
-.SYNOPSIS
-This will return a random password.
-
 .DESCRIPTION
-This will return a random password. The format of the password will be half lowercase, half uppercase, two numbers, and two symbols.
-
+This will return a random password which meets Active Directory's complexity requirements.
 .PARAMETER Lenght
-The lenght of the password to return.
+The lenght of the password to return. The default is 8 characters.
 
-.PARAMETER Characters
-A string of characters to use.
+.PARAMETER Symbols
+The number of symbols to include in the password. The default is 2 symbols.
+
+.LINK
+http://woshub.com/generating-random-password-with-powershell/
+
+.LINK
+https://docs.microsoft.com/en-us/dotnet/api/system.web.security.membership.generatepassword?view=netframework-4.8
+
 #>
 param (
-  $length = 14
+  [int]$Lenght = 8,
+  [int]$Symbols = 2
 )
+
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-$LengthAlpha = $Length - 4
-$LengthLower = [math]::Max(0, $LengthAlpha / 2)
-$LengthUpper = [math]::Max(0, $LengthAlpha - $LengthLower)
-$Password = Get-RandomCharacters -length $LengthLower -characters "abcdefghiklmnoprstuvwxyz"
-$Password += Get-RandomCharacters -length $LengthUpper -characters "ABCDEFGHKLMNOPRSTUVWXYZ"
-$Password += Get-RandomCharacters -length 2 -characters "1234567890"
-$Password += Get-RandomCharacters -length 2 -characters "!@#$%^&*()_+-=[]\{}|;:,./<>?"
-Return $Password
+Add-Type -AssemblyName System.Web
+
+do {
+  $Password = [System.Web.Security.Membership]::GeneratePassword($Lenght, $Symbols)
+  If (     ($Password -cmatch "[A-Z\p{Lu}\s]") `
+      -and ($Password -cmatch "[a-z\p{Ll}\s]") `
+      -and ($Password -match "[\d]") `
+      -and ($Password -match "[^\w]")
+  ) { $Complex = $True }
+} While (-not $Complex)
+
+return $Password
