@@ -598,6 +598,73 @@ Get-ChildItem -File -Path $Path | ForEach-Object {
   $Format = $null
 }
 }
+function Add-ComputerToDomain {
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID 847616c6-fd6a-4685-b96f-ff8446a849e0
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+<#
+.DESCRIPTION
+This script will add the computer to the domain.
+
+.PARAMETER Domain
+The domain to join.
+
+.PARAMETER User
+The domain user with crednetials to join the domain.
+
+.PARAMETER Password
+The password for the domain user.
+
+.PARAMETER OU
+The OU to add the computer to.
+
+.PARAMETER SecurePassword
+The password for the domain user as a secure string.
+
+.PARAMETER Credentials
+The credentials object to use for the join.
+#>
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
+param(
+    [string]$Domain,
+    [string]$User,
+    [string]$Password,
+    [string]$OU,
+    [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force),
+    [pscredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
+)
+
+if ($OU) { Add-Computer -DomainName $Domain -Credential $Credentials -Force -OU $OU }
+else { Add-Computer -DomainName $Domain -Credential $Credentials -Force }
+}
 function Add-GroupEmail {
 <#PSScriptInfo
 .VERSION 1.0.0
@@ -1987,6 +2054,77 @@ if ($char.StartsWith('N')) {
 
 Write-Host 'Invalid input'
 }
+function Export-AdUsersToAssetPanda {
+<#PSScriptInfo
+
+.VERSION 1.0.2
+
+.GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+<#
+.DESCRIPTION
+Export AD user for Asset Panda
+#>
+
+param(
+    [string]$SearchBase,
+    [string]$Filter = "*",
+    [array]$Properties = ("Surname", "GivenName", "EmailAddress", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Office", "Created"),
+    [string]$Server
+)
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+$Arguments = @{}
+if ($SearchBase) { $Arguments.SearchBase = $SearchBase }
+if ($Filter) { $Arguments.Filter = $Filter }
+if ($Filter) { $Arguments.Filter = $Filter }
+if ($Properties) { $Arguments.Properties = $Properties }
+if ($Server) { $Arguments.Server = $Server }
+
+[System.Collections.ArrayList]$Results = @()
+
+Get-ADUser @Arguments | ForEach-Object {
+    $Result = [PSCustomObject]@{
+        "Last Name"      = $_.Surname
+        "First Name"     = $_.GivenName
+        "Email"          = $_.EmailAddress
+        "Department"     = $_.Department
+        "Work Phone"     = ([regex]::Match($_.telephoneNumber, "^((?:\+1)? ?(?:\d{10}|\d{7}))(?:.*)$")).Groups[1].Value
+        "Work Extension" = $_.ipPhone
+        "Cell Phone"     = $_.MobilePhone
+        "Office"         = $_.Office
+        "Hire Date"      =	$_.Created
+        "Status"         = "Full Time"
+    }
+    $Results += $Result
+}
+return $Results
+}
 function Export-MatchingCertificates {
 <#PSScriptInfo
 
@@ -3243,264 +3381,10 @@ $Result = [PSCustomObject]@{
 }
 Return $Result
 }
-function Get-MfpEmailsCanonAbk {
+function Get-MfpEmails {
 <#PSScriptInfo
 
-.VERSION 1.0.6
-
-.GUID 01fdecd7-47c1-4691-bc07-15f93ce2cf1a
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME ***REMOVED***
-
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-
-#> 
-
-
-
-
-
-
-
-<#
-.DESCRIPTION
-This script will Results the email addresses needed for the scan to email function on Canon MFPs.
-
-.LINK
-https://oip.manual.canon/USRMA-4706-zz-CS-3700-enUV/contents/devu-mcn_mng-rui-setdata_impt_expt-indivi-adrs.html
-
-.PARAMETER Properties
-The properties to export.
-
-.PARAMETER Path
-The location to export the address book to.
-
-.PARAMETER WhereObject
-Filters the returned results based on the spesified parameters.
-
-.PARAMETER SearchBase
-The base OU to search from.
-
-.PARAMETER Filter
-How should the AD results be filtered?
-#>
-[CmdletBinding(SupportsShouldProcess = $true)]
-param(
-    [array]$Properties = ("name", "DisplayName", "mail", "enabled"),
-    [string]$Path,
-    $WhereObject = { $_.mail -ne $null -and $_.Enabled -ne $false },
-    [string]$SearchBase ,
-    [string]$Filter = "*"
-)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
-if ($SearchBase) {
-    $Users = Get-ADUser -Filter $Filter -SearchBase $SearchBase -Properties $Properties | Where-Object $WhereObject | Sort-Object $Properties[0]
-}
-else {
-    $Users = Get-ADUser -Filter $Filter -Properties $Properties | Where-Object $WhereObject | Sort-Object $Properties[0]
-}
-
-$Index = 200
-$Results = "# Canon AddressBook version: 1
-`# CharSet: WCP1252
-`# SubAddressBookName: Cambridge Users
-`# DB Version: 0x0108"
-
-
-$Users | ForEach-Object {
-    $Index++
-    Write-Verbose "$($_.DisplayName + ": " + $_.Enabled)"
-    $Results += "
-
-subdbid: 1
-dn: $Index
-cn: $($_.DisplayName)
-cnread: $($_.DisplayName)
-mailaddress: $($_.mail)
-enablepartial: false
-accesscode: 0
-protocol: smtp
-objectclass: top
-objectclass: extensibleobject
-objectclass: email"
-}
-
-If ($Path) { [IO.File]::WriteAllLines($Path, $Results) }
-
-Return $Results
-}
-function Get-MfpEmailsCanonCsv {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID ce6000db-e45d-4622-804c-c45eaa20a737
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME ***REMOVED***
-
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-
-#> 
-
-
-
-
-
-<#
-.DESCRIPTION
-This script will output the email addresses needed for the scan to email function on Canon MFPs.
-
-.LINK
-https://oip.manual.canon/USRMA-4706-zz-CS-3700-enUV/contents/devu-mcn_mng-rui-setdata_impt_expt-indivi-adrs.html
-
-.PARAMETER Properties
-The properties to export.
-
-.PARAMETER Path
-The location to export the address book to.
-
-.PARAMETER WhereObject
-Filters the returned results based on the spesified parameters.
-
-.PARAMETER SearchBase
-The base OU to search from.
-
-.PARAMETER Filter
-How should the AD results be filtered?
-#>
-[CmdletBinding(SupportsShouldProcess = $true)]
-param(
-    [array]$Properties = ("name", "DisplayName", "mail", "enabled"),
-    [string]$Path,
-    $WhereObject = { $_.mail -ne $null -and $_.Enabled -ne $false },
-    [string]$SearchBase ,
-    [string]$Filter = "*"
-)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
-if ($SearchBase) {
-    $Users = Get-ADUser -Filter $Filter -SearchBase $SearchBase -Properties $Properties | Where-Object $WhereObject | Sort-Object $Properties[0]
-}
-else {
-    $Users = Get-ADUser -Filter $Filter -Properties $Properties | Where-Object $WhereObject | Sort-Object $Properties[0]
-}
-
-
-
-$Results = @()
-$Index = 200
-$Users | ForEach-Object {
-    $Index++
-    Write-Verbose "$($_.DisplayName + ": " + $_.Enabled)"
-    $Result = [PSCustomObject]@{
-        objectclass       = "email"
-        cn                = $_.DisplayName
-        cnread            = $_.DisplayName
-        cnshort           = $null
-        subdbid           = 1
-        mailaddress       = $_.mail
-        dialdata          = $null
-        uri               = $null
-        url               = $null
-        path              = $null
-        protocol          = "smtp"
-        username          = $null
-        pwd               = $null
-        member            = $null
-        indxid            = $Index
-        enablepartial     = "off"
-        sub               = $null
-        faxprotocol       = $null
-        ecm               = $null
-        txstartspeed      = $null
-        commode           = $null
-        lineselect        = $null
-        uricommode        = $null
-        uriflag           = $null
-        pwdinputflag      = $null
-        ifaxmode          = $null
-        transsvcstr1      = $null
-        transsvcstr2      = $null
-        ifaxdirectmode    = $null
-        documenttype      = $null
-        bwpapersize       = $null
-        bwcompressiontype = $null
-        bwpixeltype       = $null
-        bwbitsperpixel    = $null
-        bwresolution      = $null
-        clpapersize       = $null
-        clcompressiontype = $null
-        clpixeltype       = $null
-        clbitsperpixel    = $null
-        clresolution      = $null
-        accesscode        = 0
-        uuid              = $null
-        cnreadlang        = "en"
-        enablesfp         = $null
-        memberobjectuuid  = $null
-        loginusername     = $null
-        logindomainname   = $null
-        usergroupname     = $null
-        personalid        = $null
-    }
-    $Results += $Result
-}
-
-If ($Path) {
-    
-    $Results | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8 
-    $(
-        "# Canon AddressBook CSV version: 0x0002
-"
-    (Get-Content $Path -Raw) -replace "`"", ""
-    ) | Out-File $Path -Encoding UTF8
-}
-
-Return $Results
-}
-function Get-MfpEmailsKonicaMinolta {
-<#PSScriptInfo
-
-.VERSION 1.0.2
+.VERSION 2.0.1
 
 .GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e
 
@@ -3531,8 +3415,6 @@ function Get-MfpEmailsKonicaMinolta {
 
 
 
-
-
 <#
 .DESCRIPTION
 This script will output the email addresses needed for the scan to email function on MFPs.
@@ -3549,23 +3431,153 @@ The base OU to search from.
 .PARAMETER Filter
 How should the AD results be filtered?
 #>
+
 [CmdletBinding(SupportsShouldProcess = $true)]
+
 param(
-    [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path = ".\AD.csv",
-    [array]$Properties = ("name", "mail"),
-    [string]$SearchBase ,
+    [ValidateSet("Canon", "KonicaMinolta")][string]$Vendor,
+    [ValidateSet("csv", "abk")][string]$Format = "csv",
+    [ValidateScript( { Test-Path (Split-Path $_ -Parent) })][string]$Path,
+    [array]$Properties = ("name", "DisplayName", "mail", "enabled", "msExchHideFromAddressLists"),
+    [array]$AdditionalUsers,
+    [string]$SearchBase,
+    $WhereObject = { $_.mail -ne $null -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },
+    [string]$Server,
     [string]$Filter = "*"
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-If ($SearchBase) { $Result = Get-ADUser -Properties $Properties -Filter $Filter -SearchBase $SearchBase | Where-Object Enabled -eq $true }
-else { $Result = Get-ADUser -Properties $Properties -Filter $Filter | Where-Object Enabled -eq $true }
-$Result += Get-ADUser -Properties $Properties -Identity "koinonia"
-$Result += Get-ADUser -Properties $Properties -Identity "kcfit"
-$Result = $Result | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, mail | Sort-Object -Property Company, name
-$Result | ForEach-Object { $_.name = "$($_.name[0..23] -join '')" } #Trim lenght for import.
-$Result | Export-Csv -NoTypeInformation -Path $Path
-Return $Result
+$Arguments = @{}
+if ($Properties) { $Arguments.Properties = $Properties }
+if ($SearchBase) { $Arguments.SearchBase = $SearchBase }
+if ($Server) { $Arguments.Server = $Server }
+if ($Filter) { $Arguments.Filter = $Filter }
+
+Write-Verbose "Searching AD"
+$Users = Get-ADUser @Arguments
+
+Write-Verbose "Searching for additional users"
+if ($AdditionalUsers) {
+    $Arguments.Remove("SearchBase")
+    $AdditionalUsers | ForEach-Object { 
+        $Arguments.Identity = $_
+        $Users += Get-ADUser @Arguments
+    }
+}
+
+Write-Verbose "Sorting results"
+$Users = $Users | Where-Object $WhereObject | Select-Object $Properties | Sort-Object $Properties[0]
+
+if ($Vendor -eq "Canon") {
+    $Results = @()
+    $Index = 200
+    if ($Format -eq "csv") {
+        Write-Verbose "Starting export for Canon CSV"
+        $Users | ForEach-Object {
+            $Index++
+            $Result = [PSCustomObject]@{
+                objectclass       = "email"
+                cn                = $_.DisplayName
+                cnread            = $_.DisplayName
+                cnshort           = $null
+                subdbid           = 1
+                mailaddress       = $_.mail
+                dialdata          = $null
+                uri               = $null
+                url               = $null
+                path              = $null
+                protocol          = "smtp"
+                username          = $null
+                pwd               = $null
+                member            = $null
+                indxid            = $Index
+                enablepartial     = "off"
+                sub               = $null
+                faxprotocol       = $null
+                ecm               = $null
+                txstartspeed      = $null
+                commode           = $null
+                lineselect        = $null
+                uricommode        = $null
+                uriflag           = $null
+                pwdinputflag      = $null
+                ifaxmode          = $null
+                transsvcstr1      = $null
+                transsvcstr2      = $null
+                ifaxdirectmode    = $null
+                documenttype      = $null
+                bwpapersize       = $null
+                bwcompressiontype = $null
+                bwpixeltype       = $null
+                bwbitsperpixel    = $null
+                bwresolution      = $null
+                clpapersize       = $null
+                clcompressiontype = $null
+                clpixeltype       = $null
+                clbitsperpixel    = $null
+                clresolution      = $null
+                accesscode        = 0
+                uuid              = $null
+                cnreadlang        = "en"
+                enablesfp         = $null
+                memberobjectuuid  = $null
+                loginusername     = $null
+                logindomainname   = $null
+                usergroupname     = $null
+                personalid        = $null
+            }
+            $Results += $Result
+        }
+        If ($Path) {
+    
+            $Results | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8 
+            $(
+                "# Canon AddressBook CSV version: 0x0002
+"
+            (Get-Content $Path -Raw) -replace "`"", ""
+            ) | Out-File $Path -Encoding UTF8
+        }
+    }
+    elseif ($Format -eq "abk") {
+        Write-Verbose "Starting export for Canon ABK"
+        $Results = "# Canon AddressBook version: 1
+`# CharSet: WCP1252
+`# SubAddressBookName: Cambridge Users
+`# DB Version: 0x0108"
+        $Users | ForEach-Object {
+            $Index++
+            Write-Verbose "$($_.DisplayName + ": " + $_.Enabled)"
+            $Results += "
+
+subdbid: 1
+dn: $Index
+cn: $($_.DisplayName)
+cnread: $($_.DisplayName)
+mailaddress: $($_.mail)
+enablepartial: false
+accesscode: 0
+protocol: smtp
+objectclass: top
+objectclass: extensibleobject
+objectclass: email"
+        }
+
+        If ($Path) { [IO.File]::WriteAllLines($Path, $Results) }
+    }
+    
+}
+elseif ($Vendor -eq "KonicaMinolta") {
+    Write-Verbose "Starting export for KonicaMinolta"
+    $Users = $Users | Select-Object name, mail
+    $Users | ForEach-Object { $_.name = "$($_.name[0..23] -join '')" }
+    $Results = $Users
+    if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
+}
+elseif ($Null -eq $Vendor) { throw "Vendor must be specified" }
+else { throw "Vendor `'$Vendor`' not supported" }
+
+Write-Verbose "Finished"
+return $Results
 }
 function Get-NewIP {
 <#PSScriptInfo
@@ -6800,7 +6812,7 @@ foreach ($User in $Users) {
 function Set-ComputerName {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 0e319076-a254-46aa-948c-203373b9e47d
 
@@ -6829,8 +6841,6 @@ function Set-ComputerName {
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 This script will rename the computer based on the prefix and serial number.
@@ -6849,15 +6859,24 @@ The new name to use for the computer.
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
 param (
     [string]$Prefix,
+    [string]$User,
+    [string]$Password,
     [string]$Serial = (Get-WmiObject win32_bios).Serialnumber,
     $PrefixLenght = ($(15 - $Serial.length), $Prefix.Length | Measure-Object -Minimum ).Minimum,
     $NewName = $Prefix.Substring(0, $PrefixLenght) + $Serial
 )
 
+if ($User -and $Password) {
+    [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force)
+    [pscredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
+    Write-Verbose "Renaming computer to `'$NewName`' as `'$User`'"
+    return Rename-Computer -NewName $NewName -DomainCredential $Credentials
+}
 Write-Verbose "Renaming computer to `'$NewName`'"
-Rename-Computer -NewName $NewName
+return Rename-Computer -NewName $NewName
 }
 function Set-Owner {
 <#PSScriptInfo
@@ -7378,6 +7397,76 @@ $SearchLocations | ForEach-Object {
     Start-Process -FilePath $LocalPath -ArgumentList "--silent"
   }
 }
+}
+function Start-WindowsActivation {
+<#PSScriptInfo
+
+.VERSION 1.0.3
+
+.GUID 625c264b-e5ec-4c6a-8478-39ec90518250
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+<#
+.DESCRIPTION
+Activate windows using the spesified key, or fall back to the key in the BIOS.
+#>
+
+param (
+    [string]$ProductKey
+)
+
+Function ActivationStatus { return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" |  Where-Object { $_.PartialProductKey })[0].LicenseStatus }
+function ActivateWindows {
+    param ([Parameter(ValueFromPipeline = $true)][ValidatePattern('^([A-Z0-9]{5}-){4}[A-Z0-9]{5}$')][string]$ProductKey)
+    $Service = Get-WmiObject -query "select * from SoftwareLicensingService"
+    $Service.InstallProductKey($ProductKey)
+    $Service.RefreshLicenseStatus()
+    return ActivationStatus
+}
+
+$Status = ActivationStatus | Out-Null
+if ($Status -eq 1) { return "Windows is already activated." }
+
+if ($ProductKey) {
+    ActivateWindows $ProductKey
+    $Status = ActivationStatus | Out-Null
+    if ($Status -eq 1) { return "Windows was activated using the specified key." }
+    Write-Error "Windows could not be activated using the specified key."
+}
+
+$BiosProductKey = (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey 
+if ($BiosProductKey) {
+    ActivateWindows $BiosProductKey | Out-Null
+    $Status = ActivationStatus | Out-Null
+    if ($Status -eq 1) { return "Windows was activated using the BIOS key." }
+    Write-Error "Windows could not be activated BIOS key."
+}
+
+Write-Error "Windows could not be activated."
 }
 function Stop-ForKey {
 <#PSScriptInfo
