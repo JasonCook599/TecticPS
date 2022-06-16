@@ -27,9 +27,10 @@ https://wiki.voip.ms/article/Choosing_Server
 #>
 
 <# TODO use credential/secure string for $username and $password #>
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
 param(
-  [string]$Username = "kcf.it@***REMOVED***",
-  [string]$Password = "Open123!",
+  [string]$Username,
+  [string]$Password,
   [string]$Country = "*",
   [switch]$Fax,
   [ValidateRange(0, [int]::MaxValue)][int]$Retries = 5,
@@ -60,7 +61,6 @@ if ($Username) {
 else { 
   $Servers = $ServerList 
 }
-
 
 Clear-Variable best* -Scope Global #Clear the best* variables in case you run it more than once...
 

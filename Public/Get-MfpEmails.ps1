@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.0.1
+.VERSION 2.0.2
 
 .GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e
 
@@ -25,11 +25,7 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -48,8 +44,6 @@ The base OU to search from.
 How should the AD results be filtered?
 #>
 
-[CmdletBinding(SupportsShouldProcess = $true)]
-
 param(
     [ValidateSet("Canon", "KonicaMinolta")][string]$Vendor,
     [ValidateSet("csv", "abk")][string]$Format = "csv",
@@ -57,7 +51,7 @@ param(
     [array]$Properties = ("name", "DisplayName", "mail", "enabled", "msExchHideFromAddressLists"),
     [array]$AdditionalUsers,
     [string]$SearchBase,
-    $WhereObject = { $_.mail -ne $null -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },
+    $WhereObject = { $null -ne $_.mail -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },
     [string]$Server,
     [string]$Filter = "*"
 )

@@ -26,12 +26,9 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
+#>
 
 <# 
 .SYNOPSIS
@@ -61,8 +58,10 @@ param (
   
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-while ($true) {
-  If (-Not (Get-Process | Select-Object Path | Where-Object Path -eq $Path)) { Start-Process -FilePath $Path -ArgumentList $Arguments }
-  Start-Sleep -Seconds $Sleep
-}
 
+if ($PSCmdlet.ShouldContinue($Path, 'Starting kiosk app.')) {
+  while ($true) {
+    If (-Not (Get-Process | Select-Object Path | Where-Object Path -eq $Path)) { Start-Process -FilePath $Path -ArgumentList $Arguments }
+    Start-Sleep -Seconds $Sleep
+  }
+}

@@ -36,56 +36,59 @@ param (
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName PresentationFramework
+if ($PSCmdlet.ShouldContinue($DomainsAllowedToLogin, 'Install Google Cloud Credential Provider for Windows')) {
 
-#If (!(Test-Admin -Warn)) { Break }
+    Add-Type -AssemblyName System.Drawing
+    Add-Type -AssemblyName PresentationFramework
 
-<# Choose the GCPW file to download. 32-bit and 64-bit versions have different names #>
-if ([Environment]::Is64BitOperatingSystem) {
-    $gcpwFileName = 'gcpwstandaloneenterprise64.msi'
-}
-else { 
-    $gcpwFileName = 'gcpwstandaloneenterprise.msi' 
-}
+    #If (!(Test-Admin -Warn)) { Break }
 
-<# Download the GCPW installer. #>
-$gcpwUri = 'https://dl.google.com/credentialprovider/' + $gcpwFileName
+    <# Choose the GCPW file to download. 32-bit and 64-bit versions have different names #>
+    if ([Environment]::Is64BitOperatingSystem) {
+        $gcpwFileName = 'gcpwstandaloneenterprise64.msi'
+    }
+    else { 
+        $gcpwFileName = 'gcpwstandaloneenterprise.msi' 
+    }
 
-Write-Host 'Downloading GCPW from' $gcpwUri
-Invoke-WebRequest -Uri $gcpwUri -OutFile $gcpwFileName
+    <# Download the GCPW installer. #>
+    $gcpwUri = 'https://dl.google.com/credentialprovider/' + $gcpwFileName
 
-<# Run the GCPW installer and wait for the installation to finish #>
+    Write-Host 'Downloading GCPW from' $gcpwUri
+    Invoke-WebRequest -Uri $gcpwUri -OutFile $gcpwFileName
 
-Write-Output "Installing Office 2019"
-$run = $InstallPath + 'Office Deployment Tool\setup.exe'
-$Arguments = "/configure `"" + $InstallPath + "Office Deployment Tool\***REMOVED***-2019-ProPlus-Default.xml"
-Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
+    <# Run the GCPW installer and wait for the installation to finish #>
+
+    Write-Output "Installing Office 2019"
+    $run = $InstallPath + 'Office Deployment Tool\setup.exe'
+    $Arguments = "/configure `"" + $InstallPath + "Office Deployment Tool\***REMOVED***-2019-ProPlus-Default.xml"
+    Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
 
         
-$arguments = "/i `"$gcpwFileName`""
-$installProcess = (Start-Process msiexec.exe -ArgumentList $arguments -PassThru -Wait)
+    $arguments = "/i `"$gcpwFileName`""
+    $installProcess = (Start-Process msiexec.exe -ArgumentList $arguments -PassThru -Wait)
 
-<# Check if installation was successful #>
-if ($installProcess.ExitCode -ne 0) {
-    [System.Windows.MessageBox]::Show('Installation failed!', 'GCPW', 'OK', 'Error')
-    exit $installProcess.ExitCode
-}
-else {
-    [System.Windows.MessageBox]::Show('Installation completed successfully!', 'GCPW', 'OK', 'Info')
-}
+    <# Check if installation was successful #>
+    if ($installProcess.ExitCode -ne 0) {
+        [System.Windows.MessageBox]::Show('Installation failed!', 'GCPW', 'OK', 'Error')
+        exit $installProcess.ExitCode
+    }
+    else {
+        [System.Windows.MessageBox]::Show('Installation completed successfully!', 'GCPW', 'OK', 'Info')
+    }
 
-<# Set the required registry key with the allowed domains #>
-$registryPath = 'HKEY_LOCAL_MACHINE\Software\Google\GCPW'
-$name = 'domains_allowed_to_login'
-[microsoft.win32.registry]::SetValue($registryPath, $name, $domainsAllowedToLogin)
+    <# Set the required registry key with the allowed domains #>
+    $registryPath = 'HKEY_LOCAL_MACHINE\Software\Google\GCPW'
+    $name = 'domains_allowed_to_login'
+    [microsoft.win32.registry]::SetValue($registryPath, $name, $domainsAllowedToLogin)
 
-$domains = Get-ItemPropertyValue HKLM:\Software\Google\GCPW -Name $name
+    $domains = Get-ItemPropertyValue HKLM:\Software\Google\GCPW -Name $name
 
-if ($domains -eq $domainsAllowedToLogin) {
-    [System.Windows.MessageBox]::Show('Configuration completed successfully!', 'GCPW', 'OK', 'Info')
-}
-else {
-    [System.Windows.MessageBox]::Show('Could not write to registry. Configuration was not completed.', 'GCPW', 'OK', 'Error')
+    if ($domains -eq $domainsAllowedToLogin) {
+        [System.Windows.MessageBox]::Show('Configuration completed successfully!', 'GCPW', 'OK', 'Info')
+    }
+    else {
+        [System.Windows.MessageBox]::Show('Could not write to registry. Configuration was not completed.', 'GCPW', 'OK', 'Error')
 
+    }
 }

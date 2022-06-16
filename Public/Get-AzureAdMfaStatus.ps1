@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
 
@@ -25,11 +25,7 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -50,7 +46,7 @@ The sort key to use when sorting the results. By default, this is the first prop
 
 param(
     [string]$Filter,
-    $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", @{N = "MFA Status"; E = { if ( $_.StrongAuthenticationRequirements.State -ne $null) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
+    $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
     $SortKey = $Properties[0]
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
