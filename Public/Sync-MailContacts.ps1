@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID 6da14011-187b-4176-a61b-16836f8a0ad7
 
@@ -61,11 +61,11 @@ if ($DestinationGroup) {
         $i++ ; Progress -Index $i -Total $GroupMembers.count -Activity "Removing all members from $DestinationGroup." -Status "$_"
         Get-ADGroup $DestinationGroup -Server $DestinationDomain | Set-ADObject -Server $DestinationDomain -Remove @{'member' = $_ }
     }
+    $i = 0
 }
 
-Remove-Variable i
-
-$SyncedUsers = Ge$SyncedUsers | ForEach-Object {
+$SyncedUsers = Get-ADUser -Server $SourceDomain -Filter $SourceFilter -Properties $SourceProperties | Where-Object $WhereObject
+$SyncedUsers | ForEach-Object {
     $i++ ; Progress -Index $i -Total $SyncedUsers.count -Activity "Syncing users from $SourceSearchBase to $DestinationOU" -Status "$_"
     $Properties = @{}
     if ($_.displayName) { $Properties.displayName = $_.DisplayName }
@@ -98,18 +98,23 @@ $SyncedUsers = Ge$SyncedUsers | ForEach-Object {
     if ($_.co) { $Properties.co = $_.Country }
     if ($_.info) { $Properties.info = $_.Notes }
     
-    Write-Verbose "Creating contact for $($_.DisplayName) in $DestinationOU"
+    
     $ObjectPath = ( "CN=" + $_.DisplayName + ',' + $DestinationOU )
     $DisplayName = $_.DisplayName
     
-    try { New-ADObject -Type "contact" -Name $_.DisplayName -Server $DestinationDomain -Path $DestinationOU -OtherAttributes $Properties }
+    # Write-Verbose command occurs after the user is created to prevent logging when an error occurs.
+    try {
+        New-ADObject -Type "contact" -Name $_.DisplayName -Server $DestinationDomain -Path $DestinationOU -OtherAttributes $Properties 
+        Write-Verbose "Created contact for $DisplayName in $DestinationOU"
+    }
     catch [Microsoft.ActiveDirectory.Management.ADException] {
         try {
-            Write-Verbose "$DisplayName in $DestinationOU already exists. Updating now."
             Set-ADObject -Identity $ObjectPath -Server $DestinationDomain -Replace $Properties
+            Write-Verbose "Updated contact for $DisplayName in $DestinationOU."
         }
         catch {
-            Write-Verbose "Failed to update $DisplayName in $DestinationOU"
+            Write-Warning "Failed to update $DisplayName in $DestinationOU"
+            Write-Error $_
         }
     } 
     
