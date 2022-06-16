@@ -36,7 +36,7 @@ param (
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-if ($PSCmdlet.ShouldContinue($DomainsAllowedToLogin, 'Install Google Cloud Credential Provider for Windows')) {
+if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Credential Provider for Windows')) {
 
     Add-Type -AssemblyName System.Drawing
     Add-Type -AssemblyName PresentationFramework
