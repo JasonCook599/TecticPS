@@ -1,20 +1,30 @@
 <#PSScriptInfo
-.VERSION
-1.0.1
 
-.GUID
-717cb6fa-eb4d-4440-95e3-f00940faa21e
+.VERSION 1.0.4
 
-.AUTHOR
-Jason Cook
-Another Author
+.GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
 
-.COMPANYNAME
-***REMOVED***
-Another Company
+.AUTHOR Jason Cook
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
 #>
 
 <#
@@ -74,7 +84,8 @@ https://imagemagick.org/script/command-line-processing.php#geometry
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-	[ValidateScript( { Test-Path $_ })][array]$Path = (Get-Location),
+	[string]$Filter,
+	[ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
 	[ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
 	[string][ValidatePattern("((((\d+%){1,2})|((\d+)?x\d+(\^|!|<|>|\^)*?)|(\d+x?(\d+)?(\^|!|<|>|\^)*?)|(\d+@)|(\d+:\d+))$|^$)")]$Dimensions,
 	[string]$Suffix,
@@ -85,7 +96,6 @@ param(
 	[string]$ColorSpace,
 	[string][ValidatePattern("(^\..+$|^$)")]$OutExtension,
 	[string]$FileSize,
-	[string]$Filter,
 	[switch]$Force,
 	[ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$Magick = ((Get-Command magick).Source)
 )
@@ -98,14 +108,15 @@ If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
 	
 [System.Collections.ArrayList]$Results = @()
 
-$Images = Get-ChildItem -File -Path $Path -Filter $Filter
-ForEach ($Image in $Images) {
-	$count++ ; Progress -Index $count -Total $Images.count -Activity "Resizing images." -Name $Image.Name
+ForEach ($Image in $Path) {
+	$Image = Get-ChildItem $Image
+	if ([bool]([System.Uri]$Image.FullName).IsUnc) { throw "Path is not local." }
+	$count++ ; Progress -Index $count -Total $Path.count -Activity "Resizing images." -Name $Image.Name
 
 	$Arguments = $null		
 	If (!$OutExtension) { $ImageOutExtension = [System.IO.Path]::GetExtension($Image.Name) } #If OutExtension not set, use current
 	Else { $ImageOutExtension = $OutExtension } #Otherwise use spesified extension
-	$OutName += $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension #Out file name
+	$OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension #Out file name
 	$Out = Join-Path $OutPath $OutName #Out full path
 	If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Image")) {
 		If (Test-Path $Out) {
@@ -142,4 +153,3 @@ ForEach ($Image in $Images) {
 	}
 }
 Return $Results
-

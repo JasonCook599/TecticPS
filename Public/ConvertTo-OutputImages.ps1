@@ -1,20 +1,33 @@
 <#PSScriptInfo
-.VERSION 1.1.0
+
+.VERSION 1.1.3
+
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
 #>
 
-<#
-.SYNOPSIS
-This script will resize the spesified images to the spesifications detailed in a json file.
+<#is script will resize the spesified images to the spesifications detailed in a json file.
 
 .DESCRIPTION
 This script will resize the spesified logos, wordmarks and banner images to the spesifications of various third party services. It will pull data from a json file.
@@ -36,7 +49,7 @@ param(
 	[ValidateSet("Banner", "Logo", "Brandmark")][string]$Type = "Banner",
 	[ValidateScript( { Test-Path $_ })][string]$Json,
 	[string]$Filter,
-	[ValidateScript( { Test-Path $_ })][array]$Path = (Get-ChildItem -File -Filter $Filter),
+	[ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
 	[ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
 	[switch]$Force,
 	[string]$Destination,
@@ -47,6 +60,7 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 
 if (-not $Json) { throw "Json file not found." }
 ForEach ($Image in $Path) {
+	$Image = Get-ChildItem $Image
 	$Formats = (Get-Content -Path $Json | ConvertFrom-Json).$Type
 	$count1++; $count2 = 0
 	If ($Destination) { $Formats = $Formats | Where-Object Destination -Contains $Destination }
