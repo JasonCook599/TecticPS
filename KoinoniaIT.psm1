@@ -243,9 +243,6 @@ try {
 }
 catch { Write-Error "Error loading defaults script." }
 
-
-
-
 Write-Error "Not running as a module and can't find script path. Defaults not loaded."
 }
 function ParseGuid {
@@ -338,18 +335,9 @@ function Requires {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
-
-
-
-
-
-
+#>
 
 <#
 .SYNOPSIS
@@ -488,11 +476,7 @@ function Add-AllowedDmaDevices {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
 #> 
-
-
 
 <#
 .SYNOPSIS
@@ -626,7 +610,6 @@ function Add-ComputerToDomain {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
 
 #> 
 
@@ -967,7 +950,6 @@ function Clear-PrintQueue {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
 #> 
@@ -1033,18 +1015,9 @@ function Connect-Office365 {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
-
-
-
-
-
-
+#>
 
 <#
 .SYNOPSIS
@@ -1092,7 +1065,6 @@ Use basic auth.
 
 .PARAMETER Credential
 The credentials for basic auth.
-
 
 .PARAMETER AzureAD
 Connect to Azure Active Directory.
@@ -1225,22 +1197,32 @@ Else {
 }
 function Convert-Image {
 <#PSScriptInfo
-.VERSION
-1.0.1
 
-.GUID
-717cb6fa-eb4d-4440-95e3-f00940faa21e
+.VERSION 1.0.4
 
-.AUTHOR
-Jason Cook
-Another Author
+.GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
 
-.COMPANYNAME
-***REMOVED***
-Another Company
+.AUTHOR Jason Cook
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
 #>
 
 <#
@@ -1300,7 +1282,8 @@ https://imagemagick.org/script/command-line-processing.php#geometry
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-	[ValidateScript( { Test-Path $_ })][array]$Path = (Get-Location),
+	[string]$Filter,
+	[ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
 	[ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
 	[string][ValidatePattern("((((\d+%){1,2})|((\d+)?x\d+(\^|!|<|>|\^)*?)|(\d+x?(\d+)?(\^|!|<|>|\^)*?)|(\d+@)|(\d+:\d+))$|^$)")]$Dimensions,
 	[string]$Suffix,
@@ -1311,7 +1294,6 @@ param(
 	[string]$ColorSpace,
 	[string][ValidatePattern("(^\..+$|^$)")]$OutExtension,
 	[string]$FileSize,
-	[string]$Filter,
 	[switch]$Force,
 	[ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$Magick = ((Get-Command magick).Source)
 )
@@ -1324,14 +1306,15 @@ If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
 	
 [System.Collections.ArrayList]$Results = @()
 
-$Images = Get-ChildItem -File -Path $Path -Filter $Filter
-ForEach ($Image in $Images) {
-	$count++ ; Progress -Index $count -Total $Images.count -Activity "Resizing images." -Name $Image.Name
+ForEach ($Image in $Path) {
+	$Image = Get-ChildItem $Image
+	if ([bool]([System.Uri]$Image.FullName).IsUnc) { throw "Path is not local." }
+	$count++ ; Progress -Index $count -Total $Path.count -Activity "Resizing images." -Name $Image.Name
 
 	$Arguments = $null		
 	If (!$OutExtension) { $ImageOutExtension = [System.IO.Path]::GetExtension($Image.Name) } #If OutExtension not set, use current
 	Else { $ImageOutExtension = $OutExtension } #Otherwise use spesified extension
-	$OutName += $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension #Out file name
+	$OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension #Out file name
 	$Out = Join-Path $OutPath $OutName #Out full path
 	If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Image")) {
 		If (Test-Path $Out) {
@@ -1371,17 +1354,32 @@ Return $Results
 }
 function ConvertTo-EndpointCertificate {
 <#PSScriptInfo
-.VERSION 1.1.1
+
+.VERSION 2.0.0
+
 .GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
 #>
 
 <#
@@ -1400,89 +1398,119 @@ Copyright (c) ***REMOVED*** 2022
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
   [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
-  [string]$LocalPrefix,
+  [ValidateSet("Windows", "AlwaysUp", "CiscoSG300", "PaperCutMobility", "Spiceworks", "UnifiCloudKey", "UnifiCore", "USG", "IISManagement", "3CX")][array]$Services,
+  [string]$Prefix,
   [string]$Suffix,
-  [string]$Filter = "*.pfx"
+  [string]$Filter = "*.pfx",
+  $Certificates = (Get-ChildItem -File -Path $Path -Filter $Filter)
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-$count = 1; $PercentComplete = 0;
-$Certificates = Get-ChildItem -File -Path $Path -Filter $Filter
 ForEach ($Certificate in $Certificates) {
-  #Progress message
-  $ActivityMessage = "Converting Certificates. Please wait..."
-  $StatusMessage = ("Processing {0} of {1}: {2}" -f $count, @($Certificates).count, $Certificate.Name)
-  $PercentComplete = ($count / @($Certificates).count * 100)
-  Write-Progress -Activity $ActivityMessage -Status $StatusMessage -PercentComplete $PercentComplete
-  $count++
-
+  $count++ ; Progress -Index $count -Total @($Certificates).count -Activity "Resizing images." -Name $Certificate.Name
   $Password = Read-Host "Enter Password"
+  
   If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Certificate")) {  
-    $LocalPrefix = $Prefix + [System.IO.Path]::GetFileNameWithoutExtension($Certificate.FullName) + "_"
+    $Prefix = $Prefix + [System.IO.Path]::GetFileNameWithoutExtension($Certificate.FullName) + "_"
     $Path = $Certificate.FullName
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -out "$LocalPrefix`PEM.txt" -nodes 
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -out "$LocalPrefix`PEM_Key.txt" -nodes
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$LocalPrefix`PEM_Cert.txt" -nodes
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$LocalPrefix`PEM_Cert_NoNodes.txt"
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$LocalPrefix`PEM_Cert.cer" -nodes
-    openssl.exe pkcs12 -passin "pass:$Password" -export -in "$LocalPrefix`PEM_Cert.txt" -inkey "$LocalPrefix`PEM_Key.txt" -certfile "$LocalPrefix`PEM_Cert.txt" -out "$LocalPrefix`Unifi.p12" -name unifi -password pass:aircontrolenterprise
+
+    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -out "$Prefix`PEM.txt" -nodes 
+    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -out "$Prefix`PEM_Key.txt" -nodes
+    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert.txt" -nodes
+    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert_NoNodes.txt"
+    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert.cer" -nodes
+    openssl.exe pkcs12 -passin "pass:$Password" -export -in "$Prefix`PEM_Cert.txt" -inkey "$Prefix`PEM_Key.txt" -certfile "$Prefix`PEM_Cert.txt" -out "$Prefix`Unifi.p12" -name unifi -password pass:aircontrolenterprise
         
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -nodes | openssl.exe  rsa -out "$LocalPrefix`RSA_Key.txt"
-    openssl.exe rsa  -passin "pass:$Password" -in "$LocalPrefix`PEM.txt" -pubout -out "$LocalPrefix`RSA_Pub.txt"
-    Write-Output ""
+    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -nodes | openssl.exe  rsa -out "$Prefix`RSA_Key.txt"
+    openssl.exe rsa  -passin "pass:$Password" -in "$Prefix`PEM.txt" -pubout -out "$Prefix`RSA_Pub.txt"
 
-    Write-Output "To import to Windows run the following commands.`n`$mypwd = Get-Credential -UserName 'Enter password below' -Message 'Enter password below'`nImport-PfxCertificate -FilePath C:\Local\Web.pfx -CertStoreLocation Cert:\LocalMachine\My -Password `$mypwd.Password`n"
-
-    New-Item -Force -Type Directory -Name AlwaysUp | Out-Null
-    Copy-Item "$LocalPrefix`PEM_Cert.txt" AlwaysUp\ctc-self-signed-certificate-exp-2024.pem
-    Copy-Item "$LocalPrefix`PEM_Key.txt" AlwaysUp\ctc-self-signed-certificate-exp-2024-key.pem
-    Write-Output "Always Up: Copy files to C:\Program Files (x86)\AlwaysUpWebService\certificates`n"
-
-    New-Item -Force -Type Directory -Name CiscoSG300 | Out-Null
-    Copy-Item "$LocalPrefix`PEM_Cert.txt" CiscoSG300\Cert.txt
-    Copy-Item "$LocalPrefix`RSA_Pub.txt" CiscoSG300\RSA_Pub.txt
-    Copy-Item "$LocalPrefix`RSA_Key.txt" CiscoSG300\RSA_Key.txt
-    Write-Output "Cisco SG300: Use RSA Key, RSA Pub, and PEM Cert`nFor RSA Pub, remove the first 32 characters and change BEGIN/END PUBLIC KEY to BEGIN/END RSA PUBLIC KEY. Use only the primary certificate, not the entire chain. When importing, edit HTML to allow more than 2046 characters in certificate feild.`nInstructions from: https://severehalestorm.net/?p=54`n"
-
-    New-Item -Force -Type Directory -Name PaperCutMobility | Out-Null
-    Copy-Item "$LocalPrefix`PEM_Cert.txt" PaperCutMobility\tls.cer
-    Copy-Item "$LocalPrefix`PEM_Key.txt" PaperCutMobility\tls.pem
-    Write-Output "PaperCut Mobility: `n"
-
-    New-Item -Force -Type Directory -Name Spiceworks | Out-Null
-    Copy-Item "$LocalPrefix`PEM_Cert.txt" Spiceworks\ssl-cert.pem
-    Copy-Item "$LocalPrefix`PEM_Key.txt" Spiceworks\ssl-private-key.pem
-    Write-Output "Spiceworks: Copy files to C:\Program Files (x86)\Spiceworks\httpd\ssl`n"
-
-    New-Item -Force -Type Directory -Name UnifiCloudKey | Out-Null
-    Write-Verbose "Instructions from here: https://community.ubnt.com/t5/UniFi-Wireless/HOWTO-Install-Signed-SSL-Certificate-on-Cloudkey-and-use-for/td-p/1977049"
-    Write-Output "Unifi Cloud Key: Copy files to '/etc/ssl/private' on the Cloud Key and run the following commands.`ncd /etc/ssl/private`nkeytool -importkeystore -srckeystore unifi.p12 -srcstoretype PKCS12 -srcstorepass aircontrolenterprise -destkeystore unifi.keystore.jks -storepass aircontrolenterprise`nkeytool -list -v -keystore unifi.keystore.jks`ntar cf cert.tar cloudkey.crt cloudkey.key unifi.keystore.jks`ntar tvf cert.tar`nchown root:ssl-cert cloudkey.crt cloudkey.key unifi.keystore.jks cert.tar`nchmod 640 cloudkey.crt cloudkey.key unifi.keystore.jks cert.tar`nnginx -t`n/etc/init.d/nginx restart; /etc/init.d/unifi restart`n"
-    Copy-Item "$LocalPrefix`PEM_Cert.txt" UnifiCloudKey\cloudkey.crt
-    Copy-Item "$LocalPrefix`PEM_Key.txt" UnifiCloudKey\cloudkey.key
-    Copy-Item "$LocalPrefix``unifi.p12" UnifiCloudKey\unifi.p12
-
-    New-Item -Force -Type Directory -Name UnifiCore | Out-Null
-    Write-Output "Unifi Cloud Key: Copy files to '/data/unifi-core/config' on the Cloud Key and run the following commands.`n`nsystemctl restart unifi-core.service`n"
-    Copy-Item "$LocalPrefix`PEM_Cert_NoNodes.txt" UnifiCore\unifi-core.crt
-    Copy-Item "$LocalPrefix`RSA_Key.txt" UnifiCore\unifi-core.key
-
-    New-Item -Force -Type Directory -Name USG | Out-Null
-    Copy-Item "$LocalPrefix`PEM.txt" server.pem
-    Write-Output "Edge Router or USG: Copy the PEM file to '/etc/lighttpd/server.pem' and run the following commands."
-    Write-Output "kill -SIGINT `$(cat /var/run/lighttpd.pid)"
-    Write-Output "/usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf"
-    Write-Output ""
-
-    Write-Output "IIS Management: Add PFX certificate to server and run the following commanges in Powershell"
-    Write-Output "`$mypwd = Get-Credential -UserName 'Enter password below' -Message 'Enter password below'>"
-    Write-Output "Import-PfxCertificate -FilePath '.\***REMOVED*** Web.pfx' -CertStoreLocation Cert:\LocalMachine\My -Password `$mypwd.Password"
-    Write-Output "`$cert = Get-ChildItem -Path Cert:\LocalMachine\My | Where-Object {`$_.subject -like `"****REMOVED****`"} | Where-Object {`$_.NotAfter -gt (Get-Date)} | Select-Object -ExpandProperty Thumbprint"
-    Write-Output "Import-Module WebAdministration"
-    Write-Output "Remove-Item -Path IIS:\SslBindings\0.0.0.0!8172"
-    Write-Output "Get-Item -Path `"cert:\localmachine\my\`$cert`" | New-Item -Force -Path IIS:\SslBindings\0.0.0.0!8172"
-    Write-Output "https://support.microsoft.com/en-us/help/3206898/enabling-iis-manager-and-web-deploy-after-disabling-ssl3-and-tls-1-0"
-    Write-Output ""
-
+    if ($Services -contains "Windows") {
+      Write-Output "Windows: Run the following commands.
+`$mypwd = Get-Credential -UserName 'Enter password below' -Message 'Enter password below'
+`nImport-PfxCertificate -FilePath $($Certificate.FullName) -CertStoreLocation Cert:\LocalMachine\My -Password `$mypwd.Password
+" 
+    }
+    if ($Services -contains "IISManagement") {
+      Write-Verbose "Instructions from https://support.microsoft.com/en-us/help/3206898/enabling-iis-manager-and-web-deploy-after-disabling-ssl3-and-tls-1-0"
+      Write-Output "IIS Management: Add PFX certificate to Windows and run the following commanges in Powershell
+`$cert = Get-ChildItem -Path Cert:\LocalMachine\My | Where-Object {`$_.subject -like `"*Common Name*`"} | Where-Object {`$_.NotAfter -gt (Get-Date)} | Select-Object -ExpandProperty Thumbprint
+Import-Module WebAdministration
+Remove-Item -Path IIS:\SslBindings\0.0.0.0!8172
+Get-Item -Path `"cert:\localmachine\my\`$cert`" | New-Item -Force -Path IIS:\SslBindings\0.0.0.0!8172
+"
+    }
+    if ($Services -contains "AlwaysUp") {
+      Write-Output "Always Up: Copy files to C:\Program Files (x86)\AlwaysUpWebService\certificates`n"
+      New-Item -Force -Type Directory -Name AlwaysUp | Out-Null
+      Copy-Item "$Prefix`PEM_Cert.txt" AlwaysUp\ctc-self-signed-certificate-exp-2024.pem
+      Copy-Item "$Prefix`PEM_Key.txt" AlwaysUp\ctc-self-signed-certificate-exp-2024-key.pem
+      
+    }
+    if ($Services -contains "CiscoSG300") {
+      Write-Output "Cisco SG300: Use RSA Key, RSA Pub, and PEM Cert
+For RSA Pub, remove the first 32 characters and change BEGIN/END PUBLIC KEY to BEGIN/END RSA PUBLIC KEY. Use only the primary certificate, not the entire chain. When importing, edit HTML to allow more than 2046 characters in certificate feild.
+Instructions from: https://severehalestorm.net/?p=54
+"
+      New-Item -Force -Type Directory -Name CiscoSG300 | Out-Null
+      Copy-Item "$Prefix`PEM_Cert.txt" CiscoSG300\Cert.txt
+      Copy-Item "$Prefix`RSA_Pub.txt" CiscoSG300\RSA_Pub.txt
+      Copy-Item "$Prefix`RSA_Key.txt" CiscoSG300\RSA_Key.txt
+    }
+    if ($Services -contains "PaperCutMobility") {
+      Write-Output "PaperCut Mobility: `n"
+      New-Item -Force -Type Directory -Name PaperCutMobility | Out-Null
+      Copy-Item "$Prefix`PEM_Cert.txt" PaperCutMobility\tls.cer
+      Copy-Item "$Prefix`PEM_Key.txt" PaperCutMobility\tls.pem
+    }
+    if ($Services -contains "Spiceworks") {
+      Write-Output "Spiceworks: Copy files to C:\Program Files (x86)\Spiceworks\httpd\ssl`n"
+      New-Item -Force -Type Directory -Name Spiceworks | Out-Null
+      Copy-Item "$Prefix`PEM_Cert.txt" Spiceworks\ssl-cert.pem
+      Copy-Item "$Prefix`PEM_Key.txt" Spiceworks\ssl-private-key.pem
+    }
+    if ($Services -contains "UnifiCloudKey") {
+      Write-Verbose "Instructions from here: https://community.ubnt.com/t5/UniFi-Wireless/HOWTO-Install-Signed-SSL-Certificate-on-Cloudkey-and-use-for/td-p/1977049"
+      Write-Output "Unifi Cloud Key: Copy files to '/etc/ssl/private' on the Cloud Key and run the following commands:
+cd /etc/ssl/private
+keytool -importkeystore -srckeystore unifi.p12 -srcstoretype PKCS12 -srcstorepass aircontrolenterprise -destkeystore unifi.keystore.jks -storepass aircontrolenterprise
+keytool -list -v -keystore unifi.keystore.jks
+tar cf cert.tar cloudkey.crt cloudkey.key unifi.keystore.jks
+tar tvf cert.tar
+chown root:ssl-cert cloudkey.crt cloudkey.key unifi.keystore.jks cert.tar
+chmod 640 cloudkey.crt cloudkey.key unifi.keystore.jks cert.tar
+nginx -t
+/etc/init.d/nginx restart; /etc/init.d/unifi restart
+"
+      New-Item -Force -Type Directory -Name UnifiCloudKey | Out-Null
+      Copy-Item "$Prefix`PEM_Cert.txt" UnifiCloudKey\cloudkey.crt
+      Copy-Item "$Prefix`PEM_Key.txt" UnifiCloudKey\cloudkey.key
+      Copy-Item "$Prefix``unifi.p12" UnifiCloudKey\unifi.p12 
+    }
+    if ($Services -contains "UnifiCore") {
+      Write-Output "Unifi Cloud Key: Copy files to '/data/unifi-core/config' on the Cloud Key and run the following commands.
+systemctl restart unifi-core.service
+"
+      New-Item -Force -Type Directory -Name UnifiCore | Out-Null
+      Copy-Item "$Prefix`PEM_Cert_NoNodes.txt" UnifiCore\unifi-core.crt
+      Copy-Item "$Prefix`RSA_Key.txt" UnifiCore\unifi-core.key
+    }
+    if ($Services -contains "USG") {
+      Write-Output "Edge Router or USG: Copy the PEM file to '/etc/lighttpd/server.pem' and run the following commands.
+kill -SIGINT `$(cat /var/run/lighttpd.pid)
+/usr/sbin/lighttpd -f /etc/lighttpd/lighttpd.conf
+"
+      New-Item -Force -Type Directory -Name USG | Out-Null
+      Copy-Item "$Prefix`PEM.txt" USG\server.pem
+    }
+    if ($Services -contains "3CX") {
+      Write-Verbose "Instructions from: https://help.3cx.com/kb/en-us/33-installation/148-how-can-i-replace-the-ssl-certificates-for-a-custom-domain"
+      Write-Output "3CX Windows: Rename to match existing files, then copy to C:\Program Files\3CX Phone System\Bin\nginx\conf\Instance1 and restart the `'3CX Phone System Nginx Webserver`' service.
+      Restart-Service -DisplayName `"3CX PhoneSystem Nginx Server`"
+"
+      New-Item -Force -Type Directory -Name 3CX | Out-Null
+      Copy-Item "$Prefix`PEM_Cert.txt" 3CX\YOURFQDN-crt.pem
+      Copy-Item "$Prefix`PEM_Key.txt" 3CX\YOURFQDN-key.pem
+    }
     <#
           RSA
           RSA SG300
@@ -1499,23 +1527,35 @@ ForEach ($Certificate in $Certificates) {
 }
 function ConvertTo-OutputImages {
 <#PSScriptInfo
-.VERSION 1.1.0
+
+.VERSION 1.1.4
+
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
 #>
 
 <#
-.SYNOPSIS
-This script will resize the spesified images to the spesifications detailed in a json file.
-
 .DESCRIPTION
 This script will resize the spesified logos, wordmarks and banner images to the spesifications of various third party services. It will pull data from a json file.
 
@@ -1536,7 +1576,7 @@ param(
 	[ValidateSet("Banner", "Logo", "Brandmark")][string]$Type = "Banner",
 	[ValidateScript( { Test-Path $_ })][string]$Json,
 	[string]$Filter,
-	[ValidateScript( { Test-Path $_ })][array]$Path = (Get-ChildItem -File -Filter $Filter),
+	[ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
 	[ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
 	[switch]$Force,
 	[string]$Destination,
@@ -1547,6 +1587,7 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 
 if (-not $Json) { throw "Json file not found." }
 ForEach ($Image in $Path) {
+	$Image = Get-ChildItem $Image
 	$Formats = (Get-Content -Path $Json | ConvertFrom-Json).$Type
 	$count1++; $count2 = 0
 	If ($Destination) { $Formats = $Formats | Where-Object Destination -Contains $Destination }
@@ -1897,8 +1938,6 @@ https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/hyperv-t
 https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/LICENSE
 #>
 
-
-
 param([string]$vmName)
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
@@ -1955,7 +1994,6 @@ Add-Member -InputObject $vmInfo NoteProperty -Name "State" -Value $vm.State
 Add-Member -InputObject $vmInfo NoteProperty -Name "MacAddressSpoofing" -Value ((Get-VmNetworkAdapter -VmName $vmName).MacAddressSpoofing)
 Add-Member -InputObject $vmInfo NoteProperty -Name "MemorySize" -Value (Get-VMMemory -VmName $vmName).Startup
 
-
 $vmInfo.ExposeVirtualizationExtensions = (Get-VMProcessor -VM $vm).ExposeVirtualizationExtensions
 
 Write-Host "This script will set the following for $vmName in order to enable nesting:"
@@ -2001,7 +2039,6 @@ while (-not ($char.StartsWith('Y') -or $char.StartsWith('N'))) {
     Write-Host "Invalid Input, Y or N" 
     $char = Read-Host
 }
-
 
 if ($char.StartsWith('Y')) {
     if ($vmInfo.State -eq 'Saved') {
@@ -2082,8 +2119,6 @@ function Export-AdUsersToAssetPanda {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
 #> 
 
 <#
@@ -2154,18 +2189,9 @@ function Export-MatchingCertificates {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
-
-
-
-
-
-
+#>
 
 <#
 .SYNOPSIS
@@ -2274,15 +2300,7 @@ function Get-AdComputerInfo {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
-
-
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -2347,11 +2365,7 @@ function Get-ADInfo {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -2484,15 +2498,7 @@ function Get-AdUserInfo {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
-
-
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -2528,8 +2534,6 @@ else {
     $Users = Get-ADUser -Filter $Filter -Properties $Properties
 }
 
-
-
 return $Users # | Sort-Object $SortKey | Select-Object $Properties
 }
 function Get-AdUserSid {
@@ -2560,11 +2564,7 @@ function Get-AdUserSid {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -2583,7 +2583,7 @@ return [ADSI]"LDAP://<SID=$Sid>"
 function Get-AzureAdMfaStatus {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
 
@@ -2608,11 +2608,7 @@ function Get-AzureAdMfaStatus {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -2633,7 +2629,7 @@ The sort key to use when sorting the results. By default, this is the first prop
 
 param(
     [string]$Filter,
-    $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", @{N = "MFA Status"; E = { if ( $_.StrongAuthenticationRequirements.State -ne $null) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
+    $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
     $SortKey = $Properties[0]
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
@@ -2668,11 +2664,7 @@ function Get-AzureAdUserInfo {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -2933,7 +2925,6 @@ On a legacy BIOS-based system, or on a system that supports both legacy BIOS and
 legacy BIOS, the function will fail with ERROR_INVALID_FUNCTION. On a UEFI-based system, the function will fail with 
 an error specific to the firmware, such as ERROR_NOACCESS, to indicate that the dummy GUID namespace does not exist."
 
-
 From PowerShell, we can call the API via P/Invoke from a compiled C# class using Add-Type.  In Win32 any resulting
 API error is retrieved using GetLastError(), however, this is not reliable in .Net (see 
 blogs.msdn.com/b/adam_nathan/archive/2003/04/25/56643.aspx), instead we mark the pInvoke signature for 
@@ -2992,12 +2983,8 @@ Function IsUEFI {
     }
 '@
 
-
     [CheckUEFI]::IsUEFI()
 }
-
-
-
 
 <#
 
@@ -3017,11 +3004,6 @@ typedef enum _FIRMWARE_TYPE {
 Once again, this API call can be called in .Net via P/Invoke.  Rather than defining an enum the function below 
 just returns an unsigned int.
 #>
-
-
-
-
-
 
 Function Get-BiosType {
 
@@ -3069,7 +3051,6 @@ Function Get-BiosType {
     }
 '@
 
-
     [FirmwareType]::GetFirmwareType()
 }
 }
@@ -3101,11 +3082,7 @@ function Get-GroupMembershipReport {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -3163,7 +3140,6 @@ function Get-ipPhone {
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-
 
 .PRIVATEDATA
 
@@ -3384,7 +3360,7 @@ Return $Result
 function Get-MfpEmails {
 <#PSScriptInfo
 
-.VERSION 2.0.1
+.VERSION 2.0.2
 
 .GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e
 
@@ -3409,11 +3385,7 @@ function Get-MfpEmails {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -3432,8 +3404,6 @@ The base OU to search from.
 How should the AD results be filtered?
 #>
 
-[CmdletBinding(SupportsShouldProcess = $true)]
-
 param(
     [ValidateSet("Canon", "KonicaMinolta")][string]$Vendor,
     [ValidateSet("csv", "abk")][string]$Format = "csv",
@@ -3441,7 +3411,7 @@ param(
     [array]$Properties = ("name", "DisplayName", "mail", "enabled", "msExchHideFromAddressLists"),
     [array]$AdditionalUsers,
     [string]$SearchBase,
-    $WhereObject = { $_.mail -ne $null -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },
+    $WhereObject = { $null -ne $_.mail -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },
     [string]$Server,
     [string]$Filter = "*"
 )
@@ -3658,7 +3628,6 @@ Jason Cook
 Copyright (c) ***REMOVED*** 2022
 #>
 
-
 <#
 .DESCRIPTION
 This script will find all orphaned GPOs.
@@ -3844,12 +3813,9 @@ function Get-Spns {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
+#>
 
 <# 
 .DESCRIPTION
@@ -3912,18 +3878,9 @@ function Get-StaleAADGuestAccounts {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
-
-
-
-
-
-
+#>
 
 <#
 .SYNOPSIS
@@ -4026,14 +3983,9 @@ function Get-TermsOfUse {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -4299,12 +4251,9 @@ function Get-Wallpaper {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -4354,18 +4303,9 @@ function Grant-Matching {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
-
-
-
-
-
-
+#>
 
 <#
 .SYNOPSIS
@@ -4438,14 +4378,9 @@ function Initialize-OneDrive {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -4484,11 +4419,7 @@ function Initialize-Workstation {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .SYNOPSIS
@@ -4638,8 +4569,6 @@ if ($Action -contains "NetFX3") {
   }
 }
 
-
-
 if ($Action -contains "Ninite") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername) $NiniteInstallTo", "Install apps using Ninite")) {
     Write-Verbose "Running Ninite"
@@ -4697,58 +4626,61 @@ param (
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-Add-Type -AssemblyName System.Drawing
-Add-Type -AssemblyName PresentationFramework
+if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Credential Provider for Windows')) {
 
-#If (!(Test-Admin -Warn)) { Break }
+    Add-Type -AssemblyName System.Drawing
+    Add-Type -AssemblyName PresentationFramework
 
-<# Choose the GCPW file to download. 32-bit and 64-bit versions have different names #>
-if ([Environment]::Is64BitOperatingSystem) {
-    $gcpwFileName = 'gcpwstandaloneenterprise64.msi'
-}
-else { 
-    $gcpwFileName = 'gcpwstandaloneenterprise.msi' 
-}
+    #If (!(Test-Admin -Warn)) { Break }
 
-<# Download the GCPW installer. #>
-$gcpwUri = 'https://dl.google.com/credentialprovider/' + $gcpwFileName
+    <# Choose the GCPW file to download. 32-bit and 64-bit versions have different names #>
+    if ([Environment]::Is64BitOperatingSystem) {
+        $gcpwFileName = 'gcpwstandaloneenterprise64.msi'
+    }
+    else { 
+        $gcpwFileName = 'gcpwstandaloneenterprise.msi' 
+    }
 
-Write-Host 'Downloading GCPW from' $gcpwUri
-Invoke-WebRequest -Uri $gcpwUri -OutFile $gcpwFileName
+    <# Download the GCPW installer. #>
+    $gcpwUri = 'https://dl.google.com/credentialprovider/' + $gcpwFileName
 
-<# Run the GCPW installer and wait for the installation to finish #>
+    Write-Host 'Downloading GCPW from' $gcpwUri
+    Invoke-WebRequest -Uri $gcpwUri -OutFile $gcpwFileName
 
-Write-Output "Installing Office 2019"
-$run = $InstallPath + 'Office Deployment Tool\setup.exe'
-$Arguments = "/configure `"" + $InstallPath + "Office Deployment Tool\***REMOVED***-2019-ProPlus-Default.xml"
-Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
+    <# Run the GCPW installer and wait for the installation to finish #>
+
+    Write-Output "Installing Office 2019"
+    $run = $InstallPath + 'Office Deployment Tool\setup.exe'
+    $Arguments = "/configure `"" + $InstallPath + "Office Deployment Tool\***REMOVED***-2019-ProPlus-Default.xml"
+    Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
 
         
-$arguments = "/i `"$gcpwFileName`""
-$installProcess = (Start-Process msiexec.exe -ArgumentList $arguments -PassThru -Wait)
+    $arguments = "/i `"$gcpwFileName`""
+    $installProcess = (Start-Process msiexec.exe -ArgumentList $arguments -PassThru -Wait)
 
-<# Check if installation was successful #>
-if ($installProcess.ExitCode -ne 0) {
-    [System.Windows.MessageBox]::Show('Installation failed!', 'GCPW', 'OK', 'Error')
-    exit $installProcess.ExitCode
-}
-else {
-    [System.Windows.MessageBox]::Show('Installation completed successfully!', 'GCPW', 'OK', 'Info')
-}
+    <# Check if installation was successful #>
+    if ($installProcess.ExitCode -ne 0) {
+        [System.Windows.MessageBox]::Show('Installation failed!', 'GCPW', 'OK', 'Error')
+        exit $installProcess.ExitCode
+    }
+    else {
+        [System.Windows.MessageBox]::Show('Installation completed successfully!', 'GCPW', 'OK', 'Info')
+    }
 
-<# Set the required registry key with the allowed domains #>
-$registryPath = 'HKEY_LOCAL_MACHINE\Software\Google\GCPW'
-$name = 'domains_allowed_to_login'
-[microsoft.win32.registry]::SetValue($registryPath, $name, $domainsAllowedToLogin)
+    <# Set the required registry key with the allowed domains #>
+    $registryPath = 'HKEY_LOCAL_MACHINE\Software\Google\GCPW'
+    $name = 'domains_allowed_to_login'
+    [microsoft.win32.registry]::SetValue($registryPath, $name, $domainsAllowedToLogin)
 
-$domains = Get-ItemPropertyValue HKLM:\Software\Google\GCPW -Name $name
+    $domains = Get-ItemPropertyValue HKLM:\Software\Google\GCPW -Name $name
 
-if ($domains -eq $domainsAllowedToLogin) {
-    [System.Windows.MessageBox]::Show('Configuration completed successfully!', 'GCPW', 'OK', 'Info')
-}
-else {
-    [System.Windows.MessageBox]::Show('Could not write to registry. Configuration was not completed.', 'GCPW', 'OK', 'Error')
+    if ($domains -eq $domainsAllowedToLogin) {
+        [System.Windows.MessageBox]::Show('Configuration completed successfully!', 'GCPW', 'OK', 'Info')
+    }
+    else {
+        [System.Windows.MessageBox]::Show('Could not write to registry. Configuration was not completed.', 'GCPW', 'OK', 'Error')
 
+    }
 }
 }
 function Install-MicrosoftOffice {
@@ -4780,12 +4712,9 @@ function Install-MicrosoftOffice {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
+#>
 
 <#
 .SYNOPSIS
@@ -4876,13 +4805,9 @@ function Install-RSAT {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
-
+#>
 
 <#
 .SYNOPSIS
@@ -5178,16 +5103,9 @@ function Move-ArchiveEventLogs {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
-
-
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -5253,11 +5171,7 @@ function New-Password {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -5450,11 +5364,7 @@ function Remove-AuthenticodeSignature {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -5465,7 +5375,6 @@ http://psrdrgz.github.io/RemoveAuthenticodeSignature/#:~:text=%20Removing%20Auth
 
 .LINK
 https://stackoverflow.com/questions/1928158/how-can-i-remove-signing-from-powershell
-
 
 .EXAMPLE
 Remove-AuthenticodeSignature -File Script.ps1
@@ -5484,19 +5393,19 @@ If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
     try {
         $Content = Get-Content $FilePath
         $SignatureLineNumber = (Get-Content $FilePath | select-string "SIG # Begin signature block").LineNumber
-            if ($null -eq $SignatureLineNumber -or $SignatureLineNumber -eq 0) {
-                Write-Warning "No signature found. Nothing to do."
-            }
-            else {
-                $Content = Get-Content $FilePath
-                $Content[0..($SignatureLineNumber - 2)] | Set-Content $FilePath
-            }
+        if ($null -eq $SignatureLineNumber -or $SignatureLineNumber -eq 0) {
+            Write-Warning "No signature found. Nothing to do."
+        }
+        else {
+            $Content = Get-Content $FilePath
+            $Content[0..($SignatureLineNumber - 2)] | Set-Content $FilePath
+        }
         
-        }
-        catch {
-            Write-Error "Failed to remove signature. $($_.Exception.Message)"
-        }
     }
+    catch {
+        Write-Error "Failed to remove signature. $($_.Exception.Message)"
+    }
+}
 }
 function Remove-CachedWallpaper {
 <#PSScriptInfo
@@ -5556,7 +5465,6 @@ function Remove-GroupEmail {
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-
 
 .PRIVATEDATA
 
@@ -5770,12 +5678,9 @@ function Remove-OldModuleVersions {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -5829,7 +5734,6 @@ function Remove-UserPASSWD_NOTREQD {
 .EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
-
 
 .PRIVATEDATA
 
@@ -5887,15 +5791,12 @@ SYSTEM REQUIREMENTS:
 
 - Modify User Object Permissions in Active Directory
 
-
 PARAMETERS:
 
 -Path          Where to start search, DistinguishedName within quotation mark (")
 -Server        Name of Domain Controller
 -Subtree       Do a subtree search (Optional)
 -help          Prints the HelpFile (Optional)
-
-
 
 SYNTAX:
  -------------------------- EXAMPLE 1 --------------------------
@@ -6037,11 +5938,9 @@ Function GetUserAccCtrlStatus ($userDN) {
         $strStatus = $strStatus.substring($strStatus.IndexOf(",") + 1, $strStatus.Length - 1 )
     }
 
-
     return $strStatus
 
 }#End function
-
 
 #==========================================================================
 #==========================================================================
@@ -6215,13 +6114,7 @@ function Repair-AdAttributes {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
 #> 
-
-
-
-
 
 <#
 .SYNOPSIS
@@ -6295,21 +6188,21 @@ If ($PSCmdlet.ShouldProcess("Clear ProxyAddresses if only one exists") -and $Ext
 }
 
 If ($PSCmdlet.ShouldProcess("Clear mailNickname if mail attribute empty") -and $ClearMailNickname) {
-    $Users | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname }
-    $Groups | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname }
+    $Users | Where-Object $null -eq mail | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname }
+    $Groups | Where-Object $null -eq mail | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname }
 }
 
 If ($PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName") -and $SetMailNickname) {
-    $Users | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } }
-    $Groups | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } }
+    $Users | Where-Object $null -ne mail | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } }
+    $Groups | Where-Object $null -ne mail | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } }
 }
 
 If ($PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty") -and $ClearTelephoneNumber) {
-    $Users | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber
+    $Users | Where-Object $null -eq mail | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber
 }
 
 If ($PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension") -and $SetTelephoneNumber) {
-    $Users | Where-Object mail -ne $null | ForEach-Object { 
+    $Users | Where-Object $null -ne mail | ForEach-Object { 
         if ($_.ipphone -ne $null) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
         else { $telephoneNumber = $DefaultPhoneNumber }
         Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = $telephoneNumber } 
@@ -6345,12 +6238,9 @@ function Repair-VmPermissions {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
+#>
 
 <# 
 .DESCRIPTION
@@ -6466,7 +6356,6 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 $SkipSendingInvitation = -not $SkipSendingInvitation
 $SkipResettingRedemtion = -not $SkipResettingRedemtion
 
-
 if ($All) {
     $UPN = (Get-AzureADUser -Filter "UserType eq 'Guest'").UserPrincipalName
     Write-Warning "This will reset invites for all guest users. Are you sure?"
@@ -6514,8 +6403,6 @@ V1.20, 11/13/2017 - Fixed environment variables
 Resets the Windows Update components
 
 .DESCRIPTION
-
-
 This script will reset all of the Windows Updates components to DEFAULT SETTINGS.
 
 .OUTPUTS
@@ -6531,7 +6418,6 @@ Find me on:
 * Github:	https://github.com/rnemeth90
 * TechNet:  https://social.technet.microsoft.com/profile/ryan%20nemeth/
 #>
-
 
 $arch = Get-WMIObject -Class Win32_Processor -ComputerName LocalHost | Select-Object AddressWidth
 
@@ -6837,8 +6723,6 @@ function Set-ComputerName {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
 #> 
 
 <#
@@ -7131,13 +7015,7 @@ function Set-RoomCalendarPermissions {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -7246,7 +7124,6 @@ function Show-BitlockerEncryptionStatus {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
 #> 
@@ -7305,12 +7182,9 @@ function Start-KioskApp {
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
+#>
 
 <# 
 .SYNOPSIS
@@ -7340,9 +7214,12 @@ param (
   
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-while ($true) {
-  If (-Not (Get-Process | Select-Object Path | Where-Object Path -eq $Path)) { Start-Process -FilePath $Path -ArgumentList $Arguments }
-  Start-Sleep -Seconds $Sleep
+
+if ($PSCmdlet.ShouldContinue($Path, 'Starting kiosk app.')) {
+  while ($true) {
+    If (-Not (Get-Process | Select-Object Path | Where-Object Path -eq $Path)) { Start-Process -FilePath $Path -ArgumentList $Arguments }
+    Start-Sleep -Seconds $Sleep
+  }
 }
 }
 function Start-PaperCutClient {
@@ -7426,8 +7303,6 @@ function Start-WindowsActivation {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
 #> 
 
 <#
@@ -7502,6 +7377,128 @@ param (
 )
 $Response = Read-Host "Press $Key to abort, any other key to continue."
 If ($Response -eq $Key) { Break }
+}
+function Sync-MailContacts {
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID 6da14011-187b-4176-a61b-16836f8a0ad7
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+#>
+
+<#
+.DESCRIPTION
+This script will sync users from one AD domain to another as Contacts.
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+    [string]$SourceDomain,
+    [string]$SourceSearchBase,
+    
+    [string]$DestinationDomain,
+    [string]$DestinationOU,
+    [string]$DestinationGroup,
+
+    $WhereObject = { $null -ne $_.mail -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },
+
+    [array]$SourceProperties = ("displayName", "givenName", "sn", "initials", "mail", "SamAccountName", "description", "wWWHomePage", "title", "department", "company", "manager", "telephoneNumber", "mobile", "facsimileTelephoneNumber", "homePhone", "pager", "physicalDeliveryOfficeName", "streetAddress", "l", "st", "postalCode", "co", "info"),
+    [string]$SourceFilter = "*",
+    [string]$DestinationFilter = "*"
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+$Source = @{}
+if ($SourceSearchBase) { $Source.SearchBase = $SourceSearchBase }
+if ($SourceDomain) { $Source.Server = $SourceDomain }
+if ($SourceFilter) { $Source.Filter = $SourceFilter }
+if ($SourceProperties) { $Source.Properties = $SourceProperties }
+
+if ($DestinationGroup) { 
+    $GroupMembers = (Get-ADGroup -Identity $DestinationGroup -Properties Members).Members
+    $GroupMembers | ForEach-Object { 
+        $i++ ; Progress -Index $i -Total $GroupMembers.count -Activity "Removing all members from $DestinationGroup." -Status "$_"
+        Get-ADGroup $DestinationGroup -Server $DestinationDomain | Set-ADObject -Server $DestinationDomain -Remove @{'member' = $_ }
+    }
+}
+
+Remove-Variable i
+
+$SyncedUsers = Ge$SyncedUsers | ForEach-Object {
+    $i++ ; Progress -Index $i -Total $SyncedUsers.count -Activity "Syncing users from $SourceSearchBase to $DestinationOU" -Status "$_"
+    $Properties = @{}
+    if ($_.displayName) { $Properties.displayName = $_.DisplayName }
+    if ($_.givenName) { $Properties.givenName = $_.GivenName }
+    if ($_.sn) { $Properties.sn = $_.Surname }
+    if ($_.initials) { $Properties.initials = $_.Initials }
+
+    if ($_.mail) { $Properties.mail = $_.mail }
+    # if ($_.SamAccountName) {$Properties.mailNickname = $_.SamAccountName}
+
+    if ($_.description) { $Properties.description = $_.Description }
+    if ($_.wWWHomePage) { $Properties.wWWHomePage = $_.wWWHomePage }
+
+    if ($_.title) { $Properties.title = $_.Title }
+    if ($_.department) { $Properties.department = $_.Department }
+    if ($_.company) { $Properties.company = $_.Company }
+    # if ($_.manager) { $Properties.manager = $_.Manager }
+
+    if ($_.telephoneNumber) { $Properties.telephoneNumber = $_.TelephoneNumber }
+    if ($_.mobile) { $Properties.mobile = $_.mobile }
+    if ($_.facsimileTelephoneNumber) { $Properties.facsimileTelephoneNumber = $_.Fax }
+    if ($_.homePhone) { $Properties.homePhone = $_.HomePhone }
+    if ($_.pager) { $Properties.pager = $_.Pager }
+
+    if ($_.physicalDeliveryOfficeName) { $Properties.physicalDeliveryOfficeName = $_.physicalDeliveryOfficeName }
+    if ($_.streetAddress) { $Properties.streetAddress = $_.StreetAddress }
+    if ($_.l) { $Properties.l = $_.City }
+    if ($_.st) { $Properties.st = $_.State }
+    if ($_.postalCode) { $Properties.postalCode = $_.PostalCode }
+    if ($_.co) { $Properties.co = $_.Country }
+    if ($_.info) { $Properties.info = $_.Notes }
+    
+    Write-Verbose "Creating contact for $($_.DisplayName) in $DestinationOU"
+    $ObjectPath = ( "CN=" + $_.DisplayName + ',' + $DestinationOU )
+    $DisplayName = $_.DisplayName
+    
+    try { New-ADObject -Type "contact" -Name $_.DisplayName -Server $DestinationDomain -Path $DestinationOU -OtherAttributes $Properties }
+    catch [Microsoft.ActiveDirectory.Management.ADException] {
+        try {
+            Write-Verbose "$DisplayName in $DestinationOU already exists. Updating now."
+            Set-ADObject -Identity $ObjectPath -Server $DestinationDomain -Replace $Properties
+        }
+        catch {
+            Write-Verbose "Failed to update $DisplayName in $DestinationOU"
+        }
+    } 
+    
+    if ($DestinationGroup) { 
+        Write-Verbose "Adding $($_.DisplayName) to $DestinationGroup"
+        Set-ADGroup -Identity $DestinationGroup -Server $DestinationDomain -Add @{'member' = ("cn=" + $_.DisplayName + "," + $DestinationOU) }
+    }    
+}
 }
 function Test-Admin {
 <#PSScriptInfo
@@ -7742,9 +7739,10 @@ https://wiki.voip.ms/article/Choosing_Server
 #>
 
 <# TODO use credential/secure string for $username and $password #>
+[System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
 param(
-  [string]$Username = "kcf.it@***REMOVED***",
-  [string]$Password = "Open123!",
+  [string]$Username,
+  [string]$Password,
   [string]$Country = "*",
   [switch]$Fax,
   [ValidateRange(0, [int]::MaxValue)][int]$Retries = 5,
@@ -7775,7 +7773,6 @@ if ($Username) {
 else { 
   $Servers = $ServerList 
 }
-
 
 Clear-Variable best* -Scope Global #Clear the best* variables in case you run it more than once...
 
@@ -8005,7 +8002,6 @@ function Update-UsersStaff {
 <#PSScriptInfo
 .VERSION 1.0.0
 .GUID 120db2ff-3cb8-43ea-aa2c-f044ff52c144
-
 
 .AUTHOR
 Jason Cook
