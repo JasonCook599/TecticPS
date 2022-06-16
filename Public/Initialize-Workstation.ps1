@@ -25,11 +25,7 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .SYNOPSIS
@@ -178,8 +174,6 @@ if ($Action -contains "NetFX3") {
     Get-WindowsCapability -Online -Name NetFx3* | Add-WindowsCapability -Online
   }
 }
-
-
 
 if ($Action -contains "Ninite") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername) $NiniteInstallTo", "Install apps using Ninite")) {

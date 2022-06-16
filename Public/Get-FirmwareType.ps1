@@ -72,7 +72,6 @@ On a legacy BIOS-based system, or on a system that supports both legacy BIOS and
 legacy BIOS, the function will fail with ERROR_INVALID_FUNCTION. On a UEFI-based system, the function will fail with 
 an error specific to the firmware, such as ERROR_NOACCESS, to indicate that the dummy GUID namespace does not exist."
 
-
 From PowerShell, we can call the API via P/Invoke from a compiled C# class using Add-Type.  In Win32 any resulting
 API error is retrieved using GetLastError(), however, this is not reliable in .Net (see 
 blogs.msdn.com/b/adam_nathan/archive/2003/04/25/56643.aspx), instead we mark the pInvoke signature for 
@@ -131,12 +130,8 @@ Function IsUEFI {
     }
 '@
 
-
     [CheckUEFI]::IsUEFI()
 }
-
-
-
 
 <#
 
@@ -157,12 +152,7 @@ Once again, this API call can be called in .Net via P/Invoke.  Rather than defin
 just returns an unsigned int.
 #>
 
-
-
-
 # Windows 8/Server 2012 or above:
-
-
 Function Get-BiosType {
 
     <#
@@ -209,12 +199,7 @@ Function Get-BiosType {
     }
 '@
 
-
     [FirmwareType]::GetFirmwareType()
 }
 
-
-
 # An electron is pulled-up for speeding. The policeman says, "Sir, do you realise you were travelling at 130mph?" The electron says, "Oh great, now I'm lost."
-
-

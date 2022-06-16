@@ -52,7 +52,6 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 $SkipSendingInvitation = -not $SkipSendingInvitation
 $SkipResettingRedemtion = -not $SkipResettingRedemtion
 
-
 if ($All) {
     $UPN = (Get-AzureADUser -Filter "UserType eq 'Guest'").UserPrincipalName
     Write-Warning "This will reset invites for all guest users. Are you sure?"

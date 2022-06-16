@@ -89,5 +89,3 @@ while ($true) {
     Start-Sleep -Seconds 4
     Clear-Host
 }
-
-

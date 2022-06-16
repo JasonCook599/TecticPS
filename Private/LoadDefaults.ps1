@@ -45,9 +45,4 @@ try {
 }
 catch { Write-Error "Error loading defaults script." }
 
-
-
-
 Write-Error "Not running as a module and can't find script path. Defaults not loaded."
-
-

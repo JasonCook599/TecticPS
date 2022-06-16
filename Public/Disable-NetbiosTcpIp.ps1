@@ -44,5 +44,3 @@ $Interfaces | ForEach-Object {
     $count++ ; Progress -Index $count -Total $Interfaces.count -Activity "Disabling Netbios TCP/IP" -Name (Get-NetAdapter | Where-Object InterfaceGuid -eq ($Guid)).name
     Set-ItemProperty -Path $Path -Name NetbiosOptions -Value 2
 }
-
-

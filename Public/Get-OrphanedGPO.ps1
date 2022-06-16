@@ -12,7 +12,6 @@ Jason Cook
 Copyright (c) ***REMOVED*** 2022
 #>
 
-
 <#
 .DESCRIPTION
 This script will find all orphaned GPOs.

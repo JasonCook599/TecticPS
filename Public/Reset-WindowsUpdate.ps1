@@ -25,8 +25,6 @@ V1.20, 11/13/2017 - Fixed environment variables
 Resets the Windows Update components
 
 .DESCRIPTION
-
-
 This script will reset all of the Windows Updates components to DEFAULT SETTINGS.
 
 .OUTPUTS
@@ -42,7 +40,6 @@ Find me on:
 * Github:	https://github.com/rnemeth90
 * TechNet:  https://social.technet.microsoft.com/profile/ryan%20nemeth/
 #>
-
 
 $arch = Get-WMIObject -Class Win32_Processor -ComputerName LocalHost | Select-Object AddressWidth
 

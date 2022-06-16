@@ -25,15 +25,7 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
-
-
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -68,7 +60,5 @@ if ($SearchBase) {
 else {
     $Users = Get-ADUser -Filter $Filter -Properties $Properties
 }
-
-
 
 return $Users # | Sort-Object $SortKey | Select-Object $Properties

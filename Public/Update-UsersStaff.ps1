@@ -2,7 +2,6 @@
 .VERSION 1.0.0
 .GUID 120db2ff-3cb8-43ea-aa2c-f044ff52c144
 
-
 .AUTHOR
 Jason Cook
 

@@ -26,7 +26,6 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
 #> 
@@ -102,15 +101,12 @@ SYSTEM REQUIREMENTS:
 
 - Modify User Object Permissions in Active Directory
 
-
 PARAMETERS:
 
 -Path          Where to start search, DistinguishedName within quotation mark (")
 -Server        Name of Domain Controller
 -Subtree       Do a subtree search (Optional)
 -help          Prints the HelpFile (Optional)
-
-
 
 SYNTAX:
  -------------------------- EXAMPLE 1 --------------------------
@@ -257,11 +253,9 @@ Function GetUserAccCtrlStatus ($userDN) {
         $strStatus = $strStatus.substring($strStatus.IndexOf(",") + 1, $strStatus.Length - 1 )
     }
 
-
     return $strStatus
 
 }#End function
-
 
 #==========================================================================
 # Function		: CheckDNExist 

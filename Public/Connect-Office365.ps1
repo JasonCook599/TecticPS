@@ -26,18 +26,9 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
 
-#> 
-
-
-
-
-
-
-
-
+#>
 
 <#
 .SYNOPSIS
@@ -85,7 +76,6 @@ Use basic auth.
 
 .PARAMETER Credential
 The credentials for basic auth.
-
 
 .PARAMETER AzureAD
 Connect to Azure Active Directory.

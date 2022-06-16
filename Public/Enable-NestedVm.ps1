@@ -33,8 +33,6 @@ https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/hyperv-t
 https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/LICENSE
 #>
 
-
-
 param([string]$vmName)
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
@@ -98,7 +96,6 @@ Add-Member -InputObject $vmInfo NoteProperty -Name "State" -Value $vm.State
 Add-Member -InputObject $vmInfo NoteProperty -Name "MacAddressSpoofing" -Value ((Get-VmNetworkAdapter -VmName $vmName).MacAddressSpoofing)
 Add-Member -InputObject $vmInfo NoteProperty -Name "MemorySize" -Value (Get-VMMemory -VmName $vmName).Startup
 
-
 # is nested enabled on this VM?
 $vmInfo.ExposeVirtualizationExtensions = (Get-VMProcessor -VM $vm).ExposeVirtualizationExtensions
 
@@ -146,7 +143,6 @@ while (-not ($char.StartsWith('Y') -or $char.StartsWith('N'))) {
     Write-Host "Invalid Input, Y or N" 
     $char = Read-Host
 }
-
 
 if ($char.StartsWith('Y')) {
     if ($vmInfo.State -eq 'Saved') {
