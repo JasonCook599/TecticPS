@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.3
+.VERSION 1.1.4
 
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
@@ -27,8 +27,7 @@
 .RELEASENOTES
 #>
 
-<#is script will resize the spesified images to the spesifications detailed in a json file.
-
+<#
 .DESCRIPTION
 This script will resize the spesified logos, wordmarks and banner images to the spesifications of various third party services. It will pull data from a json file.
 
