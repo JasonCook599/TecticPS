@@ -4394,7 +4394,7 @@ Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 function Initialize-Workstation {
 <#PSScriptInfo
 
-.VERSION 1.2.8
+.VERSION 1.2.9
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -4419,7 +4419,11 @@ function Initialize-Workstation {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-#>
+
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -4501,7 +4505,7 @@ If (!(Test-Admin -Warn)) { Break }
 Requires ***REMOVED***IT
 
 if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "JoinDomain", "Reboot") }
-if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Reboot") }
+if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Wallpaper", "Reboot") }
 
 if ($Action -contains "Rename") { Set-ComputerName -Prefix $HostNamePrefix }
 
@@ -4555,6 +4559,8 @@ if ($Action -contains "Office") {
   }
 }
 
+if ($Action -contains "Wallpaper") { Set-DefaultWallpapers ; Set-WallPaper }
+
 if ($Action -contains "RSAT") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Remote Server Administrative Tools")) {
     Write-Verbose "Install Remote Server Administrative Tools"
@@ -4577,11 +4583,9 @@ if ($Action -contains "Ninite") {
 }
 
 Write-Verbose "Checking for reboot."
-Import-Module $parent\Modules\pendingreboot.0.9.0.6\pendingreboot.psm1
 If ( `
     $Reboot `
     -or (Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") `
-    -or (Test-PendingReboot -SkipConfigurationManagerClientCheck).IsRebootPending
 ) {
   Write-Verbose "A reboot is required. Reboot now?"
   Restart-Computer -Confirm
@@ -7131,6 +7135,117 @@ Get-Mailbox -RecipientTypeDetails RoomMailbox | ForEach-Object {
         Set-MailboxFolderPermission -Identity $($_.Identity + ":\Calendar") -User $User -AccessRights $AccessRights
     }
 }
+}
+function Set-Wallpaper {
+<#PSScriptInfo
+
+.VERSION 1.0.2
+
+.GUID 5367e6e7-1177-4f3f-a345-1633446ad628
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
+
+
+
+<#
+.DESCRIPTION
+Change the default Windows wallpaper for new users and copies wallpapers to system folder.
+
+.PARAMETER SourcePath
+The lcoation to search for images in.
+
+.PARAMETER Images
+An array of images to use. By default, this will select all *.jpg files in $SourcePath
+
+.PARAMETER Name
+The name of the folder to copy the images to. If not specified, this script will use "Defaults" and copy to $env:windir\Web\Wallpaper\$Name
+
+.LINK
+https://ccmexec.com/2015/08/replacing-default-wallpaper-in-windows-10-using-scriptmdtsccm/
+#><#
+
+.DESCRIPTION
+Applies a specified wallpaper to the current user's desktop.
+
+.PARAMETER Image
+Provide the exact path to the image. If unspecified, it will use the default system wallpaper from $env:windir\Web\Wallpaper\Windows
+
+.PARAMETER Style
+Provide wallpaper style (Example: Fill, Fit, Stretch, Tile, Center, or Span). Default is Fit.
+
+.EXAMPLE
+Set-WallPaper -Image "C:\Wallpaper\Default.jpg"
+Set-WallPaper -Image "C:\Wallpaper\Background.jpg" -Style Fit
+
+.LINK
+https://www.joseespitia.com/2017/09/15/set-wallpaper-powershell-function/
+
+#>
+
+param (
+    [ValidateScript({ Test-Path $_ })][string]$Image = ((Get-ChildItem -Path (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\Windows"))[0].FullName),
+    [ValidateSet('Fill', 'Fit', 'Stretch', 'Tile', 'Center', 'Span')][string]$Style = "Fit"
+)
+
+$WallpaperStyle = Switch ($Style) {
+    "Fill" { "10" }
+    "Fit" { "6" }
+    "Stretch" { "2" }
+    "Tile" { "0" }
+    "Center" { "0" }
+    "Span" { "22" }
+}
+
+New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -PropertyType String -Value $WallpaperStyle -Force
+If ($Style -eq "Tile") { New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 1 -Force }
+Else { New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 0 -Force }
+
+Add-Type -TypeDefinition @" 
+using System; 
+using System.Runtime.InteropServices;
+
+public class Params
+{ 
+[DllImport("User32.dll",CharSet=CharSet.Unicode)] 
+public static extern int SystemParametersInfo (Int32 uAction, 
+Int32 uParam, 
+String lpvParam, 
+Int32 fuWinIni);
+}
+"@ 
+
+$SPI_SETDESKWALLPAPER = 0x0014
+$UpdateIniFile = 0x01
+$SendChangeEvent = 0x02
+
+$fWinIni = $UpdateIniFile -bor $SendChangeEvent
+
+exit [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni)
 }
 function Set-WindowsAccountAvatar {
 <#PSScriptInfo

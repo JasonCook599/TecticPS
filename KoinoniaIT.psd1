@@ -12,7 +12,7 @@
 RootModule = '***REMOVED***IT.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.7'
+ModuleVersion = '1.1.9'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -97,10 +97,10 @@ FunctionsToExport = 'Add-AllowedDmaDevices', 'Add-BluredPillarBars',
                'Repair-VmPermissions', 'Reset-CSC', 'Reset-InviteRedepmtion', 
                'Reset-WindowsUpdate', 'Resize-Image', 'Save-Password', 'Set-AdPhoto', 
                'Set-ComputerName', 'Set-DefaultWallpapers', 'Set-Owner', 
-               'Set-RoomCalendarPermissions', 'Set-WindowsAccountAvatar', 
-               'Show-BitlockerEncryptionStatus', 'Start-KioskApp', 
-               'Start-PaperCutClient', 'Start-WindowsActivation', 'Stop-ForKey', 
-               'Sync-MailContacts', 'Test-Admin', 'Test-DmaDevices', 
+               'Set-RoomCalendarPermissions', 'Set-Wallpaper', 
+               'Set-WindowsAccountAvatar', 'Show-BitlockerEncryptionStatus', 
+               'Start-KioskApp', 'Start-PaperCutClient', 'Start-WindowsActivation', 
+               'Stop-ForKey', 'Sync-MailContacts', 'Test-Admin', 'Test-DmaDevices', 
                'Test-ScriptMetadata', 'Test-Scripts', 'Test-VoipMs', 
                'Uninstall-MicrosoftTeams', 'Update-AadSsoKey', 'Update-PKI', 
                'Update-UsersAcademyStudents', 'Update-UsersStaff', 'Wait-ForKey', 
