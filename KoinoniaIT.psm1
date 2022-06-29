@@ -309,7 +309,7 @@ if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentC
 function Requires {
 <#PSScriptInfo
 
-.VERSION 2.0.1
+.VERSION 2.0.2
 
 .GUID f8ca5dd1-fef2-4024-adc9-124a3007870a
 
@@ -319,25 +319,26 @@ function Requires {
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-.PRIVATEDATA
 
-#>
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -424,7 +425,9 @@ function Fail {
 
 if ($Modules) {
     foreach ($Module in $Modules) {
-        If (Get-Module -ListAvailable -Name $Module) { Import-Module $Module } else {
+        if (Get-Module -Name $Module) { Write-Verbose "Module $Module is already loaded." }
+        elseIf (Get-Module -ListAvailable -Name $Module) { Import-Module $Module }
+        else {
             if (-Not $Force) { $choice = Read-Host -Prompt "Module '$Module' is not available but is required. Install? (Y)" }
             else { Write-Output "'$Module' is not installed. Installing now." }
     
