@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.9
+.VERSION 1.2.10
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -28,6 +28,8 @@
 
 
 #> 
+
+
 
 
 
@@ -96,6 +98,7 @@ param(
   [string]$Domain,
   [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector = "TPM",
   [string]$OfficeVersion = "2019",
+  [ValidateScript({ Test-Path $_ })][string]$Wallpapers,
   [ValidateScript({ Test-Path $_ })][string]$ProvisioningPackage,
   [switch]$Ninite,
   [string]$NiniteInstallTo = "Workstation",
@@ -110,8 +113,8 @@ $parent = Split-Path $script:MyInvocation.MyCommand.Path
 If (!(Test-Admin -Warn)) { Break }
 Requires ***REMOVED***IT
 
-if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "JoinDomain", "Reboot") }
-if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Wallpaper", "Reboot") }
+if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "Wallpaper") }
+if ($Step -eq 2) { $Action = @("BitLocker", "Office", "", "Reboot") }
 
 if ($Action -contains "Rename") { Set-ComputerName -Prefix $HostNamePrefix }
 
@@ -165,7 +168,7 @@ if ($Action -contains "Office") {
   }
 }
 
-if ($Action -contains "Wallpaper") { Set-DefaultWallpapers ; Set-WallPaper }
+if ($Action -contains "Wallpaper") { Set-DefaultWallpapers -SourcePath $Wallpapers ; Set-WallPaper }
 
 if ($Action -contains "RSAT") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Remote Server Administrative Tools")) {

@@ -2160,6 +2160,68 @@ Get-ADUser @Arguments | ForEach-Object {
 }
 return $Results
 }
+function Export-FortiClientConfig {
+<#PSScriptInfo
+
+.VERSION 1.2.4
+
+.GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
+
+
+
+<#
+.DESCRIPTION
+This will export the current Forti Client configuration.
+
+.PARAMETER Path
+The location the configuration will be exported to.
+
+.EXAMPLE 
+Export-FortiClientConfig -Path backup.conf
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+    $Path = "backup.conf",
+    [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
+    $Password
+)
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+
+$Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
+if ($Password) { $Arguments += "-p $Password" }
+
+if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait    
+}
+}
 function Export-MatchingCertificates {
 <#PSScriptInfo
 
@@ -4349,6 +4411,71 @@ foreach ($UserFolder in $Path) {
 	}
 }
 }
+function Import-FortiClientConfig {
+<#PSScriptInfo
+
+.VERSION 1.2.4
+
+.GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
+
+
+
+<#
+.DESCRIPTION
+This will import the current Forti Client configuration.
+
+.PARAMETER Path
+The location the configuration will be imported from.
+
+.EXAMPLE 
+Import-FortiClientConfig -Path backup.conf
+
+.LINK
+https://getmodern.co.uk/automating-the-install-of-forticlient-vpn-via-mem-intune
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+    $Path = "backup.conf",
+    [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
+    $Password
+)
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+
+$Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
+if ($Password) { $Arguments += "-p $Password" }
+
+if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait    
+}
+}
 function Initialize-OneDrive {
 <#PSScriptInfo
 
@@ -4394,7 +4521,7 @@ Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 function Initialize-Workstation {
 <#PSScriptInfo
 
-.VERSION 1.2.9
+.VERSION 1.2.10
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -4422,6 +4549,8 @@ function Initialize-Workstation {
 
 
 #> 
+
+
 
 
 
@@ -4490,6 +4619,7 @@ param(
   [string]$Domain,
   [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector = "TPM",
   [string]$OfficeVersion = "2019",
+  [ValidateScript({ Test-Path $_ })][string]$Wallpapers,
   [ValidateScript({ Test-Path $_ })][string]$ProvisioningPackage,
   [switch]$Ninite,
   [string]$NiniteInstallTo = "Workstation",
@@ -4504,8 +4634,8 @@ $parent = Split-Path $script:MyInvocation.MyCommand.Path
 If (!(Test-Admin -Warn)) { Break }
 Requires ***REMOVED***IT
 
-if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "JoinDomain", "Reboot") }
-if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Wallpaper", "Reboot") }
+if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "Wallpaper") }
+if ($Step -eq 2) { $Action = @("BitLocker", "Office", "", "Reboot") }
 
 if ($Action -contains "Rename") { Set-ComputerName -Prefix $HostNamePrefix }
 
@@ -4559,7 +4689,7 @@ if ($Action -contains "Office") {
   }
 }
 
-if ($Action -contains "Wallpaper") { Set-DefaultWallpapers ; Set-WallPaper }
+if ($Action -contains "Wallpaper") { Set-DefaultWallpapers -SourcePath $Wallpapers ; Set-WallPaper }
 
 if ($Action -contains "RSAT") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Remote Server Administrative Tools")) {
