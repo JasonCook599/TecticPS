@@ -4524,7 +4524,7 @@ Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 function Initialize-Workstation {
 <#PSScriptInfo
 
-.VERSION 1.2.10
+.VERSION 1.2.11
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -4552,6 +4552,8 @@ function Initialize-Workstation {
 
 
 #> 
+
+
 
 
 
@@ -4617,7 +4619,7 @@ Specifes the version of Office to install. If unspecified, Office will not be in
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
   [int]$Step,
-  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "RSAT", "NetFX3", "Ninite", "Reboot")][array]$Action,
+  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "Wallpaper", "RSAT", "NetFX3", "Ninite", "Reboot")][array]$Action,
   [string]$HostNamePrefix,
   [string]$Domain,
   [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector = "TPM",
