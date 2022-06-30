@@ -4600,7 +4600,7 @@ Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 function Initialize-Workstation {
 <#PSScriptInfo
 
-.VERSION 1.2.12
+.VERSION 1.2.13
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -4631,6 +4631,8 @@ function Initialize-Workstation {
 
 
 
+
+
 <#
 .SYNOPSIS
 This script will install the neccesary applications and services on a given machine.
@@ -4650,6 +4652,7 @@ An array of actions to run.
     NetFX3: Install .Net 3.0
     Ninte: Run Ninite.
     Winget: Install the spesified packages and update existing applications using Winget. Use -Winget to select the appropriate package.
+    RemoveDesktopShortcuts: Remove all desktop shortcuts from the Public desktop.
     Reboot: Reboot the machine.
 
 .PARAMETER HostNamePrefix
@@ -4695,7 +4698,7 @@ A hashtable of winget packages to install. The key is the package name and the v
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
   [int]$Step,
-  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "Wallpaper", "RSAT", "NetFX3", "Ninite", "Winget", "Reboot")][array]$Action,
+  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "Wallpaper", "RSAT", "NetFX3", "Ninite", "Winget", "RemoveDesktopShortcuts", "Reboot")][array]$Action,
   [string]$HostNamePrefix,
   [string]$Domain,
   [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector = "TPM",
@@ -4808,6 +4811,8 @@ if ($Action -contains "winget") {
     Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList "upgrade --all" 
   }
 }
+
+if ($Action -contains "RemoveDesktopShortcuts") { Get-ChildItem C:\Users\Public\Desktop\*.lnk | Remove-Item }
 
 Write-Verbose "Checking for reboot."
 If ( $Reboot -or $Action -contains "Reboot" -or (Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") ) {
