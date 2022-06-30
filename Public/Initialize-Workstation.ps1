@@ -114,7 +114,7 @@ param(
   [string]$DriveToLabel = ($env:SystemDrive.Substring(0, 1))
 )
 
-Test-Admin -Throw
+Test-Admin -Throw | Out-Null
 Requires ***REMOVED***IT
 
 if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "Wallpaper", "Winget") }
