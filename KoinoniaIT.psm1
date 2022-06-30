@@ -309,7 +309,7 @@ if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentC
 function Requires {
 <#PSScriptInfo
 
-.VERSION 2.0.2
+.VERSION 2.0.3
 
 .GUID f8ca5dd1-fef2-4024-adc9-124a3007870a
 
@@ -2166,7 +2166,7 @@ return $Results
 function Export-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.2.4
+.VERSION 1.2.5
 
 .GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
 
@@ -2197,8 +2197,6 @@ function Export-FortiClientConfig {
 
 
 
-
-
 <#
 .DESCRIPTION
 This will export the current Forti Client configuration.
@@ -2216,7 +2214,6 @@ param (
     $Password
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
 
 $Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
 if ($Password) { $Arguments += "-p $Password" }
@@ -4417,7 +4414,7 @@ foreach ($UserFolder in $Path) {
 function Import-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.2.4
+.VERSION 1.2.5
 
 .GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d
 
@@ -4448,8 +4445,6 @@ function Import-FortiClientConfig {
 
 
 
-
-
 <#
 .DESCRIPTION
 This will import the current Forti Client configuration.
@@ -4470,7 +4465,6 @@ param (
     $Password
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
 
 $Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
 if ($Password) { $Arguments += "-p $Password" }
@@ -4524,7 +4518,7 @@ Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 function Initialize-Workstation {
 <#PSScriptInfo
 
-.VERSION 1.2.11
+.VERSION 1.2.12
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -4552,6 +4546,8 @@ function Initialize-Workstation {
 
 
 #> 
+
+
 
 <#
 .SYNOPSIS
@@ -6898,7 +6894,7 @@ return Rename-Computer -NewName $NewName
 function Set-DefaultWallpapers {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 910cea1b-4c78-4282-ac1d-7a64897475ea
 
@@ -6926,10 +6922,6 @@ function Set-DefaultWallpapers {
 
 
 #> 
-
-
-
-
 
 
 
@@ -7296,7 +7288,7 @@ Get-Mailbox -RecipientTypeDetails RoomMailbox | ForEach-Object {
 function Set-Wallpaper {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 5367e6e7-1177-4f3f-a345-1633446ad628
 
@@ -7324,8 +7316,6 @@ function Set-Wallpaper {
 
 
 #> 
-
-
 
 
 
@@ -8019,7 +8009,7 @@ function Test-RegistryValue {
 
 .AUTHOR Jonathan Medd
 
-.COMPANYNAME 
+.COMPANYNAME ***REMOVED***
 
 .COPYRIGHT Copyright (c) Jonathan Medd 2014
 
@@ -8311,7 +8301,7 @@ Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domai
 function Update-MicrosoftStoreApps {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 4cac6972-9cb0-4755-bfc1-ae2eb6dfc0d1
 
@@ -8346,16 +8336,20 @@ function Update-MicrosoftStoreApps {
 .DESCRIPTION
 Updates Microsoft Store apps. Equivalent to clicking "Check for Updates" and "Update All" in the Microsoft Store app. Tt doesn't wait for the updates to complete before returning. Check the store app for the status of the updates.
 
+.PARAMETER DontCheckStatus
+Prevents the script from opening the store app to monitor the status of the updates.
+
 .LINK
-
 https://social.technet.microsoft.com/Forums/windows/en-US/5ac7daa9-54e6-43c0-9746-293dcb8ef2ec/how-to-force-update-of-windows-store-apps-without-launching-the-store-app
-
 #>
 
+param([switch]$DontCheckStatus)
+Test-Admin -Throw
 $namespaceName = "root\cimv2\mdm\dmmap"
 $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
 $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
 $wmiObj.UpdateScanMethod()
+if (-not $DontCheckStatus) { Start-Process "ms-windows-store://downloadsandupdates" }
 }
 function Update-PKI {
 <#PSScriptInfo

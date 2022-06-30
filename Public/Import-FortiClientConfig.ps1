@@ -25,14 +25,6 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
-
-
-
 <#
 .DESCRIPTION
 This will import the current Forti Client configuration.
@@ -54,9 +46,12 @@ param (
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-
 $Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
 if ($Password) { $Arguments += "-p $Password" }
+
+if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait    
+}
 
 if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
     Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait    

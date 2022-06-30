@@ -25,12 +25,6 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
-
 <#
 .SYNOPSIS
 Used to specify required modules and prompt to install if missing.
@@ -140,6 +134,10 @@ if ($Modules) {
 
 if ($Version -gt $PSVersionTable.PSVersion) { Fail $PsVersionMessage } 
 if ($PSEditionName -and $PSEditionName -ne $PSVersionTable.PSEdition) { Fail $PSEditionMessage }
+if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
+    if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
+}
+
 if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
     if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
 }

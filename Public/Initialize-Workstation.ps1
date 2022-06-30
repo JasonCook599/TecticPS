@@ -25,10 +25,6 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
 <#
 .SYNOPSIS
 This script will install the neccesary applications and services on a given machine.
@@ -191,6 +187,10 @@ Write-Verbose "Checking for reboot."
 If ( `
     $Reboot `
     -or (Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") `
+) {
+  Write-Verbose "A reboot is required. Reboot now?"
+  Restart-Computer -Confirm
+}
 ) {
   Write-Verbose "A reboot is required. Reboot now?"
   Restart-Computer -Confirm

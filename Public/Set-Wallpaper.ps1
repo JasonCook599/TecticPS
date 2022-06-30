@@ -25,14 +25,6 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
-#> 
-
-
-
-
-
 <#
 .DESCRIPTION
 Change the default Windows wallpaper for new users and copies wallpapers to system folder.
@@ -103,6 +95,10 @@ Int32 fuWinIni);
 $SPI_SETDESKWALLPAPER = 0x0014
 $UpdateIniFile = 0x01
 $SendChangeEvent = 0x02
+
+$fWinIni = $UpdateIniFile -bor $SendChangeEvent
+
+exit [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni) 
 
 $fWinIni = $UpdateIniFile -bor $SendChangeEvent
 
