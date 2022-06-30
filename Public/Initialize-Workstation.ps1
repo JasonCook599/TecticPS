@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.11
+.VERSION 1.2.12
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -25,6 +25,12 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
+
+
+#> 
+
+
+
 <#
 .SYNOPSIS
 This script will install the neccesary applications and services on a given machine.
@@ -43,6 +49,7 @@ An array of actions to run.
     RSAT: Install Remote Server Administration Tools.
     NetFX3: Install .Net 3.0
     Ninte: Run Ninite.
+    Winget: Install the spesified packages and update existing applications using Winget. Use -Winget to select the appropriate package.
     Reboot: Reboot the machine.
 
 .PARAMETER HostNamePrefix
@@ -81,14 +88,18 @@ If specified, Remote Server Administrative Tools will be installed.
 .PARAMETER OfficeVersion
 Specifes the version of Office to install. If unspecified, Office will not be installed.
 
+.PARAMETER WingetPackages
+A hashtable of winget packages to install. The key is the package name and the value are any custom options required.
+
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
   [int]$Step,
-  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "Wallpaper", "RSAT", "NetFX3", "Ninite", "Reboot")][array]$Action,
+  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "Wallpaper", "RSAT", "NetFX3", "Ninite", "Winget", "Reboot")][array]$Action,
   [string]$HostNamePrefix,
   [string]$Domain,
   [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector = "TPM",
+  [hashtable]$WingetPackages,
   [string]$OfficeVersion = "2019",
   [ValidateScript({ Test-Path $_ })][string]$Wallpapers,
   [ValidateScript({ Test-Path $_ })][string]$ProvisioningPackage,
@@ -100,12 +111,10 @@ param(
   [string]$DriveToLabel = ($env:SystemDrive.Substring(0, 1))
 )
 
-$parent = Split-Path $script:MyInvocation.MyCommand.Path
-
-If (!(Test-Admin -Warn)) { Break }
+Test-Admin -Throw
 Requires ***REMOVED***IT
 
-if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "Wallpaper") }
+if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "Wallpaper", "Winget") }
 if ($Step -eq 2) { $Action = @("BitLocker", "Office", "", "Reboot") }
 
 if ($Action -contains "Rename") { Set-ComputerName -Prefix $HostNamePrefix }
@@ -179,19 +188,29 @@ if ($Action -contains "NetFX3") {
 if ($Action -contains "Ninite") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername) $NiniteInstallTo", "Install apps using Ninite")) {
     Write-Verbose "Running Ninite"
+    $parent = Split-Path $script:MyInvocation.MyCommand.Path
     & $parent\..\Ninite\Ninite.ps1 -Local -InstallTo $NiniteInstallTo
   }
 }
 
-Write-Verbose "Checking for reboot."
-If ( `
-    $Reboot `
-    -or (Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") `
-) {
-  Write-Verbose "A reboot is required. Reboot now?"
-  Restart-Computer -Confirm
+if ($Action -contains "winget") {
+  if ($null -ne $WingetPackages) {
+    $WingetPackages.Keys | ForEach-Object {
+      $Arguments = @( "install $_", "--accept-package-agreements", "--accept-source-agreements" )
+      if ($WingetPackages[$_] -ne $null) { $Arguments += $WingetPackages[$_] }
+      if ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install $_ with arguments: $Arguments")) { 
+        Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList $Arguments 
+      }
+    }
+  }
+  
+  if ($PsCmdlet.ShouldProcess("localhost ($env:computername)", "Upgrading packages with winget")) { 
+    Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList "upgrade --all" 
+  }
 }
-) {
+
+Write-Verbose "Checking for reboot."
+If ( $Reboot -or $Action -contains "Reboot" -or (Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") ) {
   Write-Verbose "A reboot is required. Reboot now?"
   Restart-Computer -Confirm
 }

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.4
+.VERSION 1.2.5
 
 .GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
 
@@ -25,6 +25,12 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
+
+
+#> 
+
+
+
 <#
 .DESCRIPTION
 This will export the current Forti Client configuration.

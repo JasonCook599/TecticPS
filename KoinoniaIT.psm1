@@ -75,7 +75,7 @@ param()
 $global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
 
 try {
-    # Get AAD B2B Pending Users.    
+    # Get AAD B2B Pending Users.
     return (Invoke-RestMethod -Headers @{Authorization = "Bearer $($myToken.AccessToken)" } `
             -Uri  "https://graph.microsoft.com/beta/users?filter=externalUserState eq 'PendingAcceptance'&`$top=999" `
             -Method Get).value 
@@ -219,7 +219,7 @@ param(
     $DefaultsScripts = "***REMOVED***ITDefaults.ps1"
 )
 
-try {    
+try {
     $ModuleName = (Get-Command -Name $Invocation.MyCommand -ErrorAction SilentlyContinue).ModuleName
     $ModulePath = (Get-Module -Name $ModuleName).Path
     $ModuleRoot = Split-Path -Parent -Path $ModulePath
@@ -430,7 +430,7 @@ if ($Modules) {
         else {
             if (-Not $Force) { $choice = Read-Host -Prompt "Module '$Module' is not available but is required. Install? (Y)" }
             else { Write-Output "'$Module' is not installed. Installing now." }
-    
+            
             if ($choice -eq "Y" -or $Force) { 
                 try { Install-Module $Module }
                 catch {
@@ -449,6 +449,81 @@ if ($Version -gt $PSVersionTable.PSVersion) { Fail $PsVersionMessage }
 if ($PSEditionName -and $PSEditionName -ne $PSVersionTable.PSEdition) { Fail $PSEditionMessage }
 if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
     if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
+}
+
+if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
+    if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
+}
+}
+function SelectPackage {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 0caaa663-ed3d-498c-a77e-d00e85146cd1
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
+
+<#
+.DESCRIPTION
+Select the winget pacakge to install. Used by the Initilize-Workstation command.
+
+.PARAMETER Packages
+A hashtable of packages to select from.
+
+.PARAMETER Title
+The title of the message box.
+
+.PARAMETER Mode
+Should a single or multiple package be selected?
+#>
+
+param(
+    [Parameter(Mandatory = $True, ValuefromPipeline = $True)][hashtable]$Packages,
+    [Parameter(ValuefromPipeline = $True)][string]$Title = "Select the packages to install",
+    [Parameter(ValuefromPipeline = $True)][ValidateSet("Single" , "Multiple")][string]$Mode = "Single"
+)
+
+if ($Packages.count -gt 1) {
+    $SelectedPackage = $Packages | Out-GridView -OutputMode $Mode -Title $Title
+    return @{ $SelectedPackage.Name = $SelectedPackage.Value }
+}
+
+elseif ($Packages.count -eq 1) {
+    while ("y", "n" -notcontains $Install ) { $Install = Read-Host "Do you want to install $($Packages.Keys)? [y/n] " }
+
+    if ($Install -eq "Y" ) { return @{ $($Packages.Keys) = $($Packages.Values) } }
+    else { return @{} }
+}
+
+else {
+    Write-Warning "No packages to install. Press enter to continue."
+    return @{}
 }
 }
 function Add-AllowedDmaDevices {
@@ -575,7 +650,7 @@ Get-ChildItem -File -Path $Path | ForEach-Object {
   If (!$Format) { $Format = [System.IO.Path]::GetExtension($_.Name) }
   If (!$Background) { $Background = $_.Name }
   $OutFile = $Prefix + [io.path]::GetFileNameWithoutExtension($_.Name) + $Suffix + $Format
-  Write-Verbose "$me Resizing with aspect ratio of $Aspect and height of $MaxHeight to $OutFile"  
+  Write-Verbose "$me Resizing with aspect ratio of $Aspect and height of $MaxHeight to $OutFile"
   If ($PSCmdlet.ShouldProcess("$OutFile", "Add-BluredPillarBars")) {
     $run = 'magick.exe identify -format %h ' + $_.Name
     $Height = (Invoke-Expression $run)
@@ -1413,7 +1488,7 @@ ForEach ($Certificate in $Certificates) {
   $count++ ; Progress -Index $count -Total @($Certificates).count -Activity "Resizing images." -Name $Certificate.Name
   $Password = Read-Host "Enter Password"
   
-  If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Certificate")) {  
+  If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Certificate")) {
     $Prefix = $Prefix + [System.IO.Path]::GetFileNameWithoutExtension($Certificate.FullName) + "_"
     $Path = $Certificate.FullName
 
@@ -2000,7 +2075,6 @@ Add-Member -InputObject $vmInfo NoteProperty -Name "MemorySize" -Value (Get-VMMe
 $vmInfo.ExposeVirtualizationExtensions = (Get-VMProcessor -VM $vm).ExposeVirtualizationExtensions
 
 Write-Host "This script will set the following for $vmName in order to enable nesting:"
-    
 $prompt = $false;
 
 if ($vmInfo.State -eq 'Saved') {
@@ -2010,7 +2084,7 @@ if ($vmInfo.State -eq 'Saved') {
 if ($vmInfo.State -ne 'Off' -or $vmInfo.State -eq 'Saved') {
     Write-Host "Vm State:" $vmInfo.State
     Write-Host "    $vmName will be turned off"
-    $prompt = $true         
+    $prompt = $true 
 }
 if ($vmInfo.ExposeVirtualizationExtensions -eq $false) {
     Write-Host "    Virtualization extensions will be enabled"
@@ -2219,7 +2293,11 @@ $Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
 if ($Password) { $Arguments += "-p $Password" }
 
 if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait    
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
+}
+
+if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
 }
 }
 function Export-MatchingCertificates {
@@ -2864,7 +2942,7 @@ Get-ExchangePhotos
 https://blogs.technet.microsoft.com/rajbugga/2017/05/16/picture-sync-from-office-365-to-ad-powershell-way/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-Param(  
+Param(
     [switch]$Return,
     [array]$Users = (Get-Mailbox -ResultSize Unlimited),
     [string]$Path = (Get-Location).ProviderPath,
@@ -3170,7 +3248,7 @@ Get-ADGroup -SearchBase $SearchBase -Filter * -Properties Description | ForEach-
         MembersString = $MembersString
         Members       = (Get-ADGroupMember -Identity $_.DistinguishedName).Name
     }
-    $Results += $Result    
+    $Results += $Result
 }
 return $Results
 }
@@ -3270,11 +3348,11 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 $Results = @()
 Get-ADComputer -Filter $Filter -Properties ms-Mcs-AdmPwd | Sort-Object ms-Mcs-AdmPwd, Name | ForEach-Object {
     if ($Show) { $Password = $_.'ms-Mcs-AdmPwd' } else { $Password = '********' }
-    if ($_.'ms-Mcs-AdmPwd') { $Status = $true } else { $Status = $false }       
+    if ($_.'ms-Mcs-AdmPwd') { $Status = $true } else { $Status = $false } 
     $Result = [PSCustomObject]@{
         Name     = $_.Name
         Status   = $Status
-        Password = $Password    
+        Password = $Password
     }
     $Results += $Result
 }
@@ -3323,7 +3401,7 @@ https://social.technet.microsoft.com/Forums/exchange/en-US/a234ba3b-37b4-4333-89
 Get-Mailbox | ForEach-Object {
 	$host.UI.Write("Blue", $host.UI.RawUI.BackgroundColor, "'nUser Name: " + $$.DisplayName + "'n")
 	For ($i = 0; $i -lt $_.EmailAddresses.Count; $i++) {
-		$Address = $_.EmailAddresses[$i]    
+		$Address = $_.EmailAddresses[$i]
 		$host.UI.Write("Blue", $host.UI.RawUI.BackGroundColor, $address.AddressString.ToString() + "`t")
 		If ($Address.IsPrimaryAddress) { 
 			$host.UI.Write("Green", $host.UI.RawUI.BackGroundColor, "Primary Email Address`n")
@@ -3900,7 +3978,7 @@ foreach ($result in $results) {
   Write-Host "Object Name  =  "$userEntry.name -backgroundcolor "yellow" -foregroundcolor "black"
   Write-Host "DN           =  "$userEntry.distinguishedName
   Write-Host "Object Cat.  =  "$userEntry.objectCategory
-  Write-Host "servicePrincipalNames"        
+  Write-Host "servicePrincipalNames"
   $i = 1
  
   foreach ($SPN in $userEntry.servicePrincipalName) {
@@ -4278,7 +4356,7 @@ Get-ADUser -Filter * -Properties name, givenName, sn, mail, title, department, c
         LastLogon       = ParseDate $_.lastLogonTimestamp
         PasswordLastSet = ParseDate $_.pwdLastSet
         Created         = $_.whenCreated
-        Changed         = $_.whenChanged  
+        Changed         = $_.whenChanged
     }
     $Results += $Result
 }
@@ -4470,7 +4548,11 @@ $Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
 if ($Password) { $Arguments += "-p $Password" }
 
 if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait    
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
+}
+
+if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
 }
 }
 function Initialize-OneDrive {
@@ -4567,6 +4649,7 @@ An array of actions to run.
     RSAT: Install Remote Server Administration Tools.
     NetFX3: Install .Net 3.0
     Ninte: Run Ninite.
+    Winget: Install the spesified packages and update existing applications using Winget. Use -Winget to select the appropriate package.
     Reboot: Reboot the machine.
 
 .PARAMETER HostNamePrefix
@@ -4605,14 +4688,18 @@ If specified, Remote Server Administrative Tools will be installed.
 .PARAMETER OfficeVersion
 Specifes the version of Office to install. If unspecified, Office will not be installed.
 
+.PARAMETER WingetPackages
+A hashtable of winget packages to install. The key is the package name and the value are any custom options required.
+
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
   [int]$Step,
-  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "Wallpaper", "RSAT", "NetFX3", "Ninite", "Reboot")][array]$Action,
+  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "Wallpaper", "RSAT", "NetFX3", "Ninite", "Winget", "Reboot")][array]$Action,
   [string]$HostNamePrefix,
   [string]$Domain,
   [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector = "TPM",
+  [hashtable]$WingetPackages,
   [string]$OfficeVersion = "2019",
   [ValidateScript({ Test-Path $_ })][string]$Wallpapers,
   [ValidateScript({ Test-Path $_ })][string]$ProvisioningPackage,
@@ -4624,12 +4711,10 @@ param(
   [string]$DriveToLabel = ($env:SystemDrive.Substring(0, 1))
 )
 
-$parent = Split-Path $script:MyInvocation.MyCommand.Path
-
-If (!(Test-Admin -Warn)) { Break }
+Test-Admin -Throw
 Requires ***REMOVED***IT
 
-if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "Wallpaper") }
+if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "Wallpaper", "Winget") }
 if ($Step -eq 2) { $Action = @("BitLocker", "Office", "", "Reboot") }
 
 if ($Action -contains "Rename") { Set-ComputerName -Prefix $HostNamePrefix }
@@ -4703,15 +4788,29 @@ if ($Action -contains "NetFX3") {
 if ($Action -contains "Ninite") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername) $NiniteInstallTo", "Install apps using Ninite")) {
     Write-Verbose "Running Ninite"
+    $parent = Split-Path $script:MyInvocation.MyCommand.Path
     & $parent\..\Ninite\Ninite.ps1 -Local -InstallTo $NiniteInstallTo
   }
 }
 
+if ($Action -contains "winget") {
+  if ($null -ne $WingetPackages) {
+    $WingetPackages.Keys | ForEach-Object {
+      $Arguments = @( "install $_", "--accept-package-agreements", "--accept-source-agreements" )
+      if ($WingetPackages[$_] -ne $null) { $Arguments += $WingetPackages[$_] }
+      if ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install $_ with arguments: $Arguments")) { 
+        Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList $Arguments 
+      }
+    }
+  }
+  
+  if ($PsCmdlet.ShouldProcess("localhost ($env:computername)", "Upgrading packages with winget")) { 
+    Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList "upgrade --all" 
+  }
+}
+
 Write-Verbose "Checking for reboot."
-If ( `
-    $Reboot `
-    -or (Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") `
-) {
+If ( $Reboot -or $Action -contains "Reboot" -or (Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") ) {
   Write-Verbose "A reboot is required. Reboot now?"
   Restart-Computer -Confirm
 }
@@ -5075,7 +5174,7 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
                     Write-Verbose -Verbose "Failed to uninstall $RsatItem from Windows"
                     Write-Warning -Message $_.Exception.Message
                 }
-            }       
+            }
         }
         # Querying for installed RSAT features second time
         $Installed = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat*" -AND $_.State -eq "Installed" }
@@ -5129,7 +5228,7 @@ Address Lists in Exchange Online do not automatically populate during provisioni
 
 Usage: Additional information on the usage of this script can found at the following blog post:  http://blogs.perficient.com/microsoft/?p=25536
 
-Disclaimer:  This script is provided AS IS without any support. Please test in a lab environment prior to production use.  
+Disclaimer:  This script is provided AS IS without any support. Please test in a lab environment prior to production use.
 
 .LINK
 http://blogs.perficient.com/microsoft/?p=25536
@@ -5698,7 +5797,7 @@ Begin {
 	$usr_access = ""
 }
 Process {
-	foreach ($Aliasmbx in $Alias) {	        
+	foreach ($Aliasmbx in $Alias) {
 		$writelog = $false
 		$SID_AccessRights = $null
 		$SID_SendAs = $null
@@ -5713,7 +5812,7 @@ Process {
 		}
 		# $usrs_SendAs = Get-Mailbox $Aliasmbx | Get-ADPermission | Where-Object {($_.ExtendedRights -like "*-As*") -and -not ($_.User -like "NT AUTHORITY\SELF")}
 		foreach ($usr_SendAs in $usrs_SendAs) {
-			if ($usr_SendAs.User -like 'S-1-5-21*') {				    
+			if ($usr_SendAs.User -like 'S-1-5-21*') {
 				$writelog = $true
 				Remove-AdPermission $Aliasmbx -User $usr_SendAs.User -ExtendedRights $usr_SendAs.ExtendedRights -Confirm:$false
 				Write-Verbose "SID to delete:  $($usr_SendAs.User) with the permission $($usr_SendAs.ExtendedRights) on $Aliasmbx mailbox"
@@ -6106,7 +6205,7 @@ If (CheckDNExist $Path) {
             $global:ErrCtrl = $false
             $global:strUserDN = $users[$index]
             $objUser = [ADSI]"LDAP://$global:strUserDN"
-            $global:strUserName = $objUser.cn   
+            $global:strUserName = $objUser.cn 
         
             & { #Try
                 set-aduser -server $Server $users[$index] -PasswordNotRequired $false
@@ -6118,9 +6217,9 @@ If (CheckDNExist $Path) {
                 if (!($LogFile -eq "")) {
                     [string] $strMsg = ($global:strUserName + ";Failed;" + $_.tostring().replace("`n", ""))
                     Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-                }                 
+                } 
                 ; Continue
-            }  
+            }
         
             if ($ErrCtrl -eq $false) {
                 Write-host $users[$index].name";Success;Status:"(GetUserAccCtrlStatus($users[$index])) -Foreground green
@@ -6129,7 +6228,7 @@ If (CheckDNExist $Path) {
                     [string] $strUrsStatus = GetUserAccCtrlStatus($global:strUserDN)
                     [string] $strMsg = ("$strUserNames" + ";Success;Status:" + "$strUrsStatus")
                     Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-                }                                 
+                }
             }
             $index++
         }
@@ -6153,9 +6252,9 @@ If (CheckDNExist $Path) {
             if (!($LogFile -eq "")) {
                 [string] $strMsg = ($global:strUserName + ";Failed;" + $_.tostring().replace("`n", ""))
                 Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-            }             
+            }
             ; Continue
-        }  
+        }
     
         if ($ErrCtrl -eq $false) {
 
@@ -6165,7 +6264,7 @@ If (CheckDNExist $Path) {
                 [string] $strUrsStatus = GetUserAccCtrlStatus($global:strUserDN)
                 [string] $strMsg = ("$strUserNames" + ";Success;Status:" + "$strUrsStatus")
                 Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-            }                
+            }
         }
     }
 }
@@ -6792,7 +6891,7 @@ Set-AdPhoto
 https://blogs.technet.microsoft.com/rajbugga/2017/05/16/picture-sync-from-office-365-to-ad-powershell-way/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-Param(  
+Param(
     [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
     [array]$Users = (Get-ChildItem $Path -File)
 )
@@ -6818,7 +6917,7 @@ foreach ($User in $Users) {
             catch [System.Management.Automation.MethodInvocationException] {
                 if (Test-Admin) { Throw "You do not have permission to make these changes." } 
                 else { Throw "You do not have permission to make these changes. Try running as admin." }
-            }           
+            }
         }
     }
     else { Write-Warning "User `"$account`" does not exist. Skipping." }
@@ -6919,11 +7018,7 @@ function Set-DefaultWallpapers {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -7205,7 +7300,7 @@ Process {
                 }
             }
             Else {
-                If ($PSCmdlet.ShouldProcess($Item, 'Set Directory Owner')) {                        
+                If ($PSCmdlet.ShouldProcess($Item, 'Set Directory Owner')) {
                     Try {
                         $Item.SetAccessControl($DirOwner)
                     }
@@ -7226,11 +7321,11 @@ Process {
         }
     }
 }
-End {  
+End {
     #Remove priviledges that had been granted
     [void][TokenAdjuster]::RemovePrivilege("SeRestorePrivilege") 
     [void][TokenAdjuster]::RemovePrivilege("SeBackupPrivilege") 
-    [void][TokenAdjuster]::RemovePrivilege("SeTakeOwnershipPrivilege")     
+    [void][TokenAdjuster]::RemovePrivilege("SeTakeOwnershipPrivilege")
 }
 }
 function Set-RoomCalendarPermissions {
@@ -7288,7 +7383,7 @@ Get-Mailbox -RecipientTypeDetails RoomMailbox | ForEach-Object {
 function Set-Wallpaper {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 5367e6e7-1177-4f3f-a345-1633446ad628
 
@@ -7389,6 +7484,10 @@ Int32 fuWinIni);
 $SPI_SETDESKWALLPAPER = 0x0014
 $UpdateIniFile = 0x01
 $SendChangeEvent = 0x02
+
+$fWinIni = $UpdateIniFile -bor $SendChangeEvent
+
+exit [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni) 
 
 $fWinIni = $UpdateIniFile -bor $SendChangeEvent
 
@@ -7857,7 +7956,7 @@ $SyncedUsers | ForEach-Object {
     if ($DestinationGroup) { 
         Write-Verbose "Adding $($_.DisplayName) to $DestinationGroup"
         Set-ADGroup -Identity $DestinationGroup -Server $DestinationDomain -Add @{'member' = ("cn=" + $_.DisplayName + "," + $DestinationOU) }
-    }    
+    }
 }
 }
 function Test-Admin {
@@ -7988,7 +8087,7 @@ if ($Action -contains "RemoveFirst") {
     Write-Host $LastDeviceFile
     Remove-ItemProperty $Path -Name $CurrentDevice -Force
     Set-Content -Path $LastDeviceFile -Value $CurrentDevice
-    Get-Content $File | Select-Object -Skip 1 | Set-Content $File  
+    Get-Content $File | Select-Object -Skip 1 | Set-Content $File
 
 }
 if ($Action -contains "AddLast") {
@@ -7996,22 +8095,26 @@ if ($Action -contains "AddLast") {
         $i++
         $Name = $_.FriendlyName + " " + $i
         New-ItemProperty $Path -PropertyType "String" -Force -Name $Name -Value (ParseInstanceId $_.InstanceId)
-    }   
+    } 
 }
 if ($Action -contains "Reset") { Remove-ItemProperty $Path -Name "*" }
 }
 function Test-RegistryValue {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.0
 
 .GUID 73abfeda-2bad-4f83-a401-e34757afcbc0
 
 .AUTHOR Jonathan Medd
 
+.AUTHOR Jason Cook
+
 .COMPANYNAME ***REMOVED***
 
 .COPYRIGHT Copyright (c) Jonathan Medd 2014
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
 .TAGS 
 
@@ -8023,16 +8126,10 @@ function Test-RegistryValue {
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
+.REQUIREDSCRI
 
 .RELEASENOTES
-
-
-#> 
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -8196,10 +8293,9 @@ else {
 Clear-Variable best* -Scope Global #Clear the best* variables in case you run it more than once...
 
 #Do the following code for each server in our array
-ForEach ($Server in $Servers) {  
+ForEach ($Server in $Servers) {
   $count++ ; Progress -Index $count -Total $Servers.count -Activity "Testing server latency." -Name $Server #Add to the counting varable. Update the progress bar.
 
-  
   $i = 0 #Counting variable for number of times we tried to ping a given server
   Do {
     $pingsuccess = $false #assume a failure
@@ -8213,7 +8309,7 @@ ForEach ($Server in $Servers) {
     }
     Catch {
       $pingsuccess = $false #Catch the failure and set the success variable to false
-    }     
+    }
   }  While ($pingsuccess -eq $false -and $i -le $Retries)  #Try everything between Do and While up to $Retry times, or while $pingsuccess is not true
 
   #Compare the last ping test with the best known ping test....if there is no known best ping test, assume this one is the best $bestping = $currentping 
@@ -8257,11 +8353,11 @@ if ($decision -eq 0) {
     $TeamsUpdateExePath = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Microsoft', 'Teams', 'Update.exe')
     try {
         if (Test-Path -Path $TeamsUpdateExePath) { Start-Process -FilePath $TeamsUpdateExePath -ArgumentList "-uninstall -s" -PassThru -NoNewWindow -Wait }
-        if (Test-Path -Path $TeamsPath) { Remove-Item -Path $TeamsPath -Recurse }            
+        if (Test-Path -Path $TeamsPath) { Remove-Item -Path $TeamsPath -Recurse }
     }
     catch {
         Write-Error -ErrorRecord $_
-        exit /b 1        
+        exit /b 1
     }
 } 
 else { Break }
@@ -8326,11 +8422,7 @@ function Update-MicrosoftStoreApps {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-
 #> 
-
-
 
 <#
 .DESCRIPTION

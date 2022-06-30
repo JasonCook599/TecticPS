@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 5367e6e7-1177-4f3f-a345-1633446ad628
 
@@ -25,6 +25,12 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
+
+
+#> 
+
+
+
 <#
 .DESCRIPTION
 Change the default Windows wallpaper for new users and copies wallpapers to system folder.
