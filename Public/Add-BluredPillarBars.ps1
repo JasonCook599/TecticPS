@@ -54,7 +54,7 @@ Get-ChildItem -File -Path $Path | ForEach-Object {
   If (!$Format) { $Format = [System.IO.Path]::GetExtension($_.Name) }
   If (!$Background) { $Background = $_.Name }
   $OutFile = $Prefix + [io.path]::GetFileNameWithoutExtension($_.Name) + $Suffix + $Format
-  Write-Verbose "$me Resizing with aspect ratio of $Aspect and height of $MaxHeight to $OutFile"  
+  Write-Verbose "$me Resizing with aspect ratio of $Aspect and height of $MaxHeight to $OutFile"
   If ($PSCmdlet.ShouldProcess("$OutFile", "Add-BluredPillarBars")) {
     $run = 'magick.exe identify -format %h ' + $_.Name
     $Height = (Invoke-Expression $run)

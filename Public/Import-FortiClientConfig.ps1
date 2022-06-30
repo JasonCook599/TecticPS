@@ -50,10 +50,10 @@ $Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
 if ($Password) { $Arguments += "-p $Password" }
 
 if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait    
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
 }
 
 if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait    
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
 }
 

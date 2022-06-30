@@ -55,7 +55,7 @@ ForEach ($Certificate in $Certificates) {
   $count++ ; Progress -Index $count -Total @($Certificates).count -Activity "Resizing images." -Name $Certificate.Name
   $Password = Read-Host "Enter Password"
   
-  If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Certificate")) {  
+  If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Certificate")) {
     $Prefix = $Prefix + [System.IO.Path]::GetFileNameWithoutExtension($Certificate.FullName) + "_"
     $Path = $Certificate.FullName
 

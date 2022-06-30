@@ -296,7 +296,7 @@ If (CheckDNExist $Path) {
             $global:ErrCtrl = $false
             $global:strUserDN = $users[$index]
             $objUser = [ADSI]"LDAP://$global:strUserDN"
-            $global:strUserName = $objUser.cn   
+            $global:strUserName = $objUser.cn 
         
             & { #Try
                 set-aduser -server $Server $users[$index] -PasswordNotRequired $false
@@ -308,9 +308,9 @@ If (CheckDNExist $Path) {
                 if (!($LogFile -eq "")) {
                     [string] $strMsg = ($global:strUserName + ";Failed;" + $_.tostring().replace("`n", ""))
                     Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-                }                 
+                } 
                 ; Continue
-            }  
+            }
         
             if ($ErrCtrl -eq $false) {
                 Write-host $users[$index].name";Success;Status:"(GetUserAccCtrlStatus($users[$index])) -Foreground green
@@ -319,7 +319,7 @@ If (CheckDNExist $Path) {
                     [string] $strUrsStatus = GetUserAccCtrlStatus($global:strUserDN)
                     [string] $strMsg = ("$strUserNames" + ";Success;Status:" + "$strUrsStatus")
                     Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-                }                                 
+                }
             }
             $index++
         }
@@ -343,9 +343,9 @@ If (CheckDNExist $Path) {
             if (!($LogFile -eq "")) {
                 [string] $strMsg = ($global:strUserName + ";Failed;" + $_.tostring().replace("`n", ""))
                 Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-            }             
+            }
             ; Continue
-        }  
+        }
     
         if ($ErrCtrl -eq $false) {
 
@@ -355,7 +355,7 @@ If (CheckDNExist $Path) {
                 [string] $strUrsStatus = GetUserAccCtrlStatus($global:strUserDN)
                 [string] $strMsg = ("$strUserNames" + ";Success;Status:" + "$strUrsStatus")
                 Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-            }                
+            }
         }
     }
 }

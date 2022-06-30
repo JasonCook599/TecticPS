@@ -51,7 +51,7 @@ foreach ($result in $results) {
   Write-Host "Object Name  =  "$userEntry.name -backgroundcolor "yellow" -foregroundcolor "black"
   Write-Host "DN           =  "$userEntry.distinguishedName
   Write-Host "Object Cat.  =  "$userEntry.objectCategory
-  Write-Host "servicePrincipalNames"        
+  Write-Host "servicePrincipalNames"
   $i = 1
  
   foreach ($SPN in $userEntry.servicePrincipalName) {

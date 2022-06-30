@@ -77,7 +77,7 @@ if ($Action -contains "RemoveFirst") {
     Write-Host $LastDeviceFile
     Remove-ItemProperty $Path -Name $CurrentDevice -Force
     Set-Content -Path $LastDeviceFile -Value $CurrentDevice
-    Get-Content $File | Select-Object -Skip 1 | Set-Content $File  
+    Get-Content $File | Select-Object -Skip 1 | Set-Content $File
 
 }
 if ($Action -contains "AddLast") {
@@ -85,6 +85,6 @@ if ($Action -contains "AddLast") {
         $i++
         $Name = $_.FriendlyName + " " + $i
         New-ItemProperty $Path -PropertyType "String" -Force -Name $Name -Value (ParseInstanceId $_.InstanceId)
-    }   
+    } 
 }
 if ($Action -contains "Reset") { Remove-ItemProperty $Path -Name "*" }

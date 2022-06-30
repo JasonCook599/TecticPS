@@ -65,10 +65,9 @@ else {
 Clear-Variable best* -Scope Global #Clear the best* variables in case you run it more than once...
 
 #Do the following code for each server in our array
-ForEach ($Server in $Servers) {  
+ForEach ($Server in $Servers) {
   $count++ ; Progress -Index $count -Total $Servers.count -Activity "Testing server latency." -Name $Server #Add to the counting varable. Update the progress bar.
 
-  
   $i = 0 #Counting variable for number of times we tried to ping a given server
   Do {
     $pingsuccess = $false #assume a failure
@@ -82,7 +81,7 @@ ForEach ($Server in $Servers) {
     }
     Catch {
       $pingsuccess = $false #Catch the failure and set the success variable to false
-    }     
+    }
   }  While ($pingsuccess -eq $false -and $i -le $Retries)  #Try everything between Do and While up to $Retry times, or while $pingsuccess is not true
 
   #Compare the last ping test with the best known ping test....if there is no known best ping test, assume this one is the best $bestping = $currentping 

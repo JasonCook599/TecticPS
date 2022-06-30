@@ -172,7 +172,7 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
                     Write-Verbose -Verbose "Failed to uninstall $RsatItem from Windows"
                     Write-Warning -Message $_.Exception.Message
                 }
-            }       
+            }
         }
         # Querying for installed RSAT features second time
         $Installed = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat*" -AND $_.State -eq "Installed" }

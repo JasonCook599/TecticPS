@@ -121,5 +121,5 @@ $SyncedUsers | ForEach-Object {
     if ($DestinationGroup) { 
         Write-Verbose "Adding $($_.DisplayName) to $DestinationGroup"
         Set-ADGroup -Identity $DestinationGroup -Server $DestinationDomain -Add @{'member' = ("cn=" + $_.DisplayName + "," + $DestinationOU) }
-    }    
+    }
 }

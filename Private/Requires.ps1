@@ -117,7 +117,7 @@ if ($Modules) {
         else {
             if (-Not $Force) { $choice = Read-Host -Prompt "Module '$Module' is not available but is required. Install? (Y)" }
             else { Write-Output "'$Module' is not installed. Installing now." }
-    
+            
             if ($choice -eq "Y" -or $Force) { 
                 try { Install-Module $Module }
                 catch {

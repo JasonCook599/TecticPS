@@ -33,7 +33,7 @@ Set-AdPhoto
 https://blogs.technet.microsoft.com/rajbugga/2017/05/16/picture-sync-from-office-365-to-ad-powershell-way/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-Param(  
+Param(
     [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
     [array]$Users = (Get-ChildItem $Path -File)
 )
@@ -59,7 +59,7 @@ foreach ($User in $Users) {
             catch [System.Management.Automation.MethodInvocationException] {
                 if (Test-Admin) { Throw "You do not have permission to make these changes." } 
                 else { Throw "You do not have permission to make these changes. Try running as admin." }
-            }           
+            }
         }
     }
     else { Write-Warning "User `"$account`" does not exist. Skipping." }

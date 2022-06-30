@@ -27,11 +27,11 @@ if ($decision -eq 0) {
     $TeamsUpdateExePath = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Microsoft', 'Teams', 'Update.exe')
     try {
         if (Test-Path -Path $TeamsUpdateExePath) { Start-Process -FilePath $TeamsUpdateExePath -ArgumentList "-uninstall -s" -PassThru -NoNewWindow -Wait }
-        if (Test-Path -Path $TeamsPath) { Remove-Item -Path $TeamsPath -Recurse }            
+        if (Test-Path -Path $TeamsPath) { Remove-Item -Path $TeamsPath -Recurse }
     }
     catch {
         Write-Error -ErrorRecord $_
-        exit /b 1        
+        exit /b 1
     }
 } 
 else { Break }

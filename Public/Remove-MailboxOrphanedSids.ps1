@@ -69,7 +69,7 @@ Begin {
 	$usr_access = ""
 }
 Process {
-	foreach ($Aliasmbx in $Alias) {	        
+	foreach ($Aliasmbx in $Alias) {
 		$writelog = $false
 		$SID_AccessRights = $null
 		$SID_SendAs = $null
@@ -84,7 +84,7 @@ Process {
 		}
 		# $usrs_SendAs = Get-Mailbox $Aliasmbx | Get-ADPermission | Where-Object {($_.ExtendedRights -like "*-As*") -and -not ($_.User -like "NT AUTHORITY\SELF")}
 		foreach ($usr_SendAs in $usrs_SendAs) {
-			if ($usr_SendAs.User -like 'S-1-5-21*') {				    
+			if ($usr_SendAs.User -like 'S-1-5-21*') {
 				$writelog = $true
 				Remove-AdPermission $Aliasmbx -User $usr_SendAs.User -ExtendedRights $usr_SendAs.ExtendedRights -Confirm:$false
 				Write-Verbose "SID to delete:  $($usr_SendAs.User) with the permission $($usr_SendAs.ExtendedRights) on $Aliasmbx mailbox"

@@ -100,7 +100,6 @@ Add-Member -InputObject $vmInfo NoteProperty -Name "MemorySize" -Value (Get-VMMe
 $vmInfo.ExposeVirtualizationExtensions = (Get-VMProcessor -VM $vm).ExposeVirtualizationExtensions
 
 Write-Host "This script will set the following for $vmName in order to enable nesting:"
-    
 $prompt = $false;
 
 # Output text for proposed actions
@@ -111,7 +110,7 @@ if ($vmInfo.State -eq 'Saved') {
 if ($vmInfo.State -ne 'Off' -or $vmInfo.State -eq 'Saved') {
     Write-Host "Vm State:" $vmInfo.State
     Write-Host "    $vmName will be turned off"
-    $prompt = $true         
+    $prompt = $true 
 }
 if ($vmInfo.ExposeVirtualizationExtensions -eq $false) {
     Write-Host "    Virtualization extensions will be enabled"

@@ -54,7 +54,7 @@ Get-ADUser -Filter * -Properties name, givenName, sn, mail, title, department, c
         LastLogon       = ParseDate $_.lastLogonTimestamp
         PasswordLastSet = ParseDate $_.pwdLastSet
         Created         = $_.whenCreated
-        Changed         = $_.whenChanged  
+        Changed         = $_.whenChanged
     }
     $Results += $Result
 }

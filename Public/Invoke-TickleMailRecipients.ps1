@@ -22,7 +22,7 @@ Address Lists in Exchange Online do not automatically populate during provisioni
 
 Usage: Additional information on the usage of this script can found at the following blog post:  http://blogs.perficient.com/microsoft/?p=25536
 
-Disclaimer:  This script is provided AS IS without any support. Please test in a lab environment prior to production use.  
+Disclaimer:  This script is provided AS IS without any support. Please test in a lab environment prior to production use.
 
 .LINK
 http://blogs.perficient.com/microsoft/?p=25536

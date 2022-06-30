@@ -42,7 +42,7 @@ Get-ExchangePhotos
 https://blogs.technet.microsoft.com/rajbugga/2017/05/16/picture-sync-from-office-365-to-ad-powershell-way/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-Param(  
+Param(
     [switch]$Return,
     [array]$Users = (Get-Mailbox -ResultSize Unlimited),
     [string]$Path = (Get-Location).ProviderPath,

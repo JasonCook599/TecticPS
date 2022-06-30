@@ -29,7 +29,7 @@ param()
 $global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
 
 try {
-    # Get AAD B2B Pending Users.    
+    # Get AAD B2B Pending Users.
     return (Invoke-RestMethod -Headers @{Authorization = "Bearer $($myToken.AccessToken)" } `
             -Uri  "https://graph.microsoft.com/beta/users?filter=externalUserState eq 'PendingAcceptance'&`$top=999" `
             -Method Get).value 

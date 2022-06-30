@@ -194,7 +194,7 @@ Process {
                 }
             }
             Else {
-                If ($PSCmdlet.ShouldProcess($Item, 'Set Directory Owner')) {                        
+                If ($PSCmdlet.ShouldProcess($Item, 'Set Directory Owner')) {
                     Try {
                         $Item.SetAccessControl($DirOwner)
                     }
@@ -215,10 +215,10 @@ Process {
         }
     }
 }
-End {  
+End {
     #Remove priviledges that had been granted
     [void][TokenAdjuster]::RemovePrivilege("SeRestorePrivilege") 
     [void][TokenAdjuster]::RemovePrivilege("SeBackupPrivilege") 
-    [void][TokenAdjuster]::RemovePrivilege("SeTakeOwnershipPrivilege")     
+    [void][TokenAdjuster]::RemovePrivilege("SeTakeOwnershipPrivilege")
 }
 

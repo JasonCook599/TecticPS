@@ -36,11 +36,11 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 $Results = @()
 Get-ADComputer -Filter $Filter -Properties ms-Mcs-AdmPwd | Sort-Object ms-Mcs-AdmPwd, Name | ForEach-Object {
     if ($Show) { $Password = $_.'ms-Mcs-AdmPwd' } else { $Password = '********' }
-    if ($_.'ms-Mcs-AdmPwd') { $Status = $true } else { $Status = $false }       
+    if ($_.'ms-Mcs-AdmPwd') { $Status = $true } else { $Status = $false } 
     $Result = [PSCustomObject]@{
         Name     = $_.Name
         Status   = $Status
-        Password = $Password    
+        Password = $Password
     }
     $Results += $Result
 }

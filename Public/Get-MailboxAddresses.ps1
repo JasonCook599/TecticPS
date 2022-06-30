@@ -28,7 +28,7 @@ https://social.technet.microsoft.com/Forums/exchange/en-US/a234ba3b-37b4-4333-89
 Get-Mailbox | ForEach-Object {
 	$host.UI.Write("Blue", $host.UI.RawUI.BackgroundColor, "'nUser Name: " + $$.DisplayName + "'n")
 	For ($i = 0; $i -lt $_.EmailAddresses.Count; $i++) {
-		$Address = $_.EmailAddresses[$i]    
+		$Address = $_.EmailAddresses[$i]
 		$host.UI.Write("Blue", $host.UI.RawUI.BackGroundColor, $address.AddressString.ToString() + "`t")
 		If ($Address.IsPrimaryAddress) { 
 			$host.UI.Write("Green", $host.UI.RawUI.BackGroundColor, "Primary Email Address`n")

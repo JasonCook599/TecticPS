@@ -21,7 +21,7 @@ param(
     $DefaultsScripts = "***REMOVED***ITDefaults.ps1"
 )
 
-try {    
+try {
     $ModuleName = (Get-Command -Name $Invocation.MyCommand -ErrorAction SilentlyContinue).ModuleName
     $ModulePath = (Get-Module -Name $ModuleName).Path
     $ModuleRoot = Split-Path -Parent -Path $ModulePath

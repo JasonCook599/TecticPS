@@ -51,6 +51,6 @@ Get-ADGroup -SearchBase $SearchBase -Filter * -Properties Description | ForEach-
         MembersString = $MembersString
         Members       = (Get-ADGroupMember -Identity $_.DistinguishedName).Name
     }
-    $Results += $Result    
+    $Results += $Result
 }
 return $Results
