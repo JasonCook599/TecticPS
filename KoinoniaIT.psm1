@@ -6993,7 +6993,7 @@ return Rename-Computer -NewName $NewName
 function Set-DefaultWallpapers {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 910cea1b-4c78-4282-ac1d-7a64897475ea
 
@@ -7018,7 +7018,13 @@ function Set-DefaultWallpapers {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
+
+
 #> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -7049,7 +7055,7 @@ Param (
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers."
+Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers." | Out-Null
 
 $DestinationPath = (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\$Name")
 $SystemPath = (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\Windows")
@@ -7079,7 +7085,7 @@ if ($Images.Count -lt 2) { $Image = $Images[0] }
 else { $Image = $Images[(Get-Random -Minimum 0 -Maximum ($Images.Count - 1))] }
 
 Write-Verbose "Setting default wallpaper to $($Image.Name)"
-Copy-Item -Path $Image.FullName -Destination (Join-Path -Path $SystemPath -ChildPath $DefaultImagePath)
+Copy-Item -Path $Image.FullName -Destination $DefaultImagePath
 
 if ($LockScreen) {
     try {
@@ -8397,7 +8403,7 @@ Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domai
 function Update-MicrosoftStoreApps {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.5
 
 .GUID 4cac6972-9cb0-4755-bfc1-ae2eb6dfc0d1
 
@@ -8422,7 +8428,17 @@ function Update-MicrosoftStoreApps {
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
+
+
 #> 
+
+
+
+
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -8436,11 +8452,11 @@ https://social.technet.microsoft.com/Forums/windows/en-US/5ac7daa9-54e6-43c0-974
 #>
 
 param([switch]$DontCheckStatus)
-Test-Admin -Throw
+Test-Admin -Throw | Out-Null
 $namespaceName = "root\cimv2\mdm\dmmap"
 $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
 $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
-$wmiObj.UpdateScanMethod()
+$Result = $wmiObj.UpdateScanMethod()
 if (-not $DontCheckStatus) { Start-Process "ms-windows-store://downloadsandupdates" }
 }
 function Update-PKI {

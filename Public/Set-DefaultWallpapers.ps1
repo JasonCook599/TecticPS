@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 910cea1b-4c78-4282-ac1d-7a64897475ea
 
@@ -25,7 +25,13 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
+
+
 #> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -56,7 +62,7 @@ Param (
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers."
+Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers." | Out-Null
 
 $DestinationPath = (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\$Name")
 $SystemPath = (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\Windows")
@@ -86,7 +92,7 @@ if ($Images.Count -lt 2) { $Image = $Images[0] }
 else { $Image = $Images[(Get-Random -Minimum 0 -Maximum ($Images.Count - 1))] }
 
 Write-Verbose "Setting default wallpaper to $($Image.Name)"
-Copy-Item -Path $Image.FullName -Destination (Join-Path -Path $SystemPath -ChildPath $DefaultImagePath)
+Copy-Item -Path $Image.FullName -Destination $DefaultImagePath
 
 if ($LockScreen) {
     try {
