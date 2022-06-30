@@ -4553,12 +4553,6 @@ function Initialize-Workstation {
 
 #> 
 
-
-
-
-
-
-
 <#
 .SYNOPSIS
 This script will install the neccesary applications and services on a given machine.
@@ -6904,7 +6898,7 @@ return Rename-Computer -NewName $NewName
 function Set-DefaultWallpapers {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 910cea1b-4c78-4282-ac1d-7a64897475ea
 
@@ -6937,6 +6931,8 @@ function Set-DefaultWallpapers {
 
 
 
+
+
 <#
 .DESCRIPTION
 Change the default Windows wallpaper for new users and copies wallpapers to system folder.
@@ -6950,6 +6946,9 @@ An array of images to use. By default, this will select all *.jpg files in $Sour
 .PARAMETER Name
 The name of the folder to copy the images to. If not specified, this script will use "Defaults" and copy to $env:windir\Web\Wallpaper\$Name
 
+.PARAMETER LockScreen
+Sets the lock screen wallpaper and prevents the user from changing it.
+
 .LINK
 https://ccmexec.com/2015/08/replacing-default-wallpaper-in-windows-10-using-scriptmdtsccm/
 #>
@@ -6957,17 +6956,18 @@ https://ccmexec.com/2015/08/replacing-default-wallpaper-in-windows-10-using-scri
 Param (
     [ValidateScript( { Test-Path $_ })][string]$SourcePath,
     $Images = (Get-ChildItem $SourcePath -Filter *.jpg),
-    [string]$Name = "Defaults"
-
+    [string]$Name = "Defaults",
+    [switch]$LockScreen
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers." | Out-Null
+Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers."
 
 $DestinationPath = (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\$Name")
 $SystemPath = (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\Windows")
 $ResolutionPath = (Join-Path -Path $env:windir -ChildPath "Web\4K\Wallpaper\Windows")
+$DefaultImagePath = (Join-Path -Path $SystemPath -ChildPath "img0.jpg")
 
 Write-Verbose "Copying all wallpapers from $SourcePath to $DestinationPath"
 try { Remove-Item -Path $DestinationPath -Recurse -Force | Out-null }
@@ -6992,7 +6992,29 @@ if ($Images.Count -lt 2) { $Image = $Images[0] }
 else { $Image = $Images[(Get-Random -Minimum 0 -Maximum ($Images.Count - 1))] }
 
 Write-Verbose "Setting default wallpaper to $($Image.Name)"
-Copy-Item -Path $Image.FullName -Destination (Join-Path -Path $SystemPath -ChildPath "img0.jpg")
+Copy-Item -Path $Image.FullName -Destination (Join-Path -Path $SystemPath -ChildPath $DefaultImagePath)
+
+if ($LockScreen) {
+    try {
+        $RegistryPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\"
+        $RegistryParent = (Split-Path -Path $RegistryPath -Parent)
+
+        if (-not (Test-Path -Path $RegistryPath)) { New-Item -Path $RegistryParent -Name (Split-Path -Path $RegistryPath -Leaf) -ItemType RegistryKey }
+    
+        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImagePath)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImagePath -Value "file:///C:\Windows\Web\Wallpaper\Windows\img0.jpg" -PropertyType "String" }
+        else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImagePath -Value "C:\Windows\Web\Wallpaper\Windows\img0.jpg" -Type String }
+
+        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImageUrl)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImageUrl -Value "file:///C:\Windows\Web\Wallpaper\Windows\img0.jpg" -PropertyType "String" }
+        else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImageUrl -Value "C:\Windows\Web\Wallpaper\Windows\img0.jpg" -Type String }
+    
+        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImageStatus)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImageStatus -Value 1 -PropertyType "DWord" } 
+        else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImageStatus -Value 1 -Type DWord }
+    }
+    catch {
+        $_
+        Write-Warning "Failed to set lockscreen wallpaper."
+    }
+}
 }
 function Set-Owner {
 <#PSScriptInfo
@@ -7988,6 +8010,65 @@ if ($Action -contains "AddLast") {
 }
 if ($Action -contains "Reset") { Remove-ItemProperty $Path -Name "*" }
 }
+function Test-RegistryValue {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 73abfeda-2bad-4f83-a401-e34757afcbc0
+
+.AUTHOR Jonathan Medd
+
+.COMPANYNAME 
+
+.COPYRIGHT Copyright (c) Jonathan Medd 2014
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
+
+<#
+.DESCRIPTION
+Tests is a given registry key exists.
+
+.PARAMETER Path
+The registry key to test.
+
+.PARAMETER Value
+The registry value withing the key to test.
+
+.LINK
+https://www.jonathanmedd.net/2014/02/testing-for-the-presence-of-a-registry-key-and-value.html
+#>
+
+param (
+    [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Path,
+    [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Value
+)
+    
+try {
+    Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
+    return $true
+}
+catch { return $false }
+}
 function Test-ScriptMetadata {
 <#PSScriptInfo
 .VERSION 1.0.0
@@ -8226,6 +8307,55 @@ https://docs.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-ss
 Import-Module $Env:ProgramFiles'\Microsoft Azure Active Directory Connect\AzureADSSO.psd1d'
 New-AzureADSSOAuthenticationContext #Office 365 Global Admin
 Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domain Admin credentials" -UserName ($env:USERDOMAIN + "\" + $env:USERNAME))
+}
+function Update-MicrosoftStoreApps {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 4cac6972-9cb0-4755-bfc1-ae2eb6dfc0d1
+
+.AUTHOR Tony MCP
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) Tony MCP 2016
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+
+#> 
+
+
+
+<#
+.DESCRIPTION
+Updates Microsoft Store apps. Equivalent to clicking "Check for Updates" and "Update All" in the Microsoft Store app. Tt doesn't wait for the updates to complete before returning. Check the store app for the status of the updates.
+
+.LINK
+
+https://social.technet.microsoft.com/Forums/windows/en-US/5ac7daa9-54e6-43c0-9746-293dcb8ef2ec/how-to-force-update-of-windows-store-apps-without-launching-the-store-app
+
+#>
+
+$namespaceName = "root\cimv2\mdm\dmmap"
+$className = "MDM_EnterpriseModernAppManagement_AppManagement01"
+$wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
+$wmiObj.UpdateScanMethod()
 }
 function Update-PKI {
 <#PSScriptInfo
