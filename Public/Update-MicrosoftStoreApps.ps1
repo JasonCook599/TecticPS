@@ -29,19 +29,22 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 Updates Microsoft Store apps. Equivalent to clicking "Check for Updates" and "Update All" in the Microsoft Store app. Tt doesn't wait for the updates to complete before returning. Check the store app for the status of the updates.
 
-.LINK
+.PARAMETERS DontCheckStatus
+Prevents the script from opening the store app to monitor the status of the updates.
 
+.LINK
 https://social.technet.microsoft.com/Forums/windows/en-US/5ac7daa9-54e6-43c0-9746-293dcb8ef2ec/how-to-force-update-of-windows-store-apps-without-launching-the-store-app
 
 #>
 
+param([switch]$DontCheckStatus)
+Test-Admin -Throw
 $namespaceName = "root\cimv2\mdm\dmmap"
 $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
 $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
 $wmiObj.UpdateScanMethod()
+if (-not $DontCheckStatus) { Start-Process "ms-windows-store://downloadsandupdates" }
