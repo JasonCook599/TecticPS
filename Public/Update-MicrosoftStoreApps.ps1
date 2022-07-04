@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 4cac6972-9cb0-4755-bfc1-ae2eb6dfc0d1
 
@@ -44,5 +44,5 @@ Test-Admin -Throw | Out-Null
 $namespaceName = "root\cimv2\mdm\dmmap"
 $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
 $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
-$Result = $wmiObj.UpdateScanMethod()
+$wmiObj.UpdateScanMethod() | Out-Null
 if (-not $DontCheckStatus) { Start-Process "ms-windows-store://downloadsandupdates" }

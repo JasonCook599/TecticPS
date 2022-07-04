@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.14
+.VERSION 1.2.15
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -195,7 +195,7 @@ if ($Action -contains "winget") {
   if ($null -ne $WingetPackages) {
     $WingetPackages.Keys | ForEach-Object {
       $Arguments = @( "install $_", "--accept-package-agreements", "--accept-source-agreements" )
-      if ($WingetPackages[$_] -ne $null) { $Arguments += $WingetPackages[$_] }
+      if ($null -ne $WingetPackages[$_]) { $Arguments += $WingetPackages[$_] }
       if ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install $_ with arguments: $Arguments")) {
         Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList $Arguments
       }

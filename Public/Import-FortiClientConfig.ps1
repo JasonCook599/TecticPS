@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.6
+.VERSION 1.2.7
 
 .GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d
 
@@ -45,16 +45,12 @@ https://getmodern.co.uk/automating-the-install-of-forticlient-vpn-via-mem-intune
 param (
     $Path = "backup.conf",
     [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
-    $Password
+    [SecureString]$Password
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
-if ($Password) { $Arguments += "-p $Password" }
-
-if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
-}
+if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
 
 if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
     Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait

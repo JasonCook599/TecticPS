@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID fb250771-93be-4da0-a4ec-edad2ccf7476
 
@@ -57,7 +57,7 @@ param (
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-if ($PSCmdlet.ShouldContinue($Path, 'Starting kiosk app.')) {
+If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
   while ($true) {
     If (-Not (Get-Process | Select-Object Path | Where-Object Path -eq $Path)) { Start-Process -FilePath $Path -ArgumentList $Arguments }
     Start-Sleep -Seconds $Sleep

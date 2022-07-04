@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 6309e154-81f6-4bd1-aff7-deaea3274934
 
@@ -59,6 +59,7 @@ TODO Build better help
 # the use of or inability to use the sample or documentation, even if Microsoft has been advised
 # of the possibility of such damages.
 ################################################################################################
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", Scope = "Function", Target = "*")]
 param([string]$Path,
     [string]$Server,
     [switch]$Subtree,

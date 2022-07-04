@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.6
+.VERSION 1.2.7
 
 .GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
 
@@ -42,27 +42,12 @@ Export-FortiClientConfig -Path backup.conf
 param (
     $Path = "backup.conf",
     [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
-    $Password
+    [SecureString]$Password
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
-if ($Password) { $Arguments += "-p $Password" }
-
-if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
-}
-
-if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
-}
-
-$Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
-if ($Password) { $Arguments += "-p $Password" }
-
-if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
-}
+if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
 
 if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
     Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait

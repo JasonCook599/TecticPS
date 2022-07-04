@@ -2471,7 +2471,7 @@ return $Results
 function Export-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.2.6
+.VERSION 1.2.7
 
 .GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
 
@@ -2513,27 +2513,12 @@ Export-FortiClientConfig -Path backup.conf
 param (
     $Path = "backup.conf",
     [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
-    $Password
+    [SecureString]$Password
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
-if ($Password) { $Arguments += "-p $Password" }
-
-if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
-}
-
-if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
-}
-
-$Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
-if ($Password) { $Arguments += "-p $Password" }
-
-if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
-}
+if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
 
 if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
     Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
@@ -4858,7 +4843,7 @@ foreach ($UserFolder in $Path) {
 function Import-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.2.6
+.VERSION 1.2.7
 
 .GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d
 
@@ -4903,16 +4888,12 @@ https://getmodern.co.uk/automating-the-install-of-forticlient-vpn-via-mem-intune
 param (
     $Path = "backup.conf",
     [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
-    $Password
+    [SecureString]$Password
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
-if ($Password) { $Arguments += "-p $Password" }
-
-if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
-}
+if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
 
 if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
     Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
@@ -4961,7 +4942,7 @@ Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 function Initialize-Workstation {
 <#PSScriptInfo
 
-.VERSION 1.2.14
+.VERSION 1.2.15
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -5156,7 +5137,7 @@ if ($Action -contains "winget") {
   if ($null -ne $WingetPackages) {
     $WingetPackages.Keys | ForEach-Object {
       $Arguments = @( "install $_", "--accept-package-agreements", "--accept-source-agreements" )
-      if ($WingetPackages[$_] -ne $null) { $Arguments += $WingetPackages[$_] }
+      if ($null -ne $WingetPackages[$_]) { $Arguments += $WingetPackages[$_] }
       if ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install $_ with arguments: $Arguments")) {
         Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList $Arguments
       }
@@ -6344,7 +6325,7 @@ foreach ($Module in $Modules) {
 function Remove-UserPASSWD_NOTREQD {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 6309e154-81f6-4bd1-aff7-deaea3274934
 
@@ -6379,6 +6360,7 @@ Search for user accounts with "ADS_UF_PASSWD_NOTREQD" enabled and remove the fla
 .NOTES
 TODO Build better help
 #>
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", Scope = "Function", Target = "*")]
 param([string]$Path,
     [string]$Server,
     [switch]$Subtree,
@@ -6708,7 +6690,7 @@ Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContin
 function Repair-AdAttributes {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -6823,7 +6805,7 @@ If ($PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty") -and $ClearTe
 
 If ($PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension") -and $SetTelephoneNumber) {
     $Users | Where-Object $null -ne mail | ForEach-Object {
-        if ($_.ipphone -ne $null) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
+        if ($null -ne $_.ipphone) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
         else { $telephoneNumber = $DefaultPhoneNumber }
         Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = $telephoneNumber }
     }
@@ -8221,7 +8203,7 @@ while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
 function Start-KioskApp {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID fb250771-93be-4da0-a4ec-edad2ccf7476
 
@@ -8278,7 +8260,7 @@ param (
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
-if ($PSCmdlet.ShouldContinue($Path, 'Starting kiosk app.')) {
+If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
   while ($true) {
     If (-Not (Get-Process | Select-Object Path | Where-Object Path -eq $Path)) { Start-Process -FilePath $Path -ArgumentList $Arguments }
     Start-Sleep -Seconds $Sleep
@@ -9053,7 +9035,7 @@ Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domai
 function Update-MicrosoftStoreApps {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 4cac6972-9cb0-4755-bfc1-ae2eb6dfc0d1
 
@@ -9097,7 +9079,7 @@ Test-Admin -Throw | Out-Null
 $namespaceName = "root\cimv2\mdm\dmmap"
 $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
 $wmiObj = Get-WmiObject -Namespace $namespaceName -Class $className
-$Result = $wmiObj.UpdateScanMethod()
+$wmiObj.UpdateScanMethod() | Out-Null
 if (-not $DontCheckStatus) { Start-Process "ms-windows-store://downloadsandupdates" }
 }
 function Update-OfficeCache {
