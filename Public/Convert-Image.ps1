@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
 
@@ -25,7 +25,8 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-#>
+
+#> 
 
 <#
 .DESCRIPTION
@@ -105,7 +106,7 @@ If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
 	Write-Error "magick.exe is not available in your PATH."
 	Break
 }
-	
+
 [System.Collections.ArrayList]$Results = @()
 
 ForEach ($Image in $Path) {
@@ -113,7 +114,7 @@ ForEach ($Image in $Path) {
 	if ([bool]([System.Uri]$Image.FullName).IsUnc) { throw "Path is not local." }
 	$count++ ; Progress -Index $count -Total $Path.count -Activity "Resizing images." -Name $Image.Name
 
-	$Arguments = $null		
+	$Arguments = $null
 	If (!$OutExtension) { $ImageOutExtension = [System.IO.Path]::GetExtension($Image.Name) } #If OutExtension not set, use current
 	Else { $ImageOutExtension = $OutExtension } #Otherwise use spesified extension
 	$OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension #Out file name
@@ -131,7 +132,7 @@ ForEach ($Image in $Path) {
 			If ($Mode -eq "Crop") { $Arguments += '-crop "' + $Dimensions + '+0+0" ' }
 			ElseIf ($Mode -eq "Pad") { $Arguments += '-background none -extent "' + $Dimensions + '+0+0" ' }
 		}
-		
+
 		If ($FileSize -And ($ImageOutExtension -ne ".jpg") -And ($ImageOutExtension -ne ".jpeg")) {
 			Write-Warning "FileSize paramater is only valid for JPEG images. $OutName will ignore this parameter."
 		}

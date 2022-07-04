@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 120db2ff-3cb8-43ea-aa2c-f044ff52c144
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -45,7 +61,7 @@ $Users | ForEach-Object {
 
     try {
         $Password = ConvertTo-SecureString (Get-RandomPassword) -AsPlainText -Force
-            
+
         New-ADUser -DisplayName $DisplayName -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $SamAccountName -StreetAddress $StreetAddress -City $_.City -State $_.State -PostalCode $_.PostalCode -OfficePhone $_.OfficePhone -AccountPassword $PasswordSecure -Path $Path -WhatIf
 
         $Result = [PSCustomObject]@{
@@ -75,7 +91,7 @@ $Users | ForEach-Object {
 <#     Start-Sleep -Seconds 10
     Get-ADUser -Filter * -SearchBase $Path | Sort-Object Name | ForEach-Object {
         If (-NOT ($_.SamAccountName -in $Users)) { Write-Host $_.SamAccountName }
-    } 
+    }
 
     Search-ADAccount -AccountDisabled -SearchBase $Path | ForEach-Object {
         $Result = [PSCustomObject]@{

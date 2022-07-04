@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 8e42dd4d-c91c-420c-99f5-7b233590ae2c
 
@@ -10,25 +10,23 @@
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-.PRIVATEDATA
-
-#>
+#> 
 
 <#
 .SYNOPSIS
@@ -58,7 +56,7 @@ Grant-Matching: Granting DOMAIN\user FullControl on C:\Users\user
 param(
 	$Path = (Get-ChildItem | Where-Object { $_.PSISContainer }),
 	[string]$AccessRights = 'FullControl',
-	[string]$Domain = $Env:USERDOMAIN 
+	[string]$Domain = $Env:USERDOMAIN
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 

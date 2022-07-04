@@ -1,18 +1,34 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 0603a3ee-bff9-464a-aa86-44903c476fe9
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-<# 
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
 .DESCRIPTION
 Ping a list of hosts
 
@@ -34,14 +50,14 @@ Function MakeSpace($l, $Maximum) {
     return [String]$space
 }
 #Array Variable to store length of all hostnames
-$LengthArray = @() 
+$LengthArray = @()
 $Hosts | ForEach-Object { $LengthArray += $_.length }
 
 #Find Maximum length of hostname to adjust column witdth accordingly
 $Maximum = ($LengthArray | Measure-object -Maximum).maximum
 $Count = $hosts.Count
 
-#Initializing Array objects 
+#Initializing Array objects
 $Success = New-Object int[] $Count
 $Failure = New-Object int[] $Count
 $Total = New-Object int[] $Count
@@ -50,12 +66,12 @@ Clear-Host
 while ($true) {
 
     $i = 0 #Index number of the host stored in the array
-    $out = "| HOST$(MakeSpace 4 $Maximum)| STATUS | SUCCESS  | FAILURE  | ATTEMPTS  |" 
+    $out = "| HOST$(MakeSpace 4 $Maximum)| STATUS | SUCCESS  | FAILURE  | ATTEMPTS  |"
     $Firstline = ""
     1..$out.length | ForEach-Object { $firstline += "_" }
 
     #output the Header Row on the screen
-    Write-Host $Firstline 
+    Write-Host $Firstline
     Write-host $out -ForegroundColor White -BackgroundColor Black
 
     $Hosts | ForEach-Object {
@@ -83,7 +99,7 @@ while ($true) {
 
     }
 
-    #Pause the loop for few seconds so that output 
+    #Pause the loop for few seconds so that output
     #stays on screen for a while and doesn't refreshes
 
     Start-Sleep -Seconds 4

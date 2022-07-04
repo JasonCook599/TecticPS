@@ -1,17 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 144cbae4-8208-4df5-a801-42316e9db97e
 
-.AUTHOR
-Jason Cook
-Patrick Lambert - http://dendory.net
+.AUTHOR Jason Cook Patrick Lambert - http://dendory.net
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -19,7 +34,7 @@ Resize-Image resizes an image file
 
 .DESCRIPTION
 This function uses the native .NET API to resize an image file, and optionally save it to a file or display it on the screen. You can specify a scale or a new resolution for the new image.
-It supports the following image formats: BMP, GIF, JPEG, PNG, TIFF 
+It supports the following image formats: BMP, GIF, JPEG, PNG, TIFF
 
 .EXAMPLE
 Resize-Image -InputFile "C:\kitten.jpg" -Display

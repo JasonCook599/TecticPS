@@ -1,21 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.3.0
+
+.VERSION 1.3.1
+
 .GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
 
-.AUTHOR
-Jason Cook
-Roman Zarka | Microsoft Services
+.AUTHOR Jason Cook & Roman Zarka | Microsoft Services
 
-.DESCRIPTION
-This script enable the spesified license options in Microsoft 365.
+.COMPANYNAME ***REMOVED*** & Microsoft Services
 
-.COMPANYNAME
-***REMOVED***
-Microsoft Services
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -67,8 +78,9 @@ https://blogs.technet.microsoft.com/zarkatech/2012/12/05/bulk-enable-office-365-
 https://docs.microsoft.com/en-us/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide
 
 .LINK
-.LICENSEURI https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/LICENSE
+https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/LICENSE
 #>
+
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
   [switch]$Return,
@@ -97,7 +109,7 @@ ForEach ($User in $Users) {
   $PercentComplete = ($count / @($Users).count * 100)
   Write-Progress -Activity $ActivityMessage -Status $StatusMessage -PercentComplete $PercentComplete
   $count++
-  
+
   # Mark all services as disabled.
   # Services.
   <#
@@ -171,7 +183,7 @@ Exchange        EXCHANGE_S_STANDARD
   If ($NoOfficeOnline -like $SearchUpn) { $Services.OfficeOnline = $False }
   If ($NoSharepoint -like $SearchUpn) { $Services.Sharepoint = $False }
   If ($NoExchange -like $SearchUpn) { $Services.Exchange = $False }
-  
+
   # Disable services still marked as disabled
   $DisabledOptions = @()
   If (!$Services.Whiteboard) { $DisabledOptions += "WHITEBOARD_PLAN1" }
@@ -190,7 +202,7 @@ Exchange        EXCHANGE_S_STANDARD
   If (!$Services.Skype) { $DisabledOptions += "MCOSTANDARD" }
   If (!$Services.Sharepoint) { $DisabledOptions += "SHAREPOINTSTANDARD" }
   If (!$Services.Exchange) { $DisabledOptions += "EXCHANGE_S_STANDARD" }
-  
+
   if ($PSCmdlet.ShouldProcess($User.UserPrincipalName, "Enable-LicenseOptions")) {
     If ($Assign) {
       Set-MsolUser -UserPrincipalName $User.UserPrincipalName -UsageLocation CA

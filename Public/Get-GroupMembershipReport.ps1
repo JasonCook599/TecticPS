@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID b2ff192c-1106-4c52-ab8c-b7cab4524cc9
 
@@ -25,7 +25,8 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-#>
+
+#> 
 
 <#
 .DESCRIPTION

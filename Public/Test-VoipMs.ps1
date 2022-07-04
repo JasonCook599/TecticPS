@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.2.2
+
+.VERSION 1.2.3
+
 .GUID 17fff57c-cce9-4977-a26d-aeded706a85f
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -45,7 +61,7 @@ function Progress {
     [string]$Activity,
     [string]$Status = ("Processing {0} of {1}: {2}" -f $Index, $Total, $Name),
     [int]$PercentComplete = ($Index / $Total * 100)
-  ) 
+  )
   if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentComplete $PercentComplete }
 }
 
@@ -56,10 +72,10 @@ if ($Username) {
   }
   else {
     $Servers = ($ApiServers | Where-Object server_hostname -NotLike fax* | Where-Object server_country -like $Country).server_hostname
-  } 
+  }
 }
-else { 
-  $Servers = $ServerList 
+else {
+  $Servers = $ServerList
 }
 
 Clear-Variable best* -Scope Global #Clear the best* variables in case you run it more than once...
@@ -84,8 +100,8 @@ ForEach ($Server in $Servers) {
     }
   }  While ($pingsuccess -eq $false -and $i -le $Retries)  #Try everything between Do and While up to $Retry times, or while $pingsuccess is not true
 
-  #Compare the last ping test with the best known ping test....if there is no known best ping test, assume this one is the best $bestping = $currentping 
-  If ($pingsuccess -and ($currentping -lt $bestping -or (!($bestping)))) { 
+  #Compare the last ping test with the best known ping test....if there is no known best ping test, assume this one is the best $bestping = $currentping
+  If ($pingsuccess -and ($currentping -lt $bestping -or (!($bestping)))) {
     #If this is the best ping...save it
     $bestserver = $server    #Save the best server
     $bestping = $currentping #Save the best ping results

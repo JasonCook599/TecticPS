@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 6da14011-187b-4176-a61b-16836f8a0ad7
 
@@ -25,7 +25,8 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-#>
+
+#> 
 
 <#
 .DESCRIPTION
@@ -35,7 +36,7 @@ This script will sync users from one AD domain to another as Contacts.
 param (
     [string]$SourceDomain,
     [string]$SourceSearchBase,
-    
+
     [string]$DestinationDomain,
     [string]$DestinationOU,
     [string]$DestinationGroup,
@@ -55,9 +56,9 @@ if ($SourceDomain) { $Source.Server = $SourceDomain }
 if ($SourceFilter) { $Source.Filter = $SourceFilter }
 if ($SourceProperties) { $Source.Properties = $SourceProperties }
 
-if ($DestinationGroup) { 
+if ($DestinationGroup) {
     $GroupMembers = (Get-ADGroup -Identity $DestinationGroup -Properties Members).Members
-    $GroupMembers | ForEach-Object { 
+    $GroupMembers | ForEach-Object {
         $i++ ; Progress -Index $i -Total $GroupMembers.count -Activity "Removing all members from $DestinationGroup." -Status "$_"
         Get-ADGroup $DestinationGroup -Server $DestinationDomain | Set-ADObject -Server $DestinationDomain -Remove @{'member' = $_ }
     }
@@ -97,14 +98,13 @@ $SyncedUsers | ForEach-Object {
     if ($_.postalCode) { $Properties.postalCode = $_.PostalCode }
     if ($_.co) { $Properties.co = $_.Country }
     if ($_.info) { $Properties.info = $_.Notes }
-    
-    
+
     $ObjectPath = ( "CN=" + $_.DisplayName + ',' + $DestinationOU )
     $DisplayName = $_.DisplayName
-    
+
     # Write-Verbose command occurs after the user is created to prevent logging when an error occurs.
     try {
-        New-ADObject -Type "contact" -Name $_.DisplayName -Server $DestinationDomain -Path $DestinationOU -OtherAttributes $Properties 
+        New-ADObject -Type "contact" -Name $_.DisplayName -Server $DestinationDomain -Path $DestinationOU -OtherAttributes $Properties
         Write-Verbose "Created contact for $DisplayName in $DestinationOU"
     }
     catch [Microsoft.ActiveDirectory.Management.ADException] {
@@ -116,9 +116,9 @@ $SyncedUsers | ForEach-Object {
             Write-Warning "Failed to update $DisplayName in $DestinationOU"
             Write-Error $_
         }
-    } 
-    
-    if ($DestinationGroup) { 
+    }
+
+    if ($DestinationGroup) {
         Write-Verbose "Adding $($_.DisplayName) to $DestinationGroup"
         Set-ADGroup -Identity $DestinationGroup -Server $DestinationDomain -Add @{'member' = ("cn=" + $_.DisplayName + "," + $DestinationOU) }
     }

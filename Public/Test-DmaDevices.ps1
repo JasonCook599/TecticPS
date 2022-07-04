@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID a2d15653-e7ac-4246-b3a4-adf73af11a06
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -60,11 +76,11 @@ If ($(Test-Path -Path $Parent) -eq $False) { New-Item $Parent }
 If ($(Test-Path -Path $Path) -eq $False) { New-Item $Path }
 function ParseInstanceId {
     param([Parameter(Mandatory = $true, ValueFromPipeline = $true)][string[]]$Id)
-    return ($Id -replace '&SUBSYS.*', '' -replace '\s+PCI\\', '"="PCI\\') 
+    return ($Id -replace '&SUBSYS.*', '' -replace '\s+PCI\\', '"="PCI\\')
 }
 
 if ($Action -contains "AddAll" -or $Action -contains "Export") {
-    Get-PnpDevice -InstanceId PCI\* | ForEach-Object { 
+    Get-PnpDevice -InstanceId PCI\* | ForEach-Object {
         $i++
         $Name = $_.FriendlyName + " " + $i
         if ($Action -contains "AddAll") { New-ItemProperty $Path -PropertyType "String" -Force -Name $Name -Value (ParseInstanceId $_.InstanceId) }
@@ -85,6 +101,6 @@ if ($Action -contains "AddLast") {
         $i++
         $Name = $_.FriendlyName + " " + $i
         New-ItemProperty $Path -PropertyType "String" -Force -Name $Name -Value (ParseInstanceId $_.InstanceId)
-    } 
+    }
 }
 if ($Action -contains "Reset") { Remove-ItemProperty $Path -Name "*" }

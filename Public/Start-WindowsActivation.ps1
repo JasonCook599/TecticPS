@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 625c264b-e5ec-4c6a-8478-39ec90518250
 
@@ -25,6 +25,7 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
+
 #> 
 
 <#
@@ -55,7 +56,7 @@ if ($ProductKey) {
     Write-Error "Windows could not be activated using the specified key."
 }
 
-$BiosProductKey = (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey 
+$BiosProductKey = (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey
 if ($BiosProductKey) {
     ActivateWindows $BiosProductKey | Out-Null
     $Status = ActivationStatus | Out-Null

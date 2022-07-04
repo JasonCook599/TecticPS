@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID fb250771-93be-4da0-a4ec-edad2ccf7476
 
@@ -10,27 +10,25 @@
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-.PRIVATEDATA
+#> 
 
-#>
-
-<# 
+<#
 .SYNOPSIS
 This will run a kiosk app.
 
@@ -55,7 +53,7 @@ param (
   [string]$Url,
   [array]$Arguments = "--kiosk $($Url)",
   [ValidateRange(1, [int]::MaxValue)][int]$Sleep = 5
-  
+
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 

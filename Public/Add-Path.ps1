@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID bcbc3792-1f34-4100-867c-6fcf09230520
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -42,9 +58,9 @@ if ($Machine) {
     Test-Admin -Throw
     $Registry = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
 }
-else { 
+else {
     Write-Verbose "Adding `"$Path`" to user PATH"
-    $Registry = "Registry::HKCU\Environment\" 
+    $Registry = "Registry::HKCU\Environment\"
 }
 
 $NewPath = (Get-ItemProperty -Path $Registry -Name PATH).Path + ";" + $Path

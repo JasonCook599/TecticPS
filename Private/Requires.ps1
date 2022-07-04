@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.0.3
+.VERSION 2.0.4
 
 .GUID f8ca5dd1-fef2-4024-adc9-124a3007870a
 
@@ -26,10 +26,7 @@
 
 .RELEASENOTES
 
-
 #> 
-
-
 
 <#
 .SYNOPSIS
@@ -96,16 +93,16 @@ param(
     [string]$PsVersionMessage = "Powershell $Version is required. You have $($PSVersionTable.PSVersion)",
     [string]$PSEditionMessage = "You are running the $($PSVersionTable.PSEdition) edition. $PsEditionName is required."
 )
-<# 
+<#
 #Requires -PSSnapin <PSSnapin-Name> [-Version <N>[.<n>]]
 #Requires -ShellId <ShellId> -PSSnapin <PSSnapin-Name> [-Version <N>[.<n>]]
 #>
 
 # Covert to a valid version number. Not using [version] type to allow passing a single digit as the version.
-try { [version]$Version = $Version } 
+try { [version]$Version = $Version }
 catch {
-    try { $Version = [version]::New($Version, 0) } 
-    catch { throw "$Version is not a valid version" } 
+    try { $Version = [version]::New($Version, 0) }
+    catch { throw "$Version is not a valid version" }
 }
 
 # Allow warning instead of thowing for optional requirements.
@@ -113,7 +110,7 @@ function Fail {
     param(
         [Parameter(ValueFromPipeline = $true)][string]$Message
     )
-    if ($Warn) { Write-Warning $Message } else { throw $Message } 
+    if ($Warn) { Write-Warning $Message } else { throw $Message }
 }
 
 if ($Modules) {
@@ -123,12 +120,12 @@ if ($Modules) {
         else {
             if (-Not $Force) { $choice = Read-Host -Prompt "Module '$Module' is not available but is required. Install? (Y)" }
             else { Write-Output "'$Module' is not installed. Installing now." }
-            
-            if ($choice -eq "Y" -or $Force) { 
+
+            if ($choice -eq "Y" -or $Force) {
                 try { Install-Module $Module }
                 catch {
                     try { Install-Module $Module -Scope CurrentUser }
-                    catch { Fail $FailedInstallMessage } 
+                    catch { Fail $FailedInstallMessage }
                 }
                 Import-Module $Module
             }
@@ -138,7 +135,7 @@ if ($Modules) {
 
 }
 
-if ($Version -gt $PSVersionTable.PSVersion) { Fail $PsVersionMessage } 
+if ($Version -gt $PSVersionTable.PSVersion) { Fail $PsVersionMessage }
 if ($PSEditionName -and $PSEditionName -ne $PSVersionTable.PSEdition) { Fail $PSEditionMessage }
 if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
     if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
@@ -148,3 +145,6 @@ if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32
     if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
 }
 
+if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
+    if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
+}

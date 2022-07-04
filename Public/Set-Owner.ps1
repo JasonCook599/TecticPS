@@ -1,17 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.1.0
+
+.VERSION 1.1.1
+
 .GUID fb1d15b5-4681-4f99-90d6-1fd44ed4219b
 
-.AUTHOR
-Jason Cook
-Boe Prox
+.AUTHOR Jason Cook Boe Prox
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -46,7 +61,7 @@ Copyright (c) ***REMOVED*** 2022
     Changes the owner of test.txt to Domain\bprox
 
 .EXAMPLE
-    Set-Owner -Path C:\temp -Recurse 
+    Set-Owner -Path C:\temp -Recurse
 
     Description
     -----------
@@ -200,7 +215,7 @@ Process {
                     }
                     Catch {
                         Write-Warning "Couldn't take ownership of $($Item.FullName)! Taking FullControl of $($Item.Parent.FullName)"
-                        $Item.Parent.SetAccessControl($DirAdminAcl) 
+                        $Item.Parent.SetAccessControl($DirAdminAcl)
                         $Item.SetAccessControl($DirOwner)
                     }
                 }
@@ -217,8 +232,7 @@ Process {
 }
 End {
     #Remove priviledges that had been granted
-    [void][TokenAdjuster]::RemovePrivilege("SeRestorePrivilege") 
-    [void][TokenAdjuster]::RemovePrivilege("SeBackupPrivilege") 
+    [void][TokenAdjuster]::RemovePrivilege("SeRestorePrivilege")
+    [void][TokenAdjuster]::RemovePrivilege("SeBackupPrivilege")
     [void][TokenAdjuster]::RemovePrivilege("SeTakeOwnershipPrivilege")
 }
-

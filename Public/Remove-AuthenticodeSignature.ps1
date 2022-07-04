@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 3262ca7f-d1f0-4539-9fee-90fb4580623b
 
@@ -25,7 +25,8 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-#>
+
+#> 
 
 <#
 .DESCRIPTION
@@ -61,7 +62,7 @@ If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
             $Content = Get-Content $FilePath
             $Content[0..($SignatureLineNumber - 2)] | Set-Content $FilePath
         }
-        
+
     }
     catch {
         Write-Error "Failed to remove signature. $($_.Exception.Message)"

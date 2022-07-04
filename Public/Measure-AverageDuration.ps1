@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID f4c6b8ab-e5d2-4967-b803-a410619bd191
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -29,14 +45,14 @@ param(
     [string]$Command,
     [ValidateRange(1, [int]::MaxValue)][int]$Times = 100,
     [string]$Name = $Command
-    
+
 )
 
 1..$Times | ForEach-Object {
     Write-Progress -Id 1 -Activity $Name -PercentComplete $_
     $Duration += (Measure-Command {
             pwsh -noprofile -command $Command
-        }).TotalMilliseconds 
+        }).TotalMilliseconds
 }
 Write-Progress -id 1 -Activity $Name -Completed
 return @{

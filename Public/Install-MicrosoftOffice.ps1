@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.2
+.VERSION 1.2.3
 
 .GUID 12bacb17-e597-4588-8a86-0e05142301b6
 
@@ -10,25 +10,23 @@
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-.PRIVATEDATA
-
-#>
+#> 
 
 <#
 .SYNOPSIS
@@ -40,7 +38,7 @@ This script will install the specified version of Microsoft Office on the local 
 .PARAMETER Version
 Specifes the version of Office to install. If unspecified, Office 2019 64 bit will be installed.
 
-.EXAMPLE 
+.EXAMPLE
 Install-MicrosoftOffice
 
 .EXAMPLE
@@ -83,7 +81,7 @@ if (Test-Path -Path $Exe -PathType Leaf) {
     $Message += " Office $Version"
     if ($ConfigFile) { $Message += " with $ConfigFile" }
     If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", $Message)) {
-        Write-Output $Message 
+        Write-Output $Message
         Write-Verbose "$Exe $Arguments"
         Start-Process -FilePath $Exe -NoNewWindow -Wait -ArgumentList $Arguments
     }

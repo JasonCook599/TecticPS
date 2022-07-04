@@ -1,18 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 24dd6c1f-cc9a-44a4-b8e8-dd831d7a51b4
 
-.AUTHOR
-Jason Cook
-Google
+.AUTHOR Jason Cook Google
 
-.COMPANYNAME
-***REMOVED***
-Google
+.COMPANYNAME ***REMOVED*** Google
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -47,8 +61,8 @@ if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Creden
     if ([Environment]::Is64BitOperatingSystem) {
         $gcpwFileName = 'gcpwstandaloneenterprise64.msi'
     }
-    else { 
-        $gcpwFileName = 'gcpwstandaloneenterprise.msi' 
+    else {
+        $gcpwFileName = 'gcpwstandaloneenterprise.msi'
     }
 
     <# Download the GCPW installer. #>
@@ -64,7 +78,6 @@ if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Creden
     $Arguments = "/configure `"" + $InstallPath + "Office Deployment Tool\***REMOVED***-2019-ProPlus-Default.xml"
     Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
 
-        
     $arguments = "/i `"$gcpwFileName`""
     $installProcess = (Start-Process msiexec.exe -ArgumentList $arguments -PassThru -Wait)
 

@@ -1,17 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.1.0
+
+.VERSION 1.1.1
+
 .GUID 5dcbac67-cebe-4cb8-bf95-8ad720c25e72
 
-.AUTHOR
-Jason Cook
-Rajeev Buggaveeti 
+.AUTHOR Jason Cook Rajeev Buggaveeti
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -57,7 +72,7 @@ foreach ($User in $Users) {
                 $UserResult.setinfo()
             }
             catch [System.Management.Automation.MethodInvocationException] {
-                if (Test-Admin) { Throw "You do not have permission to make these changes." } 
+                if (Test-Admin) { Throw "You do not have permission to make these changes." }
                 else { Throw "You do not have permission to make these changes. Try running as admin." }
             }
         }

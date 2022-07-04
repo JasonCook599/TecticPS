@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 4fc14578-f8eb-4ae2-8e39-77c0f197cff8
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -24,7 +40,7 @@ param (
     $Company,
     $Office,
     $Title,
-    $Path 
+    $Path
 
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
@@ -55,7 +71,7 @@ $Users | ForEach-Object {
         $Results += $Result
     }
     catch [Microsoft.ActiveDirectory.Management.ADIdentityAlreadyExistsException] {
-        Set-ADUser -Identity $SamAccountName -DisplayName $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true 
+        Set-ADUser -Identity $SamAccountName -DisplayName $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true
 
         $Result = [PSCustomObject]@{
             Grade        = $Department
@@ -67,7 +83,7 @@ $Users | ForEach-Object {
         $Results += $Result
     }
 }
-Start-Sleep -Seconds 10 
+Start-Sleep -Seconds 10
 Search-ADAccount -AccountDisabled -SearchBase $Path | ForEach-Object {
     $Result = [PSCustomObject]@{
         Name         = $_.Name

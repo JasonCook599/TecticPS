@@ -1,23 +1,39 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 6ee394c8-c592-49d5-b16c-601955ef4d2f
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
 This script will using ImageMagick to add blurred pillar bars to a set of images.
 
 .DESCRIPTION
-This script will scale to fill, then blur the spesified image. Then, on a new layer, it will scale to fit the image. 
+This script will scale to fill, then blur the spesified image. Then, on a new layer, it will scale to fit the image.
 
 .PARAMETER Path
 This is the image file or a folder of images to be modified.
@@ -63,4 +79,3 @@ Get-ChildItem -File -Path $Path | ForEach-Object {
   }
   $Format = $null
 }
-

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 2a3f5ec5-e6c3-4a0b-a8ca-67f98b359144
 
@@ -9,6 +9,22 @@
 .COMPANYNAME ***REMOVED***
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
 
 #> 
 
@@ -36,7 +52,7 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 $Results = @()
 Get-ADComputer -Filter $Filter -Properties ms-Mcs-AdmPwd | Sort-Object ms-Mcs-AdmPwd, Name | ForEach-Object {
     if ($Show) { $Password = $_.'ms-Mcs-AdmPwd' } else { $Password = '********' }
-    if ($_.'ms-Mcs-AdmPwd') { $Status = $true } else { $Status = $false } 
+    if ($_.'ms-Mcs-AdmPwd') { $Status = $true } else { $Status = $false }
     $Result = [PSCustomObject]@{
         Name     = $_.Name
         Status   = $Status
@@ -44,13 +60,12 @@ Get-ADComputer -Filter $Filter -Properties ms-Mcs-AdmPwd | Sort-Object ms-Mcs-Ad
     }
     $Results += $Result
 }
-if ($Details) { return $Results } else { 
-    
-    
+if ($Details) { return $Results } else {
+
     $EnabledCount = ($Results | Where-Object Status -eq $true).Count
     $DisabledCount = ($Results | Where-Object Status -eq $false).Count
     $TotalCount = $Results.count
-    
+
     return [PSCustomObject]@{
         Enabled         = $EnabledCount
         Disabed         = $DisabledCount

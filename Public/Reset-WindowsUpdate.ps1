@@ -1,24 +1,35 @@
 <#PSScriptInfo
-.VERSION 1.20.0
+
+.VERSION 1.20.1
+
 .GUID b4f15462-2ab3-45e5-b2e2-ecb649f1f1a6
 
-.DESCRIPTION
-This script will reset all of the Windows Updates components to DEFAULT SETTINGS.
+.AUTHOR Jason Cook Ryan Nemeth
 
-.AUTHOR
-Jason Cook
-Ryan Nemeth
+.COMPANYNAME ***REMOVED***
 
-.COMPANYNAME
-***REMOVED***
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
 .RELEASENOTES
 V1.00, 05/21/2015 - Initial version
 V1.10, 09/22/2016 - Fixed bug with call to sc.exe
 V1.20, 11/13/2017 - Fixed environment variables
-#>
+
+#> 
 
 <#
 .SYNOPSIS
@@ -28,7 +39,7 @@ Resets the Windows Update components
 This script will reset all of the Windows Updates components to DEFAULT SETTINGS.
 
 .OUTPUTS
-Results are printed to the console. Future releases will support outputting to a log file. 
+Results are printed to the console. Future releases will support outputting to a log file.
 
 .NOTES
 Written by: Ryan Nemeth

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.0.2
+.VERSION 2.0.3
 
 .GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e
 
@@ -25,7 +25,8 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-#>
+
+#> 
 
 <#
 .DESCRIPTION
@@ -69,7 +70,7 @@ $Users = Get-ADUser @Arguments
 Write-Verbose "Searching for additional users"
 if ($AdditionalUsers) {
     $Arguments.Remove("SearchBase")
-    $AdditionalUsers | ForEach-Object { 
+    $AdditionalUsers | ForEach-Object {
         $Arguments.Identity = $_
         $Users += Get-ADUser @Arguments
     }
@@ -139,8 +140,8 @@ if ($Vendor -eq "Canon") {
             $Results += $Result
         }
         If ($Path) {
-    
-            $Results | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8 
+
+            $Results | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
             $(
                 "# Canon AddressBook CSV version: 0x0002
 # CharSet: UTF-8
@@ -177,7 +178,7 @@ objectclass: email"
 
         If ($Path) { [IO.File]::WriteAllLines($Path, $Results) }
     }
-    
+
 }
 elseif ($Vendor -eq "KonicaMinolta") {
     Write-Verbose "Starting export for KonicaMinolta"

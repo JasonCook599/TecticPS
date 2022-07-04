@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.5
+.VERSION 1.2.6
 
 .GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d
 
@@ -26,10 +26,7 @@
 
 .RELEASENOTES
 
-
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -38,7 +35,7 @@ This will import the current Forti Client configuration.
 .PARAMETER Path
 The location the configuration will be imported from.
 
-.EXAMPLE 
+.EXAMPLE
 Import-FortiClientConfig -Path backup.conf
 
 .LINK
@@ -62,4 +59,3 @@ if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
 if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
     Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
 }
-

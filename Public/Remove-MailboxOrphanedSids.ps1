@@ -1,17 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID fc0d9531-8d08-4b67-8247-7ade678c2d31
 
-.AUTHOR
-Jason Cook
-CarlosDZRZ
+.AUTHOR Jason Cook CarlosDZRZ
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -30,7 +45,7 @@ Specifies a path to log folder location.The default location is $env:USERPROFILE
 Remove-MailboxOrphaned_SIDs -Alias test_mailbox
 
 .EXAMPLE
-Get-Mailbox test_mailbox | Remove-MailboxOrphaned_SIDs	
+Get-Mailbox test_mailbox | Remove-MailboxOrphaned_SIDs
 
 .EXAMPLE
 $mailboxes = Get-Mailbox -ResultSize 0

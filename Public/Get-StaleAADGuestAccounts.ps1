@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.1
+.VERSION 1.1.2
 
 .GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
 
@@ -10,25 +10,23 @@
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-.PRIVATEDATA
-
-#>
+#> 
 
 <#
 .SYNOPSIS
@@ -60,7 +58,7 @@ Get-StaleAADGuestAccounts
 #>
 
 param (
-	[Parameter(Mandatory = $true, ValueFromPipeline = $true)]$TenantId , # Tenant ID 
+	[Parameter(Mandatory = $true, ValueFromPipeline = $true)]$TenantId , # Tenant ID
 	[Parameter(Mandatory = $true, ValueFromPipeline = $true)][PSCredential]$Credential, # Registered AAD App ID and Secret
 	$StaleDays = '90', # Number of days over which an Azure AD Account that hasn't signed in is considered stale'
 	$StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a spesific date to use as stale
@@ -83,8 +81,8 @@ $StalePendingGuests = $PendingGuests | Select-Object | Where-Object { [datetime]
 Write-Host -ForegroundColor Yellow "    $($StalePendingGuests.count) Guest accounts were invited before '$($StaleDate)'"
 
 # All Stale Accounts
-$StaleAndPendingGuests = $null 
-$StaleAndPendingGuests += $StaleGuests 
+$StaleAndPendingGuests = $null
+$StaleAndPendingGuests += $StaleGuests
 $StaleAndPendingGuests += $StalePendingGuests
 Write-Host -ForegroundColor Green "$($StaleAndPendingGuests.count) Guest accounts are still 'pending' B2B Guest invitation acceptance or haven't signed in since '$($StaleDate)'."
 
@@ -93,7 +91,7 @@ If ($GetLastSignIn) {
 	foreach ($Guest in $StaleGuests) {
 		#Progress message
 		$count++ ; Progress -Index $count -Total $StaleGuests.count -Activity "Getting last sign in for stale guests." -Name $Guest.UserPrincipalName.ToString()
-		$signIns = $null 
+		$signIns = $null
 		$signIns = GetAADUserSignInActivity -ID $Guest.id
 		$Guest | Add-Member -Type NoteProperty -Name "lastSignInDateTime" -Value $signIns.signInActivity.lastSignInDateTime
 	}
@@ -106,4 +104,3 @@ $defaultDisplayPropertySet = New-Object System.Management.Automation.PSPropertyS
 $PSStandardMembers = [System.Management.Automation.PSMemberInfo[]]@($defaultDisplayPropertySet)
 $StaleAndPendingGuests | Add-Member MemberSet PSStandardMembers $PSStandardMembers
 return $StaleAndPendingGuests
-

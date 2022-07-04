@@ -1,18 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.0.0
+.VERSION 1.0.1
 
 .GUID 73abfeda-2bad-4f83-a401-e34757afcbc0
 
 .AUTHOR Jonathan Medd
 
-.AUTHOR Jason Cook
-
 .COMPANYNAME ***REMOVED***
 
 .COPYRIGHT Copyright (c) Jonathan Medd 2014
-
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
 .TAGS 
 
@@ -24,10 +20,13 @@
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRI
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-#>
+
+#> 
 
 <#
 .DESCRIPTION
@@ -47,7 +46,7 @@ param (
     [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Path,
     [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Value
 )
-    
+
 try {
     Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
     return $true

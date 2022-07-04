@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 8697df26-a171-4f10-9929-fbff1e58ab4b
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -46,7 +62,7 @@ param(
     [Uri]$RecirectURL = "http://myapps.microsoft.com",
     [boolean]$SkipSendingInvitation,
     [boolean]$SkipResettingRedemtion
-    
+
 )
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 $SkipSendingInvitation = -not $SkipSendingInvitation
@@ -56,7 +72,7 @@ if ($All) {
     $UPN = (Get-AzureADUser -Filter "UserType eq 'Guest'").UserPrincipalName
     Write-Warning "This will reset invites for all guest users. Are you sure?"
     Wait-ForKey "y"
-    
+
 }
 [System.Collections.ArrayList]$Results = @()
 $UPN | ForEach-Object {
@@ -70,4 +86,3 @@ $UPN | ForEach-Object {
 }
 
 Return $Results
-

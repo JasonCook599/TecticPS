@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 5367e6e7-1177-4f3f-a345-1633446ad628
 
@@ -26,10 +26,7 @@
 
 .RELEASENOTES
 
-
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -84,19 +81,19 @@ New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -Prope
 If ($Style -eq "Tile") { New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 1 -Force }
 Else { New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 0 -Force }
 
-Add-Type -TypeDefinition @" 
-using System; 
+Add-Type -TypeDefinition @"
+using System;
 using System.Runtime.InteropServices;
 
 public class Params
-{ 
-[DllImport("User32.dll",CharSet=CharSet.Unicode)] 
-public static extern int SystemParametersInfo (Int32 uAction, 
-Int32 uParam, 
-String lpvParam, 
+{
+[DllImport("User32.dll",CharSet=CharSet.Unicode)]
+public static extern int SystemParametersInfo (Int32 uAction,
+Int32 uParam,
+String lpvParam,
 Int32 fuWinIni);
 }
-"@ 
+"@
 
 $SPI_SETDESKWALLPAPER = 0x0014
 $UpdateIniFile = 0x01
@@ -104,8 +101,8 @@ $SendChangeEvent = 0x02
 
 $fWinIni = $UpdateIniFile -bor $SendChangeEvent
 
-exit [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni) 
+exit [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni)
 
 $fWinIni = $UpdateIniFile -bor $SendChangeEvent
 
-exit [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni) 
+exit [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni)

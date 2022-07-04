@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.1.3
+
+.VERSION 1.1.4
+
 .GUID 9be6c147-e71b-44c4-b265-1b685692e411
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -60,7 +76,7 @@ Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
     If ($PSCmdlet.ShouldProcess($_.FullName, "Add-Signature using $($Certificate.Thumbprint)")) {
       Start-Process -NoNewWindow -Wait -FilePath $SigntoolPath -ArgumentList $Arguments
     }
-  } 
+  }
   else { Write-Error "We don't know how to handle this file type: ($([System.IO.Path]::GetExtension($_.Name))" }
-  
+
 }

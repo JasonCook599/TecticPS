@@ -1,17 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.01
+
+.VERSION 1.1.2
+
 .GUID 9eea8e22-18f9-4cf7-b019-602c7d71dcf8
 
-.AUTHOR
-Jason Cook
-Aman Dhally - amandhally@gmail.com
+.AUTHOR Jason Cook Aman Dhally - amandhally@gmail.com
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022. Copyright (c) Aman Dhally 04-04-2012
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -45,7 +60,7 @@ foreach ($lan in $ethernet) {
 	Write-Output "Renewing IP Addresses"
 	$lan | Invoke-CimMethod -MethodName RenewDHCPLease | Out-Null
 	#$lan | select Description, ServiceName, IPAddress,  IPSubnet, DefaultIPGateway, DNSServerSearchOrder, DNSDomain, DHCPLeaseExpires, DHCPServer, MACAddress
-	
+
 	#$expireTime = [datetime]::ParseExact($lan.DHCPLeaseExpires,'yyyyMMddHHmmss.000000-300',$null)
 	$expireTime = $lan.DHCPLeaseExpires
 	$expireTimeFormated = Get-Date -Date $expireTime -Format F

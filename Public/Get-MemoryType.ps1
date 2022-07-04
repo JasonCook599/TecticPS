@@ -1,21 +1,36 @@
 <#PSScriptInfo
-.VERSION 1.1.3
+
+.VERSION 1.1.4
+
 .GUID 4625bce9-661a-4a70-bb4e-46ea09333f33
 
-.AUTHOR
-Jason Cook
-Microsoft
+.AUTHOR Jason Cook Microsoft
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
-This script will output the amount of memory and the type using WMI information. 
+This script will output the amount of memory and the type using WMI information.
 
 .DESCRIPTION
 This script will output the amount of memory and the type using WMI information. Type information is taken from here: https://msdn.microsoft.com/en-us/library/aa394347(v=vs.85).aspx

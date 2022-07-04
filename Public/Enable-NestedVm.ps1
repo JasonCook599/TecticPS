@@ -1,17 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.3.0
+
+.VERSION 1.3.1
+
 .GUID 528bfa6d-27a7-4612-9092-faae014e3917
 
-.AUTHOR
-Jason Cook
-Drew Cross | Microsoft Services
+.AUTHOR Jason Cook Drew Cross | Microsoft Services
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -87,7 +102,7 @@ else {
 $vm = Get-VM -Name $vmName
 
 $vmInfo = New-Object PSObject
-    
+
 # VM info
 Add-Member -InputObject $vmInfo NoteProperty -Name "ExposeVirtualizationExtensions" -Value $false
 Add-Member -InputObject $vmInfo NoteProperty -Name "DynamicMemoryEnabled" -Value $vm.DynamicMemoryEnabled
@@ -110,7 +125,7 @@ if ($vmInfo.State -eq 'Saved') {
 if ($vmInfo.State -ne 'Off' -or $vmInfo.State -eq 'Saved') {
     Write-Host "Vm State:" $vmInfo.State
     Write-Host "    $vmName will be turned off"
-    $prompt = $true 
+    $prompt = $true
 }
 if ($vmInfo.ExposeVirtualizationExtensions -eq $false) {
     Write-Host "    Virtualization extensions will be enabled"
@@ -139,7 +154,7 @@ Write-Host "Input Y to accept or N to cancel:" -NoNewline
 $char = Read-Host
 
 while (-not ($char.StartsWith('Y') -or $char.StartsWith('N'))) {
-    Write-Host "Invalid Input, Y or N" 
+    Write-Host "Invalid Input, Y or N"
     $char = Read-Host
 }
 
@@ -159,7 +174,7 @@ if ($char.StartsWith('Y')) {
 
     # Optionally turn on mac spoofing
     if ($vmInfo.MacAddressSpoofing -eq 'Off') {
-        Write-Host "Mac Address Spoofing isn't enabled (nested guests won't have network)." -ForegroundColor Yellow 
+        Write-Host "Mac Address Spoofing isn't enabled (nested guests won't have network)." -ForegroundColor Yellow
         Write-Host "Would you like to enable MAC address spoofing? (Y/N)" -NoNewline
         $Read = Read-Host
 
@@ -175,7 +190,7 @@ if ($char.StartsWith('Y')) {
     if ($vmInfo.MemorySize -lt $4GB) {
         Write-Host "VM memory is set less than 4GB, without 4GB or more, you may not be able to start VMs." -ForegroundColor Yellow
         Write-Host "Would you like to set Vm memory to 4GB? (Y/N)" -NoNewline
-        $Read = Read-Host 
+        $Read = Read-Host
 
         if ($Read -eq 'Y') {
             Set-VMMemory -VMName $vmName -StartupBytes $4GB

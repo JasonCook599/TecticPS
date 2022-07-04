@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.1.0
+
+.VERSION 1.1.1
+
 .GUID 460f5844-8755-46df-8fb5-a12fa88bf413
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -38,7 +54,7 @@ function ParseGuid {
 }
 If (!(Test-Admin -Warn)) { Break }
 $Interfaces = Get-ChildItem "HKLM:SYSTEM\CurrentControlSet\services\NetBT\Parameters\Interfaces"
-$Interfaces | ForEach-Object { 
+$Interfaces | ForEach-Object {
     $Path = $_.PSPath
     $Guid = ParseGuid $Path.Substring($Path.Length - 38)
     $count++ ; Progress -Index $count -Total $Interfaces.count -Activity "Disabling Netbios TCP/IP" -Name (Get-NetAdapter | Where-Object InterfaceGuid -eq ($Guid)).name

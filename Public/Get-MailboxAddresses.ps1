@@ -1,17 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.1
+
+.VERSION 1.0.2
+
 .GUID f3ba5497-54b4-4b33-8c6f-33a678f5551c
 
-.AUTHOR
-Jason Cook
-Laeeq Qazi - www.HostingController.com
+.AUTHOR Jason Cook Laeeq Qazi - www.HostingController.com
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -30,7 +45,7 @@ Get-Mailbox | ForEach-Object {
 	For ($i = 0; $i -lt $_.EmailAddresses.Count; $i++) {
 		$Address = $_.EmailAddresses[$i]
 		$host.UI.Write("Blue", $host.UI.RawUI.BackGroundColor, $address.AddressString.ToString() + "`t")
-		If ($Address.IsPrimaryAddress) { 
+		If ($Address.IsPrimaryAddress) {
 			$host.UI.Write("Green", $host.UI.RawUI.BackGroundColor, "Primary Email Address`n")
 		}
 		Else {

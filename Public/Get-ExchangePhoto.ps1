@@ -1,17 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.1
+
+.VERSION 1.0.2
+
 .GUID 10b98a61-ebf3-499f-847f-4aa18b41a9dd
 
-.AUTHOR
-Jason Cook
-Rajeev Buggaveeti
+.AUTHOR Jason Cook Rajeev Buggaveeti
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -62,7 +77,7 @@ New-Item -Path $CroppedPath -ItemType Directory -Force -Confirm:$false | Out-Nul
 
 foreach ($User in $Users) {
     $count++ ; Progress -Index $count -Total $Users.count -Activity "Downloading users photos." -Name $User.UserPrincipalName.ToString()
-    
+
     $Result = @{}
 
     $PhotoPath = $Path + "\" + $User.Alias + ".jpg"
@@ -88,6 +103,6 @@ foreach ($User in $Users) {
     $Result.Add("Alias", $user.Alias)
     $Results += New-Object PSObject -Property $Result
 }
-    
-If ($ResultsFile) { $Results | Export-CSV $ResultsFile -NoTypeInformation -Encoding UTF8 } 
+
+If ($ResultsFile) { $Results | Export-CSV $ResultsFile -NoTypeInformation -Encoding UTF8 }
 Return $Results

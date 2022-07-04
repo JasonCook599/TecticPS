@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.13
+.VERSION 1.2.14
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -26,12 +26,7 @@
 
 .RELEASENOTES
 
-
 #> 
-
-
-
-
 
 <#
 .SYNOPSIS
@@ -46,7 +41,7 @@ An array of actions to run.
     LabelDrive: Label the drive, by default, the $env:SystemDrive will be labelled "Windows". Use -DriveToLabel to change the drive and -DriveLabel to change the label.
     ProvisioningPackage: Install a provisioning package. Use -ProvisioningPackage to select the appropriate pacakge.
     JoinDomain: Join the current computer to a domain. Specify the domain with -Domain
-    BitLocker: Enable BitLocker. You can overridde the defaults using -BitLockerProtector and -BitlockerEncryptionMethod. 
+    BitLocker: Enable BitLocker. You can overridde the defaults using -BitLockerProtector and -BitlockerEncryptionMethod.
     Office: Install Microsoft Office. You can override the version using -Office.
     RSAT: Install Remote Server Administration Tools.
     NetFX3: Install .Net 3.0
@@ -154,7 +149,7 @@ if ($Action -contains "BitLocker") {
       }
       ElseIf ($BitLockerProtector -eq "Pin") {
         $BitLockerSecurePin = Read-Host -Prompt "Enter PIN" -AsSecureString
-        Enable-BitLocker -MountPoint $env:SystemDrive -EncryptionMethod $BitLockerEncryptionMethod -TPMandPinProtector -Pin $BitLockerSecurePin 
+        Enable-BitLocker -MountPoint $env:SystemDrive -EncryptionMethod $BitLockerEncryptionMethod -TPMandPinProtector -Pin $BitLockerSecurePin
       }
       ElseIf ($BitLockerProtector -eq "USB") {
         Enable-BitLocker -MountPoint $env:SystemDrive -EncryptionMethod $BitLockerEncryptionMethod -StartupKeyProtector -StartupKeyPath $BitLockerUSB
@@ -201,14 +196,14 @@ if ($Action -contains "winget") {
     $WingetPackages.Keys | ForEach-Object {
       $Arguments = @( "install $_", "--accept-package-agreements", "--accept-source-agreements" )
       if ($WingetPackages[$_] -ne $null) { $Arguments += $WingetPackages[$_] }
-      if ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install $_ with arguments: $Arguments")) { 
-        Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList $Arguments 
+      if ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install $_ with arguments: $Arguments")) {
+        Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList $Arguments
       }
     }
   }
-  
-  if ($PsCmdlet.ShouldProcess("localhost ($env:computername)", "Upgrading packages with winget")) { 
-    Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList "upgrade --all" 
+
+  if ($PsCmdlet.ShouldProcess("localhost ($env:computername)", "Upgrading packages with winget")) {
+    Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList "upgrade --all"
   }
 }
 

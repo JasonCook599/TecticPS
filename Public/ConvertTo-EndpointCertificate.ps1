@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.0.0
+.VERSION 2.0.1
 
 .GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21
 
@@ -25,7 +25,8 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-#>
+
+#> 
 
 <#
     .SYNOPSIS
@@ -35,7 +36,7 @@
     This script will convert a PFX certificate for use with various services. If will also provide instructions for any system that has spesific requirements for setup. This script requires & .\openssl.exe  to be available on the computer.
 
     .PARAMETER Path
-    This is the certificate file which will be converted. This option is required. 
+    This is the certificate file which will be converted. This option is required.
 
     .PARAMETER Prefix
     This string appears before the filename for each converted certificate. If unspesified, will use the name if the file being resized.
@@ -54,18 +55,18 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 ForEach ($Certificate in $Certificates) {
   $count++ ; Progress -Index $count -Total @($Certificates).count -Activity "Resizing images." -Name $Certificate.Name
   $Password = Read-Host "Enter Password"
-  
+
   If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Certificate")) {
     $Prefix = $Prefix + [System.IO.Path]::GetFileNameWithoutExtension($Certificate.FullName) + "_"
     $Path = $Certificate.FullName
 
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -out "$Prefix`PEM.txt" -nodes 
+    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -out "$Prefix`PEM.txt" -nodes
     openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -out "$Prefix`PEM_Key.txt" -nodes
     openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert.txt" -nodes
     openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert_NoNodes.txt"
     openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert.cer" -nodes
     openssl.exe pkcs12 -passin "pass:$Password" -export -in "$Prefix`PEM_Cert.txt" -inkey "$Prefix`PEM_Key.txt" -certfile "$Prefix`PEM_Cert.txt" -out "$Prefix`Unifi.p12" -name unifi -password pass:aircontrolenterprise
-        
+
     openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -nodes | openssl.exe  rsa -out "$Prefix`RSA_Key.txt"
     openssl.exe rsa  -passin "pass:$Password" -in "$Prefix`PEM.txt" -pubout -out "$Prefix`RSA_Pub.txt"
 
@@ -73,7 +74,7 @@ ForEach ($Certificate in $Certificates) {
       Write-Output "Windows: Run the following commands.
 `$mypwd = Get-Credential -UserName 'Enter password below' -Message 'Enter password below'
 `nImport-PfxCertificate -FilePath $($Certificate.FullName) -CertStoreLocation Cert:\LocalMachine\My -Password `$mypwd.Password
-" 
+"
     }
     if ($Services -contains "IISManagement") {
       Write-Verbose "Instructions from https://support.microsoft.com/en-us/help/3206898/enabling-iis-manager-and-web-deploy-after-disabling-ssl3-and-tls-1-0"
@@ -89,7 +90,7 @@ Get-Item -Path `"cert:\localmachine\my\`$cert`" | New-Item -Force -Path IIS:\Ssl
       New-Item -Force -Type Directory -Name AlwaysUp | Out-Null
       Copy-Item "$Prefix`PEM_Cert.txt" AlwaysUp\ctc-self-signed-certificate-exp-2024.pem
       Copy-Item "$Prefix`PEM_Key.txt" AlwaysUp\ctc-self-signed-certificate-exp-2024-key.pem
-      
+
     }
     if ($Services -contains "CiscoSG300") {
       Write-Output "Cisco SG300: Use RSA Key, RSA Pub, and PEM Cert
@@ -129,7 +130,7 @@ nginx -t
       New-Item -Force -Type Directory -Name UnifiCloudKey | Out-Null
       Copy-Item "$Prefix`PEM_Cert.txt" UnifiCloudKey\cloudkey.crt
       Copy-Item "$Prefix`PEM_Key.txt" UnifiCloudKey\cloudkey.key
-      Copy-Item "$Prefix``unifi.p12" UnifiCloudKey\unifi.p12 
+      Copy-Item "$Prefix``unifi.p12" UnifiCloudKey\unifi.p12
     }
     if ($Services -contains "UnifiCore") {
       Write-Output "Unifi Cloud Key: Copy files to '/data/unifi-core/config' on the Cloud Key and run the following commands.
@@ -169,4 +170,3 @@ kill -SIGINT `$(cat /var/run/lighttpd.pid)
           #>
   }
 }
-

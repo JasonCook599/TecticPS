@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.1
+.VERSION 1.2.2
 
 .GUID 44daac91-76d4-41f5-a2ab-688d548ad0d1
 
@@ -10,30 +10,28 @@
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-.PRIVATEDATA
-
-#>
+#> 
 
 <#
 .SYNOPSIS
 Install RSAT features for Windows 10 1809 or 1903
-    
+
 .DESCRIPTION
 Install RSAT features for Windows 10 1809 or 1903. All features are installed online from Microsoft Update thus the script requires Internet access
 
@@ -57,7 +55,7 @@ https://www.imab.dk
 
 .LINK
 https://twitter.com/mwbengtsson
-#> 
+#>
 
 [CmdletBinding()]
 param(
@@ -137,7 +135,7 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
 
     if ($PSBoundParameters["ServerManager"]) {
         Write-Verbose -Verbose "Script is running with -ServerManager parameter. Installing Server Manager RSAT feature"
-        $Install = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat.ServerManager*" -AND $_.State -eq "NotPresent" } 
+        $Install = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat.ServerManager*" -AND $_.State -eq "NotPresent" }
         if ($null -ne $Install) {
             $RsatItem = $Install.Name
             Write-Verbose -Verbose "Adding $RsatItem to Windows"
@@ -149,7 +147,7 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
                 Write-Warning -Message $_.Exception.Message ; break
             }
         }
-        
+
         else {
             Write-Verbose -Verbose "$RsatItem seems to be installed already"
         }
@@ -158,7 +156,7 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
     if ($PSBoundParameters["Uninstall"]) {
         Write-Verbose -Verbose "Script is running with -Uninstall parameter. Uninstalling all RSAT features"
         # Querying for installed RSAT features first time
-        $Installed = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat*" -AND $_.State -eq "Installed" -AND $_.Name -notlike "Rsat.ServerManager*" -AND $_.Name -notlike "Rsat.GroupPolicy*" -AND $_.Name -notlike "Rsat.ActiveDirectory*" } 
+        $Installed = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat*" -AND $_.State -eq "Installed" -AND $_.Name -notlike "Rsat.ServerManager*" -AND $_.Name -notlike "Rsat.GroupPolicy*" -AND $_.Name -notlike "Rsat.ActiveDirectory*" }
         if ($null -ne $Installed) {
             Write-Verbose -Verbose "Uninstalling the first round of RSAT features"
             # Uninstalling first round of RSAT features - some features seems to be locked until others are uninstalled first
@@ -176,7 +174,7 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
         }
         # Querying for installed RSAT features second time
         $Installed = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat*" -AND $_.State -eq "Installed" }
-        if ($null -ne $Installed) { 
+        if ($null -ne $Installed) {
             Write-Verbose -Verbose "Uninstalling the second round of RSAT features"
             # Uninstalling second round of RSAT features
             foreach ($Item in $Installed) {
@@ -189,7 +187,7 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
                     Write-Verbose -Verbose "Failed to remove $RsatItem from Windows"
                     Write-Warning -Message $_.Exception.Message
                 }
-            } 
+            }
         }
         else {
             Write-Verbose -Verbose "All RSAT features seems to be uninstalled already"

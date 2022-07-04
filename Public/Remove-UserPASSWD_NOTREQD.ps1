@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 6309e154-81f6-4bd1-aff7-deaea3274934
 
@@ -10,23 +10,21 @@
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
-
-.PRIVATEDATA
 
 #> 
 
@@ -39,26 +37,26 @@ TODO Build better help
 #>
 ################################################################################################
 # RemoveUserPASSWD_NOTREQD.ps1
-# 
+#
 # AUTHOR: Robin Granberg (robin.granberg@microsoft.com)
 #
 # NAME: RemoveUserPASSWD_NOTREQD.ps1
 # Version: 1.0
 # Date: 1/10/12
 #
-# THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED 
-# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR 
+# THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+# OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR
 # FITNESS FOR A PARTICULAR PURPOSE.
 #
-# This sample is not supported under any Microsoft standard support program or service. 
+# This sample is not supported under any Microsoft standard support program or service.
 # The script is provided AS IS without warranty of any kind. Microsoft further disclaims all
 # implied warranties including, without limitation, any implied warranties of merchantability
 # or of fitness for a particular purpose. The entire risk arising out of the use or performance
 # of the sample and documentation remains with you. In no event shall Microsoft, its authors,
-# or anyone else involved in the creation, production, or delivery of the script be liable for 
-# any damages whatsoever (including, without limitation, damages for loss of business profits, 
-# business interruption, loss of business information, or other pecuniary loss) arising out of 
-# the use of or inability to use the sample or documentation, even if Microsoft has been advised 
+# or anyone else involved in the creation, production, or delivery of the script be liable for
+# any damages whatsoever (including, without limitation, damages for loss of business profits,
+# business interruption, loss of business information, or other pecuniary loss) arising out of
+# the use of or inability to use the sample or documentation, even if Microsoft has been advised
 # of the possibility of such damages.
 ################################################################################################
 param([string]$Path,
@@ -71,24 +69,24 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 function funHelp() {
     Clear-Host
     $helpText = @"
-THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED 
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR 
+THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR
 FITNESS FOR A PARTICULAR PURPOSE.
 
-This sample is not supported under any Microsoft standard support program or service. 
+This sample is not supported under any Microsoft standard support program or service.
 The script is provided AS IS without warranty of any kind. Microsoft further disclaims all
 implied warranties including, without limitation, any implied warranties of merchantability
 or of fitness for a particular purpose. The entire risk arising out of the use or performance
 of the sample and documentation remains with you. In no event shall Microsoft, its authors,
-or anyone else involved in the creation, production, or delivery of the script be liable for 
-any damages whatsoever (including, without limitation, damages for loss of business profits, 
-business interruption, loss of business information, or other pecuniary loss) arising out of 
-the use of or inability to use the sample or documentation, even if Microsoft has been advised 
+or anyone else involved in the creation, production, or delivery of the script be liable for
+any damages whatsoever (including, without limitation, damages for loss of business profits,
+business interruption, loss of business information, or other pecuniary loss) arising out of
+the use of or inability to use the sample or documentation, even if Microsoft has been advised
 
 DESCRIPTION:
 NAME: RemoveUserPASSWD_NOTREQD.ps1
 Search for user accounts with "ADS_UF_PASSWD_NOTREQD" enabled and remove the flag
-This script requires Active Directory Module for Windows PowerShell. 
+This script requires Active Directory Module for Windows PowerShell.
 Run "import-module activedirectory" before running the script.
 
 SYSTEM REQUIREMENTS:
@@ -110,16 +108,15 @@ PARAMETERS:
 
 SYNTAX:
  -------------------------- EXAMPLE 1 --------------------------
- 
+
 .\RemoveUserPASSWD_NOTREQD.ps1 -Server DC1 -Path "OU=Sales,DC=contoso,DC=com"
 
  Description
  -----------
  This command will remove "ADS_UF_PASSWD_NOTREQD" on all user accounts under OU=Sales,DC=contoso,DC=com.
- 
- 
+
  -------------------------- EXAMPLE 2 --------------------------
- 
+
 .\RemoveUserPASSWD_NOTREQD.ps1 -Server DC1 -Path "OU=Sales,DC=contoso,DC=com" -subtree
 
  Description
@@ -135,16 +132,13 @@ SYNTAX:
  This command will remove "ADS_UF_PASSWD_NOTREQD" on all user accounts under OU=Sales,DC=contoso,DC=com and in all sub OU's.
  The output will also be put in a logfile.
 
- 
  -------------------------- EXAMPLE 4 --------------------------
- 
+
 .\RemoveUserPASSWD_NOTREQD.ps1  -help
 
  Description
  -----------
  Displays the help topic for the script
-
- 
 
 "@
     write-host $helpText
@@ -153,24 +147,24 @@ SYNTAX:
 function reqHelp() {
     Clear-Host
     $helpText = @"
-THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED 
-OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR 
+THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR
 FITNESS FOR A PARTICULAR PURPOSE.
 
-This sample is not supported under any Microsoft standard support program or service. 
+This sample is not supported under any Microsoft standard support program or service.
 The script is provided AS IS without warranty of any kind. Microsoft further disclaims all
 implied warranties including, without limitation, any implied warranties of merchantability
 or of fitness for a particular purpose. The entire risk arising out of the use or performance
 of the sample and documentation remains with you. In no event shall Microsoft, its authors,
-or anyone else involved in the creation, production, or delivery of the script be liable for 
-any damages whatsoever (including, without limitation, damages for loss of business profits, 
-business interruption, loss of business information, or other pecuniary loss) arising out of 
-the use of or inability to use the sample or documentation, even if Microsoft has been advised 
+or anyone else involved in the creation, production, or delivery of the script be liable for
+any damages whatsoever (including, without limitation, damages for loss of business profits,
+business interruption, loss of business information, or other pecuniary loss) arising out of
+the use of or inability to use the sample or documentation, even if Microsoft has been advised
 
 DESCRIPTION:
 NAME: RemoveUserPASSWD_NOTREQD.ps1
 Search for user accounts with "ADS_UF_PASSWD_NOTREQD" enabled and remove the flag
-This script requires Active Directory Module for Windows PowerShell. 
+This script requires Active Directory Module for Windows PowerShell.
 Run "import-module activedirectory" before running the script.
 
 SYSTEM REQUIREMENTS:
@@ -194,7 +188,7 @@ if ($null -eq $(Get-Module | Where-Object { $_.name -eq "activedirectory" })) {
 }
 $script:ErrCtrlrActionPreference = "SilentlyContinue"
 #==========================================================================
-# Function		: GetUserAccCtrlStatus 
+# Function		: GetUserAccCtrlStatus
 # Arguments     : string distinguishedName or User object
 # Returns   	: String
 # Description   : Returns userAccountControl status
@@ -258,7 +252,7 @@ Function GetUserAccCtrlStatus ($userDN) {
 }#End function
 
 #==========================================================================
-# Function		: CheckDNExist 
+# Function		: CheckDNExist
 # Arguments     : string distinguishedName
 # Returns   	: Boolean
 # Description   : Check If distinguishedName exist
@@ -285,8 +279,8 @@ if (!($LogFile -eq "")) {
 If (CheckDNExist $Path) {
     $index = 0
     if ($Subtree) {
-        $users = get-aduser -server $Server -LDAPfilter "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2048)(userAccountControl:1.2.840.113556.1.4.803:=32))" -searchbase $Path -properties useraccountcontrol -SearchScope Subtree 
-        
+        $users = get-aduser -server $Server -LDAPfilter "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2048)(userAccountControl:1.2.840.113556.1.4.803:=32))" -searchbase $Path -properties useraccountcontrol -SearchScope Subtree
+
     }
     else {
         $users = get-aduser -server $Server -LDAPfilter "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2048)(userAccountControl:1.2.840.113556.1.4.803:=32))" -searchbase $Path -properties useraccountcontrol -SearchScope OneLevel
@@ -296,22 +290,22 @@ If (CheckDNExist $Path) {
             $global:ErrCtrl = $false
             $global:strUserDN = $users[$index]
             $objUser = [ADSI]"LDAP://$global:strUserDN"
-            $global:strUserName = $objUser.cn 
-        
+            $global:strUserName = $objUser.cn
+
             & { #Try
                 set-aduser -server $Server $users[$index] -PasswordNotRequired $false
             }
-        
+
             Trap [SystemException] {
                 $global:ErrCtrl = $true
                 Write-host $users[$index].name";Failed;"$_ -Foreground red
                 if (!($LogFile -eq "")) {
                     [string] $strMsg = ($global:strUserName + ";Failed;" + $_.tostring().replace("`n", ""))
                     Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-                } 
+                }
                 ; Continue
             }
-        
+
             if ($ErrCtrl -eq $false) {
                 Write-host $users[$index].name";Success;Status:"(GetUserAccCtrlStatus($users[$index])) -Foreground green
                 if (!($LogFile -eq "")) {
@@ -329,14 +323,13 @@ If (CheckDNExist $Path) {
         $global:strUserDN = $users
         $objUser = [ADSI]"LDAP://$global:strUserDN"
         $global:strUserName = $objUser.cn
-        
-        
+
         & { #Try
             $global:ErrCtrl = $false
             set-aduser -server $Server $users -PasswordNotRequired $false
-           
+
         }
-    
+
         Trap [SystemException] {
             $global:ErrCtrl = $true
             Write-host $users.name";Failed;"$_ -Foreground red
@@ -346,7 +339,7 @@ If (CheckDNExist $Path) {
             }
             ; Continue
         }
-    
+
         if ($ErrCtrl -eq $false) {
 
             Write-host $users.name";Success;Status:"(GetUserAccCtrlStatus($users)) -Foreground green

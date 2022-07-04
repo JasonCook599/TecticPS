@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 086f7358-170c-4f90-ab37-9b06888cd963
 
@@ -10,27 +10,25 @@
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-.PRIVATEDATA
+#> 
 
-#>
-
-<# 
+<#
 .DESCRIPTION
 List all SPNs in Active Directory
 
@@ -44,7 +42,7 @@ Clear-Host
 $search = New-Object DirectoryServices.DirectorySearcher([ADSI]"")
 $search.filter = "(servicePrincipalName=*)"
 $results = $search.Findall()
- 
+
 #list results
 foreach ($result in $results) {
   $userEntry = $result.GetDirectoryEntry()
@@ -53,7 +51,7 @@ foreach ($result in $results) {
   Write-Host "Object Cat.  =  "$userEntry.objectCategory
   Write-Host "servicePrincipalNames"
   $i = 1
- 
+
   foreach ($SPN in $userEntry.servicePrincipalName) {
     $Output = "SPN (" + $i.ToString('000') + ")  =  " + $SPN
     Write-Host $Output
@@ -61,4 +59,3 @@ foreach ($result in $results) {
   }
   Write-Host ""
 }
-

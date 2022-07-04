@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.5
+.VERSION 1.2.6
 
 .GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
 
@@ -26,10 +26,7 @@
 
 .RELEASENOTES
 
-
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -38,7 +35,7 @@ This will export the current Forti Client configuration.
 .PARAMETER Path
 The location the configuration will be exported to.
 
-.EXAMPLE 
+.EXAMPLE
 Export-FortiClientConfig -Path backup.conf
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -60,3 +57,13 @@ if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
     Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
 }
 
+$Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
+if ($Password) { $Arguments += "-p $Password" }
+
+if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
+}
+
+if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
+    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
+}

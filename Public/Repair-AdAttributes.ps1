@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -25,6 +25,7 @@
 .EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
+
 #> 
 
 <#
@@ -81,15 +82,15 @@ If ($PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes") -and $Le
         $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
         ForEach ($proxyAddress in $Remove) {
             Write-Verbose "Removing $ProxyAddress from $($_.Name)"
-            Set-ADUser -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } 
+            Set-ADUser -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress }
         }
     }
-    $Groups | Where-Object Name -notlike "Group_*" | ForEach-Object { 
+    $Groups | Where-Object Name -notlike "Group_*" | ForEach-Object {
         $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
-        ForEach ($proxyAddress in $Remove) { 
+        ForEach ($proxyAddress in $Remove) {
             Write-Verbose "Removing $ProxyAddress from $($_.Name)"
-            Set-ADGroup -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } 
-        } 
+            Set-ADGroup -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress }
+        }
     }
 
 }
@@ -113,9 +114,9 @@ If ($PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty") -and $ClearTe
 }
 
 If ($PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension") -and $SetTelephoneNumber) {
-    $Users | Where-Object $null -ne mail | ForEach-Object { 
+    $Users | Where-Object $null -ne mail | ForEach-Object {
         if ($_.ipphone -ne $null) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
         else { $telephoneNumber = $DefaultPhoneNumber }
-        Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = $telephoneNumber } 
+        Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = $telephoneNumber }
     }
 }
