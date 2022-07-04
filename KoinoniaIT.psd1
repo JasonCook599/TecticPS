@@ -12,7 +12,7 @@
 RootModule = '***REMOVED***IT.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.22'
+ModuleVersion = '1.1.23'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -69,7 +69,7 @@ PowerShellVersion = '5.1'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Add-AllowedDmaDevices', 'Add-BluredPillarBars', 
+FunctionsToExport = 'Remove-BlankLines', 'Add-AllowedDmaDevices', 'Add-BluredPillarBars', 
                'Add-ComputerToDomain', 'Add-GroupEmail', 'Add-Path', 'Add-Signature', 
                'Backup-MySql', 'Clear-AdminCount', 'Clear-PrintQueue', 
                'Connect-Office365', 'Convert-Image', 'ConvertTo-EndpointCertificate', 
