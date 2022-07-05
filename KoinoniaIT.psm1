@@ -55,6 +55,8 @@ param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)][System.Management.Automation.PSCredential]$credential
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 if (!(Get-Command Get-MsalToken)) { Install-Module -name MSAL.PS -Force -AcceptLicense }
 try { return (Get-MsalToken -ClientId $credential.UserName -ClientSecret $credential.Password -TenantId $tenantID) } # Authenticate and Get Tokens
 catch { Write-Error $_ }
@@ -162,6 +164,7 @@ param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$Date
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 $global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
 
 try {
@@ -221,6 +224,8 @@ param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
     [string]$ID
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
 
@@ -313,6 +318,8 @@ param(
     $DefaultsScripts = "***REMOVED***ITDefaults.ps1"
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 try {
     $ModuleName = (Get-Command -Name $Invocation.MyCommand -ErrorAction SilentlyContinue).ModuleName
     $ModulePath = (Get-Module -Name $ModuleName).Path
@@ -374,7 +381,7 @@ return $Guid.ToString($Format)
 function Progress {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID d410b890-4003-4030-8a47-ee4b5d91a254
 
@@ -415,47 +422,8 @@ param(
     [int]$PercentComplete = ($Index / $Total * 100)
 )
 
-if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentComplete $PercentComplete }
-}
-function Remove-BlankLines {
-<#PSScriptInfo
-
-.VERSION 1.0.1
-
-.GUID c0df5582-8e43-491d-92ce-410392bb9912
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME ***REMOVED***
-
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
-.DESCRIPTION
-This will remove superfluous blank lines from a string.
-#>
-
-param([string]$String)
-while ($String.Contains("`r`n`r`n`r`n")) { $String = ($String -replace "`r`n`r`n`r`n", "`r`n`r`n").Trim() }
-return $String
+if ($PercentComplete -eq 100) { $Completed = $true } else { $Completed = $false }
+if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentComplete $PercentComplete -Completed:$Completed }
 }
 function Requires {
 <#PSScriptInfo
@@ -554,6 +522,7 @@ param(
     [string]$PSEditionMessage = "You are running the $($PSVersionTable.PSEdition) edition. $PsEditionName is required."
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 <#
 #>
 
@@ -657,6 +626,8 @@ param(
     [Parameter(ValuefromPipeline = $True)][ValidateSet("Single" , "Multiple")][string]$Mode = "Single"
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 if ($Packages.count -gt 1) {
     $SelectedPackage = $Packages | Out-GridView -OutputMode $Mode -Title $Title
     return @{ $SelectedPackage.Name = $SelectedPackage.Value }
@@ -739,6 +710,7 @@ param(
     $AllowedDevices = $DeviceList.$($ComputerInfo.Manufacturer).$($ComputerInfo.Model)
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 foreach ($Device in $AllowedDevices.GetEnumerator()) {
     New-ItemProperty -Path $Path -Name $Device.Name -Value $Device.Value -PropertyType "String" -Force -WhatIf
 }
@@ -887,6 +859,8 @@ param(
     [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force),
     [pscredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if ($OU) { Add-Computer -DomainName $Domain -Credential $Credentials -Force -OU $OU }
 else { Add-Computer -DomainName $Domain -Credential $Credentials -Force }
@@ -1181,6 +1155,8 @@ param(
   [ValidateRange(1, [int]::MaxValue)][int]$Copies = 10 #Number of copies to keep
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Write-Verbose "Get only names of the databases folders"
 $sqlDbDirList = Get-ChildItem -path $mySqlData | Where-Object { $_.PSIsContainer } | Select-Object Name
 
@@ -1272,6 +1248,8 @@ Clear-PrintQueue -ComputerName PrintServer
 param(
   [string]$ComputerName
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 while (!$ComputerName) { $ComputerName = Read-Host -Prompt "Enter the Computer Name." }
 
@@ -1408,6 +1386,8 @@ param(
 	[switch]$StaffHub,
 	[switch]$Disconnect
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tennant. Do not include `".onmicrosoft.com`"" }
 While (-NOT $UPN) { $UPN = Read-Host -Prompt "Enter your User Principal Name (UPN)" }
@@ -1597,6 +1577,8 @@ param(
 	[ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$Magick = ((Get-Command magick).Source)
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
 	Write-Error "magick.exe is not available in your PATH."
 	Break
@@ -1703,6 +1685,8 @@ param(
   [string]$Filter = "*.pfx",
   $Certificates = (Get-ChildItem -File -Path $Path -Filter $Filter)
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 ForEach ($Certificate in $Certificates) {
   $count++ ; Progress -Index $count -Total @($Certificates).count -Activity "Resizing images." -Name $Certificate.Name
@@ -1882,6 +1866,8 @@ param(
 	[string]$Prefix,
 	[switch]$All
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if (-not $Json) { throw "Json file not found." }
 ForEach ($Image in $Path) {
@@ -2466,6 +2452,8 @@ param(
     [string]$Server
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 $Arguments = @{}
 if ($SearchBase) { $Arguments.SearchBase = $SearchBase }
 if ($Filter) { $Arguments.Filter = $Filter }
@@ -2608,6 +2596,7 @@ param(
   $Templates
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 Requires -Modules PSPKI
 
 if (-not $Templates) { throw "You must specify the templates to search for." }
@@ -2712,6 +2701,8 @@ param(
     [string]$SearchBase
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
 
 if ($SearchBase) {
@@ -2803,6 +2794,8 @@ param(
   [string]$newUpnSuffix,
   [string]$SearchBase
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
 
@@ -2912,6 +2905,8 @@ param(
     [string]$SearchBase
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
 
 if ($SearchBase) {
@@ -2965,6 +2960,8 @@ The SID to search for.
 param(
     [Parameter(Mandatory = $true)][string]$Sid
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 return [ADSI]"LDAP://<SID=$Sid>"
 }
@@ -3022,6 +3019,8 @@ param(
     $SortKey = $Properties[0]
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 return Get-MsolUser -All  | Sort-Object $SortKey | Select-Object $Properties
 }
 function Get-AzureAdUserInfo {
@@ -3078,6 +3077,8 @@ param(
     $WhereObject = { $_.DirSyncEnabled -ne $true },
     $SortKey = $Properties[0]
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 return Get-AzureADUser -Filter $Filter | Where-Object $WhereObject | Sort-Object $SortKey | Select-Object $Properties
 }
@@ -3227,6 +3228,8 @@ Param(
     [string]$CroppedPath = $Path + "\Cropped\",
     [string]$ResultsFile
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Results = @()
 
@@ -3593,6 +3596,8 @@ param(
     $Filter = "ipphone -like `"*`""
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 $Results = Get-ADUser -Properties name, ipPhone, Company, Title, Department, DistinguishedName -Filter $Filter | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, ipPhone, Company, Title, Department | Sort-Object -Property Company, name
 if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
 return $Results
@@ -3646,6 +3651,8 @@ param(
     [switch]$Details,
     [string]$Show
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Results = @()
 Get-ADComputer -Filter $Filter -Properties ms-Mcs-AdmPwd | Sort-Object ms-Mcs-AdmPwd, Name | ForEach-Object {
@@ -3887,6 +3894,8 @@ param(
     [string]$Server,
     [string]$Filter = "*"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = @{}
 if ($Properties) { $Arguments.Properties = $Properties }
@@ -4226,6 +4235,8 @@ param(
   [switch]$After
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Test-Admin -Message "You are not running this script with Administrator rights. Some events may be missing." | Out-Null
 
 If ($Before -eq $True) { Get-EventLog System -Before (Get-Date).AddMinutes($Time) }
@@ -4285,6 +4296,8 @@ param(
   [string]$ComputerList,
   [string]$ReportFile
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Function Get-SystemInfo($ComputerSystem) {
   If (-NOT (Test-Connection -ComputerName $ComputerSystem -Count 1 -ErrorAction SilentlyContinue)) {
@@ -4596,6 +4609,8 @@ param(
   [string]$ReportFile
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Function Get-SystemInfo($ComputerSystem) {
   If (-NOT (Test-Connection -ComputerName $ComputerSystem -Count 1 -ErrorAction SilentlyContinue)) {
     Write-Warning "$ComputerSystem is not accessible."
@@ -4745,6 +4760,8 @@ param(
     [string]$Show
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 function ParseDate {
     param ($Date)
     if ($null -ne $Date -and $Date -ne 0) { return [datetime]::FromFileTime($Date) }
@@ -4818,6 +4835,8 @@ param(
     [Parameter(Mandatory = $true)][uri]$Uri
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Test-Admin -Warn -Message "You do not have Administrator rights to run this script! This may not work correctly." | Out-Null
 Invoke-WebRequest -OutFile $Path -Uri $Uri -ErrorAction SilentlyContinue
 }
@@ -4882,6 +4901,8 @@ param(
 	[string]$AccessRights = 'FullControl',
 	[string]$Domain = $Env:USERDOMAIN
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Requires -Modules NTFSSecurity
 
@@ -5102,6 +5123,8 @@ param(
   [string]$DriveLabel = "Windows",
   [string]$DriveToLabel = ($env:SystemDrive.Substring(0, 1))
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Throw | Out-Null
 Requires ***REMOVED***IT
@@ -5484,6 +5507,8 @@ param(
     [switch]$Uninstall
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 if (-NOT([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
     Write-Warning -Message "The script requires elevation"
     break
@@ -5655,6 +5680,8 @@ param(
   $DistributionGroups = (Get-DistributionGroup -Resultsize Unlimited)
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 foreach ($Mailbox in $Mailboxes) {
   $count1++ ; Progress -Index $count1 -Total $Mailboxes.count -Activity "Tickling mailboxes. Step 1 of 3" -Name $Mailbox.alias
   Set-Mailbox $Mailbox.alias -SimpleDisplayName $Mailbox.SimpleDisplayName -WarningAction silentlyContinue
@@ -5720,6 +5747,8 @@ param(
     [string]$Name = $Command
 
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 1..$Times | ForEach-Object {
     Write-Progress -Id 1 -Activity $Name -PercentComplete $_
@@ -5787,6 +5816,8 @@ param(
     [switch]$IgnoreHostname
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 if (-not $IgnoreHostname) {
     $NewPath = (Join-Path -Path $Path -ChildPath $Env:computername)
     New-Item -Path $NewPath -ItemType Directory -Force | Out-Null
@@ -5799,6 +5830,334 @@ $Files | ForEach-Object {
     $count++ ; Progress -Index $count -Total $Files.count -Activity "Moving archive event logs." -Name $_.Name
     Move-Item -Path $_.FullName -Destination $Path -ErrorAction Stop
 }
+}
+function New-FortiClientConfig {
+<#PSScriptInfo
+
+.VERSION 1.0.5
+
+.GUID 93f5aa38-3ef7-4d57-8225-1ba9e7167243
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+Used to generate a config file for FortiClient VPN.
+
+.PARAMETER Path
+Where should the config file be saved?
+
+.PARAMETER Locations
+A hastable of the location names and gateways.
+
+.PARAMETER AllGateways
+The name of the VPN conections to create containing all gateways.
+
+.PARAMETER Start
+The start of the XML file.
+
+.PARAMETER End
+The end of the XML file, after all the connections are created.
+#>
+
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+    [Parameter(ValueFromPipeline = $true)][string]$Path,
+    [Parameter(ValueFromPipeline = $true)][hashtable]$Locations,
+    [Parameter(ValueFromPipeline = $true)][string]$AllGateways,
+    $Start = '
+<?xml version="1.0" encoding="UTF-8" ?>
+<forticlient_configuration>
+    <forticlient_version>6.0.10.297</forticlient_version>
+    <version>6.0.10</version>
+    <exported_by_version>6.0.10.0297</exported_by_version>
+    <date>2022/07/05</date>
+    <partial_configuration>0</partial_configuration>
+    <os_version>windows</os_version>
+    <os_architecture>x64</os_architecture>
+    <system>
+        <ui>
+            <disable_backup>0</disable_backup>
+            <ads>1</ads>
+            <default_tab>VPN</default_tab>
+            <flashing_system_tray_icon>1</flashing_system_tray_icon>
+            <hide_system_tray_icon>0</hide_system_tray_icon>
+            <suppress_admin_prompt>0</suppress_admin_prompt>
+            <password />
+            <hide_user_info>0</hide_user_info>
+            <culture_code>os-default</culture_code>
+            <gpu_rendering>0</gpu_rendering>
+            <replacement_messages>
+                <quarantine>
+                    <title>
+                        <title>
+                            <![CDATA[EncX B3BE58EB0FD91B6B866DF7E9459BEB7F0697746CE89427F20469594DB893779458DFF6A49EFC8898C44D4C37309DCB818B9D6EB3174F8CF2676EF458E1AADA1C0E9852D7E752091EAA4F1FE80044]]>
+                        </title>
+                    </title>
+                    <statement>
+                        <remediation>
+                            <![CDATA[EncX D902BBB4D91522281CB2C525118B12D7790277C80142DE997D307E083A62FD471E58C7F0CCF1]]>
+                        </remediation>
+                    </statement>
+                    <remediation>
+                        <remediation>
+                            <![CDATA[EncX 8484E04F33E964972BED5802A862373493F46245F243FC580640A599612B7705E42ABE874CBC76EECB4BB5BB96EAF652BD28F128F0D16B5E258BBB8A7099F96BE16D3B48EDC03159C3C61C87AECACC3D44D311D323DD5048D03F9640882166805562E45B5D89A6B0249CAA2ADC208E838AECF2]]>
+                        </remediation>
+                    </remediation>
+                </quarantine>
+            </replacement_messages>
+        </ui>
+        <log_settings>
+            <onnet_local_logging>1</onnet_local_logging>
+            <level>6</level>
+            <log_events>ipsecvpn,sslvpn,scheduler,update,firewall</log_events>
+            <remote_logging>
+                <log_upload_enabled>0</log_upload_enabled>
+                <log_upload_server />
+                <log_upload_ssl_enabled>1</log_upload_ssl_enabled>
+                <log_retention_days>90</log_retention_days>
+                <log_upload_freq_minutes>60</log_upload_freq_minutes>
+                <log_generation_timeout_secs>900</log_generation_timeout_secs>
+                <netlog_categories>0</netlog_categories>
+                <log_protocol>faz</log_protocol>
+                <netlog_server />
+            </remote_logging>
+        </log_settings>
+        <proxy>
+            <update>0</update>
+            <online_scep>0</online_scep>
+            <type>http</type>
+            <address />
+            <port>80</port>
+            <username>
+                <![CDATA[Enc c3576adf25674d0e8657f64357e0eca3c8ff8f09ad4a07ce]]>
+            </username>
+            <password>
+                <![CDATA[Enc 715ec34363eda0d92f180c6926fa6e7e19f18b19ae60b178]]>
+            </password>
+        </proxy>
+        <update>
+            <use_custom_server>0</use_custom_server>
+            <restrict_services_to_regions />
+            <server />
+            <port>80</port>
+            <timeout>60</timeout>
+            <failoverport />
+            <fail_over_to_fdn>1</fail_over_to_fdn>
+            <use_proxy_when_fail_over_to_fdn>1</use_proxy_when_fail_over_to_fdn>
+            <auto_patch>0</auto_patch>
+            <submit_virus_info_to_fds>1</submit_virus_info_to_fds>
+            <submit_vuln_info_to_fds>1</submit_vuln_info_to_fds>
+            <update_action>download_and_install</update_action>
+            <scheduled_update>
+                <enabled>1</enabled>
+                <type>interval</type>
+                <daily_at>06:09</daily_at>
+                <update_interval_in_hours>6</update_interval_in_hours>
+            </scheduled_update>
+        </update>
+        <fortiproxy>
+            <enabled>1</enabled>
+            <enable_https_proxy>1</enable_https_proxy>
+            <http_timeout>60</http_timeout>
+            <client_comforting>
+                <pop3_client>1</pop3_client>
+                <pop3_server>1</pop3_server>
+                <smtp>1</smtp>
+            </client_comforting>
+            <selftest>
+                <enabled>1</enabled>
+                <last_port>65535</last_port>
+                <notify>1</notify>
+            </selftest>
+        </fortiproxy>
+        <certificates>
+            <crl>
+                <ocsp>
+                    <enabled>0</enabled>
+                    <server />
+                    <port />
+                </ocsp>
+            </crl>
+            <hdd />
+            <ca />
+        </certificates>
+    </system>
+    <endpoint_control>
+        <enabled>1</enabled>
+        <socket_connect_timeouts>1:5</socket_connect_timeouts>
+        <system_data>Enc 0dae8cf21fd55eea5d2961a1418235552038b0c924af92486ca781f294b60b765aa6926a792f8f91a177d2975d5b32aed2145e67f1f764d2331451a73b0378c16bcb11a1e63534dfd3201a9e</system_data>
+        <disable_unregister>0</disable_unregister>
+        <disable_fgt_switch>0</disable_fgt_switch>
+        <show_bubble_notifications>1</show_bubble_notifications>
+        <avatar_enabled>1</avatar_enabled>
+        <ui>
+            <display_antivirus>0</display_antivirus>
+            <display_webfilter>0</display_webfilter>
+            <display_firewall>0</display_firewall>
+            <display_vpn>1</display_vpn>
+            <display_vulnerability_scan>0</display_vulnerability_scan>
+            <display_sandbox>0</display_sandbox>
+            <display_compliance>0</display_compliance>
+            <hide_compliance_warning>0</hide_compliance_warning>
+            <registration_dialog>
+                <show_profile_details>1</show_profile_details>
+            </registration_dialog>
+        </ui>
+        <onnet_addresses>
+            <address />
+        </onnet_addresses>
+        <onnet_mac_addresses />
+        <alerts>
+            <notify_server>1</notify_server>
+            <alert_threshold>1</alert_threshold>
+        </alerts>
+        <fortigates>
+            <fortigate>
+                <serial_number />
+                <name />
+                <registration_password />
+                <addresses />
+            </fortigate>
+        </fortigates>
+        <local_subnets_only>0</local_subnets_only>
+        <notification_server />
+        <nac>
+            <processes>
+                <process id="" rule="present">
+                    <signature name="" />
+                </process>
+            </processes>
+            <files>
+                <path id="" />
+            </files>
+            <registry>
+                <path id="" />
+            </registry>
+        </nac>
+    </endpoint_control>
+    <vpn>
+        <options>
+            <autoconnect_tunnel />
+            <autoconnect_only_when_offnet>0</autoconnect_only_when_offnet>
+            <keep_running_max_tries>0</keep_running_max_tries>
+            <disable_internet_check>0</disable_internet_check>
+            <suppress_vpn_notification>0</suppress_vpn_notification>
+            <minimize_window_on_connect>1</minimize_window_on_connect>
+            <allow_personal_vpns>1</allow_personal_vpns>
+            <disable_connect_disconnect>0</disable_connect_disconnect>
+            <show_vpn_before_logon>1</show_vpn_before_logon>
+            <use_windows_credentials>1</use_windows_credentials>
+            <use_legacy_vpn_before_logon>0</use_legacy_vpn_before_logon>
+            <show_negotiation_wnd>0</show_negotiation_wnd>
+            <vendor_id />
+        </options>
+        <sslvpn>
+            <options>
+                <enabled>1</enabled>
+                <prefer_sslvpn_dns>1</prefer_sslvpn_dns>
+                <dnscache_service_control>0</dnscache_service_control>
+                <use_legacy_ssl_adapter>0</use_legacy_ssl_adapter>
+                <preferred_dtls_tunnel>1</preferred_dtls_tunnel>
+                <block_ipv6>0</block_ipv6>
+                <no_dhcp_server_route>0</no_dhcp_server_route>
+                <no_dns_registration>0</no_dns_registration>
+                <disallow_invalid_server_certificate>0</disallow_invalid_server_certificate>
+            </options>
+            <connections>',
+    $End = '
+            </connections>
+        </sslvpn>
+        <ipsecvpn>
+            <options>
+                <enabled>1</enabled>
+                <beep_if_error>0</beep_if_error>
+                <usewincert>1</usewincert>
+                <use_win_current_user_cert>1</use_win_current_user_cert>
+                <use_win_local_computer_cert>1</use_win_local_computer_cert>
+                <block_ipv6>1</block_ipv6>
+                <uselocalcert>0</uselocalcert>
+                <usesmcardcert>1</usesmcardcert>
+                <enable_udp_checksum>0</enable_udp_checksum>
+                <disable_default_route>0</disable_default_route>
+                <show_auth_cert_only>0</show_auth_cert_only>
+                <check_for_cert_private_key>0</check_for_cert_private_key>
+                <enhanced_key_usage_mandatory>0</enhanced_key_usage_mandatory>
+            </options>
+            <connections />
+        </ipsecvpn>
+    </vpn>
+</forticlient_configuration>
+'
+)
+
+function BuildConfig {
+    Param(
+        [ValidateLength(1, 31)][string]$Name,
+        [ValidatePattern('(?m)^(?:\w|.)*:[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]')][string]$Gateway
+    )
+    return "
+    <connection>
+        <name>$Name</name>
+        <description />
+        <server>$Gateway</server>
+        <username />
+        <single_user_mode>0</single_user_mode>
+        <ui>
+            <show_remember_password>0</show_remember_password>
+            <show_alwaysup>0</show_alwaysup>
+        </ui>
+        <password />
+        <warn_invalid_server_certificate>1</warn_invalid_server_certificate>
+        <prompt_certificate>0</prompt_certificate>
+        <prompt_username>1</prompt_username>
+        <on_connect>
+            <script>
+                <os>windows</os>
+                <script>
+                    <![CDATA[]]>
+                </script>
+            </script>
+        </on_connect>
+        <on_disconnect>
+            <script>
+                <os>windows</os>
+                <script>
+                    <![CDATA[]]>
+                </script>
+            </script>
+        </on_disconnect>
+    </connection>"
+}
+
+$Mid = ""
+if ($AllGateways) { $Mid += BuildConfig -Name $AllGateways -Gateway ($Locations.Values -join ";") }
+$Locations.Keys | ForEach-Object { $Mid += BuildConfig -Name $_ -Gateway $Locations[$_] }
+$Config = ($Start + $Mid + $End)
+If ($PSCmdlet.ShouldProcess("$Path", "Create-FortiClientConfig")) { Set-Content -Path $Path -Value $Config }
+else { return $Config }
 }
 function New-Password {
 <#PSScriptInfo
@@ -6071,6 +6430,8 @@ Param(
     [system.io.fileinfo[]]$FilePath
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
     try {
         $Content = Get-Content $FilePath
@@ -6088,6 +6449,46 @@ If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
         Write-Error "Failed to remove signature. $($_.Exception.Message)"
     }
 }
+}
+function Remove-BlankLines {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID c0df5582-8e43-491d-92ce-410392bb9912
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+#>
+
+<#
+.DESCRIPTION
+This will remove superfluous blank lines from a string.
+#>
+
+param([string]$String)
+while ($String.Contains("`r`n`r`n`r`n")) { $String = ($String -replace "`r`n`r`n`r`n", "`r`n`r`n").Trim() }
+return $String
 }
 function Remove-CachedWallpaper {
 <#PSScriptInfo
@@ -6402,6 +6803,7 @@ param(
     [array]$Modules = (Get-InstalledModule)
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 Requires -Version 2.0 -Modules PowerShellGet
 
 foreach ($Module in $Modules) {
@@ -7077,6 +7479,8 @@ param(
 
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 $SkipSendingInvitation = -not $SkipSendingInvitation
 $SkipResettingRedemtion = -not $SkipResettingRedemtion
 
@@ -7389,6 +7793,8 @@ param(
   [pscredential]$credential = (Get-Credential)
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 $Credential.Password | ConvertFrom-SecureString | Set-Content $Path
 }
 function Search-Registry {
@@ -7597,6 +8003,8 @@ Param(
     [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
     [array]$Users = (Get-ChildItem $Path -File)
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Warn -Message "You are not running this script as an administrator. It may not work as expected." | Out-null
 foreach ($User in $Users) {
@@ -8306,6 +8714,8 @@ param(
     [ValidateRange(0, [Int32]::MaxValue)][Int32]$Sleep = 5
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Test-Admin -Throw | Out-Null
 
 Get-BitLockerVolume
@@ -8986,6 +9396,7 @@ Param(
     [string]$baz = "bazziest"
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 $MyInvocation
 
 Write-Output "params"
@@ -9049,6 +9460,8 @@ param(
   [ValidateRange(0, [int]::MaxValue)][int]$Retries = 5,
   [array]$ServerList = @("amsterdam.voip.ms", "atlanta.voip.ms", "atlanta2.voip.ms", "chicago.voip.ms", "chicago2.voip.ms", "chicago3.voip.ms", "chicago4.voip.ms", "dallas.voip.ms", "dallas2.voip.ms", "denver.voip.ms", "denver2.voip.ms", "houston.voip.ms", "houston2.voip.ms", "london.voip.ms", "losangeles.voip.ms", "losangeles2.voip.ms", "melbourne.voip.ms", "montreal.voip.ms", "montreal2.voip.ms", "montreal3.voip.ms", "montreal4.voip.ms", "montreal5.voip.ms", "montreal6.voip.ms", "montreal7.voip.ms", "montreal8.voip.ms", "newyork.voip.ms", "newyork2.voip.ms", "newyork3.voip.ms", "newyork4.voip.ms", "newyork5.voip.ms", "newyork6.voip.ms", "newyork7.voip.ms", "newyork8.voip.ms", "paris.voip.ms", "sanjose.voip.ms", "sanjose2.voip.ms", "seattle.voip.ms", "seattle2.voip.ms", "seattle3.voip.ms", "tampa.voip.ms", "tampa2.voip.ms", "toronto.voip.ms", "toronto2.voip.ms", "toronto3.voip.ms", "toronto4.voip.ms", "toronto5.voip.ms", "toronto6.voip.ms", "toronto7.voip.ms", "toronto8.voip.ms", "vancouver.voip.ms", "vancouver2.voip.ms", "washington.voip.ms", "washington2.voip.ms") #Get the list of servers into an array
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 function Progress {
   param(
@@ -9285,6 +9698,8 @@ param(
     $Path = (Get-ChildItem -Filter "*.xml"),
     $Setup = ".\setup.exe"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Path | ForEach-Object {
     If ($PSCmdlet.ShouldProcess("$($_.Name)", "Update-OfficeCache")) {
@@ -9599,6 +10014,8 @@ param(
     [string]$Key = "y",
     [string]$Message = "Press $Key to continue, any other key to abort."
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Response = Read-Host $Message
 If ($Response -ne $Key) { Break }
