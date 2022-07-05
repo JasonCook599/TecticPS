@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 6ee394c8-c592-49d5-b16c-601955ef4d2f
 
@@ -64,7 +64,6 @@ param (
   [ValidateRange(1, [int]::MaxValue)][int]$MaxHeight,
   [switch]$Preview
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ChildItem -File -Path $Path | ForEach-Object {
   If (!$Format) { $Format = [System.IO.Path]::GetExtension($_.Name) }

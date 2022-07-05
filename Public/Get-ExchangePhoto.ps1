@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 10b98a61-ebf3-499f-847f-4aa18b41a9dd
 
@@ -64,7 +64,6 @@ Param(
     [string]$CroppedPath = $Path + "\Cropped\",
     [string]$ResultsFile
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Results = @()
 

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID fb250771-93be-4da0-a4ec-edad2ccf7476
 
@@ -55,7 +55,6 @@ param (
   [ValidateRange(1, [int]::MaxValue)][int]$Sleep = 5
 
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
   while ($true) {

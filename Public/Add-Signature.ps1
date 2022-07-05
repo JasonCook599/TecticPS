@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.4
+.VERSION 1.1.5
 
 .GUID 9be6c147-e71b-44c4-b265-1b685692e411
 
@@ -58,7 +58,6 @@ param (
   [string]$Url,
   [string]$Algorithm = "SHA256"
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
   If (([System.IO.Path]::GetExtension($_.FullName) -like ".ps*1")) { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $Certificate }

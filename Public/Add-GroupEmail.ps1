@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 772c6454-68cf-42aa-89b9-dd6dc5939e1b
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -36,6 +52,6 @@ param (
     [mailaddress]$EmailAddress,
     [switch]$SetPrimary
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Set-UnifiedGroup -Identity $-Identity -EmailAddresses: @{Add = $EmailAddress }
 If ($SetPrimary) { Set-UnifiedGroup -Identity $-Identity -PrimarySmtpAddress  $EmailAddress }

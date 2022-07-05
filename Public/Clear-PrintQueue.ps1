@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 4656316e-19c9-4d45-a8cb-6c26f6548e22
 
@@ -44,7 +44,7 @@ Clear-PrintQueue -ComputerName PrintServer
 param(
   [string]$ComputerName
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 while (!$ComputerName) { $ComputerName = Read-Host -Prompt "Enter the Computer Name." }
 
 Invoke-Command -ComputerName $ComputerName -ScriptBlock {

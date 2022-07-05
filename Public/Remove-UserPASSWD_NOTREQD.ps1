@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 6309e154-81f6-4bd1-aff7-deaea3274934
 
@@ -65,7 +65,6 @@ param([string]$Path,
     [switch]$Subtree,
     [string]$LogFile,
     [switch]$help)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 function funHelp() {
     Clear-Host

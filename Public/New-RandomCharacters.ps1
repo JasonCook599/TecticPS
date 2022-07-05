@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 9f443ca7-e536-40ee-a774-7d94c5d3c569
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -26,8 +42,7 @@ param (
   [ValidateRange(1, [int]::MaxValue)][int]$Length = 1,
   $Characters = "abcdefghiklmnoprstuvwxyzABCDEFGHKLMNOPRSTUVWXYZ1234567890!@#$%^&*()_+-=[]\{}|;:,./<>?"
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 $Random = 1..$Length | ForEach-Object { Get-Random -Maximum $Characters.length }
 $private:ofs = ""
 return [String]$Characters[$Random]
-

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
 
@@ -50,6 +50,5 @@ param(
     $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
     $SortKey = $Properties[0]
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 return Get-MsolUser -All  | Sort-Object $SortKey | Select-Object $Properties

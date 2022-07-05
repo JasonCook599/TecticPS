@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 05dad3a6-57cf-4747-b3bd-57bc12b7628e
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -40,11 +56,9 @@ param(
   [switch]$Before,
   [switch]$After
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Message "You are not running this script with Administrator rights. Some events may be missing." | Out-Null
 
 If ($Before -eq $True) { Get-EventLog System -Before (Get-Date).AddMinutes($Time) }
 ElseIf ($After -eq $True) { Get-EventLog System -After (Get-Date).AddMinutes($Time) }
 Else { Write-Error "You must specify either -Before or -After" }
-

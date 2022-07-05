@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 0603a3ee-bff9-464a-aa86-44903c476fe9
 
@@ -40,7 +40,7 @@ Param
     [Parameter(position = 0)] $Hosts,
     [Parameter] $ToCsv
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 #Funtion to make space so that formatting looks good
 Function MakeSpace($l, $Maximum) {
     $space = ""

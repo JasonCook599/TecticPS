@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 85c8702c-7117-4050-8629-51fc36de0cd8
 
@@ -38,8 +38,6 @@ The lenght of time to sleep between checks.
 param(
     [ValidateRange(0, [Int32]::MaxValue)][Int32]$Sleep = 5
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Throw | Out-Null
 

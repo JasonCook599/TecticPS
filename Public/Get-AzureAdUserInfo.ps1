@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 3af068df-1f2d-4e6b-b1a7-e18e09311471
 
@@ -51,6 +51,5 @@ param(
     $WhereObject = { $_.DirSyncEnabled -ne $true },
     $SortKey = $Properties[0]
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 return Get-AzureADUser -Filter $Filter | Where-Object $WhereObject | Sort-Object $SortKey | Select-Object $Properties

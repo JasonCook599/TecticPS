@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.5
+.VERSION 1.1.6
 
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
@@ -56,7 +56,6 @@ param(
 	[string]$Prefix,
 	[switch]$All
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if (-not $Json) { throw "Json file not found." }
 ForEach ($Image in $Path) {

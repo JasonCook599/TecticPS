@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
 
@@ -39,7 +39,6 @@ param(
     [array]$Properties = ("Surname", "GivenName", "EmailAddress", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Office", "Created"),
     [string]$Server
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = @{}
 if ($SearchBase) { $Arguments.SearchBase = $SearchBase }

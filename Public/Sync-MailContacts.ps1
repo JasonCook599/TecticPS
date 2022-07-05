@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 6da14011-187b-4176-a61b-16836f8a0ad7
 
@@ -47,8 +47,6 @@ param (
     [string]$SourceFilter = "*",
     [string]$DestinationFilter = "*"
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Source = @{}
 if ($SourceSearchBase) { $Source.SearchBase = $SourceSearchBase }

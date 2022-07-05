@@ -1,18 +1,36 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.4
+
 .GUID 8f760b1c-0ccc-43b7-bfed-9370fa84b7f8
 
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
 .DESCRIPTION
 Upload CRLs to GitHub if changed.
-
-.AUTHOR
-Jason Cook
-
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-.COMPANYNAME
-***REMOVED***
-
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
@@ -23,7 +41,7 @@ param (
     $BranchName = "",
     [switch]$Force
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
     If ($PSCmdlet.ShouldProcess($_.Name, "Update-PKI")) {
         $NewHash = (Get-FileHash $_.FullName).Hash

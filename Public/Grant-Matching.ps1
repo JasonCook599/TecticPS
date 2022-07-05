@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 8e42dd4d-c91c-420c-99f5-7b233590ae2c
 
@@ -58,7 +58,6 @@ param(
 	[string]$AccessRights = 'FullControl',
 	[string]$Domain = $Env:USERDOMAIN
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Requires -Modules NTFSSecurity
 

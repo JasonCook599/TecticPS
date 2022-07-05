@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 24dd6c1f-cc9a-44a4-b8e8-dd831d7a51b4
 
@@ -48,7 +48,6 @@ https://support.google.com/a/answer/9250996?hl=en
 param (
     [ValidatePattern("^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+([a-zA-Z0-9-]{2,63})$", ErrorMessage = "{0} is not a valid domain name.")][Parameter(Mandatory = $true)][string]$DomainsAllowedToLogin
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Credential Provider for Windows')) {
 

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.1.2
+.VERSION 2.1.3
 
 .GUID ab066274-cee5-401d-99ff-1eeced8ca9af
 
@@ -117,8 +117,6 @@ param(
 	[switch]$StaffHub,
 	[switch]$Disconnect
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tennant. Do not include `".onmicrosoft.com`"" }
 While (-NOT $UPN) { $UPN = Read-Host -Prompt "Enter your User Principal Name (UPN)" }

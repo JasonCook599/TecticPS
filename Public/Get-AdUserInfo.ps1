@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 2102c95e-5402-43a2-ba4f-356a89fff4ca
 
@@ -51,7 +51,6 @@ param(
     $SortKey = $Properties[0],
     [string]$SearchBase
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
 

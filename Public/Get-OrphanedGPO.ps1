@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 4ec63b79-6484-43eb-90f8-bef7e2642564
 
@@ -41,7 +41,6 @@ param (
     [string]$ForestName = (Get-ADForest).Name,
     $Domains = (Get-AdForest -Identity $ForestName | Select-Object -ExpandProperty Domains)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 try {
     ## Find all domains in the forest

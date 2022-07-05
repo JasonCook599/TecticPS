@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID c64f1f09-036c-471d-898c-c9b3da6f53a8
 
@@ -46,8 +46,6 @@ param(
     [switch]$Details,
     [string]$Show
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 function ParseDate {
     param ($Date)

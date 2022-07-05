@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID dd50132f-8bc5-4825-918d-9fd0afd3f36b
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -22,7 +38,7 @@ Param(
     [string]$baz = "bazziest"
 )
 $MyInvocation
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 # . (I:\Applications\Powershell\***REMOVED***It\Private\LoadDefaults.ps1 -Invocation $MyInvocation) -Invocation $MyInvocation
 
 Write-Output "params"
@@ -30,4 +46,3 @@ write-output "foo: $foo"
 write-output "bar: $bar"
 write-output "baz: $baz"
 write-output "test: $test"
-

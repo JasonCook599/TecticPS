@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 144cbae4-8208-4df5-a801-42316e9db97e
 
@@ -52,7 +52,6 @@ Resize the image to 30% of its original size and save it to a new file.
 http://dendory.net
 #>
 Param([Parameter(Mandatory = $true)][string]$InputFile, [string]$OutputFile, [int32]$Width, [int32]$Height, [int32]$Scale, [Switch]$Display)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 # Add System.Drawing assembly
 Add-Type -AssemblyName System.Drawing

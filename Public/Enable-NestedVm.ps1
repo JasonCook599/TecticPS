@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.3.1
+.VERSION 1.3.2
 
 .GUID 528bfa6d-27a7-4612-9092-faae014e3917
 
@@ -49,7 +49,6 @@ https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/LICENSE
 #>
 
 param([string]$vmName)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if ([string]::IsNullOrEmpty($vmName)) {
     Write-Host "No VM name passed"

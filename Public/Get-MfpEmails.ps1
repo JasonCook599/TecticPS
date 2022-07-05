@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.0.3
+.VERSION 2.0.4
 
 .GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e
 
@@ -56,7 +56,6 @@ param(
     [string]$Server,
     [string]$Filter = "*"
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = @{}
 if ($Properties) { $Arguments.Properties = $Properties }

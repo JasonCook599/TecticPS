@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 029cd8de-13e9-4169-ae20-72c021290013
 
@@ -76,6 +76,7 @@ https://stackoverflow.com/questions/42963661/use-powershell-to-search-for-string
 .LINK
 https://gallery.technet.microsoft.com/scriptcenter/Search-Registry-Find-Keys-b4ce08b4
 #>
+# SkipLoadDefaults: True
 [CmdletBinding()]
 param(
     [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][Alias("PsPath")][string[]] $Path,

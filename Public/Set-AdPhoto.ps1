@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.1
+.VERSION 1.1.2
 
 .GUID 5dcbac67-cebe-4cb8-bf95-8ad720c25e72
 
@@ -52,7 +52,7 @@ Param(
     [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
     [array]$Users = (Get-ChildItem $Path -File)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Test-Admin -Warn -Message "You are not running this script as an administrator. It may not work as expected." | Out-null
 foreach ($User in $Users) {
     $count++ ; Progress -Index $count -Total $Users.count -Activity "Setting users photos." -Name [System.IO.Path]::GetFileNameWithoutExtension($User.Name)

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.0.1
+.VERSION 2.0.2
 
 .GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21
 
@@ -50,7 +50,6 @@ param(
   [string]$Filter = "*.pfx",
   $Certificates = (Get-ChildItem -File -Path $Path -Filter $Filter)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 ForEach ($Certificate in $Certificates) {
   $count++ ; Progress -Index $count -Total @($Certificates).count -Activity "Resizing images." -Name $Certificate.Name

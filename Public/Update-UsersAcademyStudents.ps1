@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 4fc14578-f8eb-4ae2-8e39-77c0f197cff8
 
@@ -43,7 +43,6 @@ param (
     $Path
 
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ADUser -Filter * -SearchBase $Path | Set-ADUser -Enabled $false
 [System.Collections.ArrayList]$Results = @()

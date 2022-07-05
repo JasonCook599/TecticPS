@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID bcbc3792-1f34-4100-867c-6fcf09230520
 
@@ -51,7 +51,6 @@ param (
     [switch]$Force,
     [ValidateRange(1, [int]::MaxValue)][int]$MaxLength = 1024
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if ($Machine) {
     Write-Verbose "Adding `"$Path`" to system PATH"

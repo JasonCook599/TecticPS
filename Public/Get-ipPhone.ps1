@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 51e2066f-785d-4ab1-b889-904c387fb2f9
 
@@ -46,7 +46,6 @@ param(
     [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path,
     $Filter = "ipphone -like `"*`""
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Results = Get-ADUser -Properties name, ipPhone, Company, Title, Department, DistinguishedName -Filter $Filter | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, ipPhone, Company, Title, Department | Sort-Object -Property Company, name
 if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }

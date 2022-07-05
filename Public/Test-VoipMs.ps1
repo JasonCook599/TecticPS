@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.3
+.VERSION 1.2.4
 
 .GUID 17fff57c-cce9-4977-a26d-aeded706a85f
 
@@ -52,7 +52,7 @@ param(
   [ValidateRange(0, [int]::MaxValue)][int]$Retries = 5,
   [array]$ServerList = @("amsterdam.voip.ms", "atlanta.voip.ms", "atlanta2.voip.ms", "chicago.voip.ms", "chicago2.voip.ms", "chicago3.voip.ms", "chicago4.voip.ms", "dallas.voip.ms", "dallas2.voip.ms", "denver.voip.ms", "denver2.voip.ms", "houston.voip.ms", "houston2.voip.ms", "london.voip.ms", "losangeles.voip.ms", "losangeles2.voip.ms", "melbourne.voip.ms", "montreal.voip.ms", "montreal2.voip.ms", "montreal3.voip.ms", "montreal4.voip.ms", "montreal5.voip.ms", "montreal6.voip.ms", "montreal7.voip.ms", "montreal8.voip.ms", "newyork.voip.ms", "newyork2.voip.ms", "newyork3.voip.ms", "newyork4.voip.ms", "newyork5.voip.ms", "newyork6.voip.ms", "newyork7.voip.ms", "newyork8.voip.ms", "paris.voip.ms", "sanjose.voip.ms", "sanjose2.voip.ms", "seattle.voip.ms", "seattle2.voip.ms", "seattle3.voip.ms", "tampa.voip.ms", "tampa2.voip.ms", "toronto.voip.ms", "toronto2.voip.ms", "toronto3.voip.ms", "toronto4.voip.ms", "toronto5.voip.ms", "toronto6.voip.ms", "toronto7.voip.ms", "toronto8.voip.ms", "vancouver.voip.ms", "vancouver2.voip.ms", "washington.voip.ms", "washington2.voip.ms") #Get the list of servers into an array
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 function Progress {
   param(
     [int]$Index,

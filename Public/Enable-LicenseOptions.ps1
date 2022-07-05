@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.3.1
+.VERSION 1.3.2
 
 .GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
 
@@ -98,7 +98,6 @@ param (
   [array]$NoSharepoint = (Get-ADGroupMember -Recursive -Identity "Office 365-No Sharepoint" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName),
   [array]$NoExchange = (Get-ADGroupMember -Recursive -Identity "Office 365-No Exchange" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 [System.Collections.ArrayList]$Results = @()
 $count = 1; $PercentComplete = 0;

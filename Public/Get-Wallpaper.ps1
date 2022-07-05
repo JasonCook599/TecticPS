@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
 
@@ -42,7 +42,6 @@ param(
     [string]$Path = "C:\Windows\Web\Wallpaper\Windows\CurrentBackground.jpg",
     [Parameter(Mandatory = $true)][uri]$Uri
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Warn -Message "You do not have Administrator rights to run this script! This may not work correctly." | Out-Null
 Invoke-WebRequest -OutFile $Path -Uri $Uri -ErrorAction SilentlyContinue

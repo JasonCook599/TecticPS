@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 31c7075a-49f8-4f99-ad29-aa9d83ab8dc3
 
@@ -58,7 +58,6 @@ param(
   $Templates
 )
 Requires -Modules PSPKI
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if (-not $Templates) { throw "You must specify the templates to search for." }
 $Templates | Foreach-Object {

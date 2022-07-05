@@ -161,6 +161,7 @@ http://darrenjrobinson.com/
 param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$Date
 )
+
 $global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
 
 try {
@@ -413,6 +414,7 @@ param(
     [string]$Status = ("Processing {0} of {1}: {2}" -f $Index, $Total, $Name),
     [int]$PercentComplete = ($Index / $Total * 100)
 )
+
 if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentComplete $PercentComplete }
 }
 function Remove-BlankLines {
@@ -551,6 +553,7 @@ param(
     [string]$PsVersionMessage = "Powershell $Version is required. You have $($PSVersionTable.PSVersion)",
     [string]$PSEditionMessage = "You are running the $($PSVersionTable.PSEdition) edition. $PsEditionName is required."
 )
+
 <#
 #>
 
@@ -735,6 +738,7 @@ param(
     },
     $AllowedDevices = $DeviceList.$($ComputerInfo.Manufacturer).$($ComputerInfo.Model)
 )
+
 foreach ($Device in $AllowedDevices.GetEnumerator()) {
     New-ItemProperty -Path $Path -Name $Device.Name -Value $Device.Value -PropertyType "String" -Force -WhatIf
 }
@@ -742,7 +746,7 @@ foreach ($Device in $AllowedDevices.GetEnumerator()) {
 function Add-BluredPillarBars {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 6ee394c8-c592-49d5-b16c-601955ef4d2f
 
@@ -806,7 +810,6 @@ param (
   [ValidateRange(1, [int]::MaxValue)][int]$MaxHeight,
   [switch]$Preview
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ChildItem -File -Path $Path | ForEach-Object {
   If (!$Format) { $Format = [System.IO.Path]::GetExtension($_.Name) }
@@ -890,18 +893,34 @@ else { Add-Computer -DomainName $Domain -Credential $Credentials -Force }
 }
 function Add-GroupEmail {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 772c6454-68cf-42aa-89b9-dd6dc5939e1b
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -927,14 +946,14 @@ param (
     [mailaddress]$EmailAddress,
     [switch]$SetPrimary
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Set-UnifiedGroup -Identity $-Identity -EmailAddresses: @{Add = $EmailAddress }
 If ($SetPrimary) { Set-UnifiedGroup -Identity $-Identity -PrimarySmtpAddress  $EmailAddress }
 }
 function Add-Path {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID bcbc3792-1f34-4100-867c-6fcf09230520
 
@@ -985,7 +1004,6 @@ param (
     [switch]$Force,
     [ValidateRange(1, [int]::MaxValue)][int]$MaxLength = 1024
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if ($Machine) {
     Write-Verbose "Adding `"$Path`" to system PATH"
@@ -1009,7 +1027,7 @@ Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
 function Add-Signature {
 <#PSScriptInfo
 
-.VERSION 1.1.4
+.VERSION 1.1.5
 
 .GUID 9be6c147-e71b-44c4-b265-1b685692e411
 
@@ -1067,7 +1085,6 @@ param (
   [string]$Url,
   [string]$Algorithm = "SHA256"
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
   If (([System.IO.Path]::GetExtension($_.FullName) -like ".ps*1")) { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $Certificate }
@@ -1092,18 +1109,34 @@ Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
 }
 function Backup-MySql {
 <#PSScriptInfo
-.VERSION 1.0.1
+
+.VERSION 1.0.2
+
 .GUID 401b32f3-314a-47cf-b910-04c7f2492db2
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -1147,7 +1180,6 @@ param(
   [switch]$NoTrim,
   [ValidateRange(1, [int]::MaxValue)][int]$Copies = 10 #Number of copies to keep
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Write-Verbose "Get only names of the databases folders"
 $sqlDbDirList = Get-ChildItem -path $mySqlData | Where-Object { $_.PSIsContainer } | Select-Object Name
@@ -1196,7 +1228,7 @@ Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Set-ADUser -C
 function Clear-PrintQueue {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 4656316e-19c9-4d45-a8cb-6c26f6548e22
 
@@ -1240,7 +1272,7 @@ Clear-PrintQueue -ComputerName PrintServer
 param(
   [string]$ComputerName
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 while (!$ComputerName) { $ComputerName = Read-Host -Prompt "Enter the Computer Name." }
 
 Invoke-Command -ComputerName $ComputerName -ScriptBlock {
@@ -1259,7 +1291,7 @@ Invoke-Command -ComputerName $ComputerName -ScriptBlock {
 function Connect-Office365 {
 <#PSScriptInfo
 
-.VERSION 2.1.2
+.VERSION 2.1.3
 
 .GUID ab066274-cee5-401d-99ff-1eeced8ca9af
 
@@ -1377,8 +1409,6 @@ param(
 	[switch]$Disconnect
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
 While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tennant. Do not include `".onmicrosoft.com`"" }
 While (-NOT $UPN) { $UPN = Read-Host -Prompt "Enter your User Principal Name (UPN)" }
 
@@ -1466,7 +1496,7 @@ Else {
 function Convert-Image {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
 
@@ -1566,7 +1596,6 @@ param(
 	[switch]$Force,
 	[ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$Magick = ((Get-Command magick).Source)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
 	Write-Error "magick.exe is not available in your PATH."
@@ -1624,7 +1653,7 @@ Return $Results
 function ConvertTo-EndpointCertificate {
 <#PSScriptInfo
 
-.VERSION 2.0.1
+.VERSION 2.0.2
 
 .GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21
 
@@ -1674,7 +1703,6 @@ param(
   [string]$Filter = "*.pfx",
   $Certificates = (Get-ChildItem -File -Path $Path -Filter $Filter)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 ForEach ($Certificate in $Certificates) {
   $count++ ; Progress -Index $count -Total @($Certificates).count -Activity "Resizing images." -Name $Certificate.Name
@@ -1798,7 +1826,7 @@ kill -SIGINT `$(cat /var/run/lighttpd.pid)
 function ConvertTo-OutputImages {
 <#PSScriptInfo
 
-.VERSION 1.1.5
+.VERSION 1.1.6
 
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
@@ -1854,7 +1882,6 @@ param(
 	[string]$Prefix,
 	[switch]$All
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if (-not $Json) { throw "Json file not found." }
 ForEach ($Image in $Path) {
@@ -1961,7 +1988,7 @@ Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase | ForEach-Objec
 function Enable-LicenseOptions {
 <#PSScriptInfo
 
-.VERSION 1.3.1
+.VERSION 1.3.2
 
 .GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
 
@@ -2059,7 +2086,6 @@ param (
   [array]$NoSharepoint = (Get-ADGroupMember -Recursive -Identity "Office 365-No Sharepoint" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName),
   [array]$NoExchange = (Get-ADGroupMember -Recursive -Identity "Office 365-No Exchange" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 [System.Collections.ArrayList]$Results = @()
 $count = 1; $PercentComplete = 0;
@@ -2204,7 +2230,7 @@ If ($Return) { Return $Results }
 function Enable-NestedVm {
 <#PSScriptInfo
 
-.VERSION 1.3.1
+.VERSION 1.3.2
 
 .GUID 528bfa6d-27a7-4612-9092-faae014e3917
 
@@ -2253,7 +2279,6 @@ https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/LICENSE
 #>
 
 param([string]$vmName)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if ([string]::IsNullOrEmpty($vmName)) {
     Write-Host "No VM name passed"
@@ -2401,7 +2426,7 @@ Write-Host 'Invalid input'
 function Export-AdUsersToAssetPanda {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
 
@@ -2440,7 +2465,6 @@ param(
     [array]$Properties = ("Surname", "GivenName", "EmailAddress", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Office", "Created"),
     [string]$Server
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = @{}
 if ($SearchBase) { $Arguments.SearchBase = $SearchBase }
@@ -2471,7 +2495,7 @@ return $Results
 function Export-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.2.7
+.VERSION 1.2.8
 
 .GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
 
@@ -2515,7 +2539,6 @@ param (
     [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
     [SecureString]$Password
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
 if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
@@ -2527,7 +2550,7 @@ if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
 function Export-MatchingCertificates {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 31c7075a-49f8-4f99-ad29-aa9d83ab8dc3
 
@@ -2584,8 +2607,8 @@ param(
   $Date = (Get-Date),
   $Templates
 )
+
 Requires -Modules PSPKI
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if (-not $Templates) { throw "You must specify the templates to search for." }
 $Templates | Foreach-Object {
@@ -2837,7 +2860,7 @@ Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Select-Object
 function Get-AdUserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 2102c95e-5402-43a2-ba4f-356a89fff4ca
 
@@ -2888,7 +2911,6 @@ param(
     $SortKey = $Properties[0],
     [string]$SearchBase
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
 
@@ -2949,7 +2971,7 @@ return [ADSI]"LDAP://<SID=$Sid>"
 function Get-AzureAdMfaStatus {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
 
@@ -2999,14 +3021,13 @@ param(
     $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
     $SortKey = $Properties[0]
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 return Get-MsolUser -All  | Sort-Object $SortKey | Select-Object $Properties
 }
 function Get-AzureAdUserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 3af068df-1f2d-4e6b-b1a7-e18e09311471
 
@@ -3057,7 +3078,6 @@ param(
     $WhereObject = { $_.DirSyncEnabled -ne $true },
     $SortKey = $Properties[0]
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 return Get-AzureADUser -Filter $Filter | Where-Object $WhereObject | Sort-Object $SortKey | Select-Object $Properties
 }
@@ -3084,18 +3104,34 @@ return (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOrigi
 }
 function Get-BitlockerStatus {
 <#PSScriptInfo
-.VERSION 1.1.1
+
+.VERSION 1.1.2
+
 .GUID 674855a4-1cd1-43b7-8e41-fea3bc501f61
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -3110,7 +3146,6 @@ The drive to check for protection on. If unspesified, the System Drive will be u
 param (
   [ValidateScript( { Test-Path $_ })][string]$Drive = $env:SystemDrive
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If (!(Test-Path $Drive)) {
   Write-Error "$Drive is not valid. Please choose a valid path."
@@ -3128,7 +3163,7 @@ $protectans
 function Get-ExchangePhoto {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 10b98a61-ebf3-499f-847f-4aa18b41a9dd
 
@@ -3192,7 +3227,6 @@ Param(
     [string]$CroppedPath = $Path + "\Cropped\",
     [string]$ResultsFile
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Results = @()
 
@@ -3512,7 +3546,7 @@ return $Results
 function Get-ipPhone {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 51e2066f-785d-4ab1-b889-904c387fb2f9
 
@@ -3558,7 +3592,6 @@ param(
     [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path,
     $Filter = "ipphone -like `"*`""
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Results = Get-ADUser -Properties name, ipPhone, Company, Title, Department, DistinguishedName -Filter $Filter | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, ipPhone, Company, Title, Department | Sort-Object -Property Company, name
 if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
@@ -3567,7 +3600,7 @@ return $Results
 function Get-LapsInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 2a3f5ec5-e6c3-4a0b-a8ca-67f98b359144
 
@@ -3613,8 +3646,6 @@ param(
     [switch]$Details,
     [string]$Show
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Results = @()
 Get-ADComputer -Filter $Filter -Properties ms-Mcs-AdmPwd | Sort-Object ms-Mcs-AdmPwd, Name | ForEach-Object {
@@ -3800,7 +3831,7 @@ Return $Result
 function Get-MfpEmails {
 <#PSScriptInfo
 
-.VERSION 2.0.3
+.VERSION 2.0.4
 
 .GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e
 
@@ -3856,7 +3887,6 @@ param(
     [string]$Server,
     [string]$Filter = "*"
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = @{}
 if ($Properties) { $Arguments.Properties = $Properties }
@@ -4072,7 +4102,7 @@ foreach ($lan in $ethernet) {
 function Get-OrphanedGPO {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 4ec63b79-6484-43eb-90f8-bef7e2642564
 
@@ -4113,7 +4143,6 @@ param (
     [string]$ForestName = (Get-ADForest).Name,
     $Domains = (Get-AdForest -Identity $ForestName | Select-Object -ExpandProperty Domains)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 try {
     ## Find all domains in the forest
@@ -4139,18 +4168,34 @@ catch {
 }
 function Get-RecentEvents {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 05dad3a6-57cf-4747-b3bd-57bc12b7628e
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -4180,7 +4225,6 @@ param(
   [switch]$Before,
   [switch]$After
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Message "You are not running this script with Administrator rights. Some events may be missing." | Out-Null
 
@@ -4190,18 +4234,34 @@ Else { Write-Error "You must specify either -Before or -After" }
 }
 function Get-SecureBoot {
 <#PSScriptInfo
-.VERSION 1.0.1
+
+.VERSION 1.0.2
+
 .GUID 421f45c1-3a42-4c17-83a8-bb109f412a19
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -4225,7 +4285,6 @@ param(
   [string]$ComputerList,
   [string]$ReportFile
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Function Get-SystemInfo($ComputerSystem) {
   If (-NOT (Test-Connection -ComputerName $ComputerSystem -Count 1 -ErrorAction SilentlyContinue)) {
@@ -4319,7 +4378,7 @@ foreach ($result in $results) {
 function Get-StaleAADGuestAccounts {
 <#PSScriptInfo
 
-.VERSION 1.1.2
+.VERSION 1.1.3
 
 .GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
 
@@ -4383,7 +4442,6 @@ param (
 	$StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a spesific date to use as stale
 	[switch]$GetLastSignIn
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Requires -Modules MSAL.PS
 
@@ -4475,7 +4533,7 @@ return $Results
 function Get-TpmInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 14062539-2775-4450-bb0b-a3406d1db091
 
@@ -4537,7 +4595,6 @@ param(
   [string]$ComputerList,
   [string]$ReportFile
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Function Get-SystemInfo($ComputerSystem) {
   If (-NOT (Test-Connection -ComputerName $ComputerSystem -Count 1 -ErrorAction SilentlyContinue)) {
@@ -4641,7 +4698,7 @@ If ($ReportFile) { $Report | Export-Csv $ReportFile }
 function Get-UserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID c64f1f09-036c-471d-898c-c9b3da6f53a8
 
@@ -4688,8 +4745,6 @@ param(
     [string]$Show
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
 function ParseDate {
     param ($Date)
     if ($null -ne $Date -and $Date -ne 0) { return [datetime]::FromFileTime($Date) }
@@ -4720,7 +4775,7 @@ return $Results
 function Get-Wallpaper {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
 
@@ -4762,7 +4817,6 @@ param(
     [string]$Path = "C:\Windows\Web\Wallpaper\Windows\CurrentBackground.jpg",
     [Parameter(Mandatory = $true)][uri]$Uri
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Warn -Message "You do not have Administrator rights to run this script! This may not work correctly." | Out-Null
 Invoke-WebRequest -OutFile $Path -Uri $Uri -ErrorAction SilentlyContinue
@@ -4770,7 +4824,7 @@ Invoke-WebRequest -OutFile $Path -Uri $Uri -ErrorAction SilentlyContinue
 function Grant-Matching {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 8e42dd4d-c91c-420c-99f5-7b233590ae2c
 
@@ -4828,7 +4882,6 @@ param(
 	[string]$AccessRights = 'FullControl',
 	[string]$Domain = $Env:USERDOMAIN
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Requires -Modules NTFSSecurity
 
@@ -4843,7 +4896,7 @@ foreach ($UserFolder in $Path) {
 function Import-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.2.7
+.VERSION 1.2.8
 
 .GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d
 
@@ -4890,7 +4943,6 @@ param (
     [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
     [SecureString]$Password
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
 if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
@@ -5160,7 +5212,7 @@ If ( $Reboot -or $Action -contains "Reboot" -or (Test-Path "HKLM:\SOFTWARE­\Mic
 function Install-GCPW {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 24dd6c1f-cc9a-44a4-b8e8-dd831d7a51b4
 
@@ -5208,7 +5260,6 @@ https://support.google.com/a/answer/9250996?hl=en
 param (
     [ValidatePattern("^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+([a-zA-Z0-9-]{2,63})$", ErrorMessage = "{0} is not a valid domain name.")][Parameter(Mandatory = $true)][string]$DomainsAllowedToLogin
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Credential Provider for Windows')) {
 
@@ -5269,7 +5320,7 @@ if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Creden
 function Install-MicrosoftOffice {
 <#PSScriptInfo
 
-.VERSION 1.2.3
+.VERSION 1.2.4
 
 .GUID 12bacb17-e597-4588-8a86-0e05142301b6
 
@@ -5323,7 +5374,7 @@ param (
     [string]$InstallerPath,
     [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 while (!$InstallerPath) { $InstallerPath = Read-Host -Prompt "Enter the installer path." }
 if (!(Test-Path $InstallerPath)) { throw "Installer path is not valid" }
 
@@ -5555,19 +5606,34 @@ else {
 }
 function Invoke-TickleMailRecipients {
 <#PSScriptInfo
-.VERSION 1.2.2
+
+.VERSION 1.2.3
+
 .GUID ece98adc-3c44-4a02-a254-d4e7f2888f4f
 
-.AUTHOR
-Jason Cook
-Joseph Palarchio
+.AUTHOR Jason Cook Joseph Palarchio
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -5588,7 +5654,6 @@ param(
   $MailUsers = (Get-MailUser -Resultsize Unlimited),
   $DistributionGroups = (Get-DistributionGroup -Resultsize Unlimited)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 foreach ($Mailbox in $Mailboxes) {
   $count1++ ; Progress -Index $count1 -Total $Mailboxes.count -Activity "Tickling mailboxes. Step 1 of 3" -Name $Mailbox.alias
@@ -5738,7 +5803,7 @@ $Files | ForEach-Object {
 function New-Password {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
 
@@ -5787,8 +5852,6 @@ param (
   [int]$Symbols = 2
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
 Add-Type -AssemblyName System.Web
 
 do {
@@ -5804,18 +5867,34 @@ return $Password
 }
 function New-RandomCharacters {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 9f443ca7-e536-40ee-a774-7d94c5d3c569
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -5831,7 +5910,7 @@ param (
   [ValidateRange(1, [int]::MaxValue)][int]$Length = 1,
   $Characters = "abcdefghiklmnoprstuvwxyzABCDEFGHKLMNOPRSTUVWXYZ1234567890!@#$%^&*()_+-=[]\{}|;:,./<>?"
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 $Random = 1..$Length | ForEach-Object { Get-Random -Maximum $Characters.length }
 $private:ofs = ""
 return [String]$Characters[$Random]
@@ -5839,7 +5918,7 @@ return [String]$Characters[$Random]
 function Ping-Hosts {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 0603a3ee-bff9-464a-aa86-44903c476fe9
 
@@ -5879,7 +5958,7 @@ Param
     [Parameter(position = 0)] $Hosts,
     [Parameter] $ToCsv
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Function MakeSpace($l, $Maximum) {
     $space = ""
     $s = [int]($Maximum - $l) + 1
@@ -5943,7 +6022,7 @@ while ($true) {
 function Remove-AuthenticodeSignature {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 3262ca7f-d1f0-4539-9fee-90fb4580623b
 
@@ -5991,8 +6070,6 @@ Param(
     [Alias('Path')]
     [system.io.fileinfo[]]$FilePath
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
     try {
@@ -6045,7 +6122,7 @@ Remove-Item "$Env:appdata\Microsoft\Windows\Themes\CachedFiles\*.*" -ErrorAction
 function Remove-GroupEmail {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 214ed066-0271-4c0b-8210-8554f8de4f4a
 
@@ -6097,7 +6174,7 @@ param (
   [string]$GroupName,
   [string]$EmailAddress
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Remove = $EmailAddress }
 }
 function Remove-MailboxOrphanedSids {
@@ -6224,18 +6301,34 @@ End {
 }
 function Remove-OldFolders {
 <#PSScriptInfo
-.VERSION 1.0.1
+
+.VERSION 1.0.2
+
 .GUID cb98c8e9-cb35-4db2-9fe8-33afb9eb2272
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -6259,7 +6352,6 @@ param (
   [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
   [ValidateRange(1, [int]::MaxValue)][int]$Keep = 10
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ChildItem $Path -Directory | Sort-Object CreationTime -Descending | Select-Object -Skip $Keep | ForEach-Object {
   If ($PSCmdlet.ShouldProcess("$_", "Trim-Folder -Keep $Keep")) {
@@ -6270,7 +6362,7 @@ Get-ChildItem $Path -Directory | Sort-Object CreationTime -Descending | Select-O
 function Remove-OldModuleVersions {
 <#PSScriptInfo
 
-.VERSION 0.0.11
+.VERSION 0.0.12
 
 .GUID 975b5e06-eee0-461b-9b98-49351c762dcd
 
@@ -6309,8 +6401,9 @@ https://luke.geek.nz/powershell/remove-old-powershell-modules-versions-using-pow
 param(
     [array]$Modules = (Get-InstalledModule)
 )
+
 Requires -Version 2.0 -Modules PowerShellGet
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 foreach ($Module in $Modules) {
     $count++ ; Progress -Index $count -Total $Modules.count -Activity "Uninstalling old versions of $($Module.Name). [latest is $($Module.Version)]" -Name $Image.Name -ErrorAction SilentlyContinue
     $Installed = Get-InstalledModule -Name $Module.Name -AllVersions
@@ -6325,7 +6418,7 @@ foreach ($Module in $Modules) {
 function Remove-UserPASSWD_NOTREQD {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 6309e154-81f6-4bd1-aff7-deaea3274934
 
@@ -6366,7 +6459,6 @@ param([string]$Path,
     [switch]$Subtree,
     [string]$LogFile,
     [switch]$help)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 function funHelp() {
     Clear-Host
@@ -6647,18 +6739,34 @@ else {
 }
 function Remove-VsResistInstallFiles {
 <#PSScriptInfo
-.VERSION 1.1.2
+
+.VERSION 1.1.3
+
 .GUID 0775cf89-1a99-44ec-ac4e-7c80c95d87a2
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -6683,7 +6791,7 @@ Clean-VCRedist.ps1 -Drive D
 param (
   [string]$Drive = $env:SystemDrive
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 $Files = "install.exe", "install.res.1028.dll", "install.res.1031.dll", "install.res.1033.dll", "install.res.1036.dll", "install.res.1040.dll", "install.res.1041.dll", "install.res.1042.dll", "install.res.2052.dll", "install.res.3082.dll", "vcredist.bmp", "globdata.ini", "install.ini", "eula.1028.txt", "eula.1031.txt", "eula.1033.txt", "eula.1036.txt", "eula.1040.txt", "eula.1041.txt", "eula.1042.txt", "eula.2052.txt", "eula.3082.txt", "VC_RED.MSI", "VC_RED.cab"
 Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContinue }
 }
@@ -6904,7 +7012,7 @@ Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\CSC\Parameters\ -
 function Reset-InviteRedepmtion {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 8697df26-a171-4f10-9929-fbff1e58ab4b
 
@@ -6968,7 +7076,7 @@ param(
     [boolean]$SkipResettingRedemtion
 
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 $SkipSendingInvitation = -not $SkipSendingInvitation
 $SkipResettingRedemtion = -not $SkipResettingRedemtion
 
@@ -7142,7 +7250,7 @@ Write-Host "Process complete. Please reboot your computer."
 function Resize-Image {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 144cbae4-8208-4df5-a801-42316e9db97e
 
@@ -7194,7 +7302,6 @@ Resize the image to 30% of its original size and save it to a new file.
 http://dendory.net
 #>
 Param([Parameter(Mandatory = $true)][string]$InputFile, [string]$OutputFile, [int32]$Width, [int32]$Height, [int32]$Scale, [Switch]$Display)
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Add-Type -AssemblyName System.Drawing
 
@@ -7232,19 +7339,34 @@ Export-ModuleMember Resize-Image
 }
 function Save-Password {
 <#PSScriptInfo
-.VERSION 1.0.1
+
+.VERSION 1.0.2
+
 .GUID 70496d42-6d10-460f-9e42-132a6b70e09d
 
-.AUTHOR
-Jason Cook
-Vincent Christiansen - vincent@sameie.com
+.AUTHOR Jason Cook Vincent Christiansen - vincent@sameie.com
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -7266,13 +7388,13 @@ param(
   [string]$Path = ".\Password.txt",
   [pscredential]$credential = (Get-Credential)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 $Credential.Password | ConvertFrom-SecureString | Set-Content $Path
 }
 function Search-Registry {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 029cd8de-13e9-4169-ae20-72c021290013
 
@@ -7423,7 +7545,7 @@ process {
 function Set-AdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.1
+.VERSION 1.1.2
 
 .GUID 5dcbac67-cebe-4cb8-bf95-8ad720c25e72
 
@@ -7475,7 +7597,7 @@ Param(
     [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
     [array]$Users = (Get-ChildItem $Path -File)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Test-Admin -Warn -Message "You are not running this script as an administrator. It may not work as expected." | Out-null
 foreach ($User in $Users) {
     $count++ ; Progress -Index $count -Total $Users.count -Activity "Setting users photos." -Name [System.IO.Path]::GetFileNameWithoutExtension($User.Name)
@@ -7574,7 +7696,7 @@ return Rename-Computer -NewName $NewName
 function Set-DefaultWallpapers {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 910cea1b-4c78-4282-ac1d-7a64897475ea
 
@@ -7628,8 +7750,6 @@ Param (
     [string]$Name = "Defaults",
     [switch]$LockScreen
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers." | Out-Null
 
@@ -8147,7 +8267,7 @@ If ((Test-Null $ADuser_photo) -eq $false) {
 function Show-BitlockerEncryptionStatus {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 85c8702c-7117-4050-8629-51fc36de0cd8
 
@@ -8186,8 +8306,6 @@ param(
     [ValidateRange(0, [Int32]::MaxValue)][Int32]$Sleep = 5
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
 Test-Admin -Throw | Out-Null
 
 Get-BitLockerVolume
@@ -8203,7 +8321,7 @@ while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
 function Start-KioskApp {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID fb250771-93be-4da0-a4ec-edad2ccf7476
 
@@ -8258,7 +8376,6 @@ param (
   [ValidateRange(1, [int]::MaxValue)][int]$Sleep = 5
 
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
   while ($true) {
@@ -8269,18 +8386,34 @@ If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
 }
 function Start-PaperCutClient {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID 090b7063-ddf4-4e5f-91ab-24127dec0d57
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -8301,7 +8434,6 @@ Start-PaperCutClient -SearchLocations "\\print\PCClient\win","C:\Cache"
 param (
   [string[]]$SearchLocations = @("\\print\PCClient\win", "C:\Cache")
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $SearchLocations | ForEach-Object {
   Write-Verbose "Searching in $_"
@@ -8427,7 +8559,7 @@ If ($Response -eq $Key) { Break }
 function Sync-MailContacts {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 6da14011-187b-4176-a61b-16836f8a0ad7
 
@@ -8474,8 +8606,6 @@ param (
     [string]$SourceFilter = "*",
     [string]$DestinationFilter = "*"
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Source = @{}
 if ($SourceSearchBase) { $Source.SearchBase = $SourceSearchBase }
@@ -8553,18 +8683,34 @@ $SyncedUsers | ForEach-Object {
 }
 function Test-Admin {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID d96e4855-2468-4294-8475-4b954ad009dd
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -8591,7 +8737,7 @@ param (
   [switch]$Warn,
   [switch]$Throw
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 If (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { return $true }
 else {
   If ($Warn) { Write-Warning $Message }
@@ -8801,18 +8947,34 @@ return $Results
 }
 function Test-Scripts {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.1
+
 .GUID dd50132f-8bc5-4825-918d-9fd0afd3f36b
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -8823,8 +8985,8 @@ Param(
     [string]$bar = "bar",
     [string]$baz = "bazziest"
 )
+
 $MyInvocation
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Write-Output "params"
 write-output "foo: $foo"
@@ -8835,7 +8997,7 @@ write-output "test: $test"
 function Test-VoipMs {
 <#PSScriptInfo
 
-.VERSION 1.2.3
+.VERSION 1.2.4
 
 .GUID 17fff57c-cce9-4977-a26d-aeded706a85f
 
@@ -8887,7 +9049,7 @@ param(
   [ValidateRange(0, [int]::MaxValue)][int]$Retries = 5,
   [array]$ServerList = @("amsterdam.voip.ms", "atlanta.voip.ms", "atlanta2.voip.ms", "chicago.voip.ms", "chicago2.voip.ms", "chicago3.voip.ms", "chicago4.voip.ms", "dallas.voip.ms", "dallas2.voip.ms", "denver.voip.ms", "denver2.voip.ms", "houston.voip.ms", "houston2.voip.ms", "london.voip.ms", "losangeles.voip.ms", "losangeles2.voip.ms", "melbourne.voip.ms", "montreal.voip.ms", "montreal2.voip.ms", "montreal3.voip.ms", "montreal4.voip.ms", "montreal5.voip.ms", "montreal6.voip.ms", "montreal7.voip.ms", "montreal8.voip.ms", "newyork.voip.ms", "newyork2.voip.ms", "newyork3.voip.ms", "newyork4.voip.ms", "newyork5.voip.ms", "newyork6.voip.ms", "newyork7.voip.ms", "newyork8.voip.ms", "paris.voip.ms", "sanjose.voip.ms", "sanjose2.voip.ms", "seattle.voip.ms", "seattle2.voip.ms", "seattle3.voip.ms", "tampa.voip.ms", "tampa2.voip.ms", "toronto.voip.ms", "toronto2.voip.ms", "toronto3.voip.ms", "toronto4.voip.ms", "toronto5.voip.ms", "toronto6.voip.ms", "toronto7.voip.ms", "toronto8.voip.ms", "vancouver.voip.ms", "vancouver2.voip.ms", "washington.voip.ms", "washington2.voip.ms") #Get the list of servers into an array
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 function Progress {
   param(
     [int]$Index,
@@ -9085,7 +9247,7 @@ if (-not $DontCheckStatus) { Start-Process "ms-windows-store://downloadsandupdat
 function Update-OfficeCache {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 97314a7e-aba8-41e8-8b1d-ca81372ae070
 
@@ -9124,30 +9286,48 @@ param(
     $Setup = ".\setup.exe"
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
-
 $Path | ForEach-Object {
     If ($PSCmdlet.ShouldProcess("$($_.Name)", "Update-OfficeCache")) {
-        Start-Process -FilePath $Setup -ArgumentList @("\download", $_.FullName) -NoNewWindow -Wait
+        Push-Location -Path (Split-Path -Parent -Path $_.FullName)
+        Start-Process -FilePath $Setup -ArgumentList @("/download", $_.Name) -NoNewWindow -Wait
+        Pop-Location
     }
 }
 }
 function Update-PKI {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.4
+
 .GUID 8f760b1c-0ccc-43b7-bfed-9370fa84b7f8
 
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
 .DESCRIPTION
 Upload CRLs to GitHub if changed.
-
-.AUTHOR
-Jason Cook
-
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-.COMPANYNAME
-***REMOVED***
-
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
@@ -9158,7 +9338,7 @@ param (
     $BranchName = "",
     [switch]$Force
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
     If ($PSCmdlet.ShouldProcess($_.Name, "Update-PKI")) {
         $NewHash = (Get-FileHash $_.FullName).Hash
@@ -9172,7 +9352,7 @@ Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
 function Update-UsersAcademyStudents {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 4fc14578-f8eb-4ae2-8e39-77c0f197cff8
 
@@ -9215,7 +9395,6 @@ param (
     $Path
 
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Get-ADUser -Filter * -SearchBase $Path | Set-ADUser -Enabled $false
 [System.Collections.ArrayList]$Results = @()
@@ -9377,7 +9556,7 @@ Return $Results
 function Wait-ForKey {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 3642a129-3370-44a1-94ad-85fb88de7a6b
 
@@ -9420,7 +9599,6 @@ param(
     [string]$Key = "y",
     [string]$Message = "Press $Key to continue, any other key to abort."
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Response = Read-Host $Message
 If ($Response -ne $Key) { Break }

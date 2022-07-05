@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 3642a129-3370-44a1-94ad-85fb88de7a6b
 
@@ -43,7 +43,6 @@ param(
     [string]$Key = "y",
     [string]$Message = "Press $Key to continue, any other key to abort."
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Response = Read-Host $Message
 # this is a comment

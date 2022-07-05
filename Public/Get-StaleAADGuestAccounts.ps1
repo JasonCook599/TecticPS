@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.2
+.VERSION 1.1.3
 
 .GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
 
@@ -64,7 +64,6 @@ param (
 	$StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a spesific date to use as stale
 	[switch]$GetLastSignIn
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Requires -Modules MSAL.PS
 

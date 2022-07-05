@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
 
@@ -100,7 +100,6 @@ param(
 	[switch]$Force,
 	[ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$Magick = ((Get-Command magick).Source)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
 	Write-Error "magick.exe is not available in your PATH."

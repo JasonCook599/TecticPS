@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 3262ca7f-d1f0-4539-9fee-90fb4580623b
 
@@ -48,8 +48,6 @@ Param(
     [Alias('Path')]
     [system.io.fileinfo[]]$FilePath
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
     try {

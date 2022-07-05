@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 0.0.11
+.VERSION 0.0.12
 
 .GUID 975b5e06-eee0-461b-9b98-49351c762dcd
 
@@ -40,7 +40,7 @@ param(
     [array]$Modules = (Get-InstalledModule)
 )
 Requires -Version 2.0 -Modules PowerShellGet
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 foreach ($Module in $Modules) {
     $count++ ; Progress -Index $count -Total $Modules.count -Activity "Uninstalling old versions of $($Module.Name). [latest is $($Module.Version)]" -Name $Image.Name -ErrorAction SilentlyContinue
     $Installed = Get-InstalledModule -Name $Module.Name -AllVersions

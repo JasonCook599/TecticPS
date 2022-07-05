@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 910cea1b-4c78-4282-ac1d-7a64897475ea
 
@@ -54,8 +54,6 @@ Param (
     [string]$Name = "Defaults",
     [switch]$LockScreen
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers." | Out-Null
 

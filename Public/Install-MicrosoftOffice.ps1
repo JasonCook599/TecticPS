@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.3
+.VERSION 1.2.4
 
 .GUID 12bacb17-e597-4588-8a86-0e05142301b6
 
@@ -54,7 +54,7 @@ param (
     [string]$InstallerPath,
     [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 while (!$InstallerPath) { $InstallerPath = Read-Host -Prompt "Enter the installer path." }
 if (!(Test-Path $InstallerPath)) { throw "Installer path is not valid" }
 

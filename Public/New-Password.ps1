@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
 
@@ -48,8 +48,6 @@ param (
   [int]$Lenght = 8,
   [int]$Symbols = 2
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Add-Type -AssemblyName System.Web
 

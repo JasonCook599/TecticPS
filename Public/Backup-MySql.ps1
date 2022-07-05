@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.0.1
+
+.VERSION 1.0.2
+
 .GUID 401b32f3-314a-47cf-b910-04c7f2492db2
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -54,7 +70,6 @@ param(
   [switch]$NoTrim,
   [ValidateRange(1, [int]::MaxValue)][int]$Copies = 10 #Number of copies to keep
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Write-Verbose "Get only names of the databases folders"
 $sqlDbDirList = Get-ChildItem -path $mySqlData | Where-Object { $_.PSIsContainer } | Select-Object Name

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 214ed066-0271-4c0b-8210-8554f8de4f4a
 
@@ -52,5 +52,5 @@ param (
   [string]$GroupName,
   [string]$EmailAddress
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Remove = $EmailAddress }

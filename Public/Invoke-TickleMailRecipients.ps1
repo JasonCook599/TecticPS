@@ -1,17 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.2.2
+
+.VERSION 1.2.3
+
 .GUID ece98adc-3c44-4a02-a254-d4e7f2888f4f
 
-.AUTHOR
-Jason Cook
-Joseph Palarchio
+.AUTHOR Jason Cook Joseph Palarchio
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -32,7 +47,6 @@ param(
   $MailUsers = (Get-MailUser -Resultsize Unlimited),
   $DistributionGroups = (Get-DistributionGroup -Resultsize Unlimited)
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 foreach ($Mailbox in $Mailboxes) {
   $count1++ ; Progress -Index $count1 -Total $Mailboxes.count -Activity "Tickling mailboxes. Step 1 of 3" -Name $Mailbox.alias
@@ -48,4 +62,3 @@ foreach ($DistributionGroup in $DistributionGroups) {
   $count3++ ; Progress -Index $count3 -Total $DistributionGroups.count -Activity "Tickling distribution groups. Step 3 of 3" -Name $DistributionGroup.alias
   Set-DistributionGroup $DistributionGroup.alias -SimpleDisplayName $DistributionGroup.SimpleDisplayName -WarningAction silentlyContinue
 }
-

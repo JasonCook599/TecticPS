@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 8697df26-a171-4f10-9929-fbff1e58ab4b
 
@@ -64,7 +64,7 @@ param(
     [boolean]$SkipResettingRedemtion
 
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
 $SkipSendingInvitation = -not $SkipSendingInvitation
 $SkipResettingRedemtion = -not $SkipResettingRedemtion
 

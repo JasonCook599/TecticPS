@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 14062539-2775-4450-bb0b-a3406d1db091
 
@@ -62,7 +62,6 @@ param(
   [string]$ComputerList,
   [string]$ReportFile
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 Function Get-SystemInfo($ComputerSystem) {
   If (-NOT (Test-Connection -ComputerName $ComputerSystem -Count 1 -ErrorAction SilentlyContinue)) {

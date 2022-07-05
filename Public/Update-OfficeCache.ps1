@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 97314a7e-aba8-41e8-8b1d-ca81372ae070
 
@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-#>
+#> 
 
 <#
 .DESCRIPTION
@@ -38,8 +38,6 @@ param(
     $Path = (Get-ChildItem -Filter "*.xml"),
     $Setup = ".\setup.exe"
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 $Path | ForEach-Object {
     If ($PSCmdlet.ShouldProcess("$($_.Name)", "Update-OfficeCache")) {

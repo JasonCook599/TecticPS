@@ -1,16 +1,32 @@
 <#PSScriptInfo
-.VERSION 1.1.1
+
+.VERSION 1.1.2
+
 .GUID 674855a4-1cd1-43b7-8e41-fea3bc501f61
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME ***REMOVED***
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -25,7 +41,6 @@ The drive to check for protection on. If unspesified, the System Drive will be u
 param (
   [ValidateScript( { Test-Path $_ })][string]$Drive = $env:SystemDrive
 )
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 If (!(Test-Path $Drive)) {
   Write-Error "$Drive is not valid. Please choose a valid path."
