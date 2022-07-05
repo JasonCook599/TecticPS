@@ -12,7 +12,7 @@
 RootModule = '***REMOVED***IT.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.25'
+ModuleVersion = '1.1.26'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -69,28 +69,29 @@ PowerShellVersion = '5.1'
 # NestedModules = @()
 
 # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-FunctionsToExport = 'Remove-BlankLines', 'Add-AllowedDmaDevices', 'Add-BluredPillarBars', 
+FunctionsToExport = 'Add-AllowedDmaDevices', 'Add-BluredPillarBars', 
                'Add-ComputerToDomain', 'Add-GroupEmail', 'Add-Path', 'Add-Signature', 
                'Backup-MySql', 'Clear-AdminCount', 'Clear-PrintQueue', 
                'Connect-Office365', 'Convert-Image', 'ConvertTo-EndpointCertificate', 
-               'ConvertTo-OutputImages', 'Disable-NetbiosTcpIp', 
-               'Disable-SelfServicePurchase', 'Enable-LicenseOptions', 
-               'Enable-NestedVm', 'Export-AdUsersToAssetPanda', 
-               'Export-FortiClientConfig', 'Export-MatchingCertificates', 
-               'Find-EmptyOu', 'Get-AdComputerInfo', 'Get-ADInfo', 'Get-AdminCount', 
-               'Get-AdUserInfo', 'Get-AdUserSid', 'Get-AzureAdMfaStatus', 
-               'Get-AzureAdUserInfo', 'Get-BiosProductKey', 'Get-BitlockerStatus', 
-               'Get-ExchangePhoto', 'Get-FirmwareType', 'Get-GroupMembershipReport', 
-               'Get-ipPhone', 'Get-LapsInfo', 'Get-MailboxAddresses', 'Get-MemoryType', 
-               'Get-MfpEmails', 'Get-NewIP', 'Get-OrphanedGPO', 'Get-RecentEvents', 
-               'Get-SecureBoot', 'Get-Spns', 'Get-StaleAADGuestAccounts', 
-               'Get-TermsOfUse', 'Get-TpmInfo', 'Get-UserInfo', 'Get-Wallpaper', 
-               'Grant-Matching', 'Import-FortiClientConfig', 'Initialize-OneDrive', 
+               'ConvertTo-OutputImages', 'Create-FortiClientConfig', 
+               'Disable-NetbiosTcpIp', 'Disable-SelfServicePurchase', 
+               'Enable-LicenseOptions', 'Enable-NestedVm', 
+               'Export-AdUsersToAssetPanda', 'Export-FortiClientConfig', 
+               'Export-MatchingCertificates', 'Find-EmptyOu', 'Get-AdComputerInfo', 
+               'Get-ADInfo', 'Get-AdminCount', 'Get-AdUserInfo', 'Get-AdUserSid', 
+               'Get-AzureAdMfaStatus', 'Get-AzureAdUserInfo', 'Get-BiosProductKey', 
+               'Get-BitlockerStatus', 'Get-ExchangePhoto', 'Get-FirmwareType', 
+               'Get-GroupMembershipReport', 'Get-ipPhone', 'Get-LapsInfo', 
+               'Get-MailboxAddresses', 'Get-MemoryType', 'Get-MfpEmails', 'Get-NewIP', 
+               'Get-OrphanedGPO', 'Get-RecentEvents', 'Get-SecureBoot', 'Get-Spns', 
+               'Get-StaleAADGuestAccounts', 'Get-TermsOfUse', 'Get-TpmInfo', 
+               'Get-UserInfo', 'Get-Wallpaper', 'Grant-Matching', 
+               'Import-FortiClientConfig', 'Initialize-OneDrive', 
                'Initialize-Workstation', 'Install-GCPW', 'Install-MicrosoftOffice', 
                'Install-RSAT', 'Invoke-TickleMailRecipients', 
                'Measure-AverageDuration', 'Move-ArchiveEventLogs', 'New-Password', 
                'New-RandomCharacters', 'Ping-Hosts', 'Remove-AuthenticodeSignature', 
-               'Remove-CachedWallpaper', 'Remove-GroupEmail', 
+               'Remove-BlankLines', 'Remove-CachedWallpaper', 'Remove-GroupEmail', 
                'Remove-MailboxOrphanedSids', 'Remove-OldFolders', 
                'Remove-OldModuleVersions', 'Remove-UserPASSWD_NOTREQD', 
                'Remove-VsResistInstallFiles', 'Repair-AdAttributes', 
