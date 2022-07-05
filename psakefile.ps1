@@ -1,4 +1,4 @@
-Task default -depends ImportModule, TestScriptFileInfo, UpdatePSScriptInfo, TestScriptFileInfo, ExportToPsm1, FunctionsToExport, IncrementManifestBuild
+Task default -depends ImportModule, TestScriptFileInfo, UpdatePSScriptInfo, TestScriptFileInfo, ExportToPsm1, UpdateManifest
 
 $ModuleName = "***REMOVED***IT"
 $ModuleFile = $ModuleName + ".psm1"
@@ -8,6 +8,7 @@ $SourceModules = Get-ChildItem -Path *.psm1 -ErrorAction SilentlyContinue -Recur
 $SourceScripts = Get-ChildItem -Path *.ps1 -ErrorAction SilentlyContinue -Recurse | Where-Object { ($_.Name -ne "psakefile.ps1") -and ($_.Name -ne "***REMOVED***ITDefaults.ps1") -and ($_.Name -ne "Profile.ps1") }
 
 Task UpdatePSScriptInfo {
+    $count = 0
     $SourceScripts | ForEach-Object {
         $count++ ; Progress -Index $count -Total $SourceScripts.count -Activity "Checking scripts for changes" -Name $_.Name
         $GitStatus = git status $_.FullName -s --ignored
@@ -41,7 +42,9 @@ Task UpdatePSScriptInfo {
 
 Task TestScriptFileInfo {
     $ScriptFileInfo = @()
+    $count = 0
     $SourceScripts | ForEach-Object {
+        $count++ ; Progress -Index $count -Total $SourceScripts.count -Activity "Checking scripts for errors" -Name $_.Name
         $Result = New-Object PSObject
         $Result | Add-Member -NotePropertyName Name -NotePropertyValue ([System.IO.Path]::GetFileNameWithoutExtension($_.Name))
         try { $Result = Test-ScriptFileInfo -Path $_.FullName }
@@ -81,12 +84,14 @@ Task ExportToPsm1 {
     $SourceModules | ForEach-Object { $ModuleContent += ((Get-Content $_ -Raw) -replace "\n# .*").Trim() }
 
     #Export ps1 files
-    $LoadDefaultsString = ''
+    $LoadDefaultsString = 'try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }'
     $SourceScripts | ForEach-Object {
         $ScriptContent = (Get-Content $_ -Raw)
-        if ( -not ($ScriptContent -match "(?m)^.*#+.*SkipLoadDefaults:.*True.*$")) {
+        if ( -not ($ScriptContent -match "(?mi)^.*#+.*SkipLoadDefaults:.*True.*$")) {
+            Write-Debug "$($_.Name): adding LoadDefaults"
             $ScriptContent = $ScriptContent -replace '(?m)(param\(\s*$(?:.*$\n)*\))', "`$1`r`n`r`n$LoadDefaultsString"
         }
+        else { Write-Debug "$($_.Name): skipping LoadDefaults" }
         $ScriptContent = ($ScriptContent -replace "\n#[^>].*").Trim() -replace "\n\n" # Remove single linge comments and superfluous blank lines
 
         $ModuleContent += "function $($_.basename) {`n"
@@ -100,7 +105,7 @@ Task ExportToPsm1 {
     Add-Content $ModuleContent.Trim() -Path $ModuleFile
 }
 
-Task FunctionsToExport {
+Task UpdateManifest {
     # RegEx matches files like Verb-Noun.ps1 only, not psakefile.ps1 or *-*.Tests.ps1
     $FunctionNames = (Get-ChildItem -Recurse | Where-Object { $_.Name -match "^[^\.]+-[^\.]+\.ps1$" }).BaseName
     $FunctionNames += (Get-ChildItem -Path Private -Recurse | Where-Object { $_.Name -match "^^[^\.]+\.ps1$" }).BaseName
@@ -110,14 +115,10 @@ Task FunctionsToExport {
             $ast.EndBlock.Statements.Name
         }
     }
-    Write-Verbose "Using functions $FunctionNames"
-    Update-ModuleManifest -Path $ModuleManifest -FunctionsToExport $FunctionNames
-}
-
-Task IncrementManifestBuild {
     [version]$Version = (Import-PowerShellDataFile $ModuleManifest).ModuleVersion
     [version]$Version = "{0}.{1}.{2}" -f $Version.Major, $Version.Minor, ($Version.Build + 1)
-    Update-ModuleManifest -Path $ModuleManifest -ModuleVersion $Version
+    Write-Verbose "Using functions $FunctionNames"
+    Update-ModuleManifest -Path $ModuleManifest -FunctionsToExport $FunctionNames -ModuleVersion $Version
 }
 
 Task RemoveSignature {
