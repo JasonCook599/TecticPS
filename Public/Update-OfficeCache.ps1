@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -43,6 +43,8 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 
 $Path | ForEach-Object {
     If ($PSCmdlet.ShouldProcess("$($_.Name)", "Update-OfficeCache")) {
-        Start-Process -FilePath $Setup -ArgumentList @("\download", $_.FullName) -NoNewWindow -Wait
+        Push-Location -Path (Split-Path -Parent -Path $_.FullName)
+        Start-Process -FilePath $Setup -ArgumentList @("/download", $_.Name) -NoNewWindow -Wait
+        Pop-Location
     }
 }
