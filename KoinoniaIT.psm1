@@ -281,7 +281,7 @@ If (!(Get-Module -ListAvailable -Name $Name)) {
 function LoadDefaults {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 73e8a944-8951-4a89-9a54-d51db3f9afac
 
@@ -313,12 +313,11 @@ function LoadDefaults {
 .DESCRIPTION
 Load default parameters for various functions.
 #>
+
 param(
     [Parameter(Mandatory = $true)] $Invocation,
     $DefaultsScripts = "***REMOVED***ITDefaults.ps1"
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
 
 try {
     $ModuleName = (Get-Command -Name $Invocation.MyCommand -ErrorAction SilentlyContinue).ModuleName
@@ -8519,23 +8518,23 @@ function Set-Wallpaper {
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -8610,11 +8609,7 @@ $SendChangeEvent = 0x02
 
 $fWinIni = $UpdateIniFile -bor $SendChangeEvent
 
-exit [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni)
-
-$fWinIni = $UpdateIniFile -bor $SendChangeEvent
-
-exit [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni)
+return [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni)
 }
 function Set-WindowsAccountAvatar {
 <#PSScriptInfo

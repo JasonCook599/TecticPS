@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 73e8a944-8951-4a89-9a54-d51db3f9afac
 
@@ -32,6 +32,9 @@
 .DESCRIPTION
 Load default parameters for various functions.
 #>
+
+# SkipLoadDefaults: true
+
 param(
     [Parameter(Mandatory = $true)] $Invocation,
     $DefaultsScripts = "***REMOVED***ITDefaults.ps1"
