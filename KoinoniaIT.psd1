@@ -12,7 +12,7 @@
 RootModule = '***REMOVED***IT.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.33'
+ModuleVersion = '1.1.39'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -74,18 +74,19 @@ FunctionsToExport = 'Add-AllowedDmaDevices', 'Add-BluredPillarBars',
                'Backup-MySql', 'Clear-AdminCount', 'Clear-PrintQueue', 
                'Connect-Office365', 'Convert-Image', 'ConvertTo-EndpointCertificate', 
                'ConvertTo-OutputImages', 'Disable-NetbiosTcpIp', 
-               'Disable-SelfServicePurchase', 'Enable-LicenseOptions', 
-               'Enable-NestedVm', 'Export-AdUsersToAssetPanda', 
-               'Export-FortiClientConfig', 'Export-MatchingCertificates', 
-               'Find-EmptyOu', 'Get-AdComputerInfo', 'Get-ADInfo', 'Get-AdminCount', 
-               'Get-AdUserInfo', 'Get-AdUserSid', 'Get-AzureAdMfaStatus', 
-               'Get-AzureAdUserInfo', 'Get-BiosProductKey', 'Get-BitlockerStatus', 
-               'Get-ExchangePhoto', 'Get-FirmwareType', 'Get-GroupMembershipReport', 
-               'Get-ipPhone', 'Get-LapsInfo', 'Get-MailboxAddresses', 'Get-MemoryType', 
-               'Get-MfpEmails', 'Get-NewIP', 'Get-OrphanedGPO', 'Get-RecentEvents', 
-               'Get-SecureBoot', 'Get-Spns', 'Get-StaleAADGuestAccounts', 
-               'Get-TermsOfUse', 'Get-TpmInfo', 'Get-UserInfo', 'Get-Wallpaper', 
-               'Grant-Matching', 'Import-FortiClientConfig', 'Initialize-OneDrive', 
+               'Disable-SelfServicePurchase', 'Enable-AdUserPermissionInheritance', 
+               'Enable-LicenseOptions', 'Enable-NestedVm', 
+               'Export-AdUsersToAssetPanda', 'Export-FortiClientConfig', 
+               'Export-MatchingCertificates', 'Find-EmptyOu', 'Get-AdComputerInfo', 
+               'Get-ADInfo', 'Get-AdminCount', 'Get-AdUserInfo', 'Get-AdUserSid', 
+               'Get-AzureAdMfaStatus', 'Get-AzureAdUserInfo', 'Get-BiosProductKey', 
+               'Get-BitlockerStatus', 'Get-ExchangePhoto', 'Get-FirmwareType', 
+               'Get-GroupMembershipReport', 'Get-ipPhone', 'Get-LapsInfo', 
+               'Get-MailboxAddresses', 'Get-MemoryType', 'Get-MfpEmails', 'Get-NewIP', 
+               'Get-OrphanedGPO', 'Get-RecentEvents', 'Get-SecureBoot', 'Get-Spns', 
+               'Get-StaleAADGuestAccounts', 'Get-TermsOfUse', 'Get-TpmInfo', 
+               'Get-UserInfo', 'Get-Wallpaper', 'Grant-Matching', 
+               'Import-FortiClientConfig', 'Initialize-OneDrive', 
                'Initialize-Workstation', 'Install-GCPW', 'Install-MicrosoftOffice', 
                'Install-RSAT', 'Invoke-TickleMailRecipients', 
                'Measure-AverageDuration', 'Move-ArchiveEventLogs', 
