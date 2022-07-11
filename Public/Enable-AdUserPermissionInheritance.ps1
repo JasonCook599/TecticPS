@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 7e41b659-a682-489a-830d-5a118f2e11be
 
@@ -56,20 +56,18 @@ Test-Admin -Warn -Message "You likely need to must be an administrator to change
 $Users | ForEach-Object {
     $DistinguishedName = [ADSI]("LDAP://" + $_)
     $Acl = $DistinguishedName.psbase.objectSecurity
-    [PSCustomObject]$Results = @{
-        SamAccountName    = $_.SamAccountName
-        DistinguishedName = $_.DistinguishedName
-        Inheritence       = $Acl.get_AreAccessRulesProtected()
-        Changed           = $null
-    }
+
     if ($Acl.get_AreAccessRulesProtected()) {
         If ($PSCmdlet.ShouldProcess($_.SamAccountName, "Enable-AdUserPermissionInheritance.ps1")) {
             $Acl.SetAccessRuleProtection($Protected, $Preserve)
             $DistinguishedName.psbase.commitchanges()
-            $Results.Changed = $true
+            [PSCustomObject]$Results = @{
+                SamAccountName    = $_.SamAccountName
+                DistinguishedName = $_.DistinguishedName
+                Inheritence       = $Acl.get_AreAccessRulesProtected()
+                Changed           = $true
+            }
             return [PSCustomObject]$Results
         }
-        elseif ( $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent ) { return [PSCustomObject]$Results }
     }
-    elseif ( $PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent ) { return [PSCustomObject]$Results }
 }
