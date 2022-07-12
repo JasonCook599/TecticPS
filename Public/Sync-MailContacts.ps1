@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.6
 
 .GUID 6da14011-187b-4176-a61b-16836f8a0ad7
 
@@ -43,7 +43,7 @@ param (
 
     $WhereObject = { $null -ne $_.mail -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },
 
-    [array]$SourceProperties = ("displayName", "givenName", "sn", "initials", "mail", "SamAccountName", "description", "wWWHomePage", "title", "department", "company", "manager", "telephoneNumber", "mobile", "facsimileTelephoneNumber", "homePhone", "pager", "physicalDeliveryOfficeName", "streetAddress", "l", "st", "postalCode", "co", "info"),
+    [array]$SourceProperties = ("displayName", "givenName", "sn", "initials", "mail", "SamAccountName", "description", "wWWHomePage", "title", "department", "company", "manager", "telephoneNumber", "mobile", "facsimileTelephoneNumber", "homePhone", "pager", "physicalDeliveryOfficeName", "streetAddress", "l", "st", "postalCode", "co", "info", "enabled", "msExchHideFromAddressLists"),
     [string]$SourceFilter = "*",
     [string]$DestinationFilter = "*"
 )
@@ -63,7 +63,7 @@ if ($DestinationGroup) {
     $i = 0
 }
 
-$SyncedUsers = Get-ADUser -Server $SourceDomain -Filter $SourceFilter -Properties $SourceProperties | Where-Object $WhereObject
+$SyncedUsers = Get-ADUser @Source | Where-Object $WhereObject
 $SyncedUsers | ForEach-Object {
     $i++ ; Progress -Index $i -Total $SyncedUsers.count -Activity "Syncing users from $SourceSearchBase to $DestinationOU" -Status "$_"
     $Properties = @{}
