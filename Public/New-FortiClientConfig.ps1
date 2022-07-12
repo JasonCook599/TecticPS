@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 93f5aa38-3ef7-4d57-8225-1ba9e7167243
 
@@ -319,7 +319,7 @@ function BuildConfig {
 }
 
 $Mid = ""
-if ($AllGateways) { $Mid += BuildConfig -Name $AllGateways -Gateway ($Locations.Values -join ";") }
+if ($AllGateways) { $Mid += BuildConfig -Name $AllGateways -Gateway (($Locations.Values | Sort-Object ) -join ";") }
 $Locations.Keys | ForEach-Object { $Mid += BuildConfig -Name $_ -Gateway $Locations[$_] }
 $Config = ($Start + $Mid + $End)
 If ($PSCmdlet.ShouldProcess("$Path", "Create-FortiClientConfig")) { Set-Content -Path $Path -Value $Config }
