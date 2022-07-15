@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.8
 
 .GUID 0e319076-a254-46aa-948c-203373b9e47d
 
@@ -51,16 +51,23 @@ param (
     [string]$Prefix,
     [string]$User,
     [string]$Password,
-    [string]$Serial = (Get-WmiObject win32_bios).Serialnumber,
-    $PrefixLenght = ($(15 - $Serial.length), $Prefix.Length | Measure-Object -Minimum ).Minimum,
-    $NewName = $Prefix.Substring(0, $PrefixLenght) + $Serial
+    $NewName = (Get-NewComputerName -Prefix $Prefix)
 )
 
+$Arguments = @{}
+if ($NewName) { $Arguments.NewName = $NewName }
 if ($User -and $Password) {
     [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force)
-    [pscredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
-    Write-Verbose "Renaming computer to `'$NewName`' as `'$User`'"
-    return Rename-Computer -NewName $NewName -DomainCredential $Credentials
+    [pscredential]$DomainCredential = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
+    $Arguments.DomainCredential = $DomainCredential
 }
+
 Write-Verbose "Renaming computer to `'$NewName`'"
-return Rename-Computer -NewName $NewName
+try { return Rename-Computer @Arguments -ErrorAction Stop }
+catch [System.InvalidOperationException] {
+    if ($_.FullyQualifiedErrorId -eq "NewNameIsOldName,Microsoft.PowerShell.Commands.RenameComputerCommand") {
+        Write-Verbose "Computer already has the name `'$NewName`'"
+        return $null
+    }
+    else { throw $_ }
+}
