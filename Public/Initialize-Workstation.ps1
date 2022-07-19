@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.15
+.VERSION 1.2.16
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -93,7 +93,7 @@ A hashtable of winget packages to install. The key is the package name and the v
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
   [int]$Step,
-  [ValidateSet("Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "Wallpaper", "RSAT", "NetFX3", "Ninite", "Winget", "RemoveDesktopShortcuts", "Reboot")][array]$Action,
+  [ValidateSet("MicrosoftStore", "Rename", "LabelDrive", "ProvisioningPackage", "JoinDomain", "BitLocker", "Office", "Wallpaper", "RSAT", "NetFX3", "Ninite", "Winget", "RemoveDesktopShortcuts", "Reboot")][array]$Action,
   [string]$HostNamePrefix,
   [string]$Domain,
   [ValidateSet("TPM", "Password", "Pin", "USB")][string]$BitLockerProtector = "TPM",
@@ -112,8 +112,11 @@ param(
 Test-Admin -Throw | Out-Null
 Requires ***REMOVED***IT
 
-if ($Step -eq 1) { $Action = @("Rename", "LabelDrive", "Wallpaper", "Winget") }
-if ($Step -eq 2) { $Action = @("BitLocker", "Office", "", "Reboot") }
+if ($Step -eq 1) { $Action = @( "LabelDrive", "Wallpaper", "MicrosoftStore", "Winget") }
+if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Reboot") }
+
+# Microsoft Store is first so that WinGet can be used later on
+if ($Action -contains "MicrosoftStore") { Update-MicrosoftStoreApps }
 
 if ($Action -contains "Rename") { Set-ComputerName -Prefix $HostNamePrefix }
 
