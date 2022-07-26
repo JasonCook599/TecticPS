@@ -8215,7 +8215,7 @@ foreach ($User in $Users) {
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -8264,8 +8264,6 @@ https://www.michev.info/Blog/Post/3908/updating-your-profile-photo-as-guest-via-
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [switch]$Return,
-    # [array]$Users = (Get-Mailbox -ResultSize Unlimited),
     [string]$Path = (Get-Location),
     [string]$Suffix
 )
@@ -8473,7 +8471,7 @@ if ($LockScreen) {
 function Set-ExchangePhoto {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 0887fff3-2d78-4028-8440-92c1196c6891
 
@@ -8519,8 +8517,6 @@ Set-ExchangePhoto -Path C:\Photos\ -Suffix "_fabrikam.com#EXT#@contoso.com"
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [switch]$Return,
-    # [array]$Users = (Get-Mailbox -ResultSize Unlimited),
     [string]$Path = (Get-Location),
     [string]$Suffix
 )

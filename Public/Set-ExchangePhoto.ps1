@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 0887fff3-2d78-4028-8440-92c1196c6891
 
@@ -46,8 +46,6 @@ Set-ExchangePhoto -Path C:\Photos\ -Suffix "_fabrikam.com#EXT#@contoso.com"
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [switch]$Return,
-    # [array]$Users = (Get-Mailbox -ResultSize Unlimited),
     [string]$Path = (Get-Location),
     [string]$Suffix
 )
