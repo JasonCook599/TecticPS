@@ -3236,6 +3236,50 @@ switch ((Get-WmiObject -Namespace ROOT\CIMV2\Security\Microsoftvolumeencryption 
 }
 $protectans
 }
+function Get-ExchangeOnlineConnection {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 09be455e-f050-4430-a18e-fa5b4c346ba5
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+Test for a connection to Exchange Online.
+
+.PARAMETER Session
+Which session to test.
+
+.LINK
+https://www.reddit.com/r/PowerShell/comments/gupsze/comment/fsk09vo/?utm_source=share&utm_medium=web2x&context=3
+#>
+param($Session = (Get-PSSession | Where-Object { $_.Name -like "ExchangeOnlineInternalSession*" -and $_.State -eq "Opened" }))
+if ($Session) { return $Session } else { return $null }
+}
 function Get-ExchangePhoto {
 <#PSScriptInfo
 
@@ -8168,6 +8212,77 @@ foreach ($User in $Users) {
     else { Write-Warning "User `"$account`" does not exist. Skipping." }
 }
 }
+function Set-AzureAdPhoto {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 688addc9-7585-4953-b9ab-c99d55df2729
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.SYNOPSIS
+This will upload all profile photos to Office 365.
+
+.DESCRIPTION
+This will upload all profile photos to Office 365. It will match the filename to the mailbox identity. This can be used along with Set-AdPhotos to sync photos with Active Directory.
+
+.PARAMETER Suffix
+The suffix to add to the end of the mailbox identity. Can be used to upload for guest accounts.
+
+.EXAMPLE
+Set-AzureAdPhoto -Path C:\Photos\
+
+.EXAMPLE
+Set-AzureAdPhoto -Path C:\Photos\ -Suffix "_fabrikam.com#EXT#@contoso.com"
+
+.LINK
+https://www.michev.info/Blog/Post/3908/updating-your-profile-photo-as-guest-via-the-microsoft-graph-sdk-for-powershell
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+Param(
+    [switch]$Return,
+    # [array]$Users = (Get-Mailbox -ResultSize Unlimited),
+    [string]$Path = (Get-Location),
+    [string]$Suffix
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+Requires Microsoft.Graph.Users
+
+if (!(Get-MgContext)) { Connect-MgGraph -Scopes "User.ReadWrite.All" }
+
+Get-ChildItem $Path | ForEach-Object {
+    $User = Get-MgUser -UserId ([System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix)
+    If ($PSCmdlet.ShouldProcess($User.DisplayName, "Set-MgUserPhotoContent")) {
+        return Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName
+    }
+}
+}
 function Set-ComputerName {
 <#PSScriptInfo
 
@@ -8352,6 +8467,74 @@ if ($LockScreen) {
     catch {
         $_
         Write-Warning "Failed to set lockscreen wallpaper."
+    }
+}
+}
+function Set-ExchangePhoto {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 0887fff3-2d78-4028-8440-92c1196c6891
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.SYNOPSIS
+This will upload all profile photos to Office 365.
+
+.DESCRIPTION
+This will upload all profile photos to Office 365. It will match the filename to the mailbox identity. This can be used along with Set-AdPhotos to sync photos with Active Directory.
+
+.PARAMETER Suffix
+The suffix to add to the end of the mailbox identity. Can be used to upload for guest accounts.
+
+.EXAMPLE
+Set-ExchangePhoto -Path C:\Photos\
+
+.EXAMPLE
+Set-ExchangePhoto -Path C:\Photos\ -Suffix "_fabrikam.com#EXT#@contoso.com"
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+Param(
+    [switch]$Return,
+    # [array]$Users = (Get-Mailbox -ResultSize Unlimited),
+    [string]$Path = (Get-Location),
+    [string]$Suffix
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }
+
+Requires ExchangeOnlineManagement
+
+if (!(Get-ExchangeOnlineConnection)) { Connect-ExchangeOnline }
+
+Get-ChildItem $Path | ForEach-Object {
+    $User = [System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix
+    If ($PSCmdlet.ShouldProcess($User, "Set-UserPhoto")) {
+        return Set-UserPhoto -Identity $User -PictureData ([System.IO.File]::ReadAllBytes($_.FullName)) -Confirm:$false
     }
 }
 }
