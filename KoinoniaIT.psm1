@@ -1476,7 +1476,7 @@ Else {
 function Convert-Image {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
 
@@ -1523,6 +1523,9 @@ The text to appear after the resized file.
 .PARAMETER Prefix
 The text to appear before the resized file.
 
+.PARAMETER OutName
+The name of the resized file. If specified, it will override the Prefix and Suffix parameters. If unspecified, it will be $Prefix$CurentFileName$Suffix.$OutExtension.
+
 .PARAMETER OutExtension
 The file extension to use for the converted image. If unspecified, the existing extension will will be used.
 
@@ -1564,6 +1567,7 @@ param(
 	[string]$Filter,
 	[ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
 	[ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
+	[string]$OutName,
 	[string][ValidatePattern("((((\d+%){1,2})|((\d+)?x\d+(\^|!|<|>|\^)*?)|(\d+x?(\d+)?(\^|!|<|>|\^)*?)|(\d+@)|(\d+:\d+))$|^$)")]$Dimensions,
 	[string]$Suffix,
 	[string]$Prefix,
@@ -1594,7 +1598,7 @@ ForEach ($Image in $Path) {
 	$Arguments = $null
 	If (!$OutExtension) { $ImageOutExtension = [System.IO.Path]::GetExtension($Image.Name) } #If OutExtension not set, use current
 	Else { $ImageOutExtension = $OutExtension } #Otherwise use spesified extension
-	$OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension #Out file name
+	If ($null -eq $OutName) { $OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension }
 	$Out = Join-Path $OutPath $OutName #Out full path
 	If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Image")) {
 		If (Test-Path $Out) {
@@ -1882,6 +1886,77 @@ ForEach ($Image in $Path) {
 		}
 	}
 }
+}
+function Create-BiosUsbKey {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 0c7d4d03-0299-400f-92a8-f857f9b8dc6e
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+This script will create a bootable BIOS key and apply an appropriate label.
+#>
+
+param (
+    [string]$Path,
+    [string]$Drive,
+    [ValidateSet("Lenovo")][string]$Manufacturer = "Lenovo"
+)
+
+Push-Location $Path
+
+Write-Verbose "Erasing $Drive"
+Get-ChildItem -Path $Drive`:\ -Recurse | Remove-Item -Force -Recurse
+
+Write-Verbose "Creating USB Drive"
+if ($Manufacturer -eq "Lenovo") { & .\mkusbkey.bat $Drive`: | Write-Verbose }
+
+Write-Verbose "Building drive label."
+[string]$Model = (Get-Item (Split-Path -Parent -Path (Get-Location))).Name
+$Label = ($Model -replace " ", "" -replace "Type", "" -replace "Gen", "G" -replace "\(", "" -replace "\)", "" -replace ",", "")
+$Label = $Label.Substring(0, ($Label.Length, 11 | Measure-Object -Minimum).Minimum)
+
+$AutoRun = "
+[AutoRun]
+label=$Model
+"
+
+Write-Verbose "Setting drive label: $Label"
+Set-Volume -DriveLetter $Drive -NewFileSystemLabel $Label
+
+Write-Verbose "Setting AutoRun label: $Model"
+$AutoRun | Out-File -FilePath "$Drive`:\autorun.inf"
+
+Pop-Location
+
+Write-Verbose "Copying Logos"
+if ($Manufacturer -eq "Lenovo") { Copy-Item -Path .\LOGO*.gif -Destination $Drive`:\Flash\ }
 }
 function Disable-NetbiosTcpIp {
 <#PSScriptInfo
