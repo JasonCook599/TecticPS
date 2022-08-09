@@ -12,7 +12,7 @@
 RootModule = '***REMOVED***IT.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.58'
+ModuleVersion = '1.1.59'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -73,7 +73,7 @@ FunctionsToExport = 'Add-AllowedDmaDevices', 'Add-BluredPillarBars',
                'Add-ComputerToDomain', 'Add-GroupEmail', 'Add-Path', 'Add-Signature', 
                'Backup-MySql', 'Clear-AdminCount', 'Clear-PrintQueue', 
                'Connect-Office365', 'Convert-Image', 'ConvertTo-EndpointCertificate', 
-               'ConvertTo-OutputImages', 'Create-BiosUsbKey', 'Disable-NetbiosTcpIp', 
+               'ConvertTo-OutputImages', 'Disable-NetbiosTcpIp', 
                'Disable-SelfServicePurchase', 'Enable-AdUserPermissionInheritance', 
                'Enable-LicenseOptions', 'Enable-NestedVm', 
                'Export-AdUsersToAssetPanda', 'Export-FortiClientConfig', 
@@ -87,13 +87,13 @@ FunctionsToExport = 'Add-AllowedDmaDevices', 'Add-BluredPillarBars',
                'Get-RecentEvents', 'Get-SecureBoot', 'Get-Spns', 
                'Get-StaleAADGuestAccounts', 'Get-TermsOfUse', 'Get-TpmInfo', 
                'Get-UserInfo', 'Get-Wallpaper', 'Grant-Matching', 
-               'Import-FortiClientConfig', 'Initialize-OneDrive', 
-               'Initialize-Workstation', 'Install-GCPW', 'Install-MicrosoftOffice', 
-               'Install-RSAT', 'Invoke-TickleMailRecipients', 
-               'Measure-AverageDuration', 'Move-ArchiveEventLogs', 
-               'New-FortiClientConfig', 'New-Password', 'New-RandomCharacters', 
-               'Ping-Hosts', 'Remove-AuthenticodeSignature', 'Remove-BlankLines', 
-               'Remove-CachedWallpaper', 'Remove-GroupEmail', 
+               'Import-FortiClientConfig', 'Initialize-BiosUsbKey', 
+               'Initialize-OneDrive', 'Initialize-Workstation', 'Install-GCPW', 
+               'Install-MicrosoftOffice', 'Install-RSAT', 
+               'Invoke-TickleMailRecipients', 'Measure-AverageDuration', 
+               'Move-ArchiveEventLogs', 'New-FortiClientConfig', 'New-Password', 
+               'New-RandomCharacters', 'Ping-Hosts', 'Remove-AuthenticodeSignature', 
+               'Remove-BlankLines', 'Remove-CachedWallpaper', 'Remove-GroupEmail', 
                'Remove-MailboxOrphanedSids', 'Remove-OldFolders', 
                'Remove-OldModuleVersions', 'Remove-UserPASSWD_NOTREQD', 
                'Remove-VsResistInstallFiles', 'Repair-AdAttributes', 

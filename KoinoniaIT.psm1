@@ -1887,77 +1887,6 @@ ForEach ($Image in $Path) {
 	}
 }
 }
-function Create-BiosUsbKey {
-<#PSScriptInfo
-
-.VERSION 1.0.1
-
-.GUID 0c7d4d03-0299-400f-92a8-f857f9b8dc6e
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME ***REMOVED***
-
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
-.DESCRIPTION
-This script will create a bootable BIOS key and apply an appropriate label.
-#>
-
-param (
-    [string]$Path,
-    [string]$Drive,
-    [ValidateSet("Lenovo")][string]$Manufacturer = "Lenovo"
-)
-
-Push-Location $Path
-
-Write-Verbose "Erasing $Drive"
-Get-ChildItem -Path $Drive`:\ -Recurse | Remove-Item -Force -Recurse
-
-Write-Verbose "Creating USB Drive"
-if ($Manufacturer -eq "Lenovo") { & .\mkusbkey.bat $Drive`: | Write-Verbose }
-
-Write-Verbose "Building drive label."
-[string]$Model = (Get-Item (Split-Path -Parent -Path (Get-Location))).Name
-$Label = ($Model -replace " ", "" -replace "Type", "" -replace "Gen", "G" -replace "\(", "" -replace "\)", "" -replace ",", "")
-$Label = $Label.Substring(0, ($Label.Length, 11 | Measure-Object -Minimum).Minimum)
-
-$AutoRun = "
-[AutoRun]
-label=$Model
-"
-
-Write-Verbose "Setting drive label: $Label"
-Set-Volume -DriveLetter $Drive -NewFileSystemLabel $Label
-
-Write-Verbose "Setting AutoRun label: $Model"
-$AutoRun | Out-File -FilePath "$Drive`:\autorun.inf"
-
-Pop-Location
-
-Write-Verbose "Copying Logos"
-if ($Manufacturer -eq "Lenovo") { Copy-Item -Path .\LOGO*.gif -Destination $Drive`:\Flash\ }
-}
 function Disable-NetbiosTcpIp {
 <#PSScriptInfo
 
@@ -5223,6 +5152,77 @@ if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::P
 if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
     Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
 }
+}
+function Initialize-BiosUsbKey {
+<#PSScriptInfo
+
+.VERSION 1.0.2
+
+.GUID 0c7d4d03-0299-400f-92a8-f857f9b8dc6e
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+This script will create a bootable BIOS key and apply an appropriate label.
+#>
+
+param (
+    [string]$Path,
+    [string]$Drive,
+    [ValidateSet("Lenovo")][string]$Manufacturer = "Lenovo"
+)
+
+Push-Location $Path
+
+Write-Verbose "Erasing $Drive"
+Get-ChildItem -Path $Drive`:\ -Recurse | Remove-Item -Force -Recurse
+
+Write-Verbose "Creating USB Drive"
+if ($Manufacturer -eq "Lenovo") { & .\mkusbkey.bat $Drive`: | Write-Verbose }
+
+Write-Verbose "Building drive label."
+[string]$Model = (Get-Item (Split-Path -Parent -Path (Get-Location))).Name
+$Label = ($Model -replace " ", "" -replace "Type", "" -replace "Gen", "G" -replace "\(", "" -replace "\)", "" -replace ",", "")
+$Label = $Label.Substring(0, ($Label.Length, 11 | Measure-Object -Minimum).Minimum)
+
+$AutoRun = "
+[AutoRun]
+label=$Model
+"
+
+Write-Verbose "Setting drive label: $Label"
+Set-Volume -DriveLetter $Drive -NewFileSystemLabel $Label
+
+Write-Verbose "Setting AutoRun label: $Model"
+$AutoRun | Out-File -FilePath "$Drive`:\autorun.inf"
+
+Pop-Location
+
+Write-Verbose "Copying Logos"
+if ($Manufacturer -eq "Lenovo") { Copy-Item -Path .\LOGO*.gif -Destination $Drive`:\Flash\ }
 }
 function Initialize-OneDrive {
 <#PSScriptInfo
