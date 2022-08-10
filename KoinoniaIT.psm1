@@ -8290,7 +8290,7 @@ foreach ($User in $Users) {
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.1
+.VERSION 1.1.2
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -8352,7 +8352,7 @@ if (!(Get-MgContext)) { Connect-MgGraph -Scopes "User.ReadWrite.All" }
 $Photos | ForEach-Object {
     $User = Get-MgUser -UserId ([System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix)
     If ($PSCmdlet.ShouldProcess($User.DisplayName, "Set-MgUserPhotoContent")) {
-        Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName -WhatIf
+        Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName
         return [PSCustomObject]@{
             UserId       = $User.Id
             DisplayName  = $User.DisplayName
