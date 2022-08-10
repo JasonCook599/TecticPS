@@ -8290,7 +8290,7 @@ foreach ($User in $Users) {
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.2
+.VERSION 1.1.3
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -8347,7 +8347,7 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 
 Requires Microsoft.Graph.Users
 
-if (!(Get-MgContext)) { Connect-MgGraph -Scopes "User.ReadWrite.All" }
+if (!(Get-MgContext | Out-Null )) { Connect-MgGraph -Scopes "User.ReadWrite.All" | Out-Null }
 
 $Photos | ForEach-Object {
     $User = Get-MgUser -UserId ([System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix)
