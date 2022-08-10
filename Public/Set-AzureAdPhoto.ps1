@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.1.1
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -49,7 +49,7 @@ https://www.michev.info/Blog/Post/3908/updating-your-profile-photo-as-guest-via-
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [string]$Path = (Get-Location),
+    $Photos = (Get-ChildItem -Recurse -File),
     [string]$Suffix
 )
 
@@ -57,9 +57,16 @@ Requires Microsoft.Graph.Users
 
 if (!(Get-MgContext)) { Connect-MgGraph -Scopes "User.ReadWrite.All" }
 
-Get-ChildItem $Path | ForEach-Object {
+$Photos | ForEach-Object {
     $User = Get-MgUser -UserId ([System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix)
     If ($PSCmdlet.ShouldProcess($User.DisplayName, "Set-MgUserPhotoContent")) {
-        return Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName
+        Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName -WhatIf
+        return [PSCustomObject]@{
+            UserId       = $User.Id
+            DisplayName  = $User.DisplayName
+            EmailAddress = $User.Mail
+            Photo        = $_.FullName
+            PhotoDate    = $_.LastWriteTime
+        }
     }
 }
