@@ -84,7 +84,7 @@ Task ExportToPsm1 {
     $SourceModules | ForEach-Object { $ModuleContent += ((Get-Content $_ -Raw) -replace "\n# .*").Trim() }
 
     #Export ps1 files
-    $LoadDefaultsString = 'try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults. Is the module loaded?" }'
+    $LoadDefaultsString = "try { . (LoadDefaults -Invocation `$MyInvocation) -Invocation `$MyInvocation } catch { Write-Warning `"Failed to load defaults for `$(`$MyInvocation.MyCommand.Name). Is the module loaded?`" }"
     $SourceScripts | ForEach-Object {
         $ScriptContent = (Get-Content $_ -Raw)
         if ( -not ($ScriptContent -match "(?mi)^.*#+.*SkipLoadDefaults:.*True.*$")) {
