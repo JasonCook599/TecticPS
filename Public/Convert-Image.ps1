@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.10
 
 .GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
 
@@ -113,6 +113,7 @@ If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
 [System.Collections.ArrayList]$Results = @()
 
 ForEach ($Image in $Path) {
+	Clear-Variable -Name OutName
 	$Image = Get-ChildItem $Image
 	if ([bool]([System.Uri]$Image.FullName).IsUnc) { throw "Path is not local." }
 	$count++ ; Progress -Index $count -Total $Path.count -Activity "Resizing images." -Name $Image.Name
@@ -120,7 +121,7 @@ ForEach ($Image in $Path) {
 	$Arguments = $null
 	If (!$OutExtension) { $ImageOutExtension = [System.IO.Path]::GetExtension($Image.Name) } #If OutExtension not set, use current
 	Else { $ImageOutExtension = $OutExtension } #Otherwise use spesified extension
-	If ($null -eq $OutName) { $OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension }
+	If (-not $OutName) { $OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension }
 	$Out = Join-Path $OutPath $OutName #Out full path
 	If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Image")) {
 		If (Test-Path $Out) {
