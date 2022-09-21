@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.10
 
 .GUID edfc8010-fc8d-4eba-8934-4c3a75725d33
 
@@ -34,8 +34,11 @@ This will update the LastWriteTime of the specifeid file to the current time.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$Path
+    [Parameter(ValueFromPipeline = $true, Mandatory = $true)][string]$Path,
+    [Parameter(ValueFromPipeline = $true)][System.DateTime]$Date = (Get-Date)
 )
 
-if (Test-Path $Path) { (Get-ChildItem $Path).LastWriteTime = Get-Date }
-else { Write-Output $null > $file }
+If ($PSCmdlet.ShouldProcess($Path)) {
+    try { return (Get-ChildItem $Path -ErrorAction Stop).LastWriteTime = $Date }
+    catch { return (New-Item -Path $Path).CreationTime }
+}

@@ -3241,6 +3241,60 @@ switch ((Get-WmiObject -Namespace ROOT\CIMV2\Security\Microsoftvolumeencryption 
 }
 $protectans
 }
+function Get-DuplicateFileNames {
+<#PSScriptInfo
+
+.VERSION 1.0.9
+
+.GUID 5e6104a0-232a-4fb1-8858-62e1d8220721
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+Find files with the same name.
+#>
+[cmdletbinding()]
+param(
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$Path,
+    [hashtable]$Params = @{
+        Recurse = $true
+        File    = $true
+    }
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
+$Files = @()
+$Results = @()
+
+$Path | ForEach-Object { $Files += Get-ChildItem -Path $_  @Params }
+$Files | ForEach-Object { if (($Files.Name -match $_.Name).count -gt 1 ) { $Results += $_ } }
+
+return $Results
+}
 function Get-ExchangeOnlineConnection {
 <#PSScriptInfo
 
@@ -5955,7 +6009,7 @@ foreach ($DistributionGroup in $DistributionGroups) {
 function Invoke-TouchFile {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.10
 
 .GUID edfc8010-fc8d-4eba-8934-4c3a75725d33
 
@@ -5989,13 +6043,16 @@ This will update the LastWriteTime of the specifeid file to the current time.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$Path
+    [Parameter(ValueFromPipeline = $true, Mandatory = $true)][string]$Path,
+    [Parameter(ValueFromPipeline = $true)][System.DateTime]$Date = (Get-Date)
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
-if (Test-Path $Path) { (Get-ChildItem $Path).LastWriteTime = Get-Date }
-else { Write-Output $null > $file }
+If ($PSCmdlet.ShouldProcess($Path)) {
+    try { return (Get-ChildItem $Path -ErrorAction Stop).LastWriteTime = $Date }
+    catch { return (New-Item -Path $Path).CreationTime }
+}
 }
 function Measure-AverageDuration {
 <#PSScriptInfo
@@ -8346,23 +8403,23 @@ function Set-AzureAdPhoto {
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -9718,6 +9775,65 @@ if ($Action -contains "AddLast") {
     }
 }
 if ($Action -contains "Reset") { Remove-ItemProperty $Path -Name "*" }
+}
+function Test-Photo {
+<#PSScriptInfo
+
+.VERSION 1.0.9
+
+.GUID a3cdb0bc-2c01-4aa3-b702-707a5060c071
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+Test that a photo meets the requrements.
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+    $Path,
+    $Photos = (Get-ChildItem -Recurse -File -Path $Path),
+    [int]$Width,
+    [int]$Height,
+    [switch]$Square,
+    $FileSize
+)
+Add-Type -AssemblyName System.Drawing
+$Results = @()
+$Photos | ForEach-Object {
+    $Image = New-Object System.Drawing.Bitmap $_.FullName
+    [PSObject]$Result = New-Object PSObject -Property @{ Path = $_.FullName }
+    if (($Width -and $Image.Width -gt $Width) -or ($Height -and $Image.Height -gt $Height)) { $Result | Add-Member -MemberType NoteProperty -Value $true -Name BadDimensions }
+    if ($Square -and $Image.Width -ne $Image.Height) { $Result | Add-Member -MemberType NoteProperty -Value $true -Name NotSquare }
+    if ($FileSize -and $_.Length -gt $FileSize) { $Result | Add-Member -MemberType NoteProperty -Value $true -Name TooBig }
+    if ( $Result.BadDimensions -or $Result.NotSquare -or $Result.TooBig ) {
+        Write-Warning "$($_.Name) does not meet the requirements."
+        $Results += $Result
+    }
+}
+return $Results
 }
 function Test-RegistryValue {
 <#PSScriptInfo
