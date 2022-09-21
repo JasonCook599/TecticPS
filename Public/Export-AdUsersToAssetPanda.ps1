@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
 
@@ -36,7 +36,7 @@ Export AD user for Asset Panda
 param(
     [string]$SearchBase,
     [string]$Filter = "*",
-    [array]$Properties = ("Surname", "GivenName", "EmailAddress", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Office", "Created"),
+    [array]$Properties = ("Surname", "GivenName", "EmailAddress", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Office", "Created", "employeeHireDate", "employeeType"),
     [string]$Server
 )
 
@@ -62,6 +62,8 @@ Get-ADUser @Arguments | ForEach-Object {
         "Hire Date"      =	$_.Created
         "Status"         = "Full Time"
     }
+    if ($null -ne $_.employeeHireDate) { $Result."Hire Date" = $_.employeeHireDate }
+    if ($null -ne $_.employeeType) { $Result.Status = $_.employeeType }
     $Results += $Result
 }
 return $Results
