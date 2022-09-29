@@ -8395,7 +8395,7 @@ foreach ($User in $Users) {
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.7
+.VERSION 1.1.8
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -8405,23 +8405,23 @@ function Set-AzureAdPhoto {
 
 .COPYRIGHT Copyright (c) ***REMOVED*** 2022
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-#>
+#> 
 
 <#
 .SYNOPSIS
@@ -8474,7 +8474,7 @@ $Photos | ForEach-Object {
             EmailAddress = $User.Mail
             Photo        = $_.FullName
             PhotoDate    = $_.LastWriteTime
-            Error        = $UploadError
+            Error        = $UploadError[0]
         }
     }
 }
