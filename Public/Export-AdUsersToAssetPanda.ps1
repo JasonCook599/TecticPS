@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.8
 
 .GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
 
@@ -58,7 +58,7 @@ Get-ADUser @Arguments | ForEach-Object {
         "Work Phone"     = ([regex]::Match($_.telephoneNumber, "^((?:\+1)? ?(?:\d{10}|\d{7}))(?:.*)$")).Groups[1].Value
         "Work Extension" = $_.ipPhone
         "Cell Phone"     = $_.MobilePhone
-        "Office"         = $_.Office
+        "Office"         = ($_.Office -split ",")[0]
         "Hire Date"      =	$_.Created
         "Status"         = "Full Time"
     }
