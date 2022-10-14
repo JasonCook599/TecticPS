@@ -1891,7 +1891,7 @@ ForEach ($Image in $Path) {
 function Copy-ToPublicDesktop {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID f54d5874-3851-47a7-87f5-7841980e0c7a
 
@@ -1927,11 +1927,35 @@ This script will copy the specified file to the public desktop.
 The path of the item to copy.
 #>
 param(
-    $Path
+    $Path,
+    [ValidateSet("AD", "NPS", "Hyper-V", "CA", "Print")][array]$Group,
+    [string]$PublicDesktop = "$env:PUBLIC\Desktop"
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-$Path | ForEach-Object { Copy-Item -Path $_ -Destination "$env:PUBLIC\Desktop" }
+if ($Path) {
+    $Path | ForEach-Object { Copy-Item -Destination $PublicDesktop -Path $_ }
+}
+if ($Group -contains "AD") {
+    Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Active Directory Administrative Center.lnk"
+    Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk"
+}
+if ($Group -contains "NPS") {
+    Copy-Item -Destination $PublicDesktop -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Network Policy Server.lnk"
+}
+if ($Group -contains "Hyper-V") {
+    Copy-Item -Destination $PublicDesktop -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Hyper-V Manager.lnk"
+}
+if ($Group -contains "CA") {
+    Copy-Item -Destination $PublicDesktop -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Certification Authority.lnk"
+}
+if ($Group -contains "Print") {
+    Copy-Item -Destination $PublicDesktop -Path "C:\ProgramData\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Print Management.lnk"
+}
+if ($Group -contains "IIS") {
+    # Copy-Item -Destination $PublicDesktop -Path
+
+}
 }
 function Disable-NetbiosTcpIp {
 <#PSScriptInfo
