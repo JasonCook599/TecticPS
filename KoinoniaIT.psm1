@@ -9678,7 +9678,7 @@ $SyncedUsers | ForEach-Object {
 function Sync-Nps {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.6
 
 .GUID 6e7a4d29-1b73-490f-91aa-fc074a886716
 
@@ -9737,12 +9737,13 @@ param (
 )
 
 Write-Debug "Create an NPS Sync Event Source if it doesn't already exist"
-if (!(Get-EventLog -LogName "System" -Source "NPS-Sync")) { New-Eventlog -LogName "System" -Source "NPS-Sync" }
+if (-not [System.Diagnostics.EventLog]::SourceExists("NPS-Sync")) { New-Eventlog -LogName "System" -Source "NPS-Sync" }
 
 Write-Debug "Write an error and exit the script if an exception is ever thrown"
 trap {
     Write-EventLog -LogName "System" -eventID 1 -Source "NPS-Sync" -EntryType "Error" -Message "An Error occured during NPS Sync: $_. Script run from $($MyInvocation.MyCommand.Definition)"
     throw $_
+    exit
 }
 
 If ($PSCmdlet.ShouldProcess("$Source", "Export NPS Config")) {
