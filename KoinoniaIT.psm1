@@ -9678,7 +9678,7 @@ $SyncedUsers | ForEach-Object {
 function Sync-Nps {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 6e7a4d29-1b73-490f-91aa-fc074a886716
 
@@ -9736,19 +9736,21 @@ param (
     $Path = "\\$Source\C$\NPSConfig-$Source.xml"
 )
 
-Write-Debug "Create an NPS Sync Event Source if it doesn't already exist"
-if (-not [System.Diagnostics.EventLog]::SourceExists("NPS-Sync")) { New-Eventlog -LogName "System" -Source "NPS-Sync" }
+$ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
 
 Write-Debug "Write an error and exit the script if an exception is ever thrown"
 trap {
     Write-EventLog -LogName "System" -eventID 1 -Source "NPS-Sync" -EntryType "Error" -Message "An Error occured during NPS Sync: $_. Script run from $($MyInvocation.MyCommand.Definition)"
-    throw $_
+    $_
     exit
 }
 
+Write-Debug "Create an NPS Sync Event Source if it doesn't already exist"
+if (-not [System.Diagnostics.EventLog]::SourceExists("NPS-Sync")) { New-Eventlog -LogName "System" -Source "NPS-Sync" }
+
 If ($PSCmdlet.ShouldProcess("$Source", "Export NPS Config")) {
     Write-Debug "Connect to NPS Master and export configuration"
-    $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -scriptBlock { param ($Path) netsh nps export filename = $Path exportPSK = yes }
+    $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -ScriptBlock { param ($Path) netsh nps export filename = $Path exportPSK = yes }
     Write-Debug "Verify that the import XML file was created. If it is not there, it will throw an exception caught by the trap above that will exit the script."
     Get-Item $Path | Out-Null
 }
