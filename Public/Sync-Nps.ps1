@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.9
 
 .GUID 6e7a4d29-1b73-490f-91aa-fc074a886716
 
@@ -83,6 +83,7 @@ If ($PSCmdlet.ShouldProcess("$Source", "Reset NPS Config")) {
 }
 
 If ($PSCmdlet.ShouldProcess("$Source", "Import NPS Config")) {
+    Get-Item -Path $Path -ErrorAction Stop
     netsh nps import filename = $Path | Out-Null
     Write-Debug "Delete Temporary File"
     Remove-Item -path $Path
