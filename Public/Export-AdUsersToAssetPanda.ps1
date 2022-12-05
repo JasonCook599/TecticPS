@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.9
 
 .GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
 
@@ -42,7 +42,6 @@ param(
 
 $Arguments = @{}
 if ($SearchBase) { $Arguments.SearchBase = $SearchBase }
-if ($Filter) { $Arguments.Filter = $Filter }
 if ($Filter) { $Arguments.Filter = $Filter }
 if ($Properties) { $Arguments.Properties = $Properties }
 if ($Server) { $Arguments.Server = $Server }
