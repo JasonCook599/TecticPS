@@ -1,4 +1,5 @@
 Task default -depends ImportModule, TestScriptFileInfo, UpdatePSScriptInfo, TestScriptFileInfo, ExportToPsm1, UpdateManifest
+Task quick -depends ExportToPsm1, UpdateManifest
 
 $ModuleName = "***REMOVED***IT"
 $ModuleFile = $ModuleName + ".psm1"
