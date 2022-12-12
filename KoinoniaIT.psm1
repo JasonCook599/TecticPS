@@ -8631,7 +8631,7 @@ foreach ($User in $Users) {
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.8
+.VERSION 1.1.13
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -8692,25 +8692,44 @@ Requires Microsoft.Graph.Users
 if (!(Get-MgContext | Out-Null )) { Connect-MgGraph -Scopes "User.ReadWrite.All" | Out-Null }
 
 $Photos | ForEach-Object {
-    Clear-Variable -Name UploadError -ErrorAction SilentlyContinue
+    $count++ ; Progress -Index $count -Total $Photos.count -Activity "Uploading profile photos." -Name $_.Name
+
+    Clear-Variable -ErrorAction SilentlyContinue -Name UploadError
+    Clear-Variable -ErrorAction SilentlyContinue -Name User
+
+    Write-Debug "Adding `'$Suffix`' to `$UserId"
     $UserId = ([System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix)
+
     If ($Substitute) {
         $Substitute.GetEnumerator() | ForEach-Object {
             Write-Verbose "Replacing $($_.Name) with $($_.Value)"
             $UserId = $UserId -replace $_.Name, $_.Value
         }
     }
-    $User = Get-MgUser -UserId $UserId
+    $User = Get-MgUser -UserId $UserId -ErrorAction SilentlyContinue
 
+    Write-Verbose "Processing $User"
     If ($PSCmdlet.ShouldProcess($User.DisplayName, "Set-MgUserPhotoContent")) {
-        Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName -ErrorVariable UploadError
-        return [PSCustomObject]@{
-            UserId       = $User.Id
-            DisplayName  = $User.DisplayName
-            EmailAddress = $User.Mail
-            Photo        = $_.FullName
-            PhotoDate    = $_.LastWriteTime
-            Error        = $UploadError[0]
+        if ($User.Id) {
+            Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName -ErrorVariable UploadError
+            return [PSCustomObject]@{
+                UserId       = $User.Id
+                DisplayName  = $User.DisplayName
+                EmailAddress = $User.Mail
+                Photo        = $_.FullName
+                PhotoDate    = $_.LastWriteTime
+                Error        = $UploadError[0]
+            }
+        }
+        else {
+            return [PSCustomObject]@{
+                UserId       = $UserId
+                DisplayName  = $null
+                EmailAddress = $null
+                Photo        = $_.FullName
+                PhotoDate    = $_.LastWriteTime
+                Error        = "User does not exist."
+            }
         }
     }
 }
