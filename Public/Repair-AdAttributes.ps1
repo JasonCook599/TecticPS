@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.11
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -68,7 +68,7 @@ An array of properties to search against.
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [array]$Actions = @("LegacyExchange", "LegacyProxyAddresses", "ExtraProxyAddresses", "ClearMailNickname", "SetMailNickname", "ClearTelephoneNumber", "SetTelephoneNumber"),
+    [array]$Actions = @("LegacyExchange", "LegacyProxyAddresses", "ExtraProxyAddresses", "ClearMailNickname", "SetMailNickname", "ClearTelephoneNumber"),
     [string]$SearchBase,
     [string]$Server,
     [string]$DefaultPhoneNumber,
@@ -84,11 +84,11 @@ if ($Server) { $SetAdOptions.Server = $Server }
 $GetAdOptions = @{}
 if ($SearchBase) { $GetAdOptions.SearchBase = $SearchBase }
 if ($Server) { $GetAdOptions.Server = $Server }
-if ($Properties) { $GetAdOptions.SearchBase = $Properties }
+if ($Properties) { $GetAdOptions.Properties = $Properties }
 if ($Filter) { $GetAdOptions.Filter = $Filter } else { $GetAdOptions.Filter = "*" }
 
-$Users = Get-ADUser -Properties $Properties -Filter $Filter @GetAdOptions
-$Groups = Get-ADGroup -Properties $Properties -Filter $Filter @GetAdOptions
+$Users = Get-ADUser @GetAdOptions
+$Groups = Get-ADGroup @GetAdOptions
 
 If ($PSCmdlet.ShouldProcess("Remove legacy exchange attributes") -and $Actions -contains "LegacyExchange") {
     $Users | Set-ADUser -Clear $LegacyExchangeAttributes @SetAdOptions
@@ -119,22 +119,22 @@ If ($PSCmdlet.ShouldProcess("Clear ProxyAddresses if only one exists") -and $Act
 }
 
 If ($PSCmdlet.ShouldProcess("Clear mailNickname if mail attribute empty") -and $Actions -contains "ClearMailNickname") {
-    $Users | Where-Object $null -eq mail | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname } @SetAdOptions
-    $Groups | Where-Object $null -eq mail | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname } @SetAdOptions
+    $Users | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
+    $Groups | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
 }
 
 If ($PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName") -and $Actions -contains "SetMailNickname") {
-    $Users | Where-Object $null -ne mail | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } } @SetAdOptions
-    $Groups | Where-Object $null -ne mail | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } } @SetAdOptions
+    $Users | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
+    $Groups | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
 }
 
 If ($PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty") -and $Actions -contains "ClearTelephoneNumber") {
-    $Users | Where-Object $null -eq mail | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber @SetAdOptions
+    $Users | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber @SetAdOptions
 }
 
 If ($PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension") -and $Actions -contains "SetTelephoneNumber") {
     while (!$DefaultPhoneNumber) { $DefaultPhoneNumber = Read-Host -Prompt "Enter the default phone number." }
-    $Users | Where-Object $null -ne mail | ForEach-Object {
+    $Users | Where-Object mail -ne $null | ForEach-Object {
         if ($null -ne $_.ipphone) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
         else { $telephoneNumber = $DefaultPhoneNumber }
         Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = $telephoneNumber } @SetAdOptions

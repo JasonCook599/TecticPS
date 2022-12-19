@@ -12,7 +12,7 @@
 RootModule = '***REMOVED***IT.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.122'
+ModuleVersion = '1.1.130'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
