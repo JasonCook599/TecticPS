@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.13
+.VERSION 1.1.17
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -50,13 +50,21 @@ https://www.michev.info/Blog/Post/3908/updating-your-profile-photo-as-guest-via-
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
     $Photos = (Get-ChildItem -Recurse -File),
+    [guid]$TenantId,
     [hashtable]$Substitute,
     [string]$Suffix
 )
 
 Requires Microsoft.Graph.Users
 
-if (!(Get-MgContext | Out-Null )) { Connect-MgGraph -Scopes "User.ReadWrite.All" | Out-Null }
+$MgContext = Get-MgContext
+$ConnectMgGraph = @{Scopes = "User.ReadWrite.All" }
+if ($TenantId) { $ConnectMgGraph.TenantId = $TenantId }
+
+while (($TenantId -and $MgContext.TenantId -ne $TenantId) -or $MgContext.Scopes -notcontains "User.ReadWrite.All") {
+    Connect-MgGraph @ConnectMgGraph | Write-Verbose
+    $MgContext = Get-MgContext
+}
 
 $Photos | ForEach-Object {
     $count++ ; Progress -Index $count -Total $Photos.count -Activity "Uploading profile photos." -Name $_.Name
@@ -75,7 +83,6 @@ $Photos | ForEach-Object {
     }
     $User = Get-MgUser -UserId $UserId -ErrorAction SilentlyContinue
 
-    Write-Verbose "Processing $User"
     If ($PSCmdlet.ShouldProcess($User.DisplayName, "Set-MgUserPhotoContent")) {
         if ($User.Id) {
             Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName -ErrorVariable UploadError
