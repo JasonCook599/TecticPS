@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.13
 
 .GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
 
@@ -31,9 +31,28 @@
 <#
 .DESCRIPTION
 Export AD user for Asset Panda
+
+.PARAMETER DefaultEmployeeType
+The default type if not set for an employee.
+
+.PARAMETER SearchBase
+The AD search base to pull users from.
+
+.PARAMETER Filter
+The filter when querying for AD users.
+
+.PARAMETER Properties
+An array of properties to query from AD.
+
+.PARAMETER Server
+The AD server to query.
+
+.LINK
+https://help.assetpanda.com/Importing.html
 #>
 
 param(
+    [string]$DefaultEmployeeType = "Inactive",
     [string]$SearchBase,
     [string]$Filter = "*",
     [array]$Properties = ("Surname", "GivenName", "EmailAddress", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Office", "Created", "employeeHireDate", "employeeType"),
@@ -46,10 +65,11 @@ if ($Filter) { $Arguments.Filter = $Filter }
 if ($Properties) { $Arguments.Properties = $Properties }
 if ($Server) { $Arguments.Server = $Server }
 
-[System.Collections.ArrayList]$Results = @()
-
 Get-ADUser @Arguments | ForEach-Object {
-    $Result = [PSCustomObject]@{
+    if ($null -ne $_.employeeHireDate) { $HireDate = $_.employeeHireDate } else { $HireDate = $_.Created }
+    if ($null -ne $_.employeeType) { $EmployeeType = $_.employeeType } else { $EmployeeType = $DefaultEmployeeType }
+
+    return [PSCustomObject]@{
         "Last Name"      = $_.Surname
         "First Name"     = $_.GivenName
         "Email"          = $_.EmailAddress
@@ -58,11 +78,7 @@ Get-ADUser @Arguments | ForEach-Object {
         "Work Extension" = $_.ipPhone
         "Cell Phone"     = $_.MobilePhone
         "Office"         = ($_.Office -split ",")[0]
-        "Hire Date"      =	$_.Created
-        "Status"         = "Full Time"
+        "Hire Date"      = $HireDate.ToString("MM\/dd\/yyyy")
+        "Status"         = $EmployeeType
     }
-    if ($null -ne $_.employeeHireDate) { $Result."Hire Date" = $_.employeeHireDate }
-    if ($null -ne $_.employeeType) { $Result.Status = $_.employeeType }
-    $Results += $Result
 }
-return $Results
