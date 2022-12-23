@@ -5,7 +5,7 @@
       "Name": "AAD_Branding_Banner",
       "Dimensions": "280x60>",
       "FileSize": "10KB",
-      "Trim": true,
+      "Trim": false,
       "SupportedFormats": [
         ".png", ".jpg"
       ],
@@ -127,11 +127,6 @@
       "Dimensions": "x60>",
       "Destination": ["Application", "Web"]
     }, {
-      "Name": "Signature",
-      "Dimensions": "650x150>",
-      "Trim": true,
-      "Destination": ["Application"]
-    }, {
       "Name": "ChurchOnline",
       "Dimensions": "x104>",
       "Trim": true,
@@ -142,6 +137,24 @@
       "Dimensions": "150x150<",
       "Trim": true,
       "Reference": ["https://support.online.church/l/en/article/4bq369shzv-appearance"],
+      "Destination": ["Application"]
+    }, {
+      "Name": "BMS_HeaderAndReport",
+      "Dimensions": "x40>",
+      "Trim": true,
+      "Mode": "Pad",
+      "Destination": ["Application"]
+    }, {
+      "Name": "BMS_LogIn",
+      "Dimensions": "x70>",
+      "Trim": true,
+      "Mode": "Pad",
+      "Destination": ["Application"]
+    }, {
+      "Name": "IT_Glue_Header",
+      "Dimensions": "200x52>",
+      "Trim": false,
+      "Mode": "Pad",
       "Destination": ["Application"]
     }, {
       "Name": "Trim",
@@ -358,6 +371,16 @@
       "Reference": ["https://get.brushfire.help/hc/en-us/articles/205038074-How-can-I-customize-the-branding-for-my-events-"],
       "Destination": ["Application"]
     }, {
+      "Name": "BMS_LogIn",
+      "OutExtension": ".jpg",
+      "FileSize": "500KB",
+      "SupportedFormats": [".jpg", ".jpeg", ".png", ".gif"]
+    }, {
+      "Name": "KeurigCommercial",
+      "OutExtension": ".jpg",
+      "Dimensions": "350x600>^",
+      "FileSize": "250KB"
+    }, {
       "Name": "720p",
       "Dimensions": "1280x720>^",
       "FileSize": "750KB",
@@ -374,7 +397,7 @@
       "Name": "AAD_Branding_Square",
       "Dimensions": "240x240>",
       "FileSize": "10KB",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "Reference": ["https://docs.microsoft.com/en-ca/azure/active-directory/fundamentals/customize-branding"],
       "Destination": ["Application"]
@@ -393,7 +416,7 @@
       "Name": "MicrosoftTeams_AppStore",
       "Dimensions": "32x32>",
       "FileSize": "5MB",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "SupportedFormats": [
         ".png", ".jpg", ".svg"
@@ -477,7 +500,7 @@
       "Name": "UptimeRobot",
       "Dimensions": "96x96>",
       "FileSize": "150KB",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "Reference": ["https://uptimerobot.com/statuspage.php"],
       "Destination": ["Application"]
@@ -491,67 +514,49 @@
     }, {
       "Name": "16",
       "Dimensions": "16x16>",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "Destination": ["Generic", "Web"]
     }, {
       "Name": "32",
       "Dimensions": "32x32>",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "Destination": ["Generic", "Web"]
     }, {
       "Name": "64",
       "Dimensions": "64x64>",
-      "Trim": true,
-      "Mode": "Pad",
-      "Destination": ["Generic", "Web"]
-    }, {
-      "Name": "75",
-      "Dimensions": "75x75>",
-      "Trim": true,
-      "Mode": "Pad",
-      "Destination": ["Generic", "Web"]
-    }, {
-      "Name": "100",
-      "Dimensions": "100x100>",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "Destination": ["Generic", "Web"]
     }, {
       "Name": "128",
       "Dimensions": "128x128>",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "Destination": ["Generic", "Web"]
     }, {
       "Name": "256",
       "Dimensions": "256x256>",
-      "Trim": true,
-      "Mode": "Pad",
-      "Destination": ["Generic", "Web"]
-    }, {
-      "Name": "300",
-      "Dimensions": "300x300>",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "Destination": ["Generic", "Web"]
     }, {
       "Name": "512",
       "Dimensions": "512x512>",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "Destination": ["Generic", "Web"]
     }, {
       "Name": "1024",
       "Dimensions": "1024x1024>",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "Destination": ["Generic"]
     }, {
       "Name": "2048",
       "Dimensions": "2048x2048>",
-      "Trim": true,
+      "Trim": false,
       "Mode": "Pad",
       "Destination": ["Generic", "Web"]
     }, {
