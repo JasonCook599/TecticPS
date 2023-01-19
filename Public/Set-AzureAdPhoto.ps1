@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.17
+.VERSION 1.1.18
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -77,7 +77,7 @@ $Photos | ForEach-Object {
 
     If ($Substitute) {
         $Substitute.GetEnumerator() | ForEach-Object {
-            Write-Verbose "Replacing $($_.Name) with $($_.Value)"
+            Write-Debug "Replacing $($_.Name) with $($_.Value)"
             $UserId = $UserId -replace $_.Name, $_.Value
         }
     }

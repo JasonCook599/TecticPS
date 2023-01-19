@@ -2561,7 +2561,7 @@ Write-Host 'Invalid input'
 function Export-AdUsersToAssetPanda {
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.13
 
 .GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
 
@@ -2592,9 +2592,28 @@ function Export-AdUsersToAssetPanda {
 <#
 .DESCRIPTION
 Export AD user for Asset Panda
+
+.PARAMETER DefaultEmployeeType
+The default type if not set for an employee.
+
+.PARAMETER SearchBase
+The AD search base to pull users from.
+
+.PARAMETER Filter
+The filter when querying for AD users.
+
+.PARAMETER Properties
+An array of properties to query from AD.
+
+.PARAMETER Server
+The AD server to query.
+
+.LINK
+https://help.assetpanda.com/Importing.html
 #>
 
 param(
+    [string]$DefaultEmployeeType = "Inactive",
     [string]$SearchBase,
     [string]$Filter = "*",
     [array]$Properties = ("Surname", "GivenName", "EmailAddress", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Office", "Created", "employeeHireDate", "employeeType"),
@@ -2609,10 +2628,11 @@ if ($Filter) { $Arguments.Filter = $Filter }
 if ($Properties) { $Arguments.Properties = $Properties }
 if ($Server) { $Arguments.Server = $Server }
 
-[System.Collections.ArrayList]$Results = @()
-
 Get-ADUser @Arguments | ForEach-Object {
-    $Result = [PSCustomObject]@{
+    if ($null -ne $_.employeeHireDate) { $HireDate = $_.employeeHireDate } else { $HireDate = $_.Created }
+    if ($null -ne $_.employeeType) { $EmployeeType = $_.employeeType } else { $EmployeeType = $DefaultEmployeeType }
+
+    return [PSCustomObject]@{
         "Last Name"      = $_.Surname
         "First Name"     = $_.GivenName
         "Email"          = $_.EmailAddress
@@ -2621,14 +2641,10 @@ Get-ADUser @Arguments | ForEach-Object {
         "Work Extension" = $_.ipPhone
         "Cell Phone"     = $_.MobilePhone
         "Office"         = ($_.Office -split ",")[0]
-        "Hire Date"      =	$_.Created
-        "Status"         = "Full Time"
+        "Hire Date"      = $HireDate.ToString("MM\/dd\/yyyy")
+        "Status"         = $EmployeeType
     }
-    if ($null -ne $_.employeeHireDate) { $Result."Hire Date" = $_.employeeHireDate }
-    if ($null -ne $_.employeeType) { $Result.Status = $_.employeeType }
-    $Results += $Result
 }
-return $Results
 }
 function Export-FortiClientConfig {
 <#PSScriptInfo
@@ -7795,7 +7811,7 @@ Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContin
 function Repair-AdAttributes {
 <#PSScriptInfo
 
-.VERSION 1.0.11
+.VERSION 1.0.17
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -7803,7 +7819,7 @@ function Repair-AdAttributes {
 
 .COMPANYNAME ***REMOVED***
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
 
 .TAGS 
 
@@ -7927,7 +7943,7 @@ If ($PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty") -and $Actions
     $Users | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber @SetAdOptions
 }
 
-If ($PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension") -and $Actions -contains "SetTelephoneNumber") {
+If ($Actions -contains "SetTelephoneNumber" -and $PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension")) {
     while (!$DefaultPhoneNumber) { $DefaultPhoneNumber = Read-Host -Prompt "Enter the default phone number." }
     $Users | Where-Object mail -ne $null | ForEach-Object {
         if ($null -ne $_.ipphone) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
@@ -8651,7 +8667,7 @@ foreach ($User in $Users) {
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.17
+.VERSION 1.1.18
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -8730,7 +8746,7 @@ $Photos | ForEach-Object {
 
     If ($Substitute) {
         $Substitute.GetEnumerator() | ForEach-Object {
-            Write-Verbose "Replacing $($_.Name) with $($_.Value)"
+            Write-Debug "Replacing $($_.Name) with $($_.Value)"
             $UserId = $UserId -replace $_.Name, $_.Value
         }
     }

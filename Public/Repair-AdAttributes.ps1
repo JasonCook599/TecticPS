@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.11
+.VERSION 1.0.17
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME ***REMOVED***
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
 
 .TAGS 
 
@@ -132,7 +132,7 @@ If ($PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty") -and $Actions
     $Users | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber @SetAdOptions
 }
 
-If ($PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension") -and $Actions -contains "SetTelephoneNumber") {
+If ($Actions -contains "SetTelephoneNumber" -and $PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension")) {
     while (!$DefaultPhoneNumber) { $DefaultPhoneNumber = Read-Host -Prompt "Enter the default phone number." }
     $Users | Where-Object mail -ne $null | ForEach-Object {
         if ($null -ne $_.ipphone) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
