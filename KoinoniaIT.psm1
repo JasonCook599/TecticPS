@@ -8667,7 +8667,7 @@ foreach ($User in $Users) {
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.18
+.VERSION 1.1.19
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -8702,6 +8702,21 @@ This will upload all profile photos to Office 365.
 .DESCRIPTION
 This will upload all profile photos to Office 365. It will match the filename to the mailbox identity. This can be used along with Set-AdPhotos to sync photos with Active Directory.
 
+.PARAMETER Photos
+An array of photos to process. Photo names should match the user principal name, excluding the file extension.
+
+.PARAMETER TenantId
+The Azure AD tenant id. If not specified, it will try and use the current user's tennant.
+
+.PARAMETER ClientId
+When authenticating as an application, the ClientId of that application.
+
+.PARAMETER Certificate
+When authenticating as an application, the certificate used for authentication.
+
+.PARAMETER Substitute
+An array of substitutions to make in the between the file name and the user principal name. Can be used to upload for guest accounts.
+
 .PARAMETER Suffix
 The suffix to add to the end of the mailbox identity. Can be used to upload for guest accounts.
 
@@ -8718,6 +8733,8 @@ https://www.michev.info/Blog/Post/3908/updating-your-profile-photo-as-guest-via-
 Param(
     $Photos = (Get-ChildItem -Recurse -File),
     [guid]$TenantId,
+    [guid]$ClientId,
+    [System.Security.Cryptography.X509Certificates.X509Certificate]$Certificate,
     [hashtable]$Substitute,
     [string]$Suffix
 )
@@ -8729,6 +8746,11 @@ Requires Microsoft.Graph.Users
 $MgContext = Get-MgContext
 $ConnectMgGraph = @{Scopes = "User.ReadWrite.All" }
 if ($TenantId) { $ConnectMgGraph.TenantId = $TenantId }
+if ($ClientId -and $Certificate) {
+    $ConnectMgGraph.ClientId = $ClientId
+    $ConnectMgGraph.Certificate = $Certificate
+}
+elseif ($ClientId -or $Certificate) { throw "You must specify both of neither -ClientId and -Certificate" }
 
 while (($TenantId -and $MgContext.TenantId -ne $TenantId) -or $MgContext.Scopes -notcontains "User.ReadWrite.All") {
     Connect-MgGraph @ConnectMgGraph | Write-Verbose
