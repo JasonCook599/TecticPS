@@ -8667,7 +8667,7 @@ foreach ($User in $Users) {
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.19
+.VERSION 1.1.20
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -8744,13 +8744,14 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 Requires Microsoft.Graph.Users
 
 $MgContext = Get-MgContext
-$ConnectMgGraph = @{Scopes = "User.ReadWrite.All" }
+$ConnectMgGraph = @{}
 if ($TenantId) { $ConnectMgGraph.TenantId = $TenantId }
 if ($ClientId -and $Certificate) {
     $ConnectMgGraph.ClientId = $ClientId
     $ConnectMgGraph.Certificate = $Certificate
 }
 elseif ($ClientId -or $Certificate) { throw "You must specify both of neither -ClientId and -Certificate" }
+else { $ConnectMgGraph.Scopes = "User.ReadWrite.All" }
 
 while (($TenantId -and $MgContext.TenantId -ne $TenantId) -or $MgContext.Scopes -notcontains "User.ReadWrite.All") {
     Connect-MgGraph @ConnectMgGraph | Write-Verbose
