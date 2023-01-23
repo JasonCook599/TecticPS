@@ -10201,6 +10201,143 @@ if ($Action -contains "AddLast") {
 }
 if ($Action -contains "Reset") { Remove-ItemProperty $Path -Name "*" }
 }
+function Test-PendingFileRename {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 98d059e8-6686-4643-bf07-2a2fd9729ca6
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+Returns any pending file renames present in the PendingFileRenameOperations registry key.
+
+.PARAMETER IgnoreDeletes
+Ignore any delete options and only return file neames.
+
+.LINK
+https://stackoverflow.com/questions/47867949/how-can-i-check-for-a-pending-reboot/68627581#68627581
+
+.LINK
+https://forensicatorj.wordpress.com/2014/06/25/interpreting-the-pendingfilerenameoperations-registry-key-for-forensics/
+
+.LINK
+https://learn.microsoft.com/en-us/sysinternals/downloads/pendmoves#movefile-usage
+
+#>
+
+[OutputType('bool')]
+[CmdletBinding()]
+param(
+    [switch]$IgnoreDeletes
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+$Operations = (Get-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\').GetValue('PendingFileRenameOperations')
+if ($null -eq $Operations) {
+    return $false
+}
+else {
+    $OperationsCount = $Operations.Length / 2
+    $Renames = [System.Collections.Generic.Dictionary[string, string]]::new($OperationsCount)
+    for ($i = 0; $i -ne $OperationsCount; $i++) {
+        $OperationSource = $Operations[$i * 2]
+        $operationDestination = $Operations[$i * 2 + 1]
+        if ($IgnoreDeletes -and $operationDestination.Length -eq 0) {
+            Write-Verbose "Ignoring pending file delete '$OperationSource'"
+        }
+        else {
+            Write-Host "Found a true pending file rename (as opposed to delete). Source '$OperationSource'; Dest '$operationDestination'"
+            $Renames[$Operationsource] = $operationDestination
+        }
+    }
+    return $Renames
+}
+}
+function Test-PendingReboot {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID eb35ecd5-48d9-4b6d-97d9-ad4b5893fb6a
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+Returns true if a reboot is pending.
+
+.LINK
+https://stackoverflow.com/questions/47867949/how-can-i-check-for-a-pending-reboot/68627581#68627581
+
+.LINK
+https://gist.github.com/altrive/5329377
+
+.LINK
+http://gallery.technet.microsoft.com/scriptcenter/Get-PendingReboot-Query-bdb79542
+
+#>
+
+if (Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending" -EA Ignore) { return "Component Based Servicing\RebootPending" }
+if (Get-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired" -EA Ignore) { return "WindowsUpdate\Auto Update\RebootRequired" }
+if (Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager" -Name PendingFileRenameOperations -EA Ignore) { return "PendingFileRenameOperations" }
+try {
+    $util = [wmiclass]"\\.\root\ccm\clientsdk:CCM_ClientUtilities"
+    $status = $util.DetermineIfRebootPending()
+    if (($null -ne $status) -and $status.RebootPending) {
+        return "CCM_ClientUtilities"
+    }
+}
+catch { }
+
+return $false
+}
 function Test-Photo {
 <#PSScriptInfo
 
