@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.20
+.VERSION 1.1.21
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -81,7 +81,7 @@ if ($ClientId -and $Certificate) {
     $ConnectMgGraph.ClientId = $ClientId
     $ConnectMgGraph.Certificate = $Certificate
 }
-elseif ($ClientId -or $Certificate) { throw "You must specify both of neither -ClientId and -Certificate" }
+elseif ($ClientId -or $Certificate) { throw "You must specify both or neither -ClientId and -Certificate" }
 else { $ConnectMgGraph.Scopes = "User.ReadWrite.All" }
 
 while (($TenantId -and $MgContext.TenantId -ne $TenantId) -or $MgContext.Scopes -notcontains "User.ReadWrite.All") {
