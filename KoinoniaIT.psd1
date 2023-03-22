@@ -12,7 +12,7 @@
 RootModule = '***REMOVED***IT.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.143'
+ModuleVersion = '1.1.144'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -108,7 +108,7 @@ FunctionsToExport = 'Add-AllowedDmaDevices', 'Add-BluredPillarBars',
                'Set-Wallpaper', 'Set-WindowsAccountAvatar', 
                'Show-BitlockerEncryptionStatus', 'Start-KioskApp', 
                'Start-PaperCutClient', 'Start-WindowsActivation', 'Stop-ForKey', 
-               'Sync-MailContacts', 'Sync-Nps', 'Test-Admin', 'Test-CVE-2021-34470', 
+               'Sync-MailContacts', 'Sync-Nps', 'Test-Admin', 'Test-CVE202134470', 
                'Test-DmaDevices', 'Test-PendingFileRename', 'Test-PendingReboot', 
                'Test-Photo', 'Test-RegistryValue', 'Test-ScriptMetadata', 
                'Test-Scripts', 'Test-VoipMs', 'Uninstall-MicrosoftTeams', 

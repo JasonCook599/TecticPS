@@ -10195,10 +10195,10 @@ else {
   return $false
 }
 }
-function Test-CVE-2021-34470 {
+function Test-CVE202134470 {
 <#PSScriptInfo
 
-.VERSION 22.11.12
+.VERSION 22.11.13
 
 .GUID 83ac6137-696a-496a-a746-0372e8a20797
 
