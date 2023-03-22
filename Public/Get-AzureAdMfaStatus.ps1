@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME ***REMOVED***
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
 
 .TAGS 
 
@@ -47,7 +47,7 @@ The sort key to use when sorting the results. By default, this is the first prop
 
 param(
     [string]$Filter,
-    $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
+    $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", "UserType", "BlockCredential", "IsLicensed", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
     $SortKey = $Properties[0]
 )
 
