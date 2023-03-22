@@ -12,7 +12,7 @@
 RootModule = '***REMOVED***IT.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.142'
+ModuleVersion = '1.1.143'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -108,13 +108,13 @@ FunctionsToExport = 'Add-AllowedDmaDevices', 'Add-BluredPillarBars',
                'Set-Wallpaper', 'Set-WindowsAccountAvatar', 
                'Show-BitlockerEncryptionStatus', 'Start-KioskApp', 
                'Start-PaperCutClient', 'Start-WindowsActivation', 'Stop-ForKey', 
-               'Sync-MailContacts', 'Sync-Nps', 'Test-Admin', 'Test-DmaDevices', 
-               'Test-PendingFileRename', 'Test-PendingReboot', 'Test-Photo', 
-               'Test-RegistryValue', 'Test-ScriptMetadata', 'Test-Scripts', 
-               'Test-VoipMs', 'Uninstall-MicrosoftTeams', 'Update-AadSsoKey', 
-               'Update-MicrosoftStoreApps', 'Update-OfficeCache', 'Update-PKI', 
-               'Update-UsersAcademyStudents', 'Update-UsersStaff', 'Wait-ForKey', 
-               'AuthN', 'GetAADPendingGuests', 'GetAADSignIns', 
+               'Sync-MailContacts', 'Sync-Nps', 'Test-Admin', 'Test-CVE-2021-34470', 
+               'Test-DmaDevices', 'Test-PendingFileRename', 'Test-PendingReboot', 
+               'Test-Photo', 'Test-RegistryValue', 'Test-ScriptMetadata', 
+               'Test-Scripts', 'Test-VoipMs', 'Uninstall-MicrosoftTeams', 
+               'Update-AadSsoKey', 'Update-MicrosoftStoreApps', 'Update-OfficeCache', 
+               'Update-PKI', 'Update-UsersAcademyStudents', 'Update-UsersStaff', 
+               'Wait-ForKey', 'AuthN', 'GetAADPendingGuests', 'GetAADSignIns', 
                'GetAADUserSignInActivity', 'InstallModule', 'LoadDefaults', 
                'ParseGuid', 'Progress', 'Requires', 'SelectPackage'
 
