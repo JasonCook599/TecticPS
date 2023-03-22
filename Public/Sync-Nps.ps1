@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.10
 
 .GUID 6e7a4d29-1b73-490f-91aa-fc074a886716
 
@@ -74,7 +74,7 @@ If ($PSCmdlet.ShouldProcess("$Source", "Export NPS Config")) {
     Write-Debug "Connect to NPS Master and export configuration"
     $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -ScriptBlock { param ($Path) netsh nps export filename = $Path exportPSK = yes }
     Write-Debug "Verify that the import XML file was created. If it is not there, it will throw an exception caught by the trap above that will exit the script."
-    Get-Item $Path | Out-Null
+    Get-Item $Path -ErrorAction Stop | Out-Null
 }
 
 If ($PSCmdlet.ShouldProcess("$Source", "Reset NPS Config")) {
