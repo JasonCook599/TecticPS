@@ -3134,7 +3134,7 @@ return [ADSI]"LDAP://<SID=$Sid>"
 function Get-AzureAdMfaStatus {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
 
@@ -3142,7 +3142,7 @@ function Get-AzureAdMfaStatus {
 
 .COMPANYNAME ***REMOVED***
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
 
 .TAGS 
 
@@ -3181,7 +3181,7 @@ The sort key to use when sorting the results. By default, this is the first prop
 
 param(
     [string]$Filter,
-    $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
+    $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", "UserType", "BlockCredential", "IsLicensed", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
     $SortKey = $Properties[0]
 )
 
@@ -7811,7 +7811,7 @@ Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContin
 function Repair-AdAttributes {
 <#PSScriptInfo
 
-.VERSION 1.0.17
+.VERSION 1.0.18
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -7889,10 +7889,14 @@ param (
     $Properties = @("ProxyAddresses", "mail", "mailNickname", "ipPhone", "telephoneNumber")
 )
 
-$SetAdOptions = @{}
+$SetAdOptions = @{
+    Verbose = $VerbosePreference
+}
 if ($Server) { $SetAdOptions.Server = $Server }
 
-$GetAdOptions = @{}
+$GetAdOptions = @{
+    Verbose = $VerbosePreference
+}
 if ($SearchBase) { $GetAdOptions.SearchBase = $SearchBase }
 if ($Server) { $GetAdOptions.Server = $Server }
 if ($Properties) { $GetAdOptions.Properties = $Properties }
@@ -7901,12 +7905,12 @@ if ($Filter) { $GetAdOptions.Filter = $Filter } else { $GetAdOptions.Filter = "*
 $Users = Get-ADUser @GetAdOptions
 $Groups = Get-ADGroup @GetAdOptions
 
-If ($PSCmdlet.ShouldProcess("Remove legacy exchange attributes") -and $Actions -contains "LegacyExchange") {
+If ($Actions -contains "LegacyExchange" -and $PSCmdlet.ShouldProcess("Remove legacy exchange attributes")) {
     $Users | Set-ADUser -Clear $LegacyExchangeAttributes @SetAdOptions
     $Groups | Where-Object Name -notlike "Group_*" | Set-ADGroup -Clear $LegacyExchangeAttributes @SetAdOptions
 }
 
-If ($PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes") -and $Actions -contains "LegacyProxyAddresses") {
+If ($Actions -contains "LegacyProxyAddresses" -and $PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes")) {
     $Users | ForEach-Object {
         $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
         ForEach ($proxyAddress in $Remove) {
@@ -7924,22 +7928,23 @@ If ($PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes") -and $Ac
 
 }
 
-If ($PSCmdlet.ShouldProcess("Clear ProxyAddresses if only one exists") -and $Actions -contains "ExtraProxyAddresses") {
+If ($Actions -contains "ExtraProxyAddresses" -and $PSCmdlet.ShouldProcess("Clear ProxyAddresses if only one exists")) {
     $Users | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADUser -Clear ProxyAddresses @SetAdOptions
     $Groups | Where-Object Name -notlike "Group_*" | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADGroup -Clear ProxyAddresses @SetAdOptions
 }
 
-If ($PSCmdlet.ShouldProcess("Clear mailNickname if mail attribute empty") -and $Actions -contains "ClearMailNickname") {
+If ($Actions -contains "ClearMailNickname" -and $PSCmdlet.ShouldProcess("Clear mailNickname if mail attribute empty")) {
     $Users | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
     $Groups | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
 }
 
-If ($PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName") -and $Actions -contains "SetMailNickname") {
+If ($Actions -contains "SetMailNickname" -and $PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName")) {
+    return $Users
     $Users | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
     $Groups | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
 }
 
-If ($PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty") -and $Actions -contains "ClearTelephoneNumber") {
+If ($Actions -contains "ClearTelephoneNumber" -and $PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty")) {
     $Users | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber @SetAdOptions
 }
 
@@ -8664,10 +8669,107 @@ foreach ($User in $Users) {
     else { Write-Warning "User `"$account`" does not exist. Skipping." }
 }
 }
+function Set-ADUserPrimaryGroup {
+<#PSScriptInfo
+
+.VERSION 1.0.4
+
+.GUID 32f72580-a957-48f1-ba2e-da24f5550bb6
+
+.AUTHOR saw-friendship
+
+.COMPANYNAME 
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+
+.TAGS ActiveDirectory AD User Primary Group Member
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+
+.EXAMPLE
+Get-ADUser -Filter {Name -like 'u6*'} -Properties primaryGroupID,MemberOf | Set-ADUserPrimaryGroup -Group (Get-ADGroup 'Domain Users')
+
+.EXAMPLE
+Set-ADUserPrimaryGroup u676 'Domain Users'
+
+.EXAMPLE
+Set-ADUserPrimaryGroup u676,u677 'Domain Users'
+
+.EXAMPLE
+Get-ADUser u676 | Set-ADUserPrimaryGroup -Group (Get-ADGroup 'Domain Users')
+
+.EXAMPLE
+Get-ADUser -Filter {Name -like 'u6*'} | Set-ADUserPrimaryGroup -Group 'Domain Users'
+
+.DESCRIPTION
+Script for change the primary group of an AD user
+
+.LINK
+https://www.powershellgallery.com/packages/Set-ADUserPrimaryGroup/1.0.3/Content/Set-ADUserPrimaryGroup.ps1
+
+#>
+
+Param (
+    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$User,
+    [Parameter(Mandatory = $true)]$Group
+)
+Begin {
+    if ($Group.SID) {
+        $ADGroup = $Group
+    }
+    else {
+        $ADGroup = $Group | Get-ADGroup
+    }
+
+    $primaryGroupID = $ADGroup.SID -replace @('.+\-', '')
+
+}
+
+Process {
+    $User | ForEach-Object {
+        if ($_.PropertyNames -contains 'primaryGroupID' -and $_.PropertyNames -contains 'MemberOf') {
+            $ADUser = $_
+        }
+        else {
+            $ADUser = $_ | Get-ADUser -Properties primaryGroupID, MemberOf
+        }
+
+        if ($ADUser.MemberOf -notcontains $ADGroup.DistinguishedName) {
+            try {
+                Add-ADGroupMember -Identity $ADGroup.DistinguishedName -Members $ADUser.SID -ErrorAction SilentlyContinue
+            }
+            catch {
+                # Write-Error $Error[0]
+                exit
+            }
+        }
+
+        $ADUser | Set-ADUser -Replace @{'primaryGroupID' = $primaryGroupID } -ErrorAction SilentlyContinue -PassThru | Get-ADUser -Properties primaryGroup, primaryGroupID, MemberOf
+    }
+}
+
+End {}
+}
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.20
+.VERSION 1.1.21
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -8750,7 +8852,7 @@ if ($ClientId -and $Certificate) {
     $ConnectMgGraph.ClientId = $ClientId
     $ConnectMgGraph.Certificate = $Certificate
 }
-elseif ($ClientId -or $Certificate) { throw "You must specify both of neither -ClientId and -Certificate" }
+elseif ($ClientId -or $Certificate) { throw "You must specify both or neither -ClientId and -Certificate" }
 else { $ConnectMgGraph.Scopes = "User.ReadWrite.All" }
 
 while (($TenantId -and $MgContext.TenantId -ne $TenantId) -or $MgContext.Scopes -notcontains "User.ReadWrite.All") {
@@ -9930,7 +10032,7 @@ $SyncedUsers | ForEach-Object {
 function Sync-Nps {
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.10
 
 .GUID 6e7a4d29-1b73-490f-91aa-fc074a886716
 
@@ -10004,7 +10106,7 @@ If ($PSCmdlet.ShouldProcess("$Source", "Export NPS Config")) {
     Write-Debug "Connect to NPS Master and export configuration"
     $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -ScriptBlock { param ($Path) netsh nps export filename = $Path exportPSK = yes }
     Write-Debug "Verify that the import XML file was created. If it is not there, it will throw an exception caught by the trap above that will exit the script."
-    Get-Item $Path | Out-Null
+    Get-Item $Path -ErrorAction Stop | Out-Null
 }
 
 If ($PSCmdlet.ShouldProcess("$Source", "Reset NPS Config")) {
