@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.17
+.VERSION 1.0.18
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -78,10 +78,14 @@ param (
     $Properties = @("ProxyAddresses", "mail", "mailNickname", "ipPhone", "telephoneNumber")
 )
 
-$SetAdOptions = @{}
+$SetAdOptions = @{
+    Verbose = $VerbosePreference
+}
 if ($Server) { $SetAdOptions.Server = $Server }
 
-$GetAdOptions = @{}
+$GetAdOptions = @{
+    Verbose = $VerbosePreference
+}
 if ($SearchBase) { $GetAdOptions.SearchBase = $SearchBase }
 if ($Server) { $GetAdOptions.Server = $Server }
 if ($Properties) { $GetAdOptions.Properties = $Properties }
@@ -90,12 +94,12 @@ if ($Filter) { $GetAdOptions.Filter = $Filter } else { $GetAdOptions.Filter = "*
 $Users = Get-ADUser @GetAdOptions
 $Groups = Get-ADGroup @GetAdOptions
 
-If ($PSCmdlet.ShouldProcess("Remove legacy exchange attributes") -and $Actions -contains "LegacyExchange") {
+If ($Actions -contains "LegacyExchange" -and $PSCmdlet.ShouldProcess("Remove legacy exchange attributes")) {
     $Users | Set-ADUser -Clear $LegacyExchangeAttributes @SetAdOptions
     $Groups | Where-Object Name -notlike "Group_*" | Set-ADGroup -Clear $LegacyExchangeAttributes @SetAdOptions
 }
 
-If ($PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes") -and $Actions -contains "LegacyProxyAddresses") {
+If ($Actions -contains "LegacyProxyAddresses" -and $PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes")) {
     $Users | ForEach-Object {
         $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
         ForEach ($proxyAddress in $Remove) {
@@ -113,22 +117,23 @@ If ($PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes") -and $Ac
 
 }
 
-If ($PSCmdlet.ShouldProcess("Clear ProxyAddresses if only one exists") -and $Actions -contains "ExtraProxyAddresses") {
+If ($Actions -contains "ExtraProxyAddresses" -and $PSCmdlet.ShouldProcess("Clear ProxyAddresses if only one exists")) {
     $Users | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADUser -Clear ProxyAddresses @SetAdOptions
     $Groups | Where-Object Name -notlike "Group_*" | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADGroup -Clear ProxyAddresses @SetAdOptions
 }
 
-If ($PSCmdlet.ShouldProcess("Clear mailNickname if mail attribute empty") -and $Actions -contains "ClearMailNickname") {
+If ($Actions -contains "ClearMailNickname" -and $PSCmdlet.ShouldProcess("Clear mailNickname if mail attribute empty")) {
     $Users | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
     $Groups | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
 }
 
-If ($PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName") -and $Actions -contains "SetMailNickname") {
+If ($Actions -contains "SetMailNickname" -and $PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName")) {
+    return $Users
     $Users | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
     $Groups | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
 }
 
-If ($PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty") -and $Actions -contains "ClearTelephoneNumber") {
+If ($Actions -contains "ClearTelephoneNumber" -and $PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty")) {
     $Users | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber @SetAdOptions
 }
 
