@@ -2561,7 +2561,7 @@ Write-Host 'Invalid input'
 function Export-AdUsersToAssetPanda {
 <#PSScriptInfo
 
-.VERSION 1.0.13
+.VERSION 1.0.23
 
 .GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
 
@@ -2569,7 +2569,7 @@ function Export-AdUsersToAssetPanda {
 
 .COMPANYNAME ***REMOVED***
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
 
 .TAGS 
 
@@ -2593,8 +2593,11 @@ function Export-AdUsersToAssetPanda {
 .DESCRIPTION
 Export AD user for Asset Panda
 
-.PARAMETER DefaultEmployeeType
-The default type if not set for an employee.
+.PARAMETER ActiveEmployeeType
+The default type for enabled users if not set for an employee.
+
+.PARAMETER InctiveEmployeeType
+The default type for disabled users if not set for an employee.
 
 .PARAMETER SearchBase
 The AD search base to pull users from.
@@ -2613,10 +2616,11 @@ https://help.assetpanda.com/Importing.html
 #>
 
 param(
-    [string]$DefaultEmployeeType = "Inactive",
+    [string]$ActiveEmployeeType = "Full Time",
+    [string]$InactiveEmployeeType = "Inactive",
     [string]$SearchBase,
     [string]$Filter = "*",
-    [array]$Properties = ("Surname", "GivenName", "EmailAddress", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Office", "Created", "employeeHireDate", "employeeType"),
+    [array]$Properties = ("DisplayName", "GivenName", "Surname", "EmailAddress", "Office", "Title", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Created", "Enabled", "employeeHireDate", "employeeType"),
     [string]$Server
 )
 
@@ -2629,20 +2633,24 @@ if ($Properties) { $Arguments.Properties = $Properties }
 if ($Server) { $Arguments.Server = $Server }
 
 Get-ADUser @Arguments | ForEach-Object {
-    if ($null -ne $_.employeeHireDate) { $HireDate = $_.employeeHireDate } else { $HireDate = $_.Created }
-    if ($null -ne $_.employeeType) { $EmployeeType = $_.employeeType } else { $EmployeeType = $DefaultEmployeeType }
+    if ($_.employeeHireDate) { $HireDate = $_.employeeHireDate } else { $HireDate = $_.Created }
+    if (-not $_.enabled) { $EmployeeType = $InactiveEmployeeType }
+    elseif ($_.employeeType) { $EmployeeType = $_.employeeType }
+    else { $EmployeeType = $ActiveEmployeeType }
 
     return [PSCustomObject]@{
-        "Last Name"      = $_.Surname
+        "Display Name"   = $_.DisplayName
+        "E-mail"         = $_.EmailAddress -replace "`'"
         "First Name"     = $_.GivenName
-        "Email"          = $_.EmailAddress
+        "Last Name"      = $_.Surname
+        "Office"         = ($_.Office -split ",")[0]
+        "Type"           = $EmployeeType
+        "Title"          = $_.Title
         "Department"     = $_.Department
         "Work Phone"     = ([regex]::Match($_.telephoneNumber, "^((?:\+1)? ?(?:\d{10}|\d{7}))(?:.*)$")).Groups[1].Value
         "Work Extension" = $_.ipPhone
         "Cell Phone"     = $_.MobilePhone
-        "Office"         = ($_.Office -split ",")[0]
         "Hire Date"      = $HireDate.ToString("MM\/dd\/yyyy")
-        "Status"         = $EmployeeType
     }
 }
 }
