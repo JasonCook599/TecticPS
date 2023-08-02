@@ -1637,6 +1637,94 @@ ForEach ($Image in $Path) {
 }
 Return $Results
 }
+function ConvertTo-3CXRates {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 44859c27-bbf8-4831-8b02-ee12be6c726d
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+This will convert the rates from VoIP.ms to an XML file for use in 3CX. This script is not well optimized and will take a long time to run.
+
+.PARAMETER Path
+The path to export the rates to.
+
+.PARAMETER RatesPath
+The path to a CSV file containing the rates.
+
+.PARAMETER Rates
+An array of the current rates. Automatically generates from the file specified in RatesPath.
+#>
+
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+  [string]$Path,
+  [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$RatePath,
+  [array]$Rates = (Import-Csv $RatePath)
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
+Write-Verbose "Generating file header"
+$Output = '<?xml version="1.0" encoding="utf-8"?>
+<TenantProperties>
+  <TenantProperty>
+    <name>BILL_0000</name>
+    <type>String</type>
+    <value n="default" p="default" r="15" />
+  </TenantProperty>'
+
+Write-Verbose "Generating file content"
+$Rates | ForEach-Object {
+  $count++ ; Progress -Index $count -Total $Rates.count -Activity "Generating XML" -Name $("[" + $_.'Prefix ' + "] " + $_.'Description ')
+  $Output += "
+  <TenantProperty>
+    <name>BILL_$('{0:d4}' -f $count)</name>
+    <type>String</type>
+    <value n=`"$(($_.'Description ').replace("&","&amp;") )`" p=`"+$($_.'Prefix ')`" r=`"$([math]::Round([decimal]$_."Rate Value" * 100,2))`" />
+  </TenantProperty>"
+
+}
+
+Write-Verbose "Generating file footer"
+$Output += '
+</TenantProperties>'
+
+if ($Path) {
+  Write-Verbose "Writing file to $Path"
+  $Output | Out-File -FilePath $Path -Encoding utf8
+}
+else { Write-Verbose "No path specified. Not writing to file." }
+
+Write-Verbose "Done"
+return $Output
+}
 function ConvertTo-EndpointCertificate {
 <#PSScriptInfo
 
@@ -6200,6 +6288,105 @@ else {
 
 }
 }
+function Install-WingetFromCsv {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID a2fd3f34-5e6e-4bab-a860-ce9048a23348
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+Installs multiple apps using Winget
+
+.PARAMETER Path
+Path the the CSV file containing the list of apps to install. Must contain an "ID" column.
+
+.PARAMETER Apps
+An array of apps to install. Usually generated from the file specified in Path.
+
+.PARAMETER Scope
+The install scope for the application. Machine by default. Can specify $null to use the default scope.
+#>
+
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+  [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path,
+  [array]$Apps = ((Import-Csv $Path | Where-Object Source -eq "winget" | Where-Object Skip -ne $true | Sort-Object Id).Id),
+  [string]$Scope = "--scope machine"
+)
+return $Apps | ForEach-Object {
+  If ($PSCmdlet.ShouldProcess($_, "winget install")) {
+    Start-Process -FilePath "winget" -ArgumentList "install $_ $Scope" -NoNewWindow -Wait
+  }
+}
+}
+function Invoke-Command {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID b757fe20-fd8f-489d-bb21-9d01146274cd
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+This will run the specified file.
+
+.PARAMETER Path
+The file you wish to run.
+#>
+
+param ([ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path)
+& $Path
+}
 function Invoke-TickleMailRecipients {
 <#PSScriptInfo
 
@@ -8054,6 +8241,62 @@ This will reset the CSC (offline files) cache.
 [CmdletBinding(SupportsShouldProcess = $true)]
 param ()
 Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\CSC\Parameters\ -Name FormatDatabase -Value 1 -Type DWord
+}
+function Reset-GitBranch {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID ba7e96d7-1170-4cc0-9e58-4062d6821790
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+This will reset the current directory to the specified Git branch.
+
+.PARAMETER Branch
+The name of the branch to set to.
+
+.PARAMETER Path
+The location of the Git repository. Default to the current directory.
+#>
+
+param(
+  [string]$Branch = "master",
+  [ValidateScript( { Test-Path $_ -PathType Container })][string]$Path
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
+if ($Path) { Push-Location -Path $Path }
+git clean -fd
+git fetch origin
+git checkout $Branch
+git reset --hard origin/$Branch
+Pop-Location
 }
 function Reset-InviteRedepmtion {
 <#PSScriptInfo
@@ -10988,6 +11231,90 @@ https://docs.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-ss
 Import-Module $Env:ProgramFiles'\Microsoft Azure Active Directory Connect\AzureADSSO.psd1d'
 New-AzureADSSOAuthenticationContext #Office 365 Global Admin
 Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domain Admin credentials" -UserName ($env:USERDOMAIN + "\" + $env:USERNAME))
+}
+function Update-MerakiSwitchPortNames {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+Update the switch port names in Meraki based on the CSV file you specify.
+
+.PARAMETER APIKey
+Your Meraki API key.
+
+.PARAMETER networkid
+The network ID that contains the switches you wish to update.
+
+.PARAMETER Path
+The CSV file containing records you wish to update. Must contain the following columns 'Switch Name', 'Switch Port', and 'Switch Label'.
+
+.PARAMETER Headers
+An array of headers to send in each API request. Automatically generated using the APIKey paramater.
+#>
+
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+  [string]$APIKey,
+  [string]$networkid,
+  [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path,
+  $Headers = @{
+    "Content-Type"           = "application/json"
+    "Accept"                 = "application/json"
+    "X-Cisco-Meraki-API-Key" = $APIKey
+  }
+)
+
+Write-Verbose "Getting devices for $networkid"
+$Switches = Invoke-RestMethod -Method Get -Uri "https://api.meraki.com/api/v1/networks/$($networkid)/devices" -Headers $headers
+
+function UpdateSwitchPortName {
+  [CmdletBinding(SupportsShouldProcess = $true)]
+  param (
+    [string]$SwitchName,
+    [int]$Port,
+    [string]$Name
+  )
+
+  $Serial = ($Switches | Where-Object name -eq $SwitchName).Serial
+  $Body = @{ name = $Name } | ConvertTo-Json -Compress
+  If ($PSCmdlet.ShouldProcess("$SwitchName $Port", "UpdateSwitchPortName to $Name")) {
+    return Invoke-RestMethod -Method Put -Uri "https://api.meraki.com/api/v1/devices/$($Serial)/switch/ports/$($Port)" -Headers $headers -Body $Body
+  }
+}
+
+Import-Csv -Path $Path | ForEach-Object {
+  if ($null -ne $_.'Switch Name') {
+    return UpdateSwitchPortName -SwitchName $_.'Switch Name' -Port $_.'Switch Port' -Name $_.'Switch Label'
+  }
+}
 }
 function Update-MicrosoftStoreApps {
 <#PSScriptInfo
