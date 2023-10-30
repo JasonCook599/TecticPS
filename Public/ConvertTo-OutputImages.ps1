@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.6
+.VERSION 1.1.7
 
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME ***REMOVED***
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
 
 .TAGS 
 
@@ -46,27 +46,29 @@ ConvertTo-OutputImages
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-	[ValidateSet("Banner", "Logo", "Brandmark")][string]$Type = "Banner",
-	[ValidateScript( { Test-Path $_ })][string]$Json,
-	[string]$Filter,
-	[ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
-	[ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
-	[switch]$Force,
-	[string]$Destination,
-	[string]$Prefix,
-	[switch]$All
+  [ValidateSet("Banner", "Logo", "Brandmark")][array]$Types = "Banner",
+  [ValidateScript( { Test-Path $_ })][string]$Json,
+  [string]$Filter,
+  [ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
+  [ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
+  [switch]$Force,
+  [string]$Destination,
+  [string]$Prefix,
+  [switch]$All
 )
 
 if (-not $Json) { throw "Json file not found." }
 ForEach ($Image in $Path) {
-	$Image = Get-ChildItem $Image
-	$Formats = (Get-Content -Path $Json | ConvertFrom-Json).$Type
-	$count1++; $count2 = 0
-	If ($Destination) { $Formats = $Formats | Where-Object Destination -Contains $Destination }
-	$Formats | ForEach-Object {
-		$count2++; Progress -Index $count2 -Total ([math]::Max(1, $Formats.count)) -Activity "Resizing $count1 of $($Path.count): $($Image.Name)" -Name $_.Name
-		If ($PSCmdlet.ShouldProcess("$($Image.FullName) > $($_.Name)", "Convert-Image")) {
-			Convert-Image -Force:$Force -Path $Image.FullName -OutPath $OutPath -Dimensions $_.Dimensions  -Suffix ("_" + $_.Name) -Trim:$_.Trim -OutExtension $_.OutExtension -FileSize $_.FileSize -Mode $_.Mode
-		}
-	}
+  foreach ($Type in $Types) {
+    $Image = Get-ChildItem $Image
+    $Formats = (Get-Content -Path $Json | ConvertFrom-Json).$Type
+    $count1++; $count2 = 0
+    If ($Destination) { $Formats = $Formats | Where-Object Destination -Contains $Destination }
+    $Formats | ForEach-Object {
+      $count2++; Progress -Index $count2 -Total ([math]::Max(1, $Formats.count)) -Activity "Resizing $count1 of $($Path.count): $($Image.Name)" -Name $_.Name
+      If ($PSCmdlet.ShouldProcess("$($Image.FullName) > $($_.Name)", "Convert-Image")) {
+        Convert-Image -Force:$Force -Path $Image.FullName -OutPath $OutPath -Dimensions $_.Dimensions  -Suffix ("_" + $_.Name) -Trim:$_.Trim -OutExtension $_.OutExtension -FileSize $_.FileSize -Mode $_.Mode
+      }
+    }
+  }
 }
