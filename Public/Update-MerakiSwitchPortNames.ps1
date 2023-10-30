@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
 
@@ -75,8 +75,8 @@ function UpdateSwitchPortName {
   }
 }
 
-Import-Csv -Path $Path | ForEach-Object {
-  if ($null -ne $_.'Switch Name') {
-    return UpdateSwitchPortName -SwitchName $_.'Switch Name' -Port $_.'Switch Port' -Name $_.'Switch Label'
-  }
+$JackLocations = Import-Csv -Path $Path | Where-Object 'Switch Name' -NotLike ""
+$JackLocations | ForEach-Object {
+  $count++ ; Progress -Index $count -Total $JackLocations.count -Activity "Updating switch port names" -Name $($_.'Switch Port' + ": " + $_.'Switch Label')
+  return UpdateSwitchPortName -SwitchName $_.'Switch Name' -Port $_.'Switch Port' -Name $_.'Switch Label'
 }
