@@ -1903,7 +1903,7 @@ kill -SIGINT `$(cat /var/run/lighttpd.pid)
 function ConvertTo-OutputImages {
 <#PSScriptInfo
 
-.VERSION 1.1.6
+.VERSION 1.1.7
 
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
@@ -1911,7 +1911,7 @@ function ConvertTo-OutputImages {
 
 .COMPANYNAME ***REMOVED***
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
 
 .TAGS 
 
@@ -1949,31 +1949,33 @@ ConvertTo-OutputImages
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-	[ValidateSet("Banner", "Logo", "Brandmark")][string]$Type = "Banner",
-	[ValidateScript( { Test-Path $_ })][string]$Json,
-	[string]$Filter,
-	[ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
-	[ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
-	[switch]$Force,
-	[string]$Destination,
-	[string]$Prefix,
-	[switch]$All
+  [ValidateSet("Banner", "Logo", "Brandmark")][array]$Types = "Banner",
+  [ValidateScript( { Test-Path $_ })][string]$Json,
+  [string]$Filter,
+  [ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
+  [ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
+  [switch]$Force,
+  [string]$Destination,
+  [string]$Prefix,
+  [switch]$All
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 if (-not $Json) { throw "Json file not found." }
 ForEach ($Image in $Path) {
-	$Image = Get-ChildItem $Image
-	$Formats = (Get-Content -Path $Json | ConvertFrom-Json).$Type
-	$count1++; $count2 = 0
-	If ($Destination) { $Formats = $Formats | Where-Object Destination -Contains $Destination }
-	$Formats | ForEach-Object {
-		$count2++; Progress -Index $count2 -Total ([math]::Max(1, $Formats.count)) -Activity "Resizing $count1 of $($Path.count): $($Image.Name)" -Name $_.Name
-		If ($PSCmdlet.ShouldProcess("$($Image.FullName) > $($_.Name)", "Convert-Image")) {
-			Convert-Image -Force:$Force -Path $Image.FullName -OutPath $OutPath -Dimensions $_.Dimensions  -Suffix ("_" + $_.Name) -Trim:$_.Trim -OutExtension $_.OutExtension -FileSize $_.FileSize -Mode $_.Mode
-		}
-	}
+  foreach ($Type in $Types) {
+    $Image = Get-ChildItem $Image
+    $Formats = (Get-Content -Path $Json | ConvertFrom-Json).$Type
+    $count1++; $count2 = 0
+    If ($Destination) { $Formats = $Formats | Where-Object Destination -Contains $Destination }
+    $Formats | ForEach-Object {
+      $count2++; Progress -Index $count2 -Total ([math]::Max(1, $Formats.count)) -Activity "Resizing $count1 of $($Path.count): $($Image.Name)" -Name $_.Name
+      If ($PSCmdlet.ShouldProcess("$($Image.FullName) > $($_.Name)", "Convert-Image")) {
+        Convert-Image -Force:$Force -Path $Image.FullName -OutPath $OutPath -Dimensions $_.Dimensions  -Suffix ("_" + $_.Name) -Trim:$_.Trim -OutExtension $_.OutExtension -FileSize $_.FileSize -Mode $_.Mode
+      }
+    }
+  }
 }
 }
 function Copy-ToPublicDesktop {
@@ -3226,6 +3228,94 @@ param(
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 return [ADSI]"LDAP://<SID=$Sid>"
+}
+function Get-AzureAdDirectLicenseAssignments {
+<#PSScriptInfo
+
+.VERSION 2.0.1
+
+.GUID f05dd4da-b51c-41e0-9bc2-92888c536c8e
+
+.AUTHOR Nicola Suter
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+Script to cleanup direct Azure AD license assignments. This script will only remove a direct assignment if there is an associated group assignment. Before running the script make sure that you have the MSOnline PowerShell module installed. Connect to MSOnline with: Connect-MsolService
+
+.PARAMETER WhatIf
+Predict changes
+
+.PARAMETER SaveReport
+Whether to save the report to the script location.
+
+.LINK
+https://github.com/nicolonsky/Techblog/tree/master/CleanupAzureADLicensing
+
+.LINK
+https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-groups-migrate-users
+
+#>
+
+[CmdletBinding(SupportsShouldProcess)]
+param (
+  $Users = (Get-MsolUser -All -ErrorAction Stop),
+  $Skus = ("ATP_ENTERPRISE", "ATP_ENTERPRISE", "ENTERPRISEPACK")
+)
+
+$Results = @()
+
+$Users | ForEach-Object {
+  Write-Verbose "Processing $($_.UserPrincipalName)"
+  $count++ ; Progress -Index $count -Total $Users.count -Activity "Processing all licenses." -Name $_.UserPrincipalName
+  $User = $_
+  $_.Licenses | ForEach-Object {
+    <#
+      the "GroupsAssigningLicense" array contains objectId's of groups which inherit licenses
+      if the array contains an entry with the users own objectId the license was assigned directly to the user
+      if the array contains no entries and the user has a license assigned he also got a direct license assignment
+      #>
+    $_.AccountSkuId -match '\:(.*)' | Out-Null ; $Sku = $Matches[1]
+    if ($_.GroupsAssigningLicense -contains $User.ObjectId -and $Sku -in $Skus) {
+      Write-Verbose "$($User.UserPrincipalName) ($($User.ObjectId)) has direct license assignment for '$($_.AccountSkuId)'"
+      $_.GroupsAssigningLicense.Remove($User.ObjectId) | Out-Null
+
+      $Result = [PSCustomObject]@{
+        UserPrincipalName      = $user.UserPrincipalName
+        ObjectId               = $user.ObjectId
+        GroupsAssigningLicense = $_.GroupsAssigningLicense
+        AccountSkuId           = $_.AccountSkuId
+      }
+      $Results += $Result
+      return $Result
+    }
+  }
+
+}
+
+if ($Results) { Write-Warning "Found $($Results.Count) direct assigned license(s)." }
+else { Write-Output "No direct license assignments found" }
 }
 function Get-AzureAdMfaStatus {
 <#PSScriptInfo
@@ -7256,6 +7346,101 @@ If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
     }
 }
 }
+function Remove-AzureAdDirectLicenseAssignments {
+<#PSScriptInfo
+
+.VERSION 2.0.1
+
+.GUID 0677b108-26b5-409b-a169-b0eb45399dcf
+
+.AUTHOR Nicola Suter
+
+.COMPANYNAME ***REMOVED***
+
+.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
+
+<#
+.DESCRIPTION
+Script to cleanup direct Azure AD license assignments. This script will only remove a direct assignment if there is an associated group assignment. Before running the script make sure that you have the MSOnline PowerShell module installed. Connect to MSOnline with: Connect-MsolService
+
+.PARAMETER WhatIf
+Predict changes
+
+.PARAMETER SaveReport
+Whether to save the report to the script location.
+
+.LINK
+https://github.com/nicolonsky/Techblog/tree/master/CleanupAzureADLicensing
+
+.LINK
+https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-groups-migrate-users
+
+#>
+
+[CmdletBinding(SupportsShouldProcess)]
+param (
+  $Users = (Get-MsolUser -All -ErrorAction Stop),
+  $Skus = (Get-MgSubscribedSku)
+)
+
+$Results = @()
+
+$Users | ForEach-Object {
+  Write-Verbose "Processing $($_.UserPrincipalName)"
+  $count++ ; Progress -Index $count -Total $Users.count -Activity "Processing all licenses." -Name $_.UserPrincipalName
+  $User = $_
+  $_.Licenses | ForEach-Object {
+    <#
+      the "GroupsAssigningLicense" array contains objectId's of groups which inherit licenses
+      if the array contains an entry with the users own objectId the license was assigned directly to the user
+      if the array contains no entries and the user has a license assigned he also got a direct license assignment
+      #>
+    if ($_.GroupsAssigningLicense -contains $User.ObjectId -and $_.GroupsAssigningLicense.Count -gt 1) {
+      Write-Verbose "$($User.UserPrincipalName) ($($User.ObjectId)) has direct license assignment for '$($_.AccountSkuId)'"
+      $_.GroupsAssigningLicense.Remove($User.ObjectId) | Out-Null
+
+      # TODO Repalce static strings with regex matches.
+      $SkuGUID = ($Skus | Where-Object SkuPartNumber -eq (($_.AccountSkuId) -replace ("***REMOVED***:", ""))).Id -replace ("***REMOVED***_", "")
+
+      if ($PSCmdlet.ShouldProcess($user.UserPrincipalName, "Remove license assignment for sku '$($_.AccountSkuId)'")) {
+        Write-Verbose "Removing license assignment for sku '$($_.AccountSkuId) on target '$($User.UserPrincipalName)'"
+        Set-MgUserLicense -UserId $User.objectId -AddLicenses @() -RemoveLicenses $SkuGUID | Out-Null
+      }
+      $Result = [PSCustomObject]@{
+        UserPrincipalName      = $user.UserPrincipalName
+        ObjectId               = $user.ObjectId
+        GroupsAssigningLicense = $_.GroupsAssigningLicense
+        AccountSkuId           = $_.AccountSkuId
+        SkuGUID                = $SkuGUID
+      }
+      $Results += $Result
+      return $Result
+    }
+  }
+
+}
+
+if ($Results) { Write-Warning "Found $($Results.Count) direct assigned license(s)." }
+else { Write-Output "No direct license assignments found" }
+}
 function Remove-BlankLines {
 <#PSScriptInfo
 
@@ -11235,7 +11420,7 @@ Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domai
 function Update-MerakiSwitchPortNames {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
 
@@ -11310,10 +11495,10 @@ function UpdateSwitchPortName {
   }
 }
 
-Import-Csv -Path $Path | ForEach-Object {
-  if ($null -ne $_.'Switch Name') {
-    return UpdateSwitchPortName -SwitchName $_.'Switch Name' -Port $_.'Switch Port' -Name $_.'Switch Label'
-  }
+$JackLocations = Import-Csv -Path $Path | Where-Object 'Switch Name' -NotLike ""
+$JackLocations | ForEach-Object {
+  $count++ ; Progress -Index $count -Total $JackLocations.count -Activity "Updating switch port names" -Name $($_.'Switch Port' + ": " + $_.'Switch Label')
+  return UpdateSwitchPortName -SwitchName $_.'Switch Name' -Port $_.'Switch Port' -Name $_.'Switch Label'
 }
 }
 function Update-MicrosoftStoreApps {
