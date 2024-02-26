@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 14062539-2775-4450-bb0b-a3406d1db091
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

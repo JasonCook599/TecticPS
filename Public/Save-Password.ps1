@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 70496d42-6d10-460f-9e42-132a6b70e09d
 
 .AUTHOR Jason Cook Vincent Christiansen - vincent@sameie.com
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

@@ -1,15 +1,15 @@
 function AuthN {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID fe011093-6980-4847-aa9c-f7a7b47a3a5b
 
 .AUTHOR Jason Cook & Darren J Robinson
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -64,15 +64,15 @@ catch { Write-Error $_ }
 function GetAADPendingGuests {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID d2231470-2326-4498-80d2-0456b0018d0a
 
 .AUTHOR Jason Cook Darren J Robinson
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -118,15 +118,15 @@ catch { Write-Error $_ }
 function GetAADSignIns {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID e5758f99-a57e-4bcf-af21-30e5fd176e51
 
 .AUTHOR Jason Cook Darren J Robinson
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -178,15 +178,15 @@ catch { Write-Error $_ }
 function GetAADUserSignInActivity {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID b444ff47-447f-4196-90eb-08723fa0fbaf
 
 .AUTHOR Jason Cook Darren J Robinson
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -240,15 +240,15 @@ catch { Write-Error $_ }
 function InstallModule {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 10ba8c03-4333-4f67-b11b-b25fef85943b
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -281,15 +281,15 @@ If (!(Get-Module -ListAvailable -Name $Name)) {
 function LoadDefaults {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 73e8a944-8951-4a89-9a54-d51db3f9afac
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -316,7 +316,7 @@ Load default parameters for various functions.
 
 param(
     [Parameter(Mandatory = $true)] $Invocation,
-    $DefaultsScripts = "***REMOVED***ITDefaults.ps1"
+    $DefaultsScripts = "TecticPSDefaults.ps1"
 )
 
 try {
@@ -348,18 +348,34 @@ catch {
 }
 function ParseGuid {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID 93f9436d-928a-4cf8-a5a0-e3f3f6bdcf14
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -381,33 +397,33 @@ return $Guid.ToString($Format)
 function Progress {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID d410b890-4003-4030-8a47-ee4b5d91a254
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-#>
+#> 
 
 <#
 .DESCRIPTION
@@ -428,15 +444,15 @@ if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentC
 function Requires {
 <#PSScriptInfo
 
-.VERSION 2.0.4
+.VERSION 2.0.6
 
 .GUID f8ca5dd1-fef2-4024-adc9-124a3007870a
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -578,15 +594,15 @@ if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32
 function SelectPackage {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 0caaa663-ed3d-498c-a77e-d00e85146cd1
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -648,15 +664,15 @@ else {
 function Add-AllowedDmaDevices {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID a684ddd1-559b-48e2-bbdf-a85a3d50d3f6
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -718,15 +734,15 @@ foreach ($Device in $AllowedDevices.GetEnumerator()) {
 function Add-BluredPillarBars {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 6ee394c8-c592-49d5-b16c-601955ef4d2f
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -800,15 +816,15 @@ Get-ChildItem -File -Path $Path | ForEach-Object {
 function Add-ComputerToDomain {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 847616c6-fd6a-4685-b96f-ff8446a849e0
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -868,15 +884,15 @@ else { Add-Computer -DomainName $Domain -Credential $Credentials -Force }
 function Add-GroupEmail {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 772c6454-68cf-42aa-89b9-dd6dc5939e1b
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -927,15 +943,15 @@ If ($SetPrimary) { Set-UnifiedGroup -Identity $-Identity -PrimarySmtpAddress  $E
 function Add-Path {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID bcbc3792-1f34-4100-867c-6fcf09230520
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -1001,15 +1017,15 @@ Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
 function Add-Signature {
 <#PSScriptInfo
 
-.VERSION 1.1.5
+.VERSION 1.1.7
 
 .GUID 9be6c147-e71b-44c4-b265-1b685692e411
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -1084,15 +1100,15 @@ Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
 function Backup-MySql {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 401b32f3-314a-47cf-b910-04c7f2492db2
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -1179,18 +1195,34 @@ If (!$NoTrim) {
 }
 function Clear-AdminCount {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID 5e42fd43-6940-434e-bb1c-aebb8ac32e44
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -1204,15 +1236,15 @@ Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Set-ADUser -C
 function Clear-PrintQueue {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 4656316e-19c9-4d45-a8cb-6c26f6548e22
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -1269,15 +1301,15 @@ Invoke-Command -ComputerName $ComputerName -ScriptBlock {
 function Connect-Office365 {
 <#PSScriptInfo
 
-.VERSION 2.1.3
+.VERSION 2.1.5
 
 .GUID ab066274-cee5-401d-99ff-1eeced8ca9af
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -1476,15 +1508,15 @@ Else {
 function Convert-Image {
 <#PSScriptInfo
 
-.VERSION 1.0.10
+.VERSION 1.0.12
 
 .GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -1640,15 +1672,15 @@ Return $Results
 function ConvertTo-3CXRates {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 44859c27-bbf8-4831-8b02-ee12be6c726d
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -1728,15 +1760,15 @@ return $Output
 function ConvertTo-EndpointCertificate {
 <#PSScriptInfo
 
-.VERSION 2.0.2
+.VERSION 2.0.4
 
 .GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -1903,15 +1935,15 @@ kill -SIGINT `$(cat /var/run/lighttpd.pid)
 function ConvertTo-OutputImages {
 <#PSScriptInfo
 
-.VERSION 1.1.7
+.VERSION 1.1.9
 
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -1981,15 +2013,15 @@ ForEach ($Image in $Path) {
 function Copy-ToPublicDesktop {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID f54d5874-3851-47a7-87f5-7841980e0c7a
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -2050,15 +2082,15 @@ if ($Group -contains "CA") {
 function Disable-NetbiosTcpIp {
 <#PSScriptInfo
 
-.VERSION 1.1.1
+.VERSION 1.1.3
 
 .GUID 460f5844-8755-46df-8fb5-a12fa88bf413
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -2113,18 +2145,34 @@ $Interfaces | ForEach-Object {
 }
 function Disable-SelfServicePurchase {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID 1af7209d-520d-4d2c-90f4-de3bc5cf2f48
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -2138,15 +2186,15 @@ Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase | ForEach-Objec
 function Enable-AdUserPermissionInheritance {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 7e41b659-a682-489a-830d-5a118f2e11be
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -2213,15 +2261,15 @@ $Users | ForEach-Object {
 function Enable-LicenseOptions {
 <#PSScriptInfo
 
-.VERSION 1.3.2
+.VERSION 1.3.4
 
 .GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
 
 .AUTHOR Jason Cook & Roman Zarka | Microsoft Services
 
-.COMPANYNAME ***REMOVED*** & Microsoft Services
+.COMPANYNAME Tectic & Microsoft Services
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -2455,15 +2503,15 @@ If ($Return) { Return $Results }
 function Enable-NestedVm {
 <#PSScriptInfo
 
-.VERSION 1.3.2
+.VERSION 1.3.4
 
 .GUID 528bfa6d-27a7-4612-9092-faae014e3917
 
 .AUTHOR Jason Cook Drew Cross | Microsoft Services
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -2651,15 +2699,15 @@ Write-Host 'Invalid input'
 function Export-AdUsersToAssetPanda {
 <#PSScriptInfo
 
-.VERSION 1.0.23
+.VERSION 1.0.25
 
 .GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -2747,15 +2795,15 @@ Get-ADUser @Arguments | ForEach-Object {
 function Export-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.2.8
+.VERSION 1.2.10
 
 .GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -2802,15 +2850,15 @@ if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
 function Export-MatchingCertificates {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 31c7075a-49f8-4f99-ad29-aa9d83ab8dc3
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -2881,18 +2929,34 @@ $Templates | Foreach-Object {
 }
 function Find-EmptyOu {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID a1800752-6b26-44fe-8056-573c7434ff1d
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -2913,15 +2977,15 @@ ForEach-Object {
 function Get-AdComputerInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID fc558d38-77a0-4b50-bd45-9f81aaf54984
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -2981,15 +3045,15 @@ return $Computers # | Sort-Object $SortKey | Select-Object $Properties
 function Get-ADInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 868aac51-6c72-482e-8b54-42a3c5f87596
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -3026,10 +3090,10 @@ Filters the search based on the spesified parameters.
 Updates the Upn. Must be used with -OldUpn and -NewUpn. Can be combined with -SearchBase
 
 .PARAMETER oldUpnSuffix
-Specifes the UPN to be changed from. If unspecified, will use "*@koinonia.local".
+Specifes the UPN to be changed from.
 
 .PARAMETER newUpnSuffix
-Spesified the UPN to change to.  If unspecified, will use "*@***REMOVED***".
+Spesified the UPN to change to.
 
 .PARAMETER SearchBase
 Specifies the search base for the command.
@@ -3092,18 +3156,34 @@ If ($updateUpnSuffix) {
 }
 function Get-AdminCount {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID 11e3b42b-44ff-41e2-b70d-2ec61685f52f
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -3117,15 +3197,15 @@ Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Select-Object
 function Get-AdUserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 2102c95e-5402-43a2-ba4f-356a89fff4ca
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -3185,15 +3265,15 @@ return $Users # | Sort-Object $SortKey | Select-Object $Properties
 function Get-AdUserSid {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 0e4e3ea4-6fe3-4b89-98f0-a09f40baafed
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -3232,15 +3312,15 @@ return [ADSI]"LDAP://<SID=$Sid>"
 function Get-AzureAdDirectLicenseAssignments {
 <#PSScriptInfo
 
-.VERSION 2.0.1
+.VERSION 2.0.3
 
 .GUID f05dd4da-b51c-41e0-9bc2-92888c536c8e
 
 .AUTHOR Nicola Suter
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -3320,15 +3400,15 @@ else { Write-Output "No direct license assignments found" }
 function Get-AzureAdMfaStatus {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.9
 
 .GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -3378,15 +3458,15 @@ return Get-MsolUser -All  | Sort-Object $SortKey | Select-Object $Properties
 function Get-AzureAdUserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 3af068df-1f2d-4e6b-b1a7-e18e09311471
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -3436,18 +3516,34 @@ return Get-AzureADUser -Filter $Filter | Where-Object $WhereObject | Sort-Object
 }
 function Get-BiosProductKey {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID 8ccdb627-b33f-4be2-b6e0-f9cb992ee398
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -3458,15 +3554,15 @@ return (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOrigi
 function Get-BitlockerStatus {
 <#PSScriptInfo
 
-.VERSION 1.1.2
+.VERSION 1.1.4
 
 .GUID 674855a4-1cd1-43b7-8e41-fea3bc501f61
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -3516,15 +3612,15 @@ $protectans
 function Get-DuplicateFileNames {
 <#PSScriptInfo
 
-.VERSION 1.0.10
+.VERSION 1.0.12
 
 .GUID 5e6104a0-232a-4fb1-8858-62e1d8220721
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -3570,15 +3666,15 @@ return $Results
 function Get-ExchangeOnlineConnection {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 09be455e-f050-4430-a18e-fa5b4c346ba5
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -3614,15 +3710,15 @@ if ($Session) { return $Session } else { return $null }
 function Get-ExchangePhoto {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 10b98a61-ebf3-499f-847f-4aa18b41a9dd
 
 .AUTHOR Jason Cook Rajeev Buggaveeti
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -3723,15 +3819,15 @@ Return $Results
 function Get-FirmwareType {
 <#PSScriptInfo
 
-.VERSION 1.1.1
+.VERSION 1.1.3
 
 .GUID d15ce592-4b3e-4d42-82b6-d4a2dd5f15f2
 
 .AUTHOR Jason Cook Chris Warwick
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -3940,15 +4036,15 @@ Function Get-BiosType {
 function Get-GroupMembershipReport {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID b2ff192c-1106-4c52-ab8c-b7cab4524cc9
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -3999,15 +4095,15 @@ return $Results
 function Get-ipPhone {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 51e2066f-785d-4ab1-b889-904c387fb2f9
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -4055,15 +4151,15 @@ return $Results
 function Get-LapsInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 2a3f5ec5-e6c3-4a0b-a8ca-67f98b359144
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -4132,15 +4228,15 @@ if ($Details) { return $Results } else {
 function Get-MailboxAddresses {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID f3ba5497-54b4-4b33-8c6f-33a678f5551c
 
 .AUTHOR Jason Cook Laeeq Qazi - www.HostingController.com
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -4188,15 +4284,15 @@ Get-Mailbox | ForEach-Object {
 function Get-MemoryType {
 <#PSScriptInfo
 
-.VERSION 1.1.4
+.VERSION 1.1.6
 
 .GUID 4625bce9-661a-4a70-bb4e-46ea09333f33
 
 .AUTHOR Jason Cook Microsoft
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -4288,15 +4384,15 @@ Return $Result
 function Get-MfpEmails {
 <#PSScriptInfo
 
-.VERSION 2.0.4
+.VERSION 2.0.6
 
 .GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -4482,15 +4578,15 @@ return $Results
 function Get-MsGraphAuthenticationMethod {
 <#PSScriptInfo
 
-.VERSION 1.2.2
+.VERSION 1.2.4
 
 .GUID c42317a3-3385-41d1-821d-8622b798259a
 
 .AUTHOR paul@thesysadminchannel.com & Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -4644,15 +4740,15 @@ END {}
 function Get-NewComputerName {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID f0c0a88c-be5c-46ee-ab03-86272a36b5d7
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -4708,15 +4804,15 @@ return $Prefix.Substring(0, $PrefixLenght) + $Serial
 function Get-NewIP {
 <#PSScriptInfo
 
-.VERSION 1.1.2
+.VERSION 1.1.4
 
 .GUID 9eea8e22-18f9-4cf7-b019-602c7d71dcf8
 
 .AUTHOR Jason Cook Aman Dhally - amandhally@gmail.com
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -4787,15 +4883,15 @@ foreach ($lan in $ethernet) {
 function Get-OrphanedGPO {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 4ec63b79-6484-43eb-90f8-bef7e2642564
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -4854,15 +4950,15 @@ catch {
 function Get-RecentEvents {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 05dad3a6-57cf-4747-b3bd-57bc12b7628e
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -4922,15 +5018,15 @@ Else { Write-Error "You must specify either -Before or -After" }
 function Get-SecureBoot {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 421f45c1-3a42-4c17-83a8-bb109f412a19
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5006,15 +5102,15 @@ If ($ReportFile) { $Report | Export-Csv $ReportFile }
 function Get-Spns {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 086f7358-170c-4f90-ab37-9b06888cd963
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5067,15 +5163,15 @@ foreach ($result in $results) {
 function Get-StaleAADGuestAccounts {
 <#PSScriptInfo
 
-.VERSION 1.1.3
+.VERSION 1.1.5
 
 .GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
 
 .AUTHOR Jason Cook Darren J Robinson
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5169,15 +5265,15 @@ return $StaleAndPendingGuests
 function Get-TermsOfUse {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 7c954769-1a02-4bbb-b1e0-8e9ea3dbb0c8
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5222,15 +5318,15 @@ return $Results
 function Get-TpmInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 14062539-2775-4450-bb0b-a3406d1db091
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5389,15 +5485,15 @@ If ($ReportFile) { $Report | Export-Csv $ReportFile }
 function Get-UserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID c64f1f09-036c-471d-898c-c9b3da6f53a8
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5468,15 +5564,15 @@ return $Results
 function Get-Wallpaper {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5519,15 +5615,15 @@ Invoke-WebRequest -OutFile $Path -Uri $Uri -ErrorAction SilentlyContinue
 function Grant-Matching {
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 8e42dd4d-c91c-420c-99f5-7b233590ae2c
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5562,7 +5658,7 @@ https://github.com/raandree/NTFSSecurity
 This can be used to set the access right on the child folders. If unspecified, it will give FullControl. See documentation of the NTFSSecurity module for options.
 
 .PARAMETER Domain
-This can be used to set the domain of the users. If unspecified, it will use the 'KOINONIA' domain.
+This can be used to set the domain of the users. If unspecified, it will use the current domain ($Env:USERDOMAIN).
 
 .PARAMETER Folder
 This can be used to select a folder in which to run these commands on. If unspecified, it will run in the PowerShell has active.
@@ -5573,9 +5669,9 @@ Grant-Matching: Granting DOMAIN\user FullControl on C:\Users\user
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-	$Path = (Get-ChildItem | Where-Object { $_.PSISContainer }),
-	[string]$AccessRights = 'FullControl',
-	[string]$Domain = $Env:USERDOMAIN
+  $Path = (Get-ChildItem | Where-Object { $_.PSISContainer }),
+  [string]$AccessRights = 'FullControl',
+  [string]$Domain = $Env:USERDOMAIN
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
@@ -5583,25 +5679,25 @@ try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } cat
 Requires -Modules NTFSSecurity
 
 foreach ($UserFolder in $Path) {
-	$Account = $Domain + '\' + $UserFolder
-	$count++ ; Progress -Index $count -Total $Path.count -Activity "Granting $Account $AccessRights." -Name $UserFolder.FullName
-	If ($PSCmdlet.ShouldProcess("$($UserFolder.FullName)", "Add-NTFSAccess")) {
-		Add-NTFSAccess -Path $UserFolder.FullName -Account $Account -AccessRights $AccessRights
-	}
+  $Account = $Domain + '\' + $UserFolder
+  $count++ ; Progress -Index $count -Total $Path.count -Activity "Granting $Account $AccessRights." -Name $UserFolder.FullName
+  If ($PSCmdlet.ShouldProcess("$($UserFolder.FullName)", "Add-NTFSAccess")) {
+    Add-NTFSAccess -Path $UserFolder.FullName -Account $Account -AccessRights $AccessRights
+  }
 }
 }
 function Import-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.2.8
+.VERSION 1.2.10
 
 .GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5651,15 +5747,15 @@ if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
 function Initialize-BiosUsbKey {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 0c7d4d03-0299-400f-92a8-f857f9b8dc6e
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5722,15 +5818,15 @@ if ($Manufacturer -eq "Lenovo") { Copy-Item -Path .\LOGO*.gif -Destination $Driv
 function Initialize-OneDrive {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 983e1108-74f9-41a5-8de9-f12145fbeffc
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5762,15 +5858,15 @@ Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 function Initialize-Workstation {
 <#PSScriptInfo
 
-.VERSION 1.2.16
+.VERSION 1.2.18
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -5874,7 +5970,7 @@ param(
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Test-Admin -Throw | Out-Null
-Requires ***REMOVED***IT
+Requires TecticPS
 
 if ($Step -eq 1) { $Action = @( "LabelDrive", "Wallpaper", "MicrosoftStore", "Winget") }
 if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Reboot") }
@@ -5984,15 +6080,15 @@ If ( $Reboot -or $Action -contains "Reboot" -or (Test-Path "HKLM:\SOFTWARE­\Mic
 function Install-GCPW {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 24dd6c1f-cc9a-44a4-b8e8-dd831d7a51b4
 
 .AUTHOR Jason Cook Google
 
-.COMPANYNAME ***REMOVED*** Google
+.COMPANYNAME Tectic Google
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -6030,77 +6126,77 @@ https://support.google.com/a/answer/9250996?hl=en
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [ValidatePattern("^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+([a-zA-Z0-9-]{2,63})$", ErrorMessage = "{0} is not a valid domain name.")][Parameter(Mandatory = $true)][string]$DomainsAllowedToLogin
+  [ValidatePattern("^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+([a-zA-Z0-9-]{2,63})$", ErrorMessage = "{0} is not a valid domain name.")][Parameter(Mandatory = $true)][string]$DomainsAllowedToLogin
 )
 
 if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Credential Provider for Windows')) {
 
-    Add-Type -AssemblyName System.Drawing
-    Add-Type -AssemblyName PresentationFramework
+  Add-Type -AssemblyName System.Drawing
+  Add-Type -AssemblyName PresentationFramework
 
-    #If (!(Test-Admin -Warn)) { Break }
+  #If (!(Test-Admin -Warn)) { Break }
 
-    <# Choose the GCPW file to download. 32-bit and 64-bit versions have different names #>
-    if ([Environment]::Is64BitOperatingSystem) {
-        $gcpwFileName = 'gcpwstandaloneenterprise64.msi'
-    }
-    else {
-        $gcpwFileName = 'gcpwstandaloneenterprise.msi'
-    }
+  <# Choose the GCPW file to download. 32-bit and 64-bit versions have different names #>
+  if ([Environment]::Is64BitOperatingSystem) {
+    $gcpwFileName = 'gcpwstandaloneenterprise64.msi'
+  }
+  else {
+    $gcpwFileName = 'gcpwstandaloneenterprise.msi'
+  }
 
-    <# Download the GCPW installer. #>
-    $gcpwUri = 'https://dl.google.com/credentialprovider/' + $gcpwFileName
+  <# Download the GCPW installer. #>
+  $gcpwUri = 'https://dl.google.com/credentialprovider/' + $gcpwFileName
 
-    Write-Host 'Downloading GCPW from' $gcpwUri
-    Invoke-WebRequest -Uri $gcpwUri -OutFile $gcpwFileName
+  Write-Host 'Downloading GCPW from' $gcpwUri
+  Invoke-WebRequest -Uri $gcpwUri -OutFile $gcpwFileName
 
-    <# Run the GCPW installer and wait for the installation to finish #>
+  <# Run the GCPW installer and wait for the installation to finish #>
 
-    Write-Output "Installing Office 2019"
-    $run = $InstallPath + 'Office Deployment Tool\setup.exe'
-    $Arguments = "/configure `"" + $InstallPath + "Office Deployment Tool\***REMOVED***-2019-ProPlus-Default.xml"
-    Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
+  Write-Output "Installing Office 2019"
+  $run = $InstallPath + 'Office Deployment Tool\setup.exe'
+  $Arguments = "/configure `"" + $InstallPath + "Office Deployment Tool\2019-ProPlus-Default.xml"
+  Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
 
-    $arguments = "/i `"$gcpwFileName`""
-    $installProcess = (Start-Process msiexec.exe -ArgumentList $arguments -PassThru -Wait)
+  $arguments = "/i `"$gcpwFileName`""
+  $installProcess = (Start-Process msiexec.exe -ArgumentList $arguments -PassThru -Wait)
 
-    <# Check if installation was successful #>
-    if ($installProcess.ExitCode -ne 0) {
-        [System.Windows.MessageBox]::Show('Installation failed!', 'GCPW', 'OK', 'Error')
-        exit $installProcess.ExitCode
-    }
-    else {
-        [System.Windows.MessageBox]::Show('Installation completed successfully!', 'GCPW', 'OK', 'Info')
-    }
+  <# Check if installation was successful #>
+  if ($installProcess.ExitCode -ne 0) {
+    [System.Windows.MessageBox]::Show('Installation failed!', 'GCPW', 'OK', 'Error')
+    exit $installProcess.ExitCode
+  }
+  else {
+    [System.Windows.MessageBox]::Show('Installation completed successfully!', 'GCPW', 'OK', 'Info')
+  }
 
-    <# Set the required registry key with the allowed domains #>
-    $registryPath = 'HKEY_LOCAL_MACHINE\Software\Google\GCPW'
-    $name = 'domains_allowed_to_login'
-    [microsoft.win32.registry]::SetValue($registryPath, $name, $domainsAllowedToLogin)
+  <# Set the required registry key with the allowed domains #>
+  $registryPath = 'HKEY_LOCAL_MACHINE\Software\Google\GCPW'
+  $name = 'domains_allowed_to_login'
+  [microsoft.win32.registry]::SetValue($registryPath, $name, $domainsAllowedToLogin)
 
-    $domains = Get-ItemPropertyValue HKLM:\Software\Google\GCPW -Name $name
+  $domains = Get-ItemPropertyValue HKLM:\Software\Google\GCPW -Name $name
 
-    if ($domains -eq $domainsAllowedToLogin) {
-        [System.Windows.MessageBox]::Show('Configuration completed successfully!', 'GCPW', 'OK', 'Info')
-    }
-    else {
-        [System.Windows.MessageBox]::Show('Could not write to registry. Configuration was not completed.', 'GCPW', 'OK', 'Error')
+  if ($domains -eq $domainsAllowedToLogin) {
+    [System.Windows.MessageBox]::Show('Configuration completed successfully!', 'GCPW', 'OK', 'Info')
+  }
+  else {
+    [System.Windows.MessageBox]::Show('Could not write to registry. Configuration was not completed.', 'GCPW', 'OK', 'Error')
 
-    }
+  }
 }
 }
 function Install-MicrosoftOffice {
 <#PSScriptInfo
 
-.VERSION 1.2.4
+.VERSION 1.2.6
 
 .GUID 12bacb17-e597-4588-8a86-0e05142301b6
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -6141,10 +6237,10 @@ Install-MicrosoftOffice -Version 201932
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [ValidateSet(2019, 2016, 2013, 2010, 2007)][string]$Version,
-    [ValidateSet("Visio", "x86", "Standard", $null)]$Options,
-    [string]$InstallerPath,
-    [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
+  [ValidateSet(2019, 2016, 2013, 2010, 2007)][string]$Version,
+  [ValidateSet("Visio", "x86", "Standard", $null)]$Options,
+  [string]$InstallerPath,
+  [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
 )
 
 while (!$InstallerPath) { $InstallerPath = Read-Host -Prompt "Enter the installer path." }
@@ -6155,43 +6251,43 @@ ElseIf ( $Version -eq "2010" ) { $Exe = Join-Path -Path $InstallerPath -ChildPat
 ElseIf ( $Version -eq "2013" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2013 Pro Plus SP1 x86 x64\setup.exe' }
 ElseIf ( $Version -eq "2016" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2016 Pro Plus x86 41353\setup.exe' }
 ElseIf ( $Version -eq "2019" ) {
-    if ($Options -eq "Visio") { $ConfigFile = "***REMOVED***-2019-ProPlus-Visio.xml" }
-    elseif ($Options -eq "x86") { $ConfigFile = "***REMOVED***-2019-ProPlus-32-Default.xml" }
-    elseif ($Options -eq "Standard") { $ConfigFile = "***REMOVED***-2019-Standard-Default.xml" }
-    else { $ConfigFile = "***REMOVED***-2019-ProPlus-Default.xml" }
-    Write-Debug "Config file: $ConfigFile"
-    $Exe = Join-Path -Path $InstallerPath -ChildPath 'Office Deployment Tool\setup.exe'
-    $ConfigPath = Join-Path (Split-Path -Path $Exe -Parent) -ChildPath $ConfigFile
-    if (Test-Path -Path $ConfigPath -PathType Leaf) {
-        $Arguments = "/$Mode `"$ConfigPath`""
-    }
-    else { throw "Cannot find config file at $ConfigPath" }
+  if ($Options -eq "Visio") { $ConfigFile = "2019-ProPlus-Visio.xml" }
+  elseif ($Options -eq "x86") { $ConfigFile = "2019-ProPlus-32-Default.xml" }
+  elseif ($Options -eq "Standard") { $ConfigFile = "2019-Standard-Default.xml" }
+  else { $ConfigFile = "2019-ProPlus-Default.xml" }
+  Write-Debug "Config file: $ConfigFile"
+  $Exe = Join-Path -Path $InstallerPath -ChildPath 'Office Deployment Tool\setup.exe'
+  $ConfigPath = Join-Path (Split-Path -Path $Exe -Parent) -ChildPath $ConfigFile
+  if (Test-Path -Path $ConfigPath -PathType Leaf) {
+    $Arguments = "/$Mode `"$ConfigPath`""
+  }
+  else { throw "Cannot find config file at $ConfigPath" }
 }
 else { Write-Error "Version not found. Please spesify a valid version." }
 if (Test-Path -Path $Exe -PathType Leaf) {
-    if ($Mode -eq "download") { $Message = "Downloading" } else { $Message = "Installing" }
-    $Message += " Office $Version"
-    if ($ConfigFile) { $Message += " with $ConfigFile" }
-    If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", $Message)) {
-        Write-Output $Message
-        Write-Verbose "$Exe $Arguments"
-        Start-Process -FilePath $Exe -NoNewWindow -Wait -ArgumentList $Arguments
-    }
+  if ($Mode -eq "download") { $Message = "Downloading" } else { $Message = "Installing" }
+  $Message += " Office $Version"
+  if ($ConfigFile) { $Message += " with $ConfigFile" }
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", $Message)) {
+    Write-Output $Message
+    Write-Verbose "$Exe $Arguments"
+    Start-Process -FilePath $Exe -NoNewWindow -Wait -ArgumentList $Arguments
+  }
 }
 else { throw "Cannot find installer at $Exe" }
 }
 function Install-RSAT {
 <#PSScriptInfo
 
-.VERSION 1.2.2
+.VERSION 1.2.4
 
 .GUID 44daac91-76d4-41f5-a2ab-688d548ad0d1
 
 .AUTHOR Jason Cook Martin Bengtsson
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -6381,15 +6477,15 @@ else {
 function Install-WingetFromCsv {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID a2fd3f34-5e6e-4bab-a860-ce9048a23348
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -6438,15 +6534,15 @@ return $Apps | ForEach-Object {
 function Invoke-CommandSimple {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID b757fe20-fd8f-489d-bb21-9d01146274cd
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -6480,15 +6576,15 @@ param ([ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path)
 function Invoke-TickleMailRecipients {
 <#PSScriptInfo
 
-.VERSION 1.2.3
+.VERSION 1.2.5
 
 .GUID ece98adc-3c44-4a02-a254-d4e7f2888f4f
 
 .AUTHOR Jason Cook Joseph Palarchio
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -6548,15 +6644,15 @@ foreach ($DistributionGroup in $DistributionGroups) {
 function Invoke-TouchFile {
 <#PSScriptInfo
 
-.VERSION 1.0.10
+.VERSION 1.0.12
 
 .GUID edfc8010-fc8d-4eba-8934-4c3a75725d33
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -6596,15 +6692,15 @@ If ($PSCmdlet.ShouldProcess($Path)) {
 function Measure-AverageDuration {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID f4c6b8ab-e5d2-4967-b803-a410619bd191
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -6661,15 +6757,15 @@ return @{
 function Move-ArchiveEventLogs {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID f12cad80-f34f-402f-aa4a-e92d80f725a9
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -6730,15 +6826,15 @@ $Files | ForEach-Object {
 function New-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID 93f5aa38-3ef7-4d57-8225-1ba9e7167243
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -7058,15 +7154,15 @@ else { return $Config }
 function New-Password {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -7123,15 +7219,15 @@ return $Password
 function New-RandomCharacters {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 9f443ca7-e536-40ee-a774-7d94c5d3c569
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -7173,15 +7269,15 @@ return [String]$Characters[$Random]
 function Ping-Hosts {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 0603a3ee-bff9-464a-aa86-44903c476fe9
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -7277,15 +7373,15 @@ while ($true) {
 function Remove-AuthenticodeSignature {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.9
 
 .GUID 3262ca7f-d1f0-4539-9fee-90fb4580623b
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -7349,15 +7445,15 @@ If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
 function Remove-AzureAdDirectLicenseAssignments {
 <#PSScriptInfo
 
-.VERSION 2.0.1
+.VERSION 2.0.3
 
 .GUID 0677b108-26b5-409b-a169-b0eb45399dcf
 
 .AUTHOR Nicola Suter
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -7418,7 +7514,7 @@ $Users | ForEach-Object {
       $_.GroupsAssigningLicense.Remove($User.ObjectId) | Out-Null
 
       # TODO Repalce static strings with regex matches.
-      $SkuGUID = ($Skus | Where-Object SkuPartNumber -eq (($_.AccountSkuId) -replace ("***REMOVED***:", ""))).Id -replace ("***REMOVED***_", "")
+      $SkuGUID = ($Skus | Where-Object SkuPartNumber -eq (($_.AccountSkuId) -replace ("\w\:", ""))).Id -replace ("[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?_", "")
 
       if ($PSCmdlet.ShouldProcess($user.UserPrincipalName, "Remove license assignment for sku '$($_.AccountSkuId)'")) {
         Write-Verbose "Removing license assignment for sku '$($_.AccountSkuId) on target '$($User.UserPrincipalName)'"
@@ -7444,33 +7540,33 @@ else { Write-Output "No direct license assignments found" }
 function Remove-BlankLines {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID c0df5582-8e43-491d-92ce-410392bb9912
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-#>
+#> 
 
 <#
 .DESCRIPTION
@@ -7483,18 +7579,34 @@ return $String
 }
 function Remove-CachedWallpaper {
 <#PSScriptInfo
-.VERSION 1.0.1
+
+.VERSION 1.0.3
+
 .GUID 2a1c91e6-58fd-4f37-9daf-370b954c31e4
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -7514,15 +7626,15 @@ Remove-Item "$Env:appdata\Microsoft\Windows\Themes\CachedFiles\*.*" -ErrorAction
 function Remove-GroupEmail {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 214ed066-0271-4c0b-8210-8554f8de4f4a
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -7572,15 +7684,15 @@ Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Remove = $EmailAddress 
 function Remove-MailboxOrphanedSids {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID fc0d9531-8d08-4b67-8247-7ade678c2d31
 
 .AUTHOR Jason Cook CarlosDZRZ
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -7694,15 +7806,15 @@ End {
 function Remove-OldFolders {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID cb98c8e9-cb35-4db2-9fe8-33afb9eb2272
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -7754,15 +7866,15 @@ Get-ChildItem $Path -Directory | Sort-Object CreationTime -Descending | Select-O
 function Remove-OldModuleVersions {
 <#PSScriptInfo
 
-.VERSION 0.0.12
+.VERSION 0.0.14
 
 .GUID 975b5e06-eee0-461b-9b98-49351c762dcd
 
 .AUTHOR Jason Cook Luke Murray (Luke.Geek.NZ)
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -7811,15 +7923,15 @@ foreach ($Module in $Modules) {
 function Remove-UserPASSWD_NOTREQD {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 6309e154-81f6-4bd1-aff7-deaea3274934
 
 .AUTHOR Jason Cook Robin Granberg (robin.granberg@microsoft.com)
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -8133,15 +8245,15 @@ else {
 function Remove-VsResistInstallFiles {
 <#PSScriptInfo
 
-.VERSION 1.1.3
+.VERSION 1.1.5
 
 .GUID 0775cf89-1a99-44ec-ac4e-7c80c95d87a2
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -8191,15 +8303,15 @@ Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContin
 function Repair-AdAttributes {
 <#PSScriptInfo
 
-.VERSION 1.0.18
+.VERSION 1.0.20
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -8340,15 +8452,15 @@ If ($Actions -contains "SetTelephoneNumber" -and $PSCmdlet.ShouldProcess("Set te
 function Repair-VmPermissions {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 8bd63288-3b9f-44dc-bc34-c25aea4b5452
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -8406,18 +8518,34 @@ ForEach ($VM in $VMs) {
 }
 function Reset-CSC {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID a4176bef-cf00-42a8-b097-8c9be952931c
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -8430,15 +8558,15 @@ Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\CSC\Parameters\ -
 function Reset-GitBranch {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID ba7e96d7-1170-4cc0-9e58-4062d6821790
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -8486,15 +8614,15 @@ Pop-Location
 function Reset-InviteRedepmtion {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 8697df26-a171-4f10-9929-fbff1e58ab4b
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -8578,15 +8706,15 @@ Return $Results
 function Reset-WindowsUpdate {
 <#PSScriptInfo
 
-.VERSION 1.20.1
+.VERSION 1.20.3
 
 .GUID b4f15462-2ab3-45e5-b2e2-ecb649f1f1a6
 
 .AUTHOR Jason Cook Ryan Nemeth
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -8726,15 +8854,15 @@ Write-Host "Process complete. Please reboot your computer."
 function Resize-Image {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 144cbae4-8208-4df5-a801-42316e9db97e
 
 .AUTHOR Jason Cook Patrick Lambert - http://dendory.net
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -8816,15 +8944,15 @@ Export-ModuleMember Resize-Image
 function Save-Password {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 70496d42-6d10-460f-9e42-132a6b70e09d
 
 .AUTHOR Jason Cook Vincent Christiansen - vincent@sameie.com
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -8872,15 +9000,15 @@ $Credential.Password | ConvertFrom-SecureString | Set-Content $Path
 function Search-Registry {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 029cd8de-13e9-4169-ae20-72c021290013
 
 .AUTHOR Rohn Edwards
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -9023,15 +9151,15 @@ process {
 function Set-AdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.2
+.VERSION 1.1.4
 
 .GUID 5dcbac67-cebe-4cb8-bf95-8ad720c25e72
 
 .AUTHOR Jason Cook Rajeev Buggaveeti
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -9108,7 +9236,7 @@ foreach ($User in $Users) {
 function Set-ADUserPrimaryGroup {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 32f72580-a957-48f1-ba2e-da24f5550bb6
 
@@ -9116,7 +9244,7 @@ function Set-ADUserPrimaryGroup {
 
 .COMPANYNAME 
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS ActiveDirectory AD User Primary Group Member
 
@@ -9205,15 +9333,15 @@ End {}
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.21
+.VERSION 1.1.23
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -9341,15 +9469,15 @@ $Photos | ForEach-Object {
 function Set-ComputerName {
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 0e319076-a254-46aa-948c-203373b9e47d
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -9416,15 +9544,15 @@ catch [System.InvalidOperationException] {
 function Set-DefaultWallpapers {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.9
 
 .GUID 910cea1b-4c78-4282-ac1d-7a64897475ea
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -9528,15 +9656,15 @@ if ($LockScreen) {
 function Set-ExchangePhoto {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 0887fff3-2d78-4028-8440-92c1196c6891
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -9594,15 +9722,15 @@ Get-ChildItem $Path | ForEach-Object {
 function Set-Owner {
 <#PSScriptInfo
 
-.VERSION 1.1.1
+.VERSION 1.1.3
 
 .GUID fb1d15b5-4681-4f99-90d6-1fd44ed4219b
 
 .AUTHOR Jason Cook Boe Prox
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -9834,15 +9962,15 @@ End {
 function Set-RoomCalendarPermissions {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 9d477618-5530-413c-bdf8-3ddf1580dbfa
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -9887,33 +10015,33 @@ Get-Mailbox -RecipientTypeDetails RoomMailbox | ForEach-Object {
 function Set-Wallpaper {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 5367e6e7-1177-4f3f-a345-1633446ad628
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-#>
+#> 
 
 <#
 .DESCRIPTION
@@ -9992,18 +10120,34 @@ return [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni
 }
 function Set-WindowsAccountAvatar {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID 240b7f82-8102-45be-9080-2cf28a7c5b3d
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
@@ -10049,15 +10193,15 @@ If ((Test-Null $ADuser_photo) -eq $false) {
 function Show-BitlockerEncryptionStatus {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 85c8702c-7117-4050-8629-51fc36de0cd8
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -10105,15 +10249,15 @@ while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
 function Start-KioskApp {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID fb250771-93be-4da0-a4ec-edad2ccf7476
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -10171,15 +10315,15 @@ If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
 function Start-PaperCutClient {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 090b7063-ddf4-4e5f-91ab-24127dec0d57
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -10239,15 +10383,15 @@ $SearchLocations | ForEach-Object {
 function Start-WindowsActivation {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 625c264b-e5ec-4c6a-8478-39ec90518250
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -10307,18 +10451,34 @@ Write-Error "Windows could not be activated."
 }
 function Stop-ForKey {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID 9b9dfb07-a7ea-4afd-94ab-74a5bf2ee340
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .SYNOPSIS
@@ -10343,15 +10503,15 @@ If ($Response -eq $Key) { Break }
 function Sync-MailContacts {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID 6da14011-187b-4176-a61b-16836f8a0ad7
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -10468,15 +10628,15 @@ $SyncedUsers | ForEach-Object {
 function Sync-Nps {
 <#PSScriptInfo
 
-.VERSION 1.0.10
+.VERSION 1.0.12
 
 .GUID 6e7a4d29-1b73-490f-91aa-fc074a886716
 
 .AUTHOR Joseph Moody & Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -10570,15 +10730,15 @@ Script was run from $($MyInvocation.MyCommand.Definition)"
 function Test-Admin {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID d96e4855-2468-4294-8475-4b954ad009dd
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -10772,15 +10932,15 @@ if ($ApplyFix) {
 function Test-DmaDevices {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID a2d15653-e7ac-4246-b3a4-adf73af11a06
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -10880,15 +11040,15 @@ if ($Action -contains "Reset") { Remove-ItemProperty $Path -Name "*" }
 function Test-PendingFileRename {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 98d059e8-6686-4643-bf07-2a2fd9729ca6
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -10957,15 +11117,15 @@ else {
 function Test-PendingReboot {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID eb35ecd5-48d9-4b6d-97d9-ad4b5893fb6a
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -11017,15 +11177,15 @@ return $false
 function Test-Photo {
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.11
 
 .GUID a3cdb0bc-2c01-4aa3-b702-707a5060c071
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 
@@ -11076,13 +11236,13 @@ return $Results
 function Test-RegistryValue {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 73abfeda-2bad-4f83-a401-e34757afcbc0
 
 .AUTHOR Jonathan Medd
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
 .COPYRIGHT Copyright (c) Jonathan Medd 2014
 
@@ -11131,25 +11291,41 @@ catch { return $false }
 }
 function Test-ScriptMetadata {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID a0017a8d-5a3d-49a1-9c7f-5e0dbb5ee7d8
 
-.AUTHOR
-Jason Cook
+.AUTHOR Jason Cook
 
-.COMPANYNAME
-***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
-#>
+.COPYRIGHT Copyright (c) Tectic 2024
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+#> 
 
 <#
 .DESCRIPTION
 This is used to validate the existence of metadata on the individual scripts
 #>
 [System.Collections.ArrayList]$Results = @()
-$SourceScripts = Get-ChildItem -Path *.ps1 -ErrorAction SilentlyContinue -Recurse | Where-Object { ($_.Name -ne "psakefile.ps1") -and ($_.Name -ne "***REMOVED***ITDefaults.ps1") -and ($_.Name -ne "Profile.ps1") }
+$SourceScripts = Get-ChildItem -Path *.ps1 -ErrorAction SilentlyContinue -Recurse | Where-Object { ($_.Name -ne "psakefile.ps1") -and ($_.Name -ne "TecticPSDefaults.ps1") -and ($_.Name -ne "Profile.ps1") }
 $SourceScripts | ForEach-Object {
     try { $Info = Test-ScriptFileInfo  $_.FullName } catch { $Info = $false ; Write-Verbose "$_.Name does not have a valid PSScriptInfo block" }
     try { $Description = (Get-Help $_.FullName).Description } catch { $Description = $false ; Write-Verbose "$_.Name does not have a valid help block" }
@@ -11168,15 +11344,15 @@ return $Results
 function Test-Scripts {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID dd50132f-8bc5-4825-918d-9fd0afd3f36b
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -11218,15 +11394,15 @@ write-output "test: $test"
 function Test-VoipMs {
 <#PSScriptInfo
 
-.VERSION 1.2.4
+.VERSION 1.2.6
 
 .GUID 17fff57c-cce9-4977-a26d-aeded706a85f
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -11333,15 +11509,15 @@ Pause
 function Uninstall-MicrosoftTeams {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 81af22bb-f7a1-42a0-8570-1ac57f49e6bf
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -11387,27 +11563,41 @@ else { Break }
 }
 function Update-AadSsoKey {
 <#PSScriptInfo
-.VERSION 1.0.0
+
+.VERSION 1.0.2
+
 .GUID 324df81c-9595-4025-b826-08aff404f533
 
-.DESCRIPTION
-This script will preform a roll over of Azure SSO Kerberos key. Run this script on the server running Azure AD Connect.
+.AUTHOR Jason Cook, Wybe Smits http://www.wybesmits.nl
 
-.AUTHOR
-Jason Cook, Wybe Smits
-http://www.wybesmits.nl
+.COMPANYNAME Tectic
 
-.COMPANYNAME
-***REMOVED***
+.COPYRIGHT Copyright (c) Tectic 2024
 
-.COPYRIGHT
-Copyright (c) ***REMOVED*** 2022
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
 .RELEASENOTES
-    * 1.0 - initial release 15/04/2019
-#>
+* 1.0 - initial release 15/04/2019
+
+#> 
 
 <#
 .SYNOPSIS
+This script will preform a roll over of Azure SSO Kerberos key. Run this script on the server running Azure AD Connect.
+
+.DESCRIPTION
 This script will preform a roll over of Azure SSO Kerberos key. Run this script on the server running Azure AD Connect.
 
 .LINK
@@ -11420,15 +11610,15 @@ Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domai
 function Update-MerakiSwitchPortNames {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -11504,13 +11694,13 @@ $JackLocations | ForEach-Object {
 function Update-MicrosoftStoreApps {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.9
 
 .GUID 4cac6972-9cb0-4755-bfc1-ae2eb6dfc0d1
 
 .AUTHOR Tony MCP
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
 .COPYRIGHT Copyright (c) Tony MCP 2016
 
@@ -11554,15 +11744,15 @@ if (-not $DontCheckStatus) { Start-Process "ms-windows-store://downloadsandupdat
 function Update-OfficeCache {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 97314a7e-aba8-41e8-8b1d-ca81372ae070
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -11606,15 +11796,15 @@ $Path | ForEach-Object {
 function Update-PKI {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 8f760b1c-0ccc-43b7-bfed-9370fa84b7f8
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -11661,15 +11851,15 @@ Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
 function Update-UsersAcademyStudents {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 4fc14578-f8eb-4ae2-8e39-77c0f197cff8
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -11758,15 +11948,15 @@ Return $Results
 function Update-UsersStaff {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 120db2ff-3cb8-43ea-aa2c-f044ff52c144
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -11792,59 +11982,58 @@ Automatically update staff users.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [ValidateScript( { Test-Path $_ })][string] $UserPath = ".\Staff.csv",
-    [array]$Users = (Import-Csv $UserPath | Sort-Object -Property Surname, GivenName),
-    $HomePage,
-    $Company,
-    $Office,
-    $Path
+  [ValidateScript( { Test-Path $_ })][string] $UserPath = ".\Staff.csv",
+  [array]$Users = (Import-Csv $UserPath | Sort-Object -Property Surname, GivenName),
+  $HomePage,
+  $Company,
+  $Office,
+  $Path
 )
 
 [System.Collections.ArrayList]$Results = @()
 
 $Users | ForEach-Object {
-    If ($_.PreferredGivenName) { $GivenName = $_.PreferredGivenName } Else { $GivenName = $_.GivenName }
-    If ($_.PreferredSurname) { $Surname = $_.PreferredSurname } Else { $Surname = $_.Surname }
-    $DisplayName = $GivenName + " " + $Surname
-    $SamAccountName = $GivenName + "." + $Surname
-    $UserPrincipalName = $SamAccountName + "@" + $HomePage
-    $EmailAddress = $UserPrincipalName
-    $Department = $_.Title.split("\s-\s")[0]
-    $Title = $_.Title.split(" - ")[1]
-    If ($_.Department = "KCA") { $Company = "***REMOVED*** Christian Academy" }
-    $Office = $_.Office.split(" - ")[0]
+  If ($_.PreferredGivenName) { $GivenName = $_.PreferredGivenName } Else { $GivenName = $_.GivenName }
+  If ($_.PreferredSurname) { $Surname = $_.PreferredSurname } Else { $Surname = $_.Surname }
+  $DisplayName = $GivenName + " " + $Surname
+  $SamAccountName = $GivenName + "." + $Surname
+  $UserPrincipalName = $SamAccountName + "@" + $HomePage
+  $EmailAddress = $UserPrincipalName
+  $Department = $_.Title.split("\s-\s")[0]
+  $Title = $_.Title.split(" - ")[1]
+  $Office = $_.Office.split(" - ")[0]
 
-    $StreetAddress = $_.StreetAddress
-    If ($_.StreetAddress2) { $StreetAddress += `n + $_.StreetAddress2 }
+  $StreetAddress = $_.StreetAddress
+  If ($_.StreetAddress2) { $StreetAddress += `n + $_.StreetAddress2 }
 
-    try {
-        $Password = ConvertTo-SecureString (Get-RandomPassword) -AsPlainText -Force
+  try {
+    $Password = ConvertTo-SecureString (Get-RandomPassword) -AsPlainText -Force
 
-        New-ADUser -DisplayName $DisplayName -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $SamAccountName -StreetAddress $StreetAddress -City $_.City -State $_.State -PostalCode $_.PostalCode -OfficePhone $_.OfficePhone -AccountPassword $PasswordSecure -Path $Path -WhatIf
+    New-ADUser -DisplayName $DisplayName -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $SamAccountName -StreetAddress $StreetAddress -City $_.City -State $_.State -PostalCode $_.PostalCode -OfficePhone $_.OfficePhone -AccountPassword $PasswordSecure -Path $Path -WhatIf
 
-        $Result = [PSCustomObject]@{
-            DisplayName  = $DisplayName
-            Department   = $Department
-            Title        = $Title
-            EmailAddress = $UserPrincipalName
-            Password     = $Password
-            Status       = "New"
-        }
-        $Results += $Result
+    $Result = [PSCustomObject]@{
+      DisplayName  = $DisplayName
+      Department   = $Department
+      Title        = $Title
+      EmailAddress = $UserPrincipalName
+      Password     = $Password
+      Status       = "New"
     }
-    catch [Microsoft.ActiveDirectory.Management.ADIdentityAlreadyExistsException] {
-        Set-ADUser -Identity $SamAccountName -DisplayName $DisplayName -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $SamAccountName -StreetAddress $StreetAddress -City $_.City -State $_.State -PostalCode $_.PostalCode -OfficePhone $_.OfficePhone -WhatIf
+    $Results += $Result
+  }
+  catch [Microsoft.ActiveDirectory.Management.ADIdentityAlreadyExistsException] {
+    Set-ADUser -Identity $SamAccountName -DisplayName $DisplayName -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $SamAccountName -StreetAddress $StreetAddress -City $_.City -State $_.State -PostalCode $_.PostalCode -OfficePhone $_.OfficePhone -WhatIf
 
-        $Result = [PSCustomObject]@{
-            Name         = $Name
-            Department   = $Department
-            Title        = $Title
-            EmailAddress = $UserPrincipalName
-            Password     = $Password
-            Status       = "New"
-        }
-        $Results += $Result
+    $Result = [PSCustomObject]@{
+      Name         = $Name
+      Department   = $Department
+      Title        = $Title
+      EmailAddress = $UserPrincipalName
+      Password     = $Password
+      Status       = "New"
     }
+    $Results += $Result
+  }
 }
 <#     Start-Sleep -Seconds 10
     Get-ADUser -Filter * -SearchBase $Path | Sort-Object Name | ForEach-Object {
@@ -11865,15 +12054,15 @@ Return $Results
 function Wait-ForKey {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 3642a129-3370-44a1-94ad-85fb88de7a6b
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

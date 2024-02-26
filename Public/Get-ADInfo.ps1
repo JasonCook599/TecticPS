@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 868aac51-6c72-482e-8b54-42a3c5f87596
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -45,10 +45,10 @@ Filters the search based on the spesified parameters.
 Updates the Upn. Must be used with -OldUpn and -NewUpn. Can be combined with -SearchBase
 
 .PARAMETER oldUpnSuffix
-Specifes the UPN to be changed from. If unspecified, will use "*@koinonia.local".
+Specifes the UPN to be changed from.
 
 .PARAMETER newUpnSuffix
-Spesified the UPN to change to.  If unspecified, will use "*@***REMOVED***".
+Spesified the UPN to change to.
 
 .PARAMETER SearchBase
 Specifies the search base for the command.

@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.1.1
+.VERSION 1.1.3
 
 .GUID fb1d15b5-4681-4f99-90d6-1fd44ed4219b
 
 .AUTHOR Jason Cook Boe Prox
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

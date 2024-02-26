@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 0.0.12
+.VERSION 0.0.14
 
 .GUID 975b5e06-eee0-461b-9b98-49351c762dcd
 
 .AUTHOR Jason Cook Luke Murray (Luke.Geek.NZ)
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

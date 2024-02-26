@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 73e8a944-8951-4a89-9a54-d51db3f9afac
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -37,7 +37,7 @@ Load default parameters for various functions.
 
 param(
     [Parameter(Mandatory = $true)] $Invocation,
-    $DefaultsScripts = "***REMOVED***ITDefaults.ps1"
+    $DefaultsScripts = "TecticPSDefaults.ps1"
 )
 
 try {

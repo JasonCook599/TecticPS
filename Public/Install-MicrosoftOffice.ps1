@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.2.4
+.VERSION 1.2.6
 
 .GUID 12bacb17-e597-4588-8a86-0e05142301b6
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -49,10 +49,10 @@ Install-MicrosoftOffice -Version 201932
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [ValidateSet(2019, 2016, 2013, 2010, 2007)][string]$Version,
-    [ValidateSet("Visio", "x86", "Standard", $null)]$Options,
-    [string]$InstallerPath,
-    [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
+  [ValidateSet(2019, 2016, 2013, 2010, 2007)][string]$Version,
+  [ValidateSet("Visio", "x86", "Standard", $null)]$Options,
+  [string]$InstallerPath,
+  [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
 )
 
 while (!$InstallerPath) { $InstallerPath = Read-Host -Prompt "Enter the installer path." }
@@ -63,27 +63,27 @@ ElseIf ( $Version -eq "2010" ) { $Exe = Join-Path -Path $InstallerPath -ChildPat
 ElseIf ( $Version -eq "2013" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2013 Pro Plus SP1 x86 x64\setup.exe' }
 ElseIf ( $Version -eq "2016" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2016 Pro Plus x86 41353\setup.exe' }
 ElseIf ( $Version -eq "2019" ) {
-    if ($Options -eq "Visio") { $ConfigFile = "***REMOVED***-2019-ProPlus-Visio.xml" }
-    elseif ($Options -eq "x86") { $ConfigFile = "***REMOVED***-2019-ProPlus-32-Default.xml" }
-    elseif ($Options -eq "Standard") { $ConfigFile = "***REMOVED***-2019-Standard-Default.xml" }
-    else { $ConfigFile = "***REMOVED***-2019-ProPlus-Default.xml" }
-    Write-Debug "Config file: $ConfigFile"
-    $Exe = Join-Path -Path $InstallerPath -ChildPath 'Office Deployment Tool\setup.exe'
-    $ConfigPath = Join-Path (Split-Path -Path $Exe -Parent) -ChildPath $ConfigFile
-    if (Test-Path -Path $ConfigPath -PathType Leaf) {
-        $Arguments = "/$Mode `"$ConfigPath`""
-    }
-    else { throw "Cannot find config file at $ConfigPath" }
+  if ($Options -eq "Visio") { $ConfigFile = "2019-ProPlus-Visio.xml" }
+  elseif ($Options -eq "x86") { $ConfigFile = "2019-ProPlus-32-Default.xml" }
+  elseif ($Options -eq "Standard") { $ConfigFile = "2019-Standard-Default.xml" }
+  else { $ConfigFile = "2019-ProPlus-Default.xml" }
+  Write-Debug "Config file: $ConfigFile"
+  $Exe = Join-Path -Path $InstallerPath -ChildPath 'Office Deployment Tool\setup.exe'
+  $ConfigPath = Join-Path (Split-Path -Path $Exe -Parent) -ChildPath $ConfigFile
+  if (Test-Path -Path $ConfigPath -PathType Leaf) {
+    $Arguments = "/$Mode `"$ConfigPath`""
+  }
+  else { throw "Cannot find config file at $ConfigPath" }
 }
 else { Write-Error "Version not found. Please spesify a valid version." }
 if (Test-Path -Path $Exe -PathType Leaf) {
-    if ($Mode -eq "download") { $Message = "Downloading" } else { $Message = "Installing" }
-    $Message += " Office $Version"
-    if ($ConfigFile) { $Message += " with $ConfigFile" }
-    If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", $Message)) {
-        Write-Output $Message
-        Write-Verbose "$Exe $Arguments"
-        Start-Process -FilePath $Exe -NoNewWindow -Wait -ArgumentList $Arguments
-    }
+  if ($Mode -eq "download") { $Message = "Downloading" } else { $Message = "Installing" }
+  $Message += " Office $Version"
+  if ($ConfigFile) { $Message += " with $ConfigFile" }
+  If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", $Message)) {
+    Write-Output $Message
+    Write-Verbose "$Exe $Arguments"
+    Start-Process -FilePath $Exe -NoNewWindow -Wait -ArgumentList $Arguments
+  }
 }
 else { throw "Cannot find installer at $Exe" }

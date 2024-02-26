@@ -1,12 +1,12 @@
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.9
 
 .GUID 4cac6972-9cb0-4755-bfc1-ae2eb6dfc0d1
 
 .AUTHOR Tony MCP
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
 .COPYRIGHT Copyright (c) Tony MCP 2016
 

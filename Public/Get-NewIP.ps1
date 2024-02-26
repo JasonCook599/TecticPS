@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.1.2
+.VERSION 1.1.4
 
 .GUID 9eea8e22-18f9-4cf7-b019-602c7d71dcf8
 
 .AUTHOR Jason Cook Aman Dhally - amandhally@gmail.com
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

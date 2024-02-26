@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.0.10
+.VERSION 1.0.12
 
 .GUID 6e7a4d29-1b73-490f-91aa-fc074a886716
 
 .AUTHOR Joseph Moody & Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 

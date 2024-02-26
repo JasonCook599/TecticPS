@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 2.0.1
+.VERSION 2.0.3
 
 .GUID 0677b108-26b5-409b-a169-b0eb45399dcf
 
 .AUTHOR Nicola Suter
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -71,7 +71,7 @@ $Users | ForEach-Object {
       $_.GroupsAssigningLicense.Remove($User.ObjectId) | Out-Null
 
       # TODO Repalce static strings with regex matches.
-      $SkuGUID = ($Skus | Where-Object SkuPartNumber -eq (($_.AccountSkuId) -replace ("***REMOVED***:", ""))).Id -replace ("***REMOVED***_", "")
+      $SkuGUID = ($Skus | Where-Object SkuPartNumber -eq (($_.AccountSkuId) -replace ("\w\:", ""))).Id -replace ("[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?_", "")
 
       if ($PSCmdlet.ShouldProcess($user.UserPrincipalName, "Remove license assignment for sku '$($_.AccountSkuId)'")) {
         Write-Verbose "Removing license assignment for sku '$($_.AccountSkuId) on target '$($User.UserPrincipalName)'"

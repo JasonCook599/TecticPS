@@ -1,12 +1,12 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 73abfeda-2bad-4f83-a401-e34757afcbc0
 
 .AUTHOR Jonathan Medd
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
 .COPYRIGHT Copyright (c) Jonathan Medd 2014
 

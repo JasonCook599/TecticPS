@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.3.2
+.VERSION 1.3.4
 
 .GUID 528bfa6d-27a7-4612-9092-faae014e3917
 
 .AUTHOR Jason Cook Drew Cross | Microsoft Services
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 32f72580-a957-48f1-ba2e-da24f5550bb6
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME 
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS ActiveDirectory AD User Primary Group Member
 

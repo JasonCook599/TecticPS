@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.2.2
+.VERSION 1.2.4
 
 .GUID 44daac91-76d4-41f5-a2ab-688d548ad0d1
 
 .AUTHOR Jason Cook Martin Bengtsson
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

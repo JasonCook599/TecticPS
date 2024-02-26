@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 2.0.1
+.VERSION 2.0.3
 
 .GUID f05dd4da-b51c-41e0-9bc2-92888c536c8e
 
 .AUTHOR Nicola Suter
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2023
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

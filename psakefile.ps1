@@ -1,12 +1,12 @@
 Task default -depends ImportModule, TestScriptFileInfo, UpdatePSScriptInfo, TestScriptFileInfo, ExportToPsm1, UpdateManifest
 Task quick -depends ExportToPsm1, UpdateManifest
 
-$ModuleName = "***REMOVED***IT"
+$ModuleName = "TecticPS"
 $ModuleFile = $ModuleName + ".psm1"
 $ModuleManifest = $ModuleName + ".psd1"
 try { [System.Security.Cryptography.X509Certificates.X509Certificate]$Certificate = ((Get-ChildItem cert:currentuser\my\ -CodeSigningCert | Sort-Object NotBefore -Descending)[0]) } catch { $Certificate = $null }
 $SourceModules = Get-ChildItem -Path *.psm1 -ErrorAction SilentlyContinue -Recurse | Where-Object Name -ne $ModuleFile
-$SourceScripts = Get-ChildItem -Path *.ps1 -ErrorAction SilentlyContinue -Recurse | Where-Object { ($_.Name -ne "psakefile.ps1") -and ($_.Name -ne "***REMOVED***ITDefaults.ps1") -and ($_.Name -ne "Profile.ps1") }
+$SourceScripts = Get-ChildItem -Path *.ps1 -ErrorAction SilentlyContinue -Recurse | Where-Object { ($_.Name -ne "psakefile.ps1") -and ($_.Name -ne "TecticPSDefaults.ps1") -and ($_.Name -ne "Profile.ps1") }
 
 Task UpdatePSScriptInfo {
     $count = 0
@@ -20,7 +20,7 @@ Task UpdatePSScriptInfo {
             [version]$Version = "{0}.{1}.{2}" -f $Version.Major, $Version.Minor, ($Version.Build + 1)
 
             Write-Debug "$($_.Name): Updating copyright year to current year"
-            $Copyright = (Test-ScriptFileInfo  $_.FullName).Copyright -replace "^Copyright \(c\) ***REMOVED***(.*)$", "Copyright (c) ***REMOVED*** $((Get-Date).Year)" -replace "^Copyright \(c\) ***REMOVED***(.*)$", "Copyright (c) ***REMOVED*** $((Get-Date).Year)"
+            $Copyright = (Test-ScriptFileInfo  $_.FullName).Copyright -replace "^Copyright \(c\) Tectic(.*)$", "Copyright (c) Tectic $((Get-Date).Year)" -replace "^Copyright \(c\) Tectic(.*)$", "Copyright (c) Tectic $((Get-Date).Year)"
             $CopyrightString = $Copyright -join "`n"
 
             Write-Debug "$($_.Name): Updating script info"
@@ -138,6 +138,6 @@ Task AddSignature {
     Set-AuthenticodeSignature -FilePath $ModuleFile -Certificate $Certificate | Write-Verbose
 }
 
-Task CompressModule { Compress-Archive -Path .\***REMOVED***IT*.ps* -DestinationPath Release.zip -Update }
+Task CompressModule { Compress-Archive -Path .\TecticPS*.ps* -DestinationPath Release.zip -Update }
 
 Task ImportModule { Import-Module (Join-Path -Path (Get-Location) -ChildPath $ModuleManifest) -Force -Verbose:$false }

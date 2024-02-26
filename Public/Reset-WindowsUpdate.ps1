@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.20.1
+.VERSION 1.20.3
 
 .GUID b4f15462-2ab3-45e5-b2e2-ecb649f1f1a6
 
 .AUTHOR Jason Cook Ryan Nemeth
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

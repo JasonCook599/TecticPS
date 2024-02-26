@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 8e42dd4d-c91c-420c-99f5-7b233590ae2c
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -43,7 +43,7 @@ https://github.com/raandree/NTFSSecurity
 This can be used to set the access right on the child folders. If unspecified, it will give FullControl. See documentation of the NTFSSecurity module for options.
 
 .PARAMETER Domain
-This can be used to set the domain of the users. If unspecified, it will use the 'KOINONIA' domain.
+This can be used to set the domain of the users. If unspecified, it will use the current domain ($Env:USERDOMAIN).
 
 .PARAMETER Folder
 This can be used to select a folder in which to run these commands on. If unspecified, it will run in the PowerShell has active.
@@ -54,17 +54,17 @@ Grant-Matching: Granting DOMAIN\user FullControl on C:\Users\user
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-	$Path = (Get-ChildItem | Where-Object { $_.PSISContainer }),
-	[string]$AccessRights = 'FullControl',
-	[string]$Domain = $Env:USERDOMAIN
+  $Path = (Get-ChildItem | Where-Object { $_.PSISContainer }),
+  [string]$AccessRights = 'FullControl',
+  [string]$Domain = $Env:USERDOMAIN
 )
 
 Requires -Modules NTFSSecurity
 
 foreach ($UserFolder in $Path) {
-	$Account = $Domain + '\' + $UserFolder
-	$count++ ; Progress -Index $count -Total $Path.count -Activity "Granting $Account $AccessRights." -Name $UserFolder.FullName
-	If ($PSCmdlet.ShouldProcess("$($UserFolder.FullName)", "Add-NTFSAccess")) {
-		Add-NTFSAccess -Path $UserFolder.FullName -Account $Account -AccessRights $AccessRights
-	}
+  $Account = $Domain + '\' + $UserFolder
+  $count++ ; Progress -Index $count -Total $Path.count -Activity "Granting $Account $AccessRights." -Name $UserFolder.FullName
+  If ($PSCmdlet.ShouldProcess("$($UserFolder.FullName)", "Add-NTFSAccess")) {
+    Add-NTFSAccess -Path $UserFolder.FullName -Account $Account -AccessRights $AccessRights
+  }
 }

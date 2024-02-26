@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.2.2
+.VERSION 1.2.4
 
 .GUID c42317a3-3385-41d1-821d-8622b798259a
 
 .AUTHOR paul@thesysadminchannel.com & Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) TectTectic
 
 .TAGS 
 

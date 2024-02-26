@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 6309e154-81f6-4bd1-aff7-deaea3274934
 
 .AUTHOR Jason Cook Robin Granberg (robin.granberg@microsoft.com)
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 

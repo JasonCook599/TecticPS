@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.2.16
+.VERSION 1.2.18
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
 .AUTHOR Jason Cook
 
-.COMPANYNAME ***REMOVED***
+.COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
@@ -110,7 +110,7 @@ param(
 )
 
 Test-Admin -Throw | Out-Null
-Requires ***REMOVED***IT
+Requires TecticPS
 
 if ($Step -eq 1) { $Action = @( "LabelDrive", "Wallpaper", "MicrosoftStore", "Winget") }
 if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Reboot") }

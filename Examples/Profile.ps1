@@ -1,5 +1,5 @@
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", "")]
-$***REMOVED***It = @{
+$TecticPS = @{
   VerbNoun = @{
     Paramater = "Value"
   }

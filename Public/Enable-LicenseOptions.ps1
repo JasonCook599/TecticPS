@@ -1,14 +1,14 @@
 <#PSScriptInfo
 
-.VERSION 1.3.2
+.VERSION 1.3.4
 
 .GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
 
 .AUTHOR Jason Cook & Roman Zarka | Microsoft Services
 
-.COMPANYNAME ***REMOVED*** & Microsoft Services
+.COMPANYNAME Tectic & Microsoft Services
 
-.COPYRIGHT Copyright (c) ***REMOVED*** 2022
+.COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS 
 
