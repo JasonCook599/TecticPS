@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID b0940c36-a968-4b62-bd39-be7e24d30c3c
 
@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -50,8 +50,8 @@ param(
   $Encryption = "false",
   $Services = @{
     SMB        = @(139, 445)
-    HTTP       = 80
-    HTTPS      = 443
+    HTTP       = @(80)
+    HTTPS      = @(443)
 
     AD         = @(9389, 3269, 3268, 389, 636, 500, 4500, 135, 445)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#active-directory-local-security-authority
@@ -62,7 +62,7 @@ param(
     DFSN       = @(138, 139, 389, 445, 135)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#distributed-file-system-namespaces
 
-    DNS        = 53
+    DNS        = @(53)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#dns-server
 
     GP         = @(389, 445, 135)
@@ -83,10 +83,10 @@ param(
     RPCL       = @(138, 137, 139, 445)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#remote-procedure-call-rpc-locator
 
-    TCPIPPrint = 515
+    TCPIPPrint = @(515)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#tcpip-print-server
 
-    RDS        = 3389
+    RDS        = @(3389)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#remote-desktop-services-rds
 
     RDSL       = @(135, 138, 137, 139, 445)
@@ -96,37 +96,41 @@ param(
 )
 
 foreach ($Hostname in $ImportRules) {
-  Write-Verbose "Enable rules, unless disabled set."
-  if (($false -ne $Hostname.enabled) -or ("FALSE" -ne $Hostname.enabled)) { $Hostname.enabled = "true" }
+  $count++ ; Progress -Index $count -Total $ImportRules.count -Activity "Generating ZTNA destination rules" -Name $Hostname.name
 
-  Write-Verbose "Setting encryption to default value, if unset."
-  if ("FALSE" -eq $Hostname.encryption) { $Hostname.encryption = "false" }
-  elseif ("TRUE" -eq $Hostname.encryption) { $Hostname.encryption = "true" }
-  elseif (($null -eq $Hostname.encryption) -or "" -eq $Hostname.encryption) { $Hostname.encryption = $Encryption }
+  if ($Hostname.enabled -eq $false) {
+    Write-Verbose "$($Hostname.name): Skipping disabled host"
+    continue
+  }
 
-  Write-Verbose "Splitting import at seperators."
+  if (($null -eq $Hostname.encryption) -or "" -eq $Hostname.encryption) {
+    Write-Verbose "$($Hostname.name): Setting encryption to default of $Encryption."
+    $Hostname.encryption = $Encryption
+  }
+  else { Write-Verbose "$($Hostname.name): Setting encryption to $Encryption." }
+
+  Write-Debug "$($Hostname.name): Splitting import at seperators."
   $Hostname.Services = $Hostname.Services.Split(",")
   $Hostname.Ports = $Hostname.Ports.Split(";")
 
-  Write-Verbose "Collect all ports."
   $Ports = @()
-  Write-Debug "Collecting explcit ports"
+  Write-Debug "$($Hostname.name): Collecting explcit ports"
   if ($Hostname.Ports) { $Ports += $Hostname.Ports }
 
-  Write-Debug "Collecting ports by service."
+  Write-Debug "$($Hostname.name): Collecting service ports"
   if ($Hostname.Services -ne "") {
     $Hostname.Services | ForEach-Object {
       $Ports += $Services["$_"]
     }
   }
-
-  Write-Verbose "Return object for each port"
-  $Ports | ForEach-Object { ([int]::parse($_)) } | Sort-Object | Select-Object -Unique | ForEach-Object {
+  $Ports | ForEach-Object {
+    Write-Verbose "$($Hostname.name): Port $_"
+    ([int]::parse($_)) } | Sort-Object | Select-Object -Unique | ForEach-Object {
     return [PSCustomObject]@{
       "name"        = $Hostname.name + ":$_"
-      "encryption"  = $Hostname.encryption
+      "encryption"  = $Hostname.encryption.ToString().ToLower()
       "destination" = $Hostname.destination + ":$_"
-      "enabled"     = $Hostname.enabled
+      "enabled"     = "true"
     }
   }
 }
