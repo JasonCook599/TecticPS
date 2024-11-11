@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.7
 
 .GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
 
@@ -10,21 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
+
+.PRIVATEDATA
 
 #> 
 
@@ -50,6 +52,7 @@ param (
   [string]$APIKey,
   [string]$networkid,
   [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path,
+  $JackLocations = (Import-Csv -Path $Path | Where-Object Switch -NotLike ""),
   $Headers = @{
     "Content-Type"           = "application/json"
     "Accept"                 = "application/json"
@@ -71,12 +74,18 @@ function UpdateSwitchPortName {
   $Serial = ($Switches | Where-Object name -eq $SwitchName).Serial
   $Body = @{ name = $Name } | ConvertTo-Json -Compress
   If ($PSCmdlet.ShouldProcess("$SwitchName $Port", "UpdateSwitchPortName to $Name")) {
-    return Invoke-RestMethod -Method Put -Uri "https://api.meraki.com/api/v1/devices/$($Serial)/switch/ports/$($Port)" -Headers $headers -Body $Body
+    try { return Invoke-RestMethod -Method Put -Uri "https://api.meraki.com/api/v1/devices/$($Serial)/switch/ports/$($Port)" -Headers $headers -Body $Body }
+    catch {
+      return [PSCustomObject]@{
+        portId = $port
+        name   = $Name
+        error  = $_
+      }
+    }
   }
 }
 
-$JackLocations = Import-Csv -Path $Path | Where-Object 'Switch Name' -NotLike ""
 $JackLocations | ForEach-Object {
-  $count++ ; Progress -Index $count -Total $JackLocations.count -Activity "Updating switch port names" -Name $($_.'Switch Port' + ": " + $_.'Switch Label')
-  return UpdateSwitchPortName -SwitchName $_.'Switch Name' -Port $_.'Switch Port' -Name $_.'Switch Label'
+  $count++ ; Progress -Index $count -Total $JackLocations.count -Activity "Updating switch port names" -Name $($_.Switch + " / " + $_.Port + ": " + $_.Label)
+  return UpdateSwitchPortName -SwitchName $_.Switch -Port $_.Port -Name $_.Label
 }
