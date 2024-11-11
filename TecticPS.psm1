@@ -2860,23 +2860,23 @@ function Export-FortiClientEmsZtnaRules {
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -2900,8 +2900,8 @@ param(
   $Encryption = "false",
   $Services = @{
     SMB        = @(139, 445)
-    HTTP       = 80
-    HTTPS      = 443
+    HTTP       = @(80)
+    HTTPS      = @(443)
 
     AD         = @(9389, 3269, 3268, 389, 636, 500, 4500, 135, 445)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#active-directory-local-security-authority
@@ -2912,7 +2912,7 @@ param(
     DFSN       = @(138, 139, 389, 445, 135)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#distributed-file-system-namespaces
 
-    DNS        = 53
+    DNS        = @(53)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#dns-server
 
     GP         = @(389, 445, 135)
@@ -2933,10 +2933,10 @@ param(
     RPCL       = @(138, 137, 139, 445)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#remote-procedure-call-rpc-locator
 
-    TCPIPPrint = 515
+    TCPIPPrint = @(515)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#tcpip-print-server
 
-    RDS        = 3389
+    RDS        = @(3389)
     # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#remote-desktop-services-rds
 
     RDSL       = @(135, 138, 137, 139, 445)
@@ -2962,22 +2962,22 @@ foreach ($Hostname in $ImportRules) {
   else { Write-Verbose "$($Hostname.name): Setting encryption to $Encryption." }
 
   Write-Debug "$($Hostname.name): Splitting import at seperators."
-  $Hostname.Services = $Hostname.Services.Split(", ")
-  $Hostname.Ports = $Hostname.Ports.Split("; ")
+  $Hostname.Services = $Hostname.Services.Split(",")
+  $Hostname.Ports = $Hostname.Ports.Split(";")
 
   $Ports = @()
   Write-Debug "$($Hostname.name): Collecting explcit ports"
   if ($Hostname.Ports) { $Ports += $Hostname.Ports }
 
-  Write-Debug "$($Hostname.name): Collecting service "
+  Write-Debug "$($Hostname.name): Collecting service ports"
   if ($Hostname.Services -ne "") {
     $Hostname.Services | ForEach-Object {
       $Ports += $Services["$_"]
     }
   }
-
-  Write-Verbose "$($Hostname.name): returing an entry for each port."
-  $Ports | ForEach-Object { ([int]::parse($_)) } | Sort-Object | Select-Object -Unique | ForEach-Object {
+  $Ports | ForEach-Object {
+    Write-Verbose "$($Hostname.name): Port $_"
+    ([int]::parse($_)) } | Sort-Object | Select-Object -Unique | ForEach-Object {
     return [PSCustomObject]@{
       "name"        = $Hostname.name + ":$_"
       "encryption"  = $Hostname.encryption.ToString().ToLower()
@@ -4524,7 +4524,7 @@ Return $Result
 function Get-MfpEmails {
 <#PSScriptInfo
 
-.VERSION 2.0.6
+.VERSION 2.0.9
 
 .GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e
 
@@ -4534,21 +4534,23 @@ function Get-MfpEmails {
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
+
+.PRIVATEDATA
 
 #> 
 
@@ -4570,15 +4572,15 @@ How should the AD results be filtered?
 #>
 
 param(
-    [ValidateSet("Canon", "KonicaMinolta")][string]$Vendor,
-    [ValidateSet("csv", "abk")][string]$Format = "csv",
-    [ValidateScript( { Test-Path (Split-Path $_ -Parent) })][string]$Path,
-    [array]$Properties = ("name", "DisplayName", "mail", "enabled", "msExchHideFromAddressLists"),
-    [array]$AdditionalUsers,
-    [string]$SearchBase,
-    $WhereObject = { $null -ne $_.mail -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },
-    [string]$Server,
-    [string]$Filter = "*"
+  [ValidateSet("Canon", "KonicaMinolta", "Xerox")][string]$Vendor,
+  [ValidateSet("csv", "abk")][string]$Format = "csv",
+  [ValidateScript( { Test-Path (Split-Path $_ -Parent) })][string]$Path,
+  [array]$Properties = ("name", "sn", "company", "DisplayName", "mail", "enabled", "msExchHideFromAddressLists"),
+  [array]$AdditionalUsers,
+  [string]$SearchBase,
+  $WhereObject = { $null -ne $_.mail -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },
+  [string]$Server,
+  [string]$Filter = "*"
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
@@ -4594,96 +4596,96 @@ $Users = Get-ADUser @Arguments
 
 Write-Verbose "Searching for additional users"
 if ($AdditionalUsers) {
-    $Arguments.Remove("SearchBase")
-    $AdditionalUsers | ForEach-Object {
-        $Arguments.Identity = $_
-        $Users += Get-ADUser @Arguments
-    }
+  $Arguments.Remove("SearchBase")
+  $AdditionalUsers | ForEach-Object {
+    $Arguments.Identity = $_
+    $Users += Get-ADUser @Arguments
+  }
 }
 
 Write-Verbose "Sorting results"
 $Users = $Users | Where-Object $WhereObject | Select-Object $Properties | Sort-Object $Properties[0]
 
 if ($Vendor -eq "Canon") {
-    $Results = @()
-    $Index = 200
-    if ($Format -eq "csv") {
-        Write-Verbose "Starting export for Canon CSV"
-        $Users | ForEach-Object {
-            $Index++
-            $Result = [PSCustomObject]@{
-                objectclass       = "email"
-                cn                = $_.DisplayName
-                cnread            = $_.DisplayName
-                cnshort           = $null
-                subdbid           = 1
-                mailaddress       = $_.mail
-                dialdata          = $null
-                uri               = $null
-                url               = $null
-                path              = $null
-                protocol          = "smtp"
-                username          = $null
-                pwd               = $null
-                member            = $null
-                indxid            = $Index
-                enablepartial     = "off"
-                sub               = $null
-                faxprotocol       = $null
-                ecm               = $null
-                txstartspeed      = $null
-                commode           = $null
-                lineselect        = $null
-                uricommode        = $null
-                uriflag           = $null
-                pwdinputflag      = $null
-                ifaxmode          = $null
-                transsvcstr1      = $null
-                transsvcstr2      = $null
-                ifaxdirectmode    = $null
-                documenttype      = $null
-                bwpapersize       = $null
-                bwcompressiontype = $null
-                bwpixeltype       = $null
-                bwbitsperpixel    = $null
-                bwresolution      = $null
-                clpapersize       = $null
-                clcompressiontype = $null
-                clpixeltype       = $null
-                clbitsperpixel    = $null
-                clresolution      = $null
-                accesscode        = 0
-                uuid              = $null
-                cnreadlang        = "en"
-                enablesfp         = $null
-                memberobjectuuid  = $null
-                loginusername     = $null
-                logindomainname   = $null
-                usergroupname     = $null
-                personalid        = $null
-            }
-            $Results += $Result
-        }
-        If ($Path) {
+  $Results = @()
+  $Index = 200
+  if ($Format -eq "csv") {
+    Write-Verbose "Starting export for Canon CSV"
+    $Users | ForEach-Object {
+      $Index++
+      $Result = [PSCustomObject]@{
+        objectclass       = "email"
+        cn                = $_.DisplayName
+        cnread            = $_.DisplayName
+        cnshort           = $null
+        subdbid           = 1
+        mailaddress       = $_.mail
+        dialdata          = $null
+        uri               = $null
+        url               = $null
+        path              = $null
+        protocol          = "smtp"
+        username          = $null
+        pwd               = $null
+        member            = $null
+        indxid            = $Index
+        enablepartial     = "off"
+        sub               = $null
+        faxprotocol       = $null
+        ecm               = $null
+        txstartspeed      = $null
+        commode           = $null
+        lineselect        = $null
+        uricommode        = $null
+        uriflag           = $null
+        pwdinputflag      = $null
+        ifaxmode          = $null
+        transsvcstr1      = $null
+        transsvcstr2      = $null
+        ifaxdirectmode    = $null
+        documenttype      = $null
+        bwpapersize       = $null
+        bwcompressiontype = $null
+        bwpixeltype       = $null
+        bwbitsperpixel    = $null
+        bwresolution      = $null
+        clpapersize       = $null
+        clcompressiontype = $null
+        clpixeltype       = $null
+        clbitsperpixel    = $null
+        clresolution      = $null
+        accesscode        = 0
+        uuid              = $null
+        cnreadlang        = "en"
+        enablesfp         = $null
+        memberobjectuuid  = $null
+        loginusername     = $null
+        logindomainname   = $null
+        usergroupname     = $null
+        personalid        = $null
+      }
+      $Results += $Result
+    }
+    If ($Path) {
 
-            $Results | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
-            $(
-                "# Canon AddressBook CSV version: 0x0002
+      $Results | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
+      $(
+        "# Canon AddressBook CSV version: 0x0002
 "
             (Get-Content $Path -Raw) -replace "`"", ""
-            ) | Out-File $Path -Encoding UTF8
-        }
+      ) | Out-File $Path -Encoding UTF8
     }
-    elseif ($Format -eq "abk") {
-        Write-Verbose "Starting export for Canon ABK"
-        $Results = "# Canon AddressBook version: 1
+  }
+  elseif ($Format -eq "abk") {
+    Write-Verbose "Starting export for Canon ABK"
+    $Results = "# Canon AddressBook version: 1
 `# CharSet: WCP1252
 `# SubAddressBookName: Cambridge Users
 `# DB Version: 0x0108"
-        $Users | ForEach-Object {
-            $Index++
-            Write-Verbose "$($_.DisplayName + ": " + $_.Enabled)"
-            $Results += "
+    $Users | ForEach-Object {
+      $Index++
+      Write-Verbose "$($_.DisplayName + ": " + $_.Enabled)"
+      $Results += "
 
 subdbid: 1
 dn: $Index
@@ -4696,18 +4698,56 @@ protocol: smtp
 objectclass: top
 objectclass: extensibleobject
 objectclass: email"
-        }
-
-        If ($Path) { [IO.File]::WriteAllLines($Path, $Results) }
     }
+
+    If ($Path) { [IO.File]::WriteAllLines($Path, $Results) }
+  }
 
 }
 elseif ($Vendor -eq "KonicaMinolta") {
-    Write-Verbose "Starting export for KonicaMinolta"
-    $Users = $Users | Select-Object name, mail
-    $Users | ForEach-Object { $_.name = "$($_.name[0..23] -join '')" }
-    $Results = $Users
-    if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
+  Write-Verbose "Starting export for KonicaMinolta"
+  $Users = $Users | Select-Object name, mail
+  $Users | ForEach-Object { $_.name = "$($_.name[0..23] -join '')" }
+  $Results = $Users
+  if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
+}
+elseif ($Vendor -eq "Xerox") {
+  Write-Verbose "Starting export for KonicaMinolta"
+  $Results = @()
+  $Index = 0
+  $Users | ForEach-Object {
+    $count++
+    $Result = [PSCustomObject]@{
+      XrxAddressBookId       = $count
+      DisplayName            = $_.DisplayName
+      FirstName              = $_.givenName
+      LastName               = $_.sn
+      Company                = $_.company
+      XrxAllFavoritesOrder   = $count
+      MemberOf               = '""'
+      IsDL                   = 0
+      XrxApplicableWorkflows = $null
+      FaxNumber              = $null
+      XrxIsFaxFavorite       = 0
+      "E-mailAddress"        = $_.mail
+      XrxIsEmailFavorite     = 0
+      InternetFaxAddress     = $null
+      ScanNickName           = $null
+      XrxIsScanFavorite      = 0
+      ScanTransferProtocol   = 4
+      ScanServerAddress      = $null
+      ScanServerPort         = 0
+      ScanDocumentPath       = $null
+      ScanLoginName          = $null
+      ScanLoginPassword      = $null
+      ScanSMBShare           = $null
+      ScanNDSTree            = $null
+      ScanNDSContext         = $null
+      ScanNDSVolume          = $null
+    }
+    $Results += $Result
+  }
+  if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
 }
 elseif ($Null -eq $Vendor) { throw "Vendor must be specified" }
 else { throw "Vendor `'$Vendor`' not supported" }
@@ -11813,7 +11853,7 @@ Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domai
 function Update-MerakiSwitchPortNames {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.7
 
 .GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
 
@@ -11823,21 +11863,23 @@ function Update-MerakiSwitchPortNames {
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
+
+.PRIVATEDATA
 
 #> 
 
@@ -11863,6 +11905,7 @@ param (
   [string]$APIKey,
   [string]$networkid,
   [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path,
+  $JackLocations = (Import-Csv -Path $Path | Where-Object Switch -NotLike ""),
   $Headers = @{
     "Content-Type"           = "application/json"
     "Accept"                 = "application/json"
@@ -11884,14 +11927,20 @@ function UpdateSwitchPortName {
   $Serial = ($Switches | Where-Object name -eq $SwitchName).Serial
   $Body = @{ name = $Name } | ConvertTo-Json -Compress
   If ($PSCmdlet.ShouldProcess("$SwitchName $Port", "UpdateSwitchPortName to $Name")) {
-    return Invoke-RestMethod -Method Put -Uri "https://api.meraki.com/api/v1/devices/$($Serial)/switch/ports/$($Port)" -Headers $headers -Body $Body
+    try { return Invoke-RestMethod -Method Put -Uri "https://api.meraki.com/api/v1/devices/$($Serial)/switch/ports/$($Port)" -Headers $headers -Body $Body }
+    catch {
+      return [PSCustomObject]@{
+        portId = $port
+        name   = $Name
+        error  = $_
+      }
+    }
   }
 }
 
-$JackLocations = Import-Csv -Path $Path | Where-Object 'Switch Name' -NotLike ""
 $JackLocations | ForEach-Object {
-  $count++ ; Progress -Index $count -Total $JackLocations.count -Activity "Updating switch port names" -Name $($_.'Switch Port' + ": " + $_.'Switch Label')
-  return UpdateSwitchPortName -SwitchName $_.'Switch Name' -Port $_.'Switch Port' -Name $_.'Switch Label'
+  $count++ ; Progress -Index $count -Total $JackLocations.count -Activity "Updating switch port names" -Name $($_.Switch + " / " + $_.Port + ": " + $_.Label)
+  return UpdateSwitchPortName -SwitchName $_.Switch -Port $_.Port -Name $_.Label
 }
 }
 function Update-MicrosoftStoreApps {
