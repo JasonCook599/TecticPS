@@ -4288,6 +4288,165 @@ $Results = Get-ADUser -Properties name, ipPhone, Company, Title, Department, Dis
 if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
 return $Results
 }
+function Get-ITGlueExports {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID e456e40a-3a80-483a-8e0d-320bacc12d82
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+<#
+.SYNOPSIS
+Get a list of exports from IT Glue.
+
+.DESCRIPTION
+Get a list of exports from IT Glue.
+
+.PARAMETER Sort
+Field to sort the exports by. Default is "updated-at".
+
+.PARAMETER Count
+Number of exports to return. Default is one.
+
+.PARAMETER Count
+ID of a specific export to return.
+
+.PARAMETER BaseUri
+Base URI of the IT Glue API
+
+.PARAMETER APIKey
+Your IT Glue API Key.
+
+.EXAMPLE
+Get-ITGlueExports -Id 123456 -APIKey "ITG.*******************"
+
+.LINK
+https://github.com/IT-Glue-Public/automation/tree/main/Exports
+#>
+[CmdletBinding(DefaultParameterSetName = 'Multiple')]
+param (
+  [Parameter(ParameterSetName = "Multiple")]$Sort = "-updated-at",
+  [Parameter(ParameterSetName = "Multiple")]$Count = 1,
+  [Parameter(ParameterSetName = "Id")][uint64]$Id,
+  [ValidateScript( { $_[$_.Length - 1] -ne "/" })]$BaseUri = "https://api.itglue.com", # Don't allow superfluous forward slash in address
+  [string]$APIKey,
+  $Headers = @{
+    "x-api-key" = $APIKey
+  }
+)
+
+switch ($PSCmdlet.ParameterSetName) {
+  Multiple { $ResourceUri = "/exports?page[number]=1&sort=$Sort&page[size]=$Count" }
+  Id { $ResourceUri = ('/exports/{0}' -f $id) }
+}
+Write-Debug "ResourceUri: $ResourceUri "
+
+return (Invoke-RestMethod -Method get -Uri ($BaseUri + $ResourceUri) -Headers $Headers -ContentType application/vnd.api+json).data
+}
+function Get-ITGlueExportZip {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID fc1c5ecb-9dfd-48a3-956b-b9cd702e136c
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+<#
+.SYNOPSIS
+Downloads an export from IT Glue.
+
+.DESCRIPTION
+Downloads an export from IT Glue.
+
+.PARAMETER Export
+The export to download, usually passed in from Get-ITGlueExports.
+
+.PARAMETER Path
+The location to save the export to. If you only pass in a directory, the file will be named automatically based on the export information.
+
+.EXAMPLE
+Get-ITGlueExports -Id 123456 -APIKey "ITG.*******************" Get-ITGlueExportZip -Path C:\Backups\
+
+.LINK
+https://github.com/IT-Glue-Public/automation/tree/main/Exports
+#>
+param (
+  [ValidateScript( { [uint64]$_.Id -and [System.URI]$_.attributes."download-url" })][Parameter(ParameterSetName = "Export", ValueFromPipeline = $true)]$Export,
+  [ValidateScript( { Test-Path -Path $_ -Isvalid })]$Path
+)
+
+Write-Verbose "Validating Uri: $Uri"
+[System.URI]$Uri = $Export.attributes."download-url"
+if ($Uri.Scheme -ne "https") { throw "Invalid download-url: $Uri" }
+
+Write-Debug "Building output file path"
+if (Test-Path -Path $Path -PathType Container) {
+  if ($Export.attributes."export-all" -eq $true) { $FileName = "Account" }
+  else { $FileName = $Export.attributes."organization-id".ToString() + "-" + $Export.attributes."organization-name" }
+  $FileName += "-" + ($Export.attributes."created-at" -replace ":", "-")
+  $OutFile = Join-Path -Path $Path -ChildPath "$FileName.zip"
+}
+else { $OutFile = $Path }
+
+Write-Verbose "Starting export to $OutFile"
+$Response = Invoke-RestMethod -Uri $Uri -OutFile $OutFile
+
+$Return = $Export.attributes
+$Return | Add-Member -NotePropertyName Path -NotePropertyValue $OutFile
+$Return | Add-Member -NotePropertyName Response -NotePropertyValue $Response
+return $Return
+}
 function Get-LapsInfo {
 <#PSScriptInfo
 
