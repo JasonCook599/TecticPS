@@ -48,7 +48,7 @@ param (
 )
 
 $ConfigScript = ""
-$Reservations = Get-IpamReservationList -ManagedByService $ManagedByService -ComputerName $ComputerName
+$Reservations = Get-IpamReservations -ManagedByService $ManagedByService -ComputerName $ComputerName
 foreach ($Firewall in $Reservations.name | Get-Unique ) {
   $FirewallIps = $Reservations | Where-Object name -eq $Firewall
   $ConfigScript += "
