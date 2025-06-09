@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID bcbc3792-1f34-4100-867c-6fcf09230520
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 This will add a location to enviroment PATH.
@@ -49,7 +53,7 @@ This will override check of the maximum length.
 The maximum supported length for the PATH.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [Parameter(Mandatory = $true)][ValidateScript({ Test-Path -Path $_ -PathType Container })][string]$Path,
   [switch]$Machine,
   [switch]$Force,

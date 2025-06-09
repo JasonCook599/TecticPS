@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 120db2ff-3cb8-43ea-aa2c-f044ff52c144
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,14 +26,20 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
 Automatically update staff users.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path $_ })][string] $UserPath = ".\Staff.csv",
   [array]$Users = (Import-Csv $UserPath | Sort-Object -Property Surname, GivenName),
   $HomePage,

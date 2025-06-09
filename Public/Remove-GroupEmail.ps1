@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 214ed066-0271-4c0b-8210-8554f8de4f4a
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .SYNOPSIS
 Remove an email address to an existing Microsoft 365 group.
@@ -52,7 +56,7 @@ If set, this will set the email address you specified as the primary address for
 Remove-GroupEmail -Identity staff -EmailAddress staff@example.com
 #>
 
-param (
+param(
   [string]$GroupName,
   [string]$EmailAddress
 )

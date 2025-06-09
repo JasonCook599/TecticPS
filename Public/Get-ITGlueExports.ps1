@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID e456e40a-3a80-483a-8e0d-320bacc12d82
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -28,7 +28,11 @@
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -59,7 +63,7 @@ Get-ITGlueExports -Id 123456 -APIKey "ITG.*******************"
 https://github.com/IT-Glue-Public/automation/tree/main/Exports
 #>
 [CmdletBinding(DefaultParameterSetName = 'Multiple')]
-param (
+param(
   [Parameter(ParameterSetName = "Multiple")]$Sort = "-updated-at",
   [Parameter(ParameterSetName = "Multiple")]$Count = 1,
   [Parameter(ParameterSetName = "Id")][uint64]$Id,

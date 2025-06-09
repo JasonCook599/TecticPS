@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 090b7063-ddf4-4e5f-91ab-24127dec0d57
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -44,7 +50,7 @@ Start-PaperCutClient
 .EXAMPLE
 Start-PaperCutClient -SearchLocations "\\print\PCClient\win","C:\Cache"
 #>
-param (
+param(
   [string[]]$SearchLocations = @("\\print\PCClient\win", "C:\Cache")
 )
 

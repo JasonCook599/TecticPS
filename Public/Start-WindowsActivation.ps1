@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.9
 
 .GUID 625c264b-e5ec-4c6a-8478-39ec90518250
 
@@ -32,18 +32,22 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 Activate windows using the specified key, or fall back to the key in the BIOS.
 #>
 
-param (
+param(
   [string]$ProductKey
 )
 
 Function ActivationStatus { return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" |  Where-Object { $_.PartialProductKey })[0].LicenseStatus }
 function ActivateWindows {
-  param ([Parameter(ValueFromPipeline = $true)][ValidatePattern('^([A-Z0-9]{5}-){4}[A-Z0-9]{5}$')][string]$ProductKey)
+  param([Parameter(ValueFromPipeline = $true)][ValidatePattern('^([A-Z0-9]{5}-){4}[A-Z0-9]{5}$')][string]$ProductKey)
   $Service = Get-WmiObject -query "select * from SoftwareLicensingService"
   $Service.InstallProductKey($ProductKey)
   $Service.RefreshLicenseStatus()

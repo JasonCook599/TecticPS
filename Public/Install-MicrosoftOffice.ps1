@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.6
+.VERSION 1.2.8
 
 .GUID 12bacb17-e597-4588-8a86-0e05142301b6
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -48,7 +54,7 @@ Install-MicrosoftOffice -Version 2019Visio
 Install-MicrosoftOffice -Version 201932
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateSet(2019, 2016, 2013, 2010, 2007)][string]$Version,
   [ValidateSet("Visio", "x86", "Standard", $null)]$Options,
   [string]$InstallerPath,

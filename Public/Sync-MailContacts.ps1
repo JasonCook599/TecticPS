@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 6da14011-187b-4176-a61b-16836f8a0ad7
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,14 +26,20 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
 This script will sync users from one AD domain to another as Contacts.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [string]$SourceDomain,
   [string]$SourceSearchBase,
 

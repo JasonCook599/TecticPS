@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID af4b08fb-f7ab-4e9c-a200-efe99f2ac411
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -28,7 +28,11 @@
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
+
+
 
 
 
@@ -45,7 +49,7 @@ The location the configuration will be imported from.
 .PARAMETER Actions
 The type of data to be imported, either Subnet, Range, Addresses. Subnet & Range can be specified in the same command using the same file.
 #>
-param (
+param(
   [string]$ComputerName,
   [string]$Path,
   [ValidateSet("Subnet", "Range", "Addresses", IgnoreCase = $true)][array][Parameter(Position = 0, Mandatory = $true)]$Actions

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.10
+.VERSION 1.2.12
 
 .GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -39,7 +45,7 @@ The location the configuration will be exported to.
 Export-FortiClientConfig -Path backup.conf
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $Path = "backup.conf",
   [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
   [SecureString]$Password

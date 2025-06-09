@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.3.5
+.VERSION 1.3.7
 
 .GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
 
@@ -29,6 +29,10 @@
 .PRIVATEDATA
 
 #> 
+
+
+
+
 
 
 
@@ -86,7 +90,7 @@ https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/LICENSE
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [switch]$Return,
   [string]$AccountSkuId = "STANDARDWOFFPACK",
   [switch]$KeepEnabled = $False,

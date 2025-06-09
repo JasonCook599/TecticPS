@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID fb250771-93be-4da0-a4ec-edad2ccf7476
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -48,7 +54,7 @@ The argumnets to be passed to the program.
 How long to sleep before checking that the app is running.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript({ Test-Path $_ -PathType Leaf })][string]$Path = ${env:ProgramFiles(x86)} + "\Microsoft\Edge\Application\msedge.exe", #"\Google\Chrome\Application\chrome.exe",
   [string]$Url,
   [array]$Arguments = "--kiosk $($Url)",

@@ -67,7 +67,7 @@ catch { Write-Error $_ }
 function CimSession {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 2e98e078-34ab-45f7-8e39-57926daaa825
 
@@ -85,7 +85,7 @@ function CimSession {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -95,7 +95,9 @@ function CimSession {
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -104,9 +106,11 @@ Find an existing CIM session, or create a new one.
 .PARAMETER ComputerName
 The computer to create the session on.
 #>
-param (
+param(
   [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 try { $Session = (Get-CimSession -ComputerName $ComputerName -ErrorAction SilentlyContinue)[0] }
 catch { $Session = (New-CimSession -ComputerName $ComputerName) }
@@ -412,7 +416,7 @@ catch {
 function ParseGuid {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID 93f9436d-928a-4cf8-a5a0-e3f3f6bdcf14
 
@@ -420,7 +424,7 @@ function ParseGuid {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -430,7 +434,7 @@ function ParseGuid {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -438,16 +442,23 @@ function ParseGuid {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
 Parse a GUID
 #>
-param (
+param(
   [string]$String,
   [ValidateSet("N", "D", "B", "P")][string]$Format = "B"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 $Guid = [System.Guid]::empty
 If ([System.Guid]::TryParse($String, [System.Management.Automation.PSReference]$Guid)) {
   $Guid = [System.Guid]::Parse($String)
@@ -806,7 +817,7 @@ foreach ($Device in $AllowedDevices.GetEnumerator()) {
 function Add-BluredPillarBars {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 6ee394c8-c592-49d5-b16c-601955ef4d2f
 
@@ -837,6 +848,7 @@ function Add-BluredPillarBars {
 #> 
 
 
+
 <#
 .SYNOPSIS
 This script will using ImageMagick to add blurred pillar bars to a set of images.
@@ -863,7 +875,7 @@ The text that appears after the filename for each converted image. If unspecifed
 This is the max height of the converted image. If unspecified, the current height will be used.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path -Path $_ })][Parameter(Mandatory = $true)][string]$Path,
   [string]$Background,
   [string]$Format,
@@ -873,6 +885,8 @@ param (
   [ValidateRange(1, [int]::MaxValue)][int]$MaxHeight,
   [switch]$Preview
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Get-ChildItem -File -Path $Path | ForEach-Object {
   If (!$Format) { $Format = [System.IO.Path]::GetExtension($_.Name) }
@@ -962,7 +976,7 @@ else { Add-Computer -DomainName $Domain -Credential $Credentials -Force }
 function Add-GroupEmail {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 772c6454-68cf-42aa-89b9-dd6dc5939e1b
 
@@ -993,6 +1007,7 @@ function Add-GroupEmail {
 #> 
 
 
+
 <#
 .SYNOPSIS
 Add an email address to an existing Microsoft 365 group.
@@ -1012,11 +1027,13 @@ If set, this will set the email address you specified as the primary address for
 .EXAMPLE
 Add-GroupEmail -Identity staff -EmailAddress staff@example.com
 #>
-param (
+param(
   [string]$Identity,
   [mailaddress]$EmailAddress,
   [switch]$SetPrimary
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Set-UnifiedGroup -Identity $-Identity -EmailAddresses: @{Add = $EmailAddress }
 If ($SetPrimary) { Set-UnifiedGroup -Identity $-Identity -PrimarySmtpAddress  $EmailAddress }
@@ -1024,7 +1041,7 @@ If ($SetPrimary) { Set-UnifiedGroup -Identity $-Identity -PrimarySmtpAddress  $E
 function Add-Path {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID bcbc3792-1f34-4100-867c-6fcf09230520
 
@@ -1055,6 +1072,7 @@ function Add-Path {
 #> 
 
 
+
 <#
 .DESCRIPTION
 This will add a location to enviroment PATH.
@@ -1072,12 +1090,14 @@ This will override check of the maximum length.
 The maximum supported length for the PATH.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [Parameter(Mandatory = $true)][ValidateScript({ Test-Path -Path $_ -PathType Container })][string]$Path,
   [switch]$Machine,
   [switch]$Force,
   [ValidateRange(1, [int]::MaxValue)][int]$MaxLength = 1024
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 if ($Machine) {
   Write-Verbose "Adding `"$Path`" to system PATH"
@@ -1101,7 +1121,7 @@ Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
 function Add-Signature {
 <#PSScriptInfo
 
-.VERSION 1.1.8
+.VERSION 1.1.10
 
 .GUID 9be6c147-e71b-44c4-b265-1b685692e411
 
@@ -1132,6 +1152,7 @@ function Add-Signature {
 #> 
 
 
+
 <#
 .DESCRIPTION
 This script will sign Powershell scripts with the available code signing certificate.
@@ -1152,7 +1173,7 @@ Used as the signing name when signing an executable file. If unspecified, will t
 .\Sign-Script.ps1 -All
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path -Path $_[0] })][array]$Path = (Get-Location),
   [string]$Filter = "*.ps*1",
   [ValidateScript( { Test-Certificate $_ })][System.Security.Cryptography.X509Certificates.X509Certificate]$Certificate = ((Get-ChildItem cert:currentuser\my\ -CodeSigningCert | Sort-Object NotBefore -Descending)[0]),
@@ -1162,6 +1183,8 @@ param (
   [string]$Url,
   [string]$Algorithm = "SHA256"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
   If (([System.IO.Path]::GetExtension($_.FullName) -like ".ps*1")) { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $Certificate }
@@ -2181,7 +2204,7 @@ if ($Group -contains "CA") {
 function Disable-NetbiosTcpIp {
 <#PSScriptInfo
 
-.VERSION 1.1.3
+.VERSION 1.1.5
 
 .GUID 460f5844-8755-46df-8fb5-a12fa88bf413
 
@@ -2189,7 +2212,7 @@ function Disable-NetbiosTcpIp {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -2199,7 +2222,7 @@ function Disable-NetbiosTcpIp {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -2207,7 +2230,12 @@ function Disable-NetbiosTcpIp {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .SYNOPSIS
@@ -2217,10 +2245,10 @@ This script will disable Netbios TCP/IP on all interfaces.
 This script will disable Netbios TCP/IP on all interfaces.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param ()
+param()
 
 function ParseGuid {
-  param (
+  param(
     [string]$String,
     [ValidateSet("N", "D", "B", "P")][string]$Format = "B"
   )
@@ -2285,7 +2313,7 @@ Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase | ForEach-Objec
 function Enable-AdUserPermissionInheritance {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 7e41b659-a682-489a-830d-5a118f2e11be
 
@@ -2293,7 +2321,7 @@ function Enable-AdUserPermissionInheritance {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -2303,7 +2331,7 @@ function Enable-AdUserPermissionInheritance {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -2311,7 +2339,10 @@ function Enable-AdUserPermissionInheritance {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -2330,11 +2361,13 @@ Set to $true to keep inherited access rules or $false to remove inherited access
 https://itomation.ca/enable-ad-object-inheritance-using-powershell/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-Param (
+param(
   $Users,
   $Protected = $false,
   $Preserve = $true
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Test-Admin -Warn -Message "You likely need to must be an administrator to change permissions." | Out-Null
 
@@ -2360,7 +2393,7 @@ $Users | ForEach-Object {
 function Enable-LicenseOptions {
 <#PSScriptInfo
 
-.VERSION 1.3.5
+.VERSION 1.3.7
 
 .GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
 
@@ -2390,6 +2423,7 @@ function Enable-LicenseOptions {
 
 #> 
 
+
 
 <#
 .DESCRIPTION
@@ -2445,7 +2479,7 @@ https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/LICENSE
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [switch]$Return,
   [string]$AccountSkuId = "STANDARDWOFFPACK",
   [switch]$KeepEnabled = $False,
@@ -2461,6 +2495,8 @@ param (
   [array]$NoSharepoint = (Get-ADGroupMember -Recursive -Identity "Office 365-No Sharepoint" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName),
   [array]$NoExchange = (Get-ADGroupMember -Recursive -Identity "Office 365-No Exchange" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName)
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 [System.Collections.ArrayList]$Results = @()
 $count = 1; $PercentComplete = 0;
@@ -2897,7 +2933,7 @@ Get-ADUser @Arguments | ForEach-Object {
 function Export-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.2.10
+.VERSION 1.2.12
 
 .GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
 
@@ -2905,7 +2941,7 @@ function Export-FortiClientConfig {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -2915,7 +2951,7 @@ function Export-FortiClientConfig {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -2923,7 +2959,12 @@ function Export-FortiClientConfig {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -2936,11 +2977,13 @@ The location the configuration will be exported to.
 Export-FortiClientConfig -Path backup.conf
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $Path = "backup.conf",
   [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
   [SecureString]$Password
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
 if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
@@ -3563,7 +3606,7 @@ return [ADSI]"LDAP://<SID=$Sid>"
 function Get-AzureAdDirectLicenseAssignments {
 <#PSScriptInfo
 
-.VERSION 2.0.3
+.VERSION 2.0.5
 
 .GUID f05dd4da-b51c-41e0-9bc2-92888c536c8e
 
@@ -3571,7 +3614,7 @@ function Get-AzureAdDirectLicenseAssignments {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -3581,7 +3624,7 @@ function Get-AzureAdDirectLicenseAssignments {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -3589,7 +3632,11 @@ function Get-AzureAdDirectLicenseAssignments {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -3610,10 +3657,12 @@ https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licens
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
-param (
+param(
   $Users = (Get-MsolUser -All -ErrorAction Stop),
   $Skus = ("ATP_ENTERPRISE", "ATP_ENTERPRISE", "ENTERPRISEPACK")
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $Results = @()
 
@@ -3811,7 +3860,7 @@ return (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOrigi
 function Get-BitlockerStatus {
 <#PSScriptInfo
 
-.VERSION 1.1.5
+.VERSION 1.1.7
 
 .GUID 674855a4-1cd1-43b7-8e41-fea3bc501f61
 
@@ -3842,6 +3891,7 @@ function Get-BitlockerStatus {
 #> 
 
 
+
 <#
 .SYNOPSIS
 This commands checks the Bitlocker status and returns it in a human readable format.
@@ -3852,9 +3902,11 @@ This commands checks the Bitlocker status and returns it in a human readable for
 .PARAMETER Drive
 The drive to check for protection on. If unspecified, the System Drive will be used.
 #>
-param (
+param(
   [ValidateScript( { Test-Path $_ })][string]$Drive = $env:SystemDrive
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 If (!(Test-Path $Drive)) {
   Write-Error "$Drive is not valid. Please choose a valid path."
@@ -4085,7 +4137,7 @@ Return $Results
 function Get-FirmwareType {
 <#PSScriptInfo
 
-.VERSION 1.1.3
+.VERSION 1.1.4
 
 .GUID d15ce592-4b3e-4d42-82b6-d4a2dd5f15f2
 
@@ -4093,7 +4145,7 @@ function Get-FirmwareType {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -4103,7 +4155,7 @@ function Get-FirmwareType {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -4111,7 +4163,10 @@ function Get-FirmwareType {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -4196,7 +4251,7 @@ Function IsUEFI {
 #>
 
   [OutputType([Bool])]
-  Param ()
+  param()
 
   Add-Type -Language CSharp -TypeDefinition @'
 
@@ -4302,7 +4357,7 @@ Function Get-BiosType {
 function Get-GroupMembershipReport {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID b2ff192c-1106-4c52-ab8c-b7cab4524cc9
 
@@ -4333,6 +4388,8 @@ function Get-GroupMembershipReport {
 #> 
 
 
+
+
 <#
 .DESCRIPTION
 Gets group membership information for the specified groups.
@@ -4344,10 +4401,12 @@ Filters the search based on the specified parameters.
 The LDAP search base.
 #>
 
-param (
+param(
   $Filter = "*",
   $SearchBase
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 $Results = @()
 Get-ADGroup -SearchBase $SearchBase -Filter * -Properties Description | ForEach-Object {
   $MembersString = (Get-ADGroupMember -Identity $_.DistinguishedName).Name -join ";"
@@ -4364,7 +4423,7 @@ return $Results
 function Get-IpamReservations {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID e16d5930-dc98-4b09-9ef0-f94b8e117483
 
@@ -4382,7 +4441,7 @@ function Get-IpamReservations {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -4392,7 +4451,8 @@ function Get-IpamReservations {
 
 .PRIVATEDATA
 
-#>
+#> 
+
 
 
 <#
@@ -4405,12 +4465,14 @@ The computer hosting the IPAM service.
 .PARAMETER ManagedByService
 The service to choose.
 #>
-param (
+param(
   [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName,
   [string]$ManagedByService,
   [string]$AssignmentType = "Reserved",
   [ValidateSet("IPv4", "IPv6")][string]$AddressFamily = "IPv4"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $Addresses = Get-IpamAddress -CimSession (CimSession $ComputerName) -AddressFamily $AddressFamily | Where-Object AssignmentType -like Reserved
 $Ranges = Get-IpamRange -Session (CimSession $ComputerName) -AddressFamily $AddressFamily | Where-Object ManagedByService -eq $ManagedByService
@@ -4489,7 +4551,7 @@ return $Results
 function Get-ITGlueExports {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID e456e40a-3a80-483a-8e0d-320bacc12d82
 
@@ -4507,7 +4569,7 @@ function Get-ITGlueExports {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -4517,7 +4579,10 @@ function Get-ITGlueExports {
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
+
 
 <#
 .SYNOPSIS
@@ -4548,7 +4613,7 @@ Get-ITGlueExports -Id 123456 -APIKey "ITG.*******************"
 https://github.com/IT-Glue-Public/automation/tree/main/Exports
 #>
 [CmdletBinding(DefaultParameterSetName = 'Multiple')]
-param (
+param(
   [Parameter(ParameterSetName = "Multiple")]$Sort = "-updated-at",
   [Parameter(ParameterSetName = "Multiple")]$Count = 1,
   [Parameter(ParameterSetName = "Id")][uint64]$Id,
@@ -4558,6 +4623,8 @@ param (
     "x-api-key" = $APIKey
   }
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 switch ($PSCmdlet.ParameterSetName) {
   Multiple { $ResourceUri = "/exports?page[number]=1&sort=$Sort&page[size]=$Count" }
@@ -4570,7 +4637,7 @@ return (Invoke-RestMethod -Method get -Uri ($BaseUri + $ResourceUri) -Headers $H
 function Get-ITGlueExportZip {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID fc1c5ecb-9dfd-48a3-956b-b9cd702e136c
 
@@ -4588,7 +4655,7 @@ function Get-ITGlueExportZip {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -4598,7 +4665,10 @@ function Get-ITGlueExportZip {
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
+
 
 <#
 .SYNOPSIS
@@ -4619,10 +4689,12 @@ Get-ITGlueExports -Id 123456 -APIKey "ITG.*******************" Get-ITGlueExportZ
 .LINK
 https://github.com/IT-Glue-Public/automation/tree/main/Exports
 #>
-param (
+param(
   [ValidateScript( { [uint64]$_.Id -and [System.URI]$_.attributes."download-url" })][Parameter(ParameterSetName = "Export", ValueFromPipeline = $true)]$Export,
   [ValidateScript( { Test-Path -Path $_ -Isvalid })]$Path
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Write-Verbose "Validating Uri: $Uri"
 [System.URI]$Uri = $Export.attributes."download-url"
@@ -5281,7 +5353,7 @@ END {}
 function Get-NewComputerName {
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.11
 
 .GUID f0c0a88c-be5c-46ee-ab03-86272a36b5d7
 
@@ -5312,6 +5384,7 @@ function Get-NewComputerName {
 #> 
 
 
+
 <#
 .DESCRIPTION
 This script will rename the computer based on the prefix and serial number.
@@ -5331,11 +5404,13 @@ The new name to use for the computer.
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
-param (
+param(
   [string]$Prefix,
   [string]$Serial = (Get-WmiObject win32_bios).Serialnumber,
   [int]$MaxLength = 15
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 $Models = @{
   Razer = "BY21\d{2}M(\d{8})"
 }
@@ -5427,7 +5502,7 @@ foreach ($lan in $ethernet) {
 function Get-OrphanedGPO {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 4ec63b79-6484-43eb-90f8-bef7e2642564
 
@@ -5435,7 +5510,7 @@ function Get-OrphanedGPO {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -5445,7 +5520,7 @@ function Get-OrphanedGPO {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -5453,7 +5528,12 @@ function Get-OrphanedGPO {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -5464,10 +5544,12 @@ https://4sysops.com/archives/find-orphaned-active-directory-gpos-in-the-sysvol-s
 #>
 
 [CmdletBinding()]
-param (
+param(
   [string]$ForestName = (Get-ADForest).Name,
   $Domains = (Get-AdForest -Identity $ForestName | Select-Object -ExpandProperty Domains)
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 try {
   ## Find all domains in the forest
@@ -5713,7 +5795,7 @@ foreach ($result in $results) {
 function Get-StaleAADGuestAccounts {
 <#PSScriptInfo
 
-.VERSION 1.1.6
+.VERSION 1.1.8
 
 .GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
 
@@ -5744,6 +5826,7 @@ function Get-StaleAADGuestAccounts {
 #> 
 
 
+
 <#
 .SYNOPSIS
 FIND State/Dormant B2B Accounts and Stale/Dormant B2B Guest Invitations
@@ -5773,13 +5856,15 @@ Should we find the last sign in date for stale users? This will take longer to p
 Get-StaleAADGuestAccounts
 #>
 
-param (
+param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$TenantId , # Tenant ID
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)][PSCredential]$Credential, # Registered AAD App ID and Secret
   $StaleDays = '90', # Number of days over which an Azure AD Account that hasn't signed in is considered stale'
   $StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a specific date to use as stale
   [switch]$GetLastSignIn
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Requires -Modules MSAL.PS
 
@@ -6041,7 +6126,7 @@ If ($ReportFile) { $Report | Export-Csv $ReportFile }
 function Get-UserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID c64f1f09-036c-471d-898c-c9b3da6f53a8
 
@@ -6072,6 +6157,7 @@ function Get-UserInfo {
 #> 
 
 
+
 <#
 .DESCRIPTION
 Shows the percentage of machines which have LAPS configured.
@@ -6094,7 +6180,7 @@ param(
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 function ParseDate {
-  param ($Date)
+  param($Date)
   if ($null -ne $Date -and $Date -ne 0) { return [datetime]::FromFileTime($Date) }
 }
 
@@ -6248,7 +6334,7 @@ foreach ($UserFolder in $Path) {
 function Import-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.2.10
+.VERSION 1.2.12
 
 .GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d
 
@@ -6256,7 +6342,7 @@ function Import-FortiClientConfig {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -6266,7 +6352,7 @@ function Import-FortiClientConfig {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -6274,7 +6360,12 @@ function Import-FortiClientConfig {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -6290,11 +6381,13 @@ Import-FortiClientConfig -Path backup.conf
 https://getmodern.co.uk/automating-the-install-of-forticlient-vpn-via-mem-intune
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $Path = "backup.conf",
   [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
   [SecureString]$Password
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
 if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
@@ -6306,7 +6399,7 @@ if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
 function Import-Ipam {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID af4b08fb-f7ab-4e9c-a200-efe99f2ac411
 
@@ -6324,7 +6417,7 @@ function Import-Ipam {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -6334,7 +6427,8 @@ function Import-Ipam {
 
 .PRIVATEDATA
 
-#>
+#> 
+
 
 
 <#
@@ -6350,11 +6444,13 @@ The location the configuration will be imported from.
 .PARAMETER Actions
 The type of data to be imported, either Subnet, Range, Addresses. Subnet & Range can be specified in the same command using the same file.
 #>
-param (
+param(
   [string]$ComputerName,
   [string]$Path,
   [ValidateSet("Subnet", "Range", "Addresses", IgnoreCase = $true)][array][Parameter(Position = 0, Mandatory = $true)]$Actions
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 if ($Actions -contains "Subnet" -or $Actions -contains "Range") {
     (Import-Csv -Path $Path) | Foreach-object {
@@ -6381,7 +6477,7 @@ if ($Actions -contains "Addresses") {
 function Initialize-BiosUsbKey {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 0c7d4d03-0299-400f-92a8-f857f9b8dc6e
 
@@ -6389,7 +6485,7 @@ function Initialize-BiosUsbKey {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -6399,7 +6495,7 @@ function Initialize-BiosUsbKey {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -6407,18 +6503,25 @@ function Initialize-BiosUsbKey {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
 This script will create a bootable BIOS key and apply an appropriate label.
 #>
 
-param (
+param(
   [string]$Path,
   [string]$Drive,
   [ValidateSet("Lenovo")][string]$Manufacturer = "Lenovo"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Push-Location $Path
 
@@ -6717,7 +6820,7 @@ If ( $Reboot -or $Action -contains "Reboot" -or (Test-Path "HKLM:\SOFTWARE­\Mic
 function Install-GCPW {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 24dd6c1f-cc9a-44a4-b8e8-dd831d7a51b4
 
@@ -6725,7 +6828,7 @@ function Install-GCPW {
 
 .COMPANYNAME Tectic Google
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -6735,7 +6838,7 @@ function Install-GCPW {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -6743,7 +6846,12 @@ function Install-GCPW {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .SYNOPSIS
@@ -6762,9 +6870,11 @@ https://support.google.com/a/answer/9250996?hl=en
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidatePattern("^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+([a-zA-Z0-9-]{2,63})$", ErrorMessage = "{0} is not a valid domain name.")][Parameter(Mandatory = $true)][string]$DomainsAllowedToLogin
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Credential Provider for Windows')) {
 
@@ -6825,7 +6935,7 @@ if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Creden
 function Install-MicrosoftOffice {
 <#PSScriptInfo
 
-.VERSION 1.2.6
+.VERSION 1.2.8
 
 .GUID 12bacb17-e597-4588-8a86-0e05142301b6
 
@@ -6833,7 +6943,7 @@ function Install-MicrosoftOffice {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -6843,7 +6953,7 @@ function Install-MicrosoftOffice {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -6851,7 +6961,12 @@ function Install-MicrosoftOffice {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .SYNOPSIS
@@ -6873,12 +6988,14 @@ Install-MicrosoftOffice -Version 2019Visio
 Install-MicrosoftOffice -Version 201932
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateSet(2019, 2016, 2013, 2010, 2007)][string]$Version,
   [ValidateSet("Visio", "x86", "Standard", $null)]$Options,
   [string]$InstallerPath,
   [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 while (!$InstallerPath) { $InstallerPath = Read-Host -Prompt "Enter the installer path." }
 if (!(Test-Path $InstallerPath)) { throw "Installer path is not valid" }
@@ -7114,7 +7231,7 @@ else {
 function Install-WingetFromCsv {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID a2fd3f34-5e6e-4bab-a860-ce9048a23348
 
@@ -7122,7 +7239,7 @@ function Install-WingetFromCsv {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -7132,7 +7249,7 @@ function Install-WingetFromCsv {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -7140,7 +7257,12 @@ function Install-WingetFromCsv {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -7157,11 +7279,13 @@ The install scope for the application. Machine by default. Can specify $null to 
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path,
   [array]$Apps = ((Import-Csv $Path | Where-Object Source -eq "winget" | Where-Object Skip -ne $true | Sort-Object Id).Id),
   [string]$Scope = "--scope machine"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 return $Apps | ForEach-Object {
   If ($PSCmdlet.ShouldProcess($_, "winget install")) {
     Start-Process -FilePath "winget" -ArgumentList "install $_ $Scope" -NoNewWindow -Wait
@@ -7171,7 +7295,7 @@ return $Apps | ForEach-Object {
 function Invoke-CommandSimple {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID b757fe20-fd8f-489d-bb21-9d01146274cd
 
@@ -7179,7 +7303,7 @@ function Invoke-CommandSimple {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -7189,7 +7313,7 @@ function Invoke-CommandSimple {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -7197,7 +7321,12 @@ function Invoke-CommandSimple {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -7207,7 +7336,7 @@ This will run the specified file.
 The file you wish to run.
 #>
 
-param ([ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path)
+param([ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path)
 & $Path
 }
 function Invoke-TickleMailRecipients {
@@ -7526,7 +7655,7 @@ $Files | ForEach-Object {
 function New-FortiClientConfig {
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 93f5aa38-3ef7-4d57-8225-1ba9e7167243
 
@@ -7534,7 +7663,7 @@ function New-FortiClientConfig {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -7544,7 +7673,7 @@ function New-FortiClientConfig {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -7552,7 +7681,12 @@ function New-FortiClientConfig {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -7575,7 +7709,7 @@ The end of the XML file, after all the connections are created.
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [Parameter(ValueFromPipeline = $true)][string]$Path,
   [Parameter(ValueFromPipeline = $true)][hashtable]$Locations,
   [Parameter(ValueFromPipeline = $true)][string]$AllGateways,
@@ -7805,6 +7939,8 @@ param (
 '
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
 function BuildConfig {
   Param(
     [ValidateLength(1, 31)][string]$Name,
@@ -7854,7 +7990,7 @@ else { return $Config }
 function New-IpamDhcpReservationConfig {
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 94788e2a-23d9-4aaf-89e0-668c62bc27e6
 
@@ -7872,7 +8008,7 @@ function New-IpamDhcpReservationConfig {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -7882,7 +8018,9 @@ function New-IpamDhcpReservationConfig {
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 
 <#
@@ -7895,13 +8033,15 @@ The computer hosting the IPAM service.
 .PARAMETER ManagedByService
 The service to choose.
 #>
-param (
+param(
   [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName,
   [ValidateSet("FortiGate", IgnoreCase = $true)]$ManagedByService = "FortiGate"
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
 $ConfigScript = ""
-$Reservations = Get-IpamReservationList -ManagedByService $ManagedByService -ComputerName $ComputerName
+$Reservations = Get-IpamReservations -ManagedByService $ManagedByService -ComputerName $ComputerName
 foreach ($Firewall in $Reservations.name | Get-Unique ) {
   $FirewallIps = $Reservations | Where-Object name -eq $Firewall
   $ConfigScript += "
@@ -7935,7 +8075,7 @@ return $ConfigScript
 function New-Password {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
 
@@ -7966,6 +8106,7 @@ function New-Password {
 #> 
 
 
+
 <#
 .DESCRIPTION
 This will return a random password which meets Active Directory's complexity requirements.
@@ -7982,10 +8123,12 @@ http://woshub.com/generating-random-password-with-powershell/
 https://docs.microsoft.com/en-us/dotnet/api/system.web.security.membership.generatepassword?view=netframework-4.8
 
 #>
-param (
+param(
   [int]$length = 8,
   [int]$Symbols = 2
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Add-Type -AssemblyName System.Web
 
@@ -8003,7 +8146,7 @@ return $Password
 function New-RandomCharacters {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 9f443ca7-e536-40ee-a774-7d94c5d3c569
 
@@ -8034,6 +8177,7 @@ function New-RandomCharacters {
 #> 
 
 
+
 <#
 .DESCRIPTION
 This will return random characters.
@@ -8044,10 +8188,12 @@ The number of characters to return.
 .PARAMETER Characters
 A string of characters to use.
 #>
-param (
+param(
   [ValidateRange(1, [int]::MaxValue)][int]$Length = 1,
   $Characters = "abcdefghiklmnoprstuvwxyzABCDEFGHKLMNOPRSTUVWXYZ1234567890!@#$%^&*()_+-=[]\{}|;:,./<>?"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $Random = 1..$Length | ForEach-Object { Get-Random -Maximum $Characters.length }
 $private:ofs = ""
@@ -8232,7 +8378,7 @@ If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
 function Remove-AzureAdDirectLicenseAssignments {
 <#PSScriptInfo
 
-.VERSION 2.0.3
+.VERSION 2.0.5
 
 .GUID 0677b108-26b5-409b-a169-b0eb45399dcf
 
@@ -8240,7 +8386,7 @@ function Remove-AzureAdDirectLicenseAssignments {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -8250,7 +8396,7 @@ function Remove-AzureAdDirectLicenseAssignments {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -8258,7 +8404,11 @@ function Remove-AzureAdDirectLicenseAssignments {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -8279,10 +8429,12 @@ https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licens
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
-param (
+param(
   $Users = (Get-MsolUser -All -ErrorAction Stop),
   $Skus = (Get-MgSubscribedSku)
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $Results = @()
 
@@ -8367,7 +8519,7 @@ return $String
 function Remove-CachedWallpaper {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 2a1c91e6-58fd-4f37-9daf-370b954c31e4
 
@@ -8375,7 +8527,7 @@ function Remove-CachedWallpaper {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -8385,7 +8537,7 @@ function Remove-CachedWallpaper {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -8393,7 +8545,12 @@ function Remove-CachedWallpaper {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .SYNOPSIS
@@ -8406,14 +8563,14 @@ This script removes the caches wallpaper by deleting %appdata%\Microsoft\Windows
 Remove-CachedWallpaper
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param ()
+param()
 Remove-Item "$Env:appdata\Microsoft\Windows\Themes\TranscodedWallpaper" -ErrorAction SilentlyContinue
 Remove-Item "$Env:appdata\Microsoft\Windows\Themes\CachedFiles\*.*" -ErrorAction SilentlyContinue
 }
 function Remove-GroupEmail {
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 214ed066-0271-4c0b-8210-8554f8de4f4a
 
@@ -8444,6 +8601,7 @@ function Remove-GroupEmail {
 #> 
 
 
+
 <#
 .SYNOPSIS
 Remove an email address to an existing Microsoft 365 group.
@@ -8464,10 +8622,12 @@ If set, this will set the email address you specified as the primary address for
 Remove-GroupEmail -Identity staff -EmailAddress staff@example.com
 #>
 
-param (
+param(
   [string]$GroupName,
   [string]$EmailAddress
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Remove = $EmailAddress }
 }
@@ -8596,7 +8756,7 @@ End {
 function Remove-OldFolders {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID cb98c8e9-cb35-4db2-9fe8-33afb9eb2272
 
@@ -8627,6 +8787,7 @@ function Remove-OldFolders {
 #> 
 
 
+
 <#
 .SYNOPSIS
 This script will trim the specified folder to the number of items specified.
@@ -8645,10 +8806,12 @@ Remove-OldFolders -Folder C:\Backups\ -Keep 10
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
   [ValidateRange(1, [int]::MaxValue)][int]$Keep = 10
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Get-ChildItem $Path -Directory | Sort-Object CreationTime -Descending | Select-Object -Skip $Keep | ForEach-Object {
   If ($PSCmdlet.ShouldProcess("$_", "Trim-Folder -Keep $Keep")) {
@@ -8716,7 +8879,7 @@ foreach ($Module in $Modules) {
 function Remove-UserPASSWD_NOTREQD {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 6309e154-81f6-4bd1-aff7-deaea3274934
 
@@ -8724,7 +8887,7 @@ function Remove-UserPASSWD_NOTREQD {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -8734,7 +8897,7 @@ function Remove-UserPASSWD_NOTREQD {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -8742,7 +8905,10 @@ function Remove-UserPASSWD_NOTREQD {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -8937,7 +9103,7 @@ Function GetUserAccCtrlStatus ($userDN) {
 }#End function
 
 function CheckDNExist {
-  Param (
+  param(
     $sADobjectName
   )
   $sADobjectName = "LDAP://" + $sADobjectName
@@ -9038,7 +9204,7 @@ else {
 function Remove-VsResistInstallFiles {
 <#PSScriptInfo
 
-.VERSION 1.1.6
+.VERSION 1.1.8
 
 .GUID 0775cf89-1a99-44ec-ac4e-7c80c95d87a2
 
@@ -9069,6 +9235,7 @@ function Remove-VsResistInstallFiles {
 #> 
 
 
+
 <#
 .SYNOPSIS
 This script removes the files leftover from a VCRedist from VC++ 2008 install.
@@ -9089,9 +9256,11 @@ Clean-VCRedist
 Clean-VCRedist.ps1 -Drive D
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [string]$Drive = $env:SystemDrive
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $Files = "install.exe", "install.res.1028.dll", "install.res.1031.dll", "install.res.1033.dll", "install.res.1036.dll", "install.res.1040.dll", "install.res.1041.dll", "install.res.1042.dll", "install.res.2052.dll", "install.res.3082.dll", "vcredist.bmp", "globdata.ini", "install.ini", "eula.1028.txt", "eula.1031.txt", "eula.1033.txt", "eula.1036.txt", "eula.1040.txt", "eula.1041.txt", "eula.1042.txt", "eula.2052.txt", "eula.3082.txt", "VC_RED.MSI", "VC_RED.cab"
 Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContinue }
@@ -9099,7 +9268,7 @@ Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContin
 function Repair-AdAttributes {
 <#PSScriptInfo
 
-.VERSION 1.0.20
+.VERSION 1.0.22
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -9107,7 +9276,7 @@ function Repair-AdAttributes {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -9117,7 +9286,7 @@ function Repair-AdAttributes {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -9125,7 +9294,12 @@ function Repair-AdAttributes {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -9166,7 +9340,7 @@ An array of properties to search against.
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [array]$Actions = @("LegacyExchange", "LegacyProxyAddresses", "ExtraProxyAddresses", "ClearMailNickname", "SetMailNickname", "ClearTelephoneNumber"),
   [string]$SearchBase,
   [string]$Server,
@@ -9176,6 +9350,8 @@ param (
   $LegacyExchangeAttributes = @("msExchMailboxGuid", "msexchhomeservername", "legacyexchangedn", "mailNickname", "msexchmailboxsecuritydescriptor", "msexchpoliciesincluded", "msexchrecipientdisplaytype", "msexchrecipienttypedetails", "msexchumdtmfmap", "msexchuseraccountcontrol", "msexchversion", "targetAddress"),
   $Properties = @("ProxyAddresses", "mail", "mailNickname", "ipPhone", "telephoneNumber")
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $SetAdOptions = @{
   Verbose = $VerbosePreference
@@ -9315,7 +9491,7 @@ ForEach ($VM in $VMs) {
 function Reset-CSC {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.4
 
 .GUID a4176bef-cf00-42a8-b097-8c9be952931c
 
@@ -9323,7 +9499,7 @@ function Reset-CSC {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -9333,7 +9509,7 @@ function Reset-CSC {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -9341,14 +9517,19 @@ function Reset-CSC {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
 This will reset the CSC (offline files) cache.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param ()
+param()
 Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\CSC\Parameters\ -Name FormatDatabase -Value 1 -Type DWord
 }
 function Reset-GitBranch {
@@ -10041,7 +10222,7 @@ foreach ($User in $Users) {
 function Set-ADUserPrimaryGroup {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 32f72580-a957-48f1-ba2e-da24f5550bb6
 
@@ -10049,7 +10230,7 @@ function Set-ADUserPrimaryGroup {
 
 .COMPANYNAME
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS ActiveDirectory AD User Primary Group Member
 
@@ -10059,7 +10240,7 @@ function Set-ADUserPrimaryGroup {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -10067,7 +10248,10 @@ function Set-ADUserPrimaryGroup {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 
@@ -10094,10 +10278,12 @@ https://www.powershellgallery.com/packages/Set-ADUserPrimaryGroup/1.0.3/Content/
 
 #>
 
-Param (
+param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$User,
   [Parameter(Mandatory = $true)]$Group
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 Begin {
   if ($Group.SID) {
     $ADGroup = $Group
@@ -10277,7 +10463,7 @@ $Photos | ForEach-Object {
 function Set-ComputerName {
 <#PSScriptInfo
 
-.VERSION 1.0.11
+.VERSION 1.0.13
 
 .GUID 0e319076-a254-46aa-948c-203373b9e47d
 
@@ -10308,6 +10494,7 @@ function Set-ComputerName {
 #> 
 
 
+
 <#
 .DESCRIPTION
 This script will rename the computer based on the prefix and serial number.
@@ -10327,12 +10514,14 @@ The new name to use for the computer.
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
-param (
+param(
   [string]$Prefix,
   [string]$User,
   [string]$Password,
   $NewName = (Get-NewComputerName -Prefix $Prefix)
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $Arguments = @{}
 if ($NewName) { $Arguments.NewName = $NewName }
@@ -10355,7 +10544,7 @@ catch [System.InvalidOperationException] {
 function Set-DefaultWallpapers {
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.10
 
 .GUID 910cea1b-4c78-4282-ac1d-7a64897475ea
 
@@ -10363,7 +10552,7 @@ function Set-DefaultWallpapers {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -10373,7 +10562,7 @@ function Set-DefaultWallpapers {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -10381,7 +10570,10 @@ function Set-DefaultWallpapers {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -10403,12 +10595,14 @@ Sets the lock screen wallpaper and prevents the user from changing it.
 https://ccmexec.com/2015/08/replacing-default-wallpaper-in-windows-10-using-scriptmdtsccm/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-Param (
+param(
   [ValidateScript( { Test-Path $_ })][string]$SourcePath,
   $Images = (Get-ChildItem $SourcePath -Filter *.jpg),
   [string]$Name = "Defaults",
   [switch]$LockScreen
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers." | Out-Null
 
@@ -10533,7 +10727,7 @@ Get-ChildItem $Path | ForEach-Object {
 function Set-Owner {
 <#PSScriptInfo
 
-.VERSION 1.1.4
+.VERSION 1.1.5
 
 .GUID fb1d15b5-4681-4f99-90d6-1fd44ed4219b
 
@@ -10563,6 +10757,8 @@ function Set-Owner {
 
 #> 
 
+
+
 
 <#
 .SYNOPSIS
@@ -10619,7 +10815,7 @@ http://gallery.technet.microsoft.com/scriptcenter/Set-Owner-ff4db177
 [CmdletBinding(
   SupportsShouldProcess = $True
 )]
-Param (
+param(
   [parameter(ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
   [Alias('FullName')]
   [string[]]$Path,
@@ -10628,6 +10824,8 @@ Param (
   [parameter()]
   [switch]$Recurse
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 Begin {
   #Prevent Confirmation on each Write-Debug command when using -Debug
   If ($PSBoundParameters['Debug']) {
@@ -10776,7 +10974,7 @@ End {
 function Set-RoomCalendarPermissions {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID 9d477618-5530-413c-bdf8-3ddf1580dbfa
 
@@ -10784,7 +10982,7 @@ function Set-RoomCalendarPermissions {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -10794,7 +10992,7 @@ function Set-RoomCalendarPermissions {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -10802,7 +11000,12 @@ function Set-RoomCalendarPermissions {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -10815,10 +11018,12 @@ What user should the permissions be set for. If not specified, the DEFAULT user 
 The access right to set. By default, the access right is set to LimitedDetails.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $User = "Default",
   $AccessRights = "LimitedDetails"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Get-Mailbox -RecipientTypeDetails RoomMailbox | ForEach-Object {
   If ($PSCmdlet.ShouldProcess("$_", "Set-RoomCalendarPermissions")) {
@@ -10829,7 +11034,7 @@ Get-Mailbox -RecipientTypeDetails RoomMailbox | ForEach-Object {
 function Set-Wallpaper {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.9
 
 .GUID 5367e6e7-1177-4f3f-a345-1633446ad628
 
@@ -10837,7 +11042,7 @@ function Set-Wallpaper {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -10847,7 +11052,7 @@ function Set-Wallpaper {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -10855,7 +11060,12 @@ function Set-Wallpaper {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -10892,10 +11102,12 @@ https://www.joseespitia.com/2017/09/15/set-wallpaper-powershell-function/
 
 #>
 
-param (
+param(
   [ValidateScript({ Test-Path $_ })][string]$Image = ((Get-ChildItem -Path (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\Windows"))[0].FullName),
   [ValidateSet('Fill', 'Fit', 'Stretch', 'Tile', 'Center', 'Span')][string]$Style = "Fit"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $WallpaperStyle = Switch ($Style) {
   "Fill" { "10" }
@@ -11066,7 +11278,7 @@ while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
 function Start-KioskApp {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID fb250771-93be-4da0-a4ec-edad2ccf7476
 
@@ -11074,7 +11286,7 @@ function Start-KioskApp {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -11084,7 +11296,7 @@ function Start-KioskApp {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -11092,7 +11304,12 @@ function Start-KioskApp {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .SYNOPSIS
@@ -11114,13 +11331,15 @@ The argumnets to be passed to the program.
 How long to sleep before checking that the app is running.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript({ Test-Path $_ -PathType Leaf })][string]$Path = ${env:ProgramFiles(x86)} + "\Microsoft\Edge\Application\msedge.exe", #"\Google\Chrome\Application\chrome.exe",
   [string]$Url,
   [array]$Arguments = "--kiosk $($Url)",
   [ValidateRange(1, [int]::MaxValue)][int]$Sleep = 5
 
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
   while ($true) {
@@ -11132,7 +11351,7 @@ If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
 function Start-PaperCutClient {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 090b7063-ddf4-4e5f-91ab-24127dec0d57
 
@@ -11140,7 +11359,7 @@ function Start-PaperCutClient {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -11150,7 +11369,7 @@ function Start-PaperCutClient {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -11158,7 +11377,12 @@ function Start-PaperCutClient {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .SYNOPSIS
@@ -11176,9 +11400,11 @@ Start-PaperCutClient
 .EXAMPLE
 Start-PaperCutClient -SearchLocations "\\print\PCClient\win","C:\Cache"
 #>
-param (
+param(
   [string[]]$SearchLocations = @("\\print\PCClient\win", "C:\Cache")
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $SearchLocations | ForEach-Object {
   Write-Verbose "Searching in $_"
@@ -11200,7 +11426,7 @@ $SearchLocations | ForEach-Object {
 function Start-WindowsActivation {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.9
 
 .GUID 625c264b-e5ec-4c6a-8478-39ec90518250
 
@@ -11231,18 +11457,21 @@ function Start-WindowsActivation {
 #> 
 
 
+
 <#
 .DESCRIPTION
 Activate windows using the specified key, or fall back to the key in the BIOS.
 #>
 
-param (
+param(
   [string]$ProductKey
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
 Function ActivationStatus { return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" |  Where-Object { $_.PartialProductKey })[0].LicenseStatus }
 function ActivateWindows {
-  param ([Parameter(ValueFromPipeline = $true)][ValidatePattern('^([A-Z0-9]{5}-){4}[A-Z0-9]{5}$')][string]$ProductKey)
+  param([Parameter(ValueFromPipeline = $true)][ValidatePattern('^([A-Z0-9]{5}-){4}[A-Z0-9]{5}$')][string]$ProductKey)
   $Service = Get-WmiObject -query "select * from SoftwareLicensingService"
   $Service.InstallProductKey($ProductKey)
   $Service.RefreshLicenseStatus()
@@ -11272,7 +11501,7 @@ Write-Error "Windows could not be activated."
 function Stop-ForKey {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 9b9dfb07-a7ea-4afd-94ab-74a5bf2ee340
 
@@ -11303,6 +11532,7 @@ function Stop-ForKey {
 #> 
 
 
+
 <#
 .SYNOPSIS
 This will break if the specified key it press. Otherwise, it will continue.
@@ -11317,16 +11547,18 @@ The key that this will listen for.
 Stop-ForKey -Key q
 Press q to abort, any other key to continue.: q
 #>
-param (
+param(
   $Key
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 $Response = Read-Host "Press $Key to abort, any other key to continue."
 If ($Response -eq $Key) { Break }
 }
 function Sync-MailContacts {
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 6da14011-187b-4176-a61b-16836f8a0ad7
 
@@ -11334,7 +11566,7 @@ function Sync-MailContacts {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -11344,7 +11576,7 @@ function Sync-MailContacts {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -11352,14 +11584,19 @@ function Sync-MailContacts {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
 This script will sync users from one AD domain to another as Contacts.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [string]$SourceDomain,
   [string]$SourceSearchBase,
 
@@ -11373,6 +11610,8 @@ param (
   [string]$SourceFilter = "*",
   [string]$DestinationFilter = "*"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $Source = @{}
 if ($SourceSearchBase) { $Source.SearchBase = $SourceSearchBase }
@@ -11451,7 +11690,7 @@ $SyncedUsers | ForEach-Object {
 function Sync-Nps {
 <#PSScriptInfo
 
-.VERSION 1.0.12
+.VERSION 1.0.14
 
 .GUID 6e7a4d29-1b73-490f-91aa-fc074a886716
 
@@ -11469,7 +11708,7 @@ function Sync-Nps {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -11477,7 +11716,12 @@ function Sync-Nps {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -11504,10 +11748,12 @@ http://directoryadmin.blogspot.com/2018/04/syncing-nps-settings-between-two-serv
 
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [Parameter(Mandatory = $true)]$Source,
   $Path = "\\$Source\C$\NPSConfig-$Source.xml"
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
 
@@ -11523,7 +11769,7 @@ if (-not [System.Diagnostics.EventLog]::SourceExists("NPS-Sync")) { New-Eventlog
 
 If ($PSCmdlet.ShouldProcess("$Source", "Export NPS Config")) {
   Write-Debug "Connect to NPS Master and export configuration"
-  $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -ScriptBlock { param ($Path) netsh nps export filename = $Path exportPSK = yes }
+  $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -ScriptBlock { param($Path) netsh nps export filename = $Path exportPSK = yes }
   Write-Debug "Verify that the import XML file was created. If it is not there, it will throw an exception caught by the trap above that will exit the script."
   Get-Item $Path -ErrorAction Stop | Out-Null
 }
@@ -11553,7 +11799,7 @@ Script was run from $($MyInvocation.MyCommand.Definition)"
 function Test-Admin {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID d96e4855-2468-4294-8475-4b954ad009dd
 
@@ -11561,7 +11807,7 @@ function Test-Admin {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -11571,7 +11817,7 @@ function Test-Admin {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -11579,7 +11825,12 @@ function Test-Admin {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .SYNOPSIS
@@ -11601,11 +11852,13 @@ The script will throw if not running as an admin.
 Test-Admin
 False
 #>
-param (
+param(
   [string]$Message = "You do not have Administrator rights to run this script!`nPlease re-run this script as an Administrator!",
   [switch]$Warn,
   [switch]$Throw
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 If (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { return $true }
 else {
@@ -11617,7 +11870,7 @@ else {
 function Test-CVE202134470 {
 <#PSScriptInfo
 
-.VERSION 22.11.13
+.VERSION 22.11.15
 
 .GUID 83ac6137-696a-496a-a746-0372e8a20797
 
@@ -11635,7 +11888,7 @@ function Test-CVE202134470 {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -11643,7 +11896,12 @@ function Test-CVE202134470 {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .SYNOPSIS
@@ -11690,11 +11948,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE
 #>
 [CmdletBinding()]
-param (
+param(
   [Parameter()]
   [switch]
   $ApplyFix
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $ErrorActionPreference = "Stop"
 
@@ -11755,7 +12015,7 @@ if ($ApplyFix) {
 function Test-DmaDevices {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID a2d15653-e7ac-4246-b3a4-adf73af11a06
 
@@ -11763,7 +12023,7 @@ function Test-DmaDevices {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -11773,7 +12033,7 @@ function Test-DmaDevices {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -11781,7 +12041,12 @@ function Test-DmaDevices {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -11820,13 +12085,15 @@ Test-DmaDevices -Action AddLast
 Test-DmaDevices -Action Reset
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $File = "DmaDevices.txt",
   $LastDeviceFile = ("$([System.IO.Path]::GetFileNameWithoutExtension($File))-last.txt"),
   [ValidateSet("RemoveFirst", "AddLast", "AddAll", "Export", "Reset")][array]$Action,
   $Path = "HKLM:\SYSTEM\CurrentControlSet\Control\DmaSecurity\AllowedBuses",
   $Parent = (Split-Path $Path -Parent)
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 If ($(Test-Path -Path $Parent) -eq $False) { New-Item $Parent }
 If ($(Test-Path -Path $Path) -eq $False) { New-Item $Path }
 function ParseInstanceId {
@@ -12000,7 +12267,7 @@ return $false
 function Test-Photo {
 <#PSScriptInfo
 
-.VERSION 1.0.11
+.VERSION 1.0.13
 
 .GUID a3cdb0bc-2c01-4aa3-b702-707a5060c071
 
@@ -12018,7 +12285,7 @@ function Test-Photo {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -12026,14 +12293,19 @@ function Test-Photo {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
 Test that a photo meets the requrements.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $Path,
   $Photos = (Get-ChildItem -Recurse -File -Path $Path),
   [int]$Width,
@@ -12041,6 +12313,8 @@ param (
   [switch]$Square,
   $FileSize
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 Add-Type -AssemblyName System.Drawing
 $Results = @()
 $Photos | ForEach-Object {
@@ -12059,7 +12333,7 @@ return $Results
 function Test-RegistryValue {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 73abfeda-2bad-4f83-a401-e34757afcbc0
 
@@ -12077,7 +12351,7 @@ function Test-RegistryValue {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -12085,7 +12359,12 @@ function Test-RegistryValue {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
@@ -12101,10 +12380,12 @@ The registry value withing the key to test.
 https://www.jonathanmedd.net/2014/02/testing-for-the-presence-of-a-registry-key-and-value.html
 #>
 
-param (
+param(
   [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Path,
   [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Value
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 try {
   Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
@@ -12436,7 +12717,7 @@ Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domai
 function Update-MerakiSwitchPortNames {
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
 
@@ -12467,6 +12748,7 @@ function Update-MerakiSwitchPortNames {
 #> 
 
 
+
 <#
 .DESCRIPTION
 Update the switch port names in Meraki based on the CSV file you specify.
@@ -12485,7 +12767,7 @@ An array of headers to send in each API request. Automatically generated using t
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [string]$APIKey,
   [string]$networkid,
   [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path,
@@ -12497,12 +12779,14 @@ param (
   }
 )
 
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
 Write-Verbose "Getting devices for $networkid"
 $Switches = Invoke-RestMethod -Method Get -Uri "https://api.meraki.com/api/v1/networks/$($networkid)/devices" -Headers $headers
 
 function UpdateSwitchPortName {
   [CmdletBinding(SupportsShouldProcess = $true)]
-  param (
+  param(
     [string]$SwitchName,
     [int]$Port,
     [string]$Name
@@ -12632,7 +12916,7 @@ $Path | ForEach-Object {
 function Update-PKI {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID 8f760b1c-0ccc-43b7-bfed-9370fa84b7f8
 
@@ -12640,7 +12924,7 @@ function Update-PKI {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -12650,7 +12934,7 @@ function Update-PKI {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -12658,14 +12942,19 @@ function Update-PKI {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
 Upload CRLs to GitHub if changed.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $Path = "./",
   $AccessToken = "",
   $OwnerName = "",
@@ -12673,6 +12962,8 @@ param (
   $BranchName = "",
   [switch]$Force
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
   If ($PSCmdlet.ShouldProcess($_.Name, "Update-PKI")) {
@@ -12687,7 +12978,7 @@ Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
 function Update-UsersAcademyStudents {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 4fc14578-f8eb-4ae2-8e39-77c0f197cff8
 
@@ -12695,7 +12986,7 @@ function Update-UsersAcademyStudents {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -12705,7 +12996,7 @@ function Update-UsersAcademyStudents {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -12713,14 +13004,19 @@ function Update-UsersAcademyStudents {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
 Automatically update Academy student users.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path $_ })][string] $UserPath = ".\Students.csv",
   [array]$Users = (Import-Csv $UserPath | Sort-Object -Property "Grade Level", "FirstName LastName"),
   $HomePage,
@@ -12730,6 +13026,8 @@ param (
   $Path
 
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 Get-ADUser -Filter * -SearchBase $Path | Set-ADUser -Enabled $false
 [System.Collections.ArrayList]$Results = @()
@@ -12784,7 +13082,7 @@ Return $Results
 function Update-UsersStaff {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 120db2ff-3cb8-43ea-aa2c-f044ff52c144
 
@@ -12792,7 +13090,7 @@ function Update-UsersStaff {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -12802,7 +13100,7 @@ function Update-UsersStaff {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -12810,14 +13108,19 @@ function Update-UsersStaff {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
 
 <#
 .DESCRIPTION
 Automatically update staff users.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path $_ })][string] $UserPath = ".\Staff.csv",
   [array]$Users = (Import-Csv $UserPath | Sort-Object -Property Surname, GivenName),
   $HomePage,
@@ -12825,6 +13128,8 @@ param (
   $Office,
   $Path
 )
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 [System.Collections.ArrayList]$Results = @()
 

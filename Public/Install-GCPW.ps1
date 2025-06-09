@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 24dd6c1f-cc9a-44a4-b8e8-dd831d7a51b4
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic Google
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -45,7 +51,7 @@ https://support.google.com/a/answer/9250996?hl=en
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidatePattern("^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+([a-zA-Z0-9-]{2,63})$", ErrorMessage = "{0} is not a valid domain name.")][Parameter(Mandatory = $true)][string]$DomainsAllowedToLogin
 )
 

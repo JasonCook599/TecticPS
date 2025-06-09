@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID c64f1f09-036c-471d-898c-c9b3da6f53a8
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 Shows the percentage of machines which have LAPS configured.
@@ -52,7 +56,7 @@ param(
 )
 
 function ParseDate {
-  param ($Date)
+  param($Date)
   if ($null -ne $Date -and $Date -ne 0) { return [datetime]::FromFileTime($Date) }
 }
 

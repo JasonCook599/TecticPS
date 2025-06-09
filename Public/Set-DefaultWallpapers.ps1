@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.10
 
 .GUID 910cea1b-4c78-4282-ac1d-7a64897475ea
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -48,7 +52,7 @@ Sets the lock screen wallpaper and prevents the user from changing it.
 https://ccmexec.com/2015/08/replacing-default-wallpaper-in-windows-10-using-scriptmdtsccm/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-Param (
+param(
   [ValidateScript( { Test-Path $_ })][string]$SourcePath,
   $Images = (Get-ChildItem $SourcePath -Filter *.jpg),
   [string]$Name = "Defaults",

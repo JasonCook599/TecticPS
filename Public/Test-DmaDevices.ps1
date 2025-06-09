@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID a2d15653-e7ac-4246-b3a4-adf73af11a06
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -65,7 +71,7 @@ Test-DmaDevices -Action AddLast
 Test-DmaDevices -Action Reset
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $File = "DmaDevices.txt",
   $LastDeviceFile = ("$([System.IO.Path]::GetFileNameWithoutExtension($File))-last.txt"),
   [ValidateSet("RemoveFirst", "AddLast", "AddAll", "Export", "Reset")][array]$Action,

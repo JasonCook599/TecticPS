@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 4ec63b79-6484-43eb-90f8-bef7e2642564
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -37,7 +43,7 @@ https://4sysops.com/archives/find-orphaned-active-directory-gpos-in-the-sysvol-s
 #>
 
 [CmdletBinding()]
-param (
+param(
   [string]$ForestName = (Get-ADForest).Name,
   $Domains = (Get-AdForest -Identity $ForestName | Select-Object -ExpandProperty Domains)
 )

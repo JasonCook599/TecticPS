@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID 2e98e078-34ab-45f7-8e39-57926daaa825
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -28,7 +28,11 @@
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
+
+
 
 
 
@@ -39,7 +43,7 @@ Find an existing CIM session, or create a new one.
 .PARAMETER ComputerName
 The computer to create the session on.
 #>
-param (
+param(
   [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName
 )
 

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 7e41b659-a682-489a-830d-5a118f2e11be
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -45,7 +49,7 @@ Set to $true to keep inherited access rules or $false to remove inherited access
 https://itomation.ca/enable-ad-object-inheritance-using-powershell/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-Param (
+param(
   $Users,
   $Protected = $false,
   $Preserve = $true

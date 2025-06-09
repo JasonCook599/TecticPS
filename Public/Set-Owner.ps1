@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.4
+.VERSION 1.1.5
 
 .GUID fb1d15b5-4681-4f99-90d6-1fd44ed4219b
 
@@ -29,6 +29,8 @@
 .PRIVATEDATA
 
 #> 
+
+
 
 
 
@@ -87,7 +89,7 @@ http://gallery.technet.microsoft.com/scriptcenter/Set-Owner-ff4db177
 [CmdletBinding(
   SupportsShouldProcess = $True
 )]
-Param (
+param(
   [parameter(ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
   [Alias('FullName')]
   [string[]]$Path,

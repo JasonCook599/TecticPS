@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.11
+.VERSION 1.0.13
 
 .GUID a3cdb0bc-2c01-4aa3-b702-707a5060c071
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,14 +26,20 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
 Test that a photo meets the requrements.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $Path,
   $Photos = (Get-ChildItem -Recurse -File -Path $Path),
   [int]$Width,

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.6
+.VERSION 1.1.8
 
 .GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
 
@@ -29,6 +29,10 @@
 .PRIVATEDATA
 
 #> 
+
+
+
+
 
 
 
@@ -61,7 +65,7 @@ Should we find the last sign in date for stale users? This will take longer to p
 Get-StaleAADGuestAccounts
 #>
 
-param (
+param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$TenantId , # Tenant ID
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)][PSCredential]$Credential, # Registered AAD App ID and Secret
   $StaleDays = '90', # Number of days over which an Azure AD Account that hasn't signed in is considered stale'

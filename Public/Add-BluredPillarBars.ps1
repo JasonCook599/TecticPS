@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 6ee394c8-c592-49d5-b16c-601955ef4d2f
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .SYNOPSIS
 This script will using ImageMagick to add blurred pillar bars to a set of images.
@@ -58,7 +62,7 @@ The text that appears after the filename for each converted image. If unspecifed
 This is the max height of the converted image. If unspecified, the current height will be used.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path -Path $_ })][Parameter(Mandatory = $true)][string]$Path,
   [string]$Background,
   [string]$Format,

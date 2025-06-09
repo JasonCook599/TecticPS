@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.3
+.VERSION 1.1.4
 
 .GUID d15ce592-4b3e-4d42-82b6-d4a2dd5f15f2
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -113,7 +117,7 @@ Function IsUEFI {
 #>
 
   [OutputType([Bool])]
-  Param ()
+  param()
 
   Add-Type -Language CSharp -TypeDefinition @'
 

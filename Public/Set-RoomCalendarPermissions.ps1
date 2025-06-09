@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID 9d477618-5530-413c-bdf8-3ddf1580dbfa
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -39,7 +45,7 @@ What user should the permissions be set for. If not specified, the DEFAULT user 
 The access right to set. By default, the access right is set to LimitedDetails.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $User = "Default",
   $AccessRights = "LimitedDetails"
 )

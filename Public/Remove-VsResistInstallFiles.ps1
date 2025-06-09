@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.6
+.VERSION 1.1.8
 
 .GUID 0775cf89-1a99-44ec-ac4e-7c80c95d87a2
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .SYNOPSIS
 This script removes the files leftover from a VCRedist from VC++ 2008 install.
@@ -52,7 +56,7 @@ Clean-VCRedist
 Clean-VCRedist.ps1 -Drive D
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [string]$Drive = $env:SystemDrive
 )
 

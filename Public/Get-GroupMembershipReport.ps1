@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID b2ff192c-1106-4c52-ab8c-b7cab4524cc9
 
@@ -32,6 +32,8 @@
 
 
 
+
+
 <#
 .DESCRIPTION
 Gets group membership information for the specified groups.
@@ -43,7 +45,7 @@ Filters the search based on the specified parameters.
 The LDAP search base.
 #>
 
-param (
+param(
   $Filter = "*",
   $SearchBase
 )

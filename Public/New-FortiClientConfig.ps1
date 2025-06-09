@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 93f5aa38-3ef7-4d57-8225-1ba9e7167243
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -49,7 +55,7 @@ The end of the XML file, after all the connections are created.
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [Parameter(ValueFromPipeline = $true)][string]$Path,
   [Parameter(ValueFromPipeline = $true)][hashtable]$Locations,
   [Parameter(ValueFromPipeline = $true)][string]$AllGateways,

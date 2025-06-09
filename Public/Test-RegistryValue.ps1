@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 73abfeda-2bad-4f83-a401-e34757afcbc0
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -42,7 +48,7 @@ The registry value withing the key to test.
 https://www.jonathanmedd.net/2014/02/testing-for-the-presence-of-a-registry-key-and-value.html
 #>
 
-param (
+param(
   [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Path,
   [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Value
 )

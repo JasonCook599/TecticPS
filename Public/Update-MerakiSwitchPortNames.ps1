@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 Update the switch port names in Meraki based on the CSV file you specify.
@@ -50,7 +54,7 @@ An array of headers to send in each API request. Automatically generated using t
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [string]$APIKey,
   [string]$networkid,
   [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path,
@@ -67,7 +71,7 @@ $Switches = Invoke-RestMethod -Method Get -Uri "https://api.meraki.com/api/v1/ne
 
 function UpdateSwitchPortName {
   [CmdletBinding(SupportsShouldProcess = $true)]
-  param (
+  param(
     [string]$SwitchName,
     [int]$Port,
     [string]$Name

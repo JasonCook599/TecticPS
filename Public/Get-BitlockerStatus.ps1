@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.5
+.VERSION 1.1.7
 
 .GUID 674855a4-1cd1-43b7-8e41-fea3bc501f61
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .SYNOPSIS
 This commands checks the Bitlocker status and returns it in a human readable format.
@@ -42,7 +46,7 @@ This commands checks the Bitlocker status and returns it in a human readable for
 .PARAMETER Drive
 The drive to check for protection on. If unspecified, the System Drive will be used.
 #>
-param (
+param(
   [ValidateScript( { Test-Path $_ })][string]$Drive = $env:SystemDrive
 )
 

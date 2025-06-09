@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 9b9dfb07-a7ea-4afd-94ab-74a5bf2ee340
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .SYNOPSIS
 This will break if the specified key it press. Otherwise, it will continue.
@@ -46,7 +50,7 @@ The key that this will listen for.
 Stop-ForKey -Key q
 Press q to abort, any other key to continue.: q
 #>
-param (
+param(
   $Key
 )
 $Response = Read-Host "Press $Key to abort, any other key to continue."

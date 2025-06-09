@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.11
+.VERSION 1.0.13
 
 .GUID 0e319076-a254-46aa-948c-203373b9e47d
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 This script will rename the computer based on the prefix and serial number.
@@ -51,7 +55,7 @@ The new name to use for the computer.
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
-param (
+param(
   [string]$Prefix,
   [string]$User,
   [string]$Password,

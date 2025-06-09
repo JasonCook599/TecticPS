@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID b757fe20-fd8f-489d-bb21-9d01146274cd
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -36,5 +42,5 @@ This will run the specified file.
 The file you wish to run.
 #>
 
-param ([ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path)
+param([ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path)
 & $Path

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.12
+.VERSION 1.0.14
 
 .GUID 6e7a4d29-1b73-490f-91aa-fc074a886716
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -53,7 +59,7 @@ http://directoryadmin.blogspot.com/2018/04/syncing-nps-settings-between-two-serv
 
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [Parameter(Mandatory = $true)]$Source,
   $Path = "\\$Source\C$\NPSConfig-$Source.xml"
 )
@@ -72,7 +78,7 @@ if (-not [System.Diagnostics.EventLog]::SourceExists("NPS-Sync")) { New-Eventlog
 
 If ($PSCmdlet.ShouldProcess("$Source", "Export NPS Config")) {
   Write-Debug "Connect to NPS Master and export configuration"
-  $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -ScriptBlock { param ($Path) netsh nps export filename = $Path exportPSK = yes }
+  $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -ScriptBlock { param($Path) netsh nps export filename = $Path exportPSK = yes }
   Write-Debug "Verify that the import XML file was created. If it is not there, it will throw an exception caught by the trap above that will exit the script."
   Get-Item $Path -ErrorAction Stop | Out-Null
 }

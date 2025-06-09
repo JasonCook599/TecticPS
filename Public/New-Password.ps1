@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.8
 
 .GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 This will return a random password which meets Active Directory's complexity requirements.
@@ -48,7 +52,7 @@ http://woshub.com/generating-random-password-with-powershell/
 https://docs.microsoft.com/en-us/dotnet/api/system.web.security.membership.generatepassword?view=netframework-4.8
 
 #>
-param (
+param(
   [int]$length = 8,
   [int]$Symbols = 2
 )

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 772c6454-68cf-42aa-89b9-dd6dc5939e1b
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .SYNOPSIS
 Add an email address to an existing Microsoft 365 group.
@@ -51,7 +55,7 @@ If set, this will set the email address you specified as the primary address for
 .EXAMPLE
 Add-GroupEmail -Identity staff -EmailAddress staff@example.com
 #>
-param (
+param(
   [string]$Identity,
   [mailaddress]$EmailAddress,
   [switch]$SetPrimary

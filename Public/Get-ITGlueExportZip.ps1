@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID fc1c5ecb-9dfd-48a3-956b-b9cd702e136c
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -28,7 +28,11 @@
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -49,7 +53,7 @@ Get-ITGlueExports -Id 123456 -APIKey "ITG.*******************" Get-ITGlueExportZ
 .LINK
 https://github.com/IT-Glue-Public/automation/tree/main/Exports
 #>
-param (
+param(
   [ValidateScript( { [uint64]$_.Id -and [System.URI]$_.attributes."download-url" })][Parameter(ParameterSetName = "Export", ValueFromPipeline = $true)]$Export,
   [ValidateScript( { Test-Path -Path $_ -Isvalid })]$Path
 )

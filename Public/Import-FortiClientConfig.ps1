@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.10
+.VERSION 1.2.12
 
 .GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -42,7 +48,7 @@ Import-FortiClientConfig -Path backup.conf
 https://getmodern.co.uk/automating-the-install-of-forticlient-vpn-via-mem-intune
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   $Path = "backup.conf",
   [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
   [SecureString]$Password

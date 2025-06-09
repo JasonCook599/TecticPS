@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.8
+.VERSION 1.1.10
 
 .GUID 9be6c147-e71b-44c4-b265-1b685692e411
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 This script will sign Powershell scripts with the available code signing certificate.
@@ -52,7 +56,7 @@ Used as the signing name when signing an executable file. If unspecified, will t
 .\Sign-Script.ps1 -All
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path -Path $_[0] })][array]$Path = (Get-Location),
   [string]$Filter = "*.ps*1",
   [ValidateScript( { Test-Certificate $_ })][System.Security.Cryptography.X509Certificates.X509Certificate]$Certificate = ((Get-ChildItem cert:currentuser\my\ -CodeSigningCert | Sort-Object NotBefore -Descending)[0]),

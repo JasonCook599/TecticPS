@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 32f72580-a957-48f1-ba2e-da24f5550bb6
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS ActiveDirectory AD User Primary Group Member
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 
@@ -53,7 +57,7 @@ https://www.powershellgallery.com/packages/Set-ADUserPrimaryGroup/1.0.3/Content/
 
 #>
 
-Param (
+param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$User,
   [Parameter(Mandatory = $true)]$Group
 )

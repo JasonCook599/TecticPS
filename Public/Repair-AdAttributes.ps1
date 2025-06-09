@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.20
+.VERSION 1.0.22
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -67,7 +73,7 @@ An array of properties to search against.
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [array]$Actions = @("LegacyExchange", "LegacyProxyAddresses", "ExtraProxyAddresses", "ClearMailNickname", "SetMailNickname", "ClearTelephoneNumber"),
   [string]$SearchBase,
   [string]$Server,

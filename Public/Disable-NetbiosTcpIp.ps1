@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.3
+.VERSION 1.1.5
 
 .GUID 460f5844-8755-46df-8fb5-a12fa88bf413
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .SYNOPSIS
@@ -36,10 +42,10 @@ This script will disable Netbios TCP/IP on all interfaces.
 This script will disable Netbios TCP/IP on all interfaces.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param ()
+param()
 
 function ParseGuid {
-  param (
+  param(
     [string]$String,
     [ValidateSet("N", "D", "B", "P")][string]$Format = "B"
   )

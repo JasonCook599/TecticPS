@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.0.3
+.VERSION 2.0.5
 
 .GUID 0677b108-26b5-409b-a169-b0eb45399dcf
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,9 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
 
 #Requires -Module MSOnline
+
+
 
 <#
 .DESCRIPTION
@@ -49,7 +53,7 @@ https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licens
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
-param (
+param(
   $Users = (Get-MsolUser -All -ErrorAction Stop),
   $Skus = (Get-MgSubscribedSku)
 )

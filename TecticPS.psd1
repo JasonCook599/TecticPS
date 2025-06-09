@@ -12,7 +12,7 @@
 RootModule = 'TecticPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.172'
+ModuleVersion = '1.1.174'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()

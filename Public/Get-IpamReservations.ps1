@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.3
 
 .GUID e16d5930-dc98-4b09-9ef0-f94b8e117483
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -28,7 +28,11 @@
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
+
+
 
 
 
@@ -42,7 +46,7 @@ The computer hosting the IPAM service.
 .PARAMETER ManagedByService
 The service to choose.
 #>
-param (
+param(
   [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName,
   [string]$ManagedByService,
   [string]$AssignmentType = "Reserved",

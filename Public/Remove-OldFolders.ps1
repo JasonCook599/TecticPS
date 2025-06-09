@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID cb98c8e9-cb35-4db2-9fe8-33afb9eb2272
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .SYNOPSIS
 This script will trim the specified folder to the number of items specified.
@@ -50,7 +54,7 @@ Remove-OldFolders -Folder C:\Backups\ -Keep 10
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
   [ValidateRange(1, [int]::MaxValue)][int]$Keep = 10
 )

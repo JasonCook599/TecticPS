@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 6309e154-81f6-4bd1-aff7-deaea3274934
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -258,7 +262,7 @@ Function GetUserAccCtrlStatus ($userDN) {
 # Description   : Check If distinguishedName exist
 #==========================================================================
 function CheckDNExist {
-  Param (
+  param(
     $sADobjectName
   )
   $sADobjectName = "LDAP://" + $sADobjectName

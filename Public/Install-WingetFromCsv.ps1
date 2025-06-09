@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID a2fd3f34-5e6e-4bab-a860-ce9048a23348
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,13 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
+
+
 
 <#
 .DESCRIPTION
@@ -43,7 +49,7 @@ The install scope for the application. Machine by default. Can specify $null to 
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
-param (
+param(
   [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path,
   [array]$Apps = ((Import-Csv $Path | Where-Object Source -eq "winget" | Where-Object Skip -ne $true | Sort-Object Id).Id),
   [string]$Scope = "--scope machine"

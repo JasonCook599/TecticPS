@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.11
 
 .GUID f0c0a88c-be5c-46ee-ab03-86272a36b5d7
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 This script will rename the computer based on the prefix and serial number.
@@ -51,7 +55,7 @@ The new name to use for the computer.
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
-param (
+param(
   [string]$Prefix,
   [string]$Serial = (Get-WmiObject win32_bios).Serialnumber,
   [int]$MaxLength = 15

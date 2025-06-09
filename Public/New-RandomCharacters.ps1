@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.6
 
 .GUID 9f443ca7-e536-40ee-a774-7d94c5d3c569
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 This will return random characters.
@@ -42,7 +46,7 @@ The number of characters to return.
 .PARAMETER Characters
 A string of characters to use.
 #>
-param (
+param(
   [ValidateRange(1, [int]::MaxValue)][int]$Length = 1,
   $Characters = "abcdefghiklmnoprstuvwxyzABCDEFGHKLMNOPRSTUVWXYZ1234567890!@#$%^&*()_+-=[]\{}|;:,./<>?"
 )
