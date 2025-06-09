@@ -1,113 +1,77 @@
 function AuthN {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID fe011093-6980-4847-aa9c-f7a7b47a3a5b
-
-.AUTHOR Jason Cook & Darren J Robinson
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID fe011093-6980-4847-aa9c-f7a7b47a3a5b.AUTHOR Jason Cook & Darren J Robinson.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-Authenticate to Azure AD and receieve Access and Refresh Tokens.
-
-.DESCRIPTION
-Authenticate to Azure AD and receieve Access and Refresh Tokens.
-
-.PARAMETER tenantID
-(required) Azure AD TenantID.
-
-.PARAMETER credential
+Authenticate to Azure AD and receieve Access and Refresh Tokens..DESCRIPTION
+Authenticate to Azure AD and receieve Access and Refresh Tokens..PARAMETER tenantID
+(required) Azure AD TenantID..PARAMETER credential
 (required) ClientID and Cli
 .EXAMPLE
 $Credential = Get-Credential
-AuthN -credential $Credential -tenantID '74ea519d-9792-4aa9-86d9-abcdefgaaa'
-
-.LINK
-http://darrenjrobinson.com/
-
-#>
+AuthN -credential $Credential -tenantID '74ea519d-9792-4aa9-86d9-abcdefgaaa'.LINK
+http://darrenjrobinson.com/#>
 [cmdletbinding()]
 param(
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$tenantID,
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)][System.Management.Automation.PSCredential]$credential
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-if (!(Get-Command Get-MsalToken)) { Install-Module -name MSAL.PS -Force -AcceptLicense }
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }if (!(Get-Command Get-MsalToken)) { Install-Module -name MSAL.PS -Force -AcceptLicense }
 try { return (Get-MsalToken -ClientId $credential.UserName -ClientSecret $credential.Password -TenantId $tenantID) } # Authenticate and Get Tokens
 catch { Write-Error $_ }
 }
-function GetAADPendingGuests {
+function CimSession {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.1
 
-.GUID d2231470-2326-4498-80d2-0456b0018d0a
+.GUID 2e98e078-34ab-45f7-8e39-57926daaa825
 
-.AUTHOR Jason Cook Darren J Robinson
+.AUTHOR Jason Cook
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
+
+.PRIVATEDATA
 
 #> 
 
 <#
 .DESCRIPTION
-Get AAD B2B Accounts where the inviation hasn't been accepted.
-
-.EXAMPLE
-GetAADPendingGuests
-
-.LINK
+Find an existing CIM session, or create a new one..PARAMETER ComputerName
+The computer to create the session on.
+#>
+param (
+  [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName
+)try { $Session = (Get-CimSession -ComputerName $ComputerName -ErrorAction SilentlyContinue)[0] }
+catch { $Session = (New-CimSession -ComputerName DGIIPAM1M) }
+return $Session
+}
+function GetAADPendingGuests {
+<#PSScriptInfo.VERSION 1.0.3.GUID d2231470-2326-4498-80d2-0456b0018d0a.AUTHOR Jason Cook Darren J Robinson.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
+.DESCRIPTION
+Get AAD B2B Accounts where the inviation hasn't been accepted..EXAMPLE
+GetAADPendingGuests.LINK
 http://darrenjrobinson.com/
 #>
 [cmdletbinding()]
-param()
-
-$global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
-
-try {
+param()$global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Tokentry {
     # Get AAD B2B Pending Users.
     return (Invoke-RestMethod -Headers @{Authorization = "Bearer $($myToken.AccessToken)" } `
             -Uri  "https://graph.microsoft.com/beta/users?filter=externalUserState eq 'PendingAcceptance'&`$top=999" `
@@ -116,47 +80,11 @@ try {
 catch { Write-Error $_ }
 }
 function GetAADSignIns {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID e5758f99-a57e-4bcf-af21-30e5fd176e51
-
-.AUTHOR Jason Cook Darren J Robinson
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID e5758f99-a57e-4bcf-af21-30e5fd176e51.AUTHOR Jason Cook Darren J Robinson.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Get AAD Account SignIn Activity.
-
-.PARAMETER date
-(required) date whereby users haven't signed in since to return objects for
-
-.EXAMPLE
-GetAADSignIns -Date "2021-01-01"
-
-.LINK
+Get AAD Account SignIn Activity..PARAMETER date
+(required) date whereby users haven't signed in since to return objects for.EXAMPLE
+GetAADSignIns -Date "2021-01-01".LINK
 http://darrenjrobinson.com/
 #>
 [cmdletbinding()]
@@ -165,9 +93,7 @@ param(
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-$global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
-
-try {
+$global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Tokentry {
     # Get AAD B2B Users
     return (Invoke-RestMethod -Headers @{Authorization = "Bearer $($myToken.AccessToken)" } `
             -Uri  "https://graph.microsoft.com/beta/users?filter=signInActivity/lastSignInDateTime le $($Date)" `
@@ -176,47 +102,11 @@ try {
 catch { Write-Error $_ }
 }
 function GetAADUserSignInActivity {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID b444ff47-447f-4196-90eb-08723fa0fbaf
-
-.AUTHOR Jason Cook Darren J Robinson
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID b444ff47-447f-4196-90eb-08723fa0fbaf.AUTHOR Jason Cook Darren J Robinson.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Get AAD Account SignIn Activity.
-
-.PARAMETER ID
-(required) ObjectID of the user to get SignIn Activity for
-
-.EXAMPLE
-GetAADUserSignInActivity -ID "feeb81f9-af70-2d5a-aa8c-f035ddaabcde"
-
-.LINK
+Get AAD Account SignIn Activity..PARAMETER ID
+(required) ObjectID of the user to get SignIn Activity for.EXAMPLE
+GetAADUserSignInActivity -ID "feeb81f9-af70-2d5a-aa8c-f035ddaabcde".LINK
 http://darrenjrobinson.com/
 #>
 [cmdletbinding()]
@@ -225,11 +115,7 @@ param(
     [string]$ID
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
-
-try {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Tokentry {
     # Get AAD SignIn Activity.
     return Invoke-RestMethod -Headers @{Authorization = "Bearer $($myToken.AccessToken)" } `
         -Uri  "https://graph.microsoft.com/beta/users/$($ID)?`$select=id,displayName,signInActivity" `
@@ -238,37 +124,7 @@ try {
 catch { Write-Error $_ }
 }
 function InstallModule {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 10ba8c03-4333-4f67-b11b-b25fef85943b
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 10ba8c03-4333-4f67-b11b-b25fef85943b.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Install module if not pressent.
 #>
@@ -279,63 +135,26 @@ If (!(Get-Module -ListAvailable -Name $Name)) {
 }
 }
 function LoadDefaults {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 73e8a944-8951-4a89-9a54-d51db3f9afac
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 73e8a944-8951-4a89-9a54-d51db3f9afac.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Load default parameters for various functions.
 #>
-
 param(
     [Parameter(Mandatory = $true)] $Invocation,
     $DefaultsScripts = "TecticPSDefaults.ps1"
-)
-
-try {
+)try {
     $ModuleName = (Get-Command -Name $Invocation.MyCommand -ErrorAction SilentlyContinue).ModuleName
     $ModulePath = (Get-Module -Name $ModuleName).Path
     $ModuleRoot = Split-Path -Parent -Path $ModulePath
     Write-Debug "Running command from the `'$ModuleName`' module located at `'$ModulePath`'."
 }
-catch { Write-Debug "Not running command from a module." }
-
-try {
+catch { Write-Debug "Not running command from a module." }try {
     $ScriptPath = ((Get-Item $Invocation.InvocationName -ErrorAction SilentlyContinue).DirectoryName)
     $ModuleRoot = Split-Path -Path $ScriptPath -Parent
     Test-Path -ErrorAction Stop -Path $ModuleRoot | Out-Null
     Write-Debug "Running command from a script located at `'$ScriptPath`'."
 }
-catch { Write-Debug "Could not find script parent." }
-
-try {
+catch { Write-Debug "Could not find script parent." }try {
     $DefaultsPath = Join-Path -Path $ModuleRoot -ChildPath $DefaultsScripts
     Write-Debug "Defaults Path is  `'$DefaultsPath`'"
     Test-Path -ErrorAction Stop -Path $DefaultsPath | Out-Null
@@ -347,37 +166,7 @@ catch {
 }
 }
 function ParseGuid {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID 93f9436d-928a-4cf8-a5a0-e3f3f6bdcf14
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID 93f9436d-928a-4cf8-a5a0-e3f3f6bdcf14.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Parse a GUID
 #>
@@ -395,37 +184,7 @@ Else {
 return $Guid.ToString($Format)
 }
 function Progress {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID d410b890-4003-4030-8a47-ee4b5d91a254
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID d410b890-4003-4030-8a47-ee4b5d91a254.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Show progress in an easier to use format
 #>
@@ -436,93 +195,29 @@ param(
     [string]$Activity,
     [string]$Status = ("Processing {0} of {1}: {2}" -f $Index, $Total, $Name),
     [int]$PercentComplete = ($Index / $Total * 100)
-)
-
-if ($PercentComplete -eq 100) { $Completed = $true } else { $Completed = $false }
+)if ($PercentComplete -eq 100) { $Completed = $true } else { $Completed = $false }
 if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentComplete $PercentComplete -Completed:$Completed }
 }
 function Requires {
-<#PSScriptInfo
-
-.VERSION 2.0.6
-
-.GUID f8ca5dd1-fef2-4024-adc9-124a3007870a
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 2.0.6.GUID f8ca5dd1-fef2-4024-adc9-124a3007870a.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-Used to specify required modules and prompt to install if missing.
-
-.DESCRIPTION
-Used to specify required modules and prompt to install if missing. The primary purpose for the creation of this is to allow the loading of a module even if the requirements of spesific scripts or functions are not met.
-
-This mimicks the #Requires format however has a limited feature set. Notable differences or limitations are listed below. Contributions are welcome to address these limitations.
+Used to specify required modules and prompt to install if missing..DESCRIPTION
+Used to specify required modules and prompt to install if missing. The primary purpose for the creation of this is to allow the loading of a module even if the requirements of spesific scripts or functions are not met.This mimicks the #Requires format however has a limited feature set. Notable differences or limitations are listed below. Contributions are welcome to address these limitations.
     - It is only possible to check if a module has been installed. You cannot check for spesific versions.
     - The PSEdition paramater has been renamed to PSEditonName as the former is reserved.
-    - This does not support the following parameters: Assembly, PSSnapin, ShellId
-
-.PARAMETER Modules
-An array of PowerShell modules that the script requires. Unlike a #Requires statement, you cannot specify version numbers.
-
-If the required modules aren't in the current session, PowerShell imports them. If the modules can't be imported, PowerShell prompt to install. If the installation fails or is declined, the check fails.
-
-.PARAMETER Version
-Specifies the minimum version of PowerShell that the script requires. Enter a major version number and optional minor version number.
-
-.PARAMETER PSEditionName
-Specifies a PowerShell edition that the script requires. Valid values are Core for PowerShell and Desktop for Windows PowerShell.
-
-.PARAMETER RunAsAdministrator
-the PowerShell session in which you're running the script must be started with elevated user rights. The RunAsAdministrator parameter is ignored on a non-Windows operating system. The RunAsAdministrator parameter was introduced in PowerShell 4.0.
-
-.PARAMETER Warn
-If specified, a warning will be thrown when a check fails. By default, a terminating error will be thrown.
-
-.PARAMETER Force
-If specified, missing modules will be installed without prompting.
-
-.PARAMETER FailedInstallMessage
-The message to show for a failed module installation.
-
-.PARAMETER SkippedInstallMessage
-The message to show for a skipped module installation.
-
-.PARAMETER PsVersionMessage
-The message to show for an invalid PowerShell version.
-
-.PARAMETER PSEditionMessage
-The message to show for an invalid PowerShell edition.
-
-.NOTES
-Credits    : Some text from Microsoft's official documentation. Available under Creative Commons Attribution 4.0 International License.
-
-.LINK
-https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_requires?view=powershell-7.2
-
-.LINK
+    - This does not support the following parameters: Assembly, PSSnapin, ShellId.PARAMETER Modules
+An array of PowerShell modules that the script requires. Unlike a #Requires statement, you cannot specify version numbers.If the required modules aren't in the current session, PowerShell imports them. If the modules can't be imported, PowerShell prompt to install. If the installation fails or is declined, the check fails..PARAMETER Version
+Specifies the minimum version of PowerShell that the script requires. Enter a major version number and optional minor version number..PARAMETER PSEditionName
+Specifies a PowerShell edition that the script requires. Valid values are Core for PowerShell and Desktop for Windows PowerShell..PARAMETER RunAsAdministrator
+the PowerShell session in which you're running the script must be started with elevated user rights. The RunAsAdministrator parameter is ignored on a non-Windows operating system. The RunAsAdministrator parameter was introduced in PowerShell 4.0..PARAMETER Warn
+If specified, a warning will be thrown when a check fails. By default, a terminating error will be thrown..PARAMETER Force
+If specified, missing modules will be installed without prompting..PARAMETER FailedInstallMessage
+The message to show for a failed module installation..PARAMETER SkippedInstallMessage
+The message to show for a skipped module installation..PARAMETER PsVersionMessage
+The message to show for an invalid PowerShell version..PARAMETER PSEditionMessage
+The message to show for an invalid PowerShell edition..NOTES
+Credits    : Some text from Microsoft's official documentation. Available under Creative Commons Attribution 4.0 International License..LINK
+https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/about/about_requires?view=powershell-7.2.LINK
 https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/reference/7.2/Microsoft.PowerShell.Core/About/about_Requires.md
 #>
 param(
@@ -540,30 +235,22 @@ param(
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 <#
-#>
-
-try { [version]$Version = $Version }
+#>try { [version]$Version = $Version }
 catch {
     try { $Version = [version]::New($Version, 0) }
     catch { throw "$Version is not a valid version" }
-}
-
-function Fail {
+}function Fail {
     param(
         [Parameter(ValueFromPipeline = $true)][string]$Message
     )
     if ($Warn) { Write-Warning $Message } else { throw $Message }
-}
-
-if ($Modules) {
+}if ($Modules) {
     foreach ($Module in $Modules) {
         if (Get-Module -Name $Module) { Write-Verbose "Module $Module is already loaded." }
         elseIf (Get-Module -ListAvailable -Name $Module) { Import-Module $Module }
         else {
             if (-Not $Force) { $choice = Read-Host -Prompt "Module '$Module' is not available but is required. Install? (Y)" }
-            else { Write-Output "'$Module' is not installed. Installing now." }
-
-            if ($choice -eq "Y" -or $Force) {
+            else { Write-Output "'$Module' is not installed. Installing now." }            if ($choice -eq "Y" -or $Force) {
                 try { Install-Module $Module }
                 catch {
                     try { Install-Module $Module -Scope CurrentUser }
@@ -573,142 +260,48 @@ if ($Modules) {
             }
             else { Fail $SkippedInstallMessage }
         }
-    }
-
-}
-
-if ($Version -gt $PSVersionTable.PSVersion) { Fail $PsVersionMessage }
+    }}if ($Version -gt $PSVersionTable.PSVersion) { Fail $PsVersionMessage }
 if ($PSEditionName -and $PSEditionName -ne $PSVersionTable.PSEdition) { Fail $PSEditionMessage }
 if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
     if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
-}
-
-if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
+}if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
     if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
-}
-
-if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
+}if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
     if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
 }
 }
 function SelectPackage {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 0caaa663-ed3d-498c-a77e-d00e85146cd1
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 0caaa663-ed3d-498c-a77e-d00e85146cd1.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Select the winget pacakge to install. Used by the Initilize-Workstation command.
-
-.PARAMETER Packages
-A hashtable of packages to select from.
-
-.PARAMETER Title
-The title of the message box.
-
-.PARAMETER Mode
+Select the winget pacakge to install. Used by the Initilize-Workstation command..PARAMETER Packages
+A hashtable of packages to select from..PARAMETER Title
+The title of the message box..PARAMETER Mode
 Should a single or multiple package be selected?
-#>
-
-param(
+#>param(
     [Parameter(Mandatory = $True, ValuefromPipeline = $True)][hashtable]$Packages,
     [Parameter(ValuefromPipeline = $True)][string]$Title = "Select the packages to install",
     [Parameter(ValuefromPipeline = $True)][ValidateSet("Single" , "Multiple")][string]$Mode = "Single"
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-if ($Packages.count -gt 1) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }if ($Packages.count -gt 1) {
     $SelectedPackage = $Packages | Out-GridView -OutputMode $Mode -Title $Title
     return @{ $SelectedPackage.Name = $SelectedPackage.Value }
-}
-
-elseif ($Packages.count -eq 1) {
-    while ("y", "n" -notcontains $Install ) { $Install = Read-Host "Do you want to install $($Packages.Keys)? [y/n] " }
-
-    if ($Install -eq "Y" ) { return @{ $($Packages.Keys) = $($Packages.Values) } }
+}elseif ($Packages.count -eq 1) {
+    while ("y", "n" -notcontains $Install ) { $Install = Read-Host "Do you want to install $($Packages.Keys)? [y/n] " }    if ($Install -eq "Y" ) { return @{ $($Packages.Keys) = $($Packages.Values) } }
     else { return @{} }
-}
-
-else {
+}else {
     Write-Warning "No packages to install. Press enter to continue."
     return @{}
 }
 }
 function Add-AllowedDmaDevices {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID a684ddd1-559b-48e2-bbdf-a85a3d50d3f6
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID a684ddd1-559b-48e2-bbdf-a85a3d50d3f6.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will Allow spesific devices to the list of Allowed Buses.
-
-.DESCRIPTION
-This script will Allow spesific devices to the list of Allowed Buses. The primary use if for automatic BitLocker encryption.
-
-.PARAMETER ComputerInfo
-The Manufacturer and Model of the current device.
-
-.PARAMETER Path
-The registry path for AllowedBuses
-
-.PARAMETER DeviceList
-A hashtable of all the address of allowed devices in the format of Manufactuer.Model.Name.
-
-.PARAMETER AllowedDevices
+This script will Allow spesific devices to the list of Allowed Buses..DESCRIPTION
+This script will Allow spesific devices to the list of Allowed Buses. The primary use if for automatic BitLocker encryption..PARAMETER ComputerInfo
+The Manufacturer and Model of the current device..PARAMETER Path
+The registry path for AllowedBuses.PARAMETER DeviceList
+A hashtable of all the address of allowed devices in the format of Manufactuer.Model.Name..PARAMETER AllowedDevices
 An list of all the devices allowed on this spesific device.
 #>
 param(
@@ -732,59 +325,15 @@ foreach ($Device in $AllowedDevices.GetEnumerator()) {
 }
 }
 function Add-BluredPillarBars {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 6ee394c8-c592-49d5-b16c-601955ef4d2f
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 6ee394c8-c592-49d5-b16c-601955ef4d2f.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will using ImageMagick to add blurred pillar bars to a set of images.
-
-.DESCRIPTION
-This script will scale to fill, then blur the spesified image. Then, on a new layer, it will scale to fit the image.
-
-.PARAMETER Path
-This is the image file or a folder of images to be modified.
-
-.PARAMETER Format
-The file format to convert images to. If unspesified, the existing format will be used.
-
-.PARAMETER Aspect
-The aspect ration to convert to, in x:y format. If unspesified, 16:9 will be used.
-
-.PARAMETER Prefix
-The text that appears before the filename for each converted image. If unspesified, the aspect ration in x_y format will be used.
-
-.PARAMETER Suffix
-The text that appears after the filename for each converted image. If unspesifed, no text will be used.
-
-.PARAMETER MaxHeight
+This script will using ImageMagick to add blurred pillar bars to a set of images..DESCRIPTION
+This script will scale to fill, then blur the spesified image. Then, on a new layer, it will scale to fit the image..PARAMETER Path
+This is the image file or a folder of images to be modified..PARAMETER Format
+The file format to convert images to. If unspesified, the existing format will be used..PARAMETER Aspect
+The aspect ration to convert to, in x:y format. If unspesified, 16:9 will be used..PARAMETER Prefix
+The text that appears before the filename for each converted image. If unspesified, the aspect ration in x_y format will be used..PARAMETER Suffix
+The text that appears after the filename for each converted image. If unspesifed, no text will be used..PARAMETER MaxHeight
 This is the max height of the converted image. If unspesified, the current height will be used.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -797,9 +346,7 @@ param (
   [string]$Suffix,
   [ValidateRange(1, [int]::MaxValue)][int]$MaxHeight,
   [switch]$Preview
-)
-
-Get-ChildItem -File -Path $Path | ForEach-Object {
+)Get-ChildItem -File -Path $Path | ForEach-Object {
   If (!$Format) { $Format = [System.IO.Path]::GetExtension($_.Name) }
   If (!$Background) { $Background = $_.Name }
   $OutFile = $Prefix + [io.path]::GetFileNameWithoutExtension($_.Name) + $Suffix + $Format
@@ -814,56 +361,14 @@ Get-ChildItem -File -Path $Path | ForEach-Object {
 }
 }
 function Add-ComputerToDomain {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 847616c6-fd6a-4685-b96f-ff8446a849e0
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 847616c6-fd6a-4685-b96f-ff8446a849e0.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will add the computer to the domain.
-
-.PARAMETER Domain
-The domain to join.
-
-.PARAMETER User
-The domain user with crednetials to join the domain.
-
-.PARAMETER Password
-The password for the domain user.
-
-.PARAMETER OU
-The OU to add the computer to.
-
-.PARAMETER SecurePassword
-The password for the domain user as a secure string.
-
-.PARAMETER Credentials
+This script will add the computer to the domain..PARAMETER Domain
+The domain to join..PARAMETER User
+The domain user with crednetials to join the domain..PARAMETER Password
+The password for the domain user..PARAMETER OU
+The OU to add the computer to..PARAMETER SecurePassword
+The password for the domain user as a secure string..PARAMETER Credentials
 The credentials object to use for the join.
 #>
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
@@ -876,115 +381,33 @@ param(
     [pscredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-if ($OU) { Add-Computer -DomainName $Domain -Credential $Credentials -Force -OU $OU }
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }if ($OU) { Add-Computer -DomainName $Domain -Credential $Credentials -Force -OU $OU }
 else { Add-Computer -DomainName $Domain -Credential $Credentials -Force }
 }
 function Add-GroupEmail {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 772c6454-68cf-42aa-89b9-dd6dc5939e1b
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 772c6454-68cf-42aa-89b9-dd6dc5939e1b.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-Add an email address to an existing Microsoft 365 group.
-
-.DESCRIPTION
-Add an email address to an existing Microsoft 365 group. You can also use this to set the primary address for the group.
-
-.PARAMETER Identity
-The identity of the group you wish to change.
-
-.PARAMETER EmailAddress
-The email address you whish to add.
-
-.PARAMETER SetPrimary
-If set, this will set the email adress you specified as the primary address for the group.
-
-.EXAMPLE
+Add an email address to an existing Microsoft 365 group..DESCRIPTION
+Add an email address to an existing Microsoft 365 group. You can also use this to set the primary address for the group..PARAMETER Identity
+The identity of the group you wish to change..PARAMETER EmailAddress
+The email address you whish to add..PARAMETER SetPrimary
+If set, this will set the email adress you specified as the primary address for the group..EXAMPLE
 Add-GroupEmail -Identity staff -EmailAddress staff@example.com
 #>
 param (
     [string]$Identity,
     [mailaddress]$EmailAddress,
     [switch]$SetPrimary
-)
-
-Set-UnifiedGroup -Identity $-Identity -EmailAddresses: @{Add = $EmailAddress }
+)Set-UnifiedGroup -Identity $-Identity -EmailAddresses: @{Add = $EmailAddress }
 If ($SetPrimary) { Set-UnifiedGroup -Identity $-Identity -PrimarySmtpAddress  $EmailAddress }
 }
 function Add-Path {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID bcbc3792-1f34-4100-867c-6fcf09230520
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID bcbc3792-1f34-4100-867c-6fcf09230520.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will add a location to enviroment PATH.
-
-.PARAMETER Path
-The path to add.
-
-.PARAMETER Machine
-This will modify the machine path instead of the user's path.
-
-.PARAMETER Force
-This will override check of the maximum lenght.
-
-.PARAMETER MaxLenght
+This will add a location to enviroment PATH..PARAMETER Path
+The path to add..PARAMETER Machine
+This will modify the machine path instead of the user's path..PARAMETER Force
+This will override check of the maximum lenght..PARAMETER MaxLenght
 The maximum supported lenght for the PATH.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -993,9 +416,7 @@ param (
     [switch]$Machine,
     [switch]$Force,
     [ValidateRange(1, [int]::MaxValue)][int]$MaxLength = 1024
-)
-
-if ($Machine) {
+)if ($Machine) {
     Write-Verbose "Adding `"$Path`" to system PATH"
     Test-Admin -Throw
     $Registry = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
@@ -1003,65 +424,19 @@ if ($Machine) {
 else {
     Write-Verbose "Adding `"$Path`" to user PATH"
     $Registry = "Registry::HKCU\Environment\"
-}
-
-$NewPath = (Get-ItemProperty -Path $Registry -Name PATH).Path + ";" + $Path
-
-Write-Verbose "PATH length is $($NewPath.length)"
+}$NewPath = (Get-ItemProperty -Path $Registry -Name PATH).Path + ";" + $PathWrite-Verbose "PATH length is $($NewPath.length)"
 if ($NewPath.length -gt $MaxLength -and (-not $Force)) {
     throw "Path is longer than $MaxLength characters. Paths this long may not behave as expected. Run with -Force to override."
-}
-
-Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
+}Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
 }
 function Add-Signature {
-<#PSScriptInfo
-
-.VERSION 1.1.7
-
-.GUID 9be6c147-e71b-44c4-b265-1b685692e411
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.7.GUID 9be6c147-e71b-44c4-b265-1b685692e411.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will sign Powershell scripts with the availble code signing certificate.
-
-.PARAMETER Path
-This is the file or folder containing files to sign. If unspecified, it will run in the current folder.
-
-.PARAMETER Filter
-Use this to limit the search to spesific files. If unspesified, "*.ps1" will be used.
-
-.PARAMETER Certificate
-The certificate to use when signing. If unspesified, the first code signing certificate in the personal store will be used.
-
-.PARAMETER Name
-Used as the signing name when signing an executable file. If unspecified, will the current user's company.
-
-.EXAMPLE
+This script will sign Powershell scripts with the availble code signing certificate..PARAMETER Path
+This is the file or folder containing files to sign. If unspecified, it will run in the current folder..PARAMETER Filter
+Use this to limit the search to spesific files. If unspesified, "*.ps1" will be used..PARAMETER Certificate
+The certificate to use when signing. If unspesified, the first code signing certificate in the personal store will be used..PARAMETER Name
+Used as the signing name when signing an executable file. If unspecified, will the current user's company..EXAMPLE
 .\Sign-Script.ps1 -All
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -1074,9 +449,7 @@ param (
   [switch]$Append,
   [string]$Url,
   [string]$Algorithm = "SHA256"
-)
-
-Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
+)Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
   If (([System.IO.Path]::GetExtension($_.FullName) -like ".ps*1")) { Set-AuthenticodeSignature -FilePath $_.FullName -Certificate $Certificate }
   elseif ([System.IO.Path]::GetExtension($_.FullName) -eq ".exe" -or [System.IO.Path]::GetExtension($_.FullName) -eq ".cat") {
     $Arguments = @("sign")
@@ -1093,76 +466,26 @@ Get-ChildItem -File -Path $Path -Filter $Filter | ForEach-Object {
       Start-Process -NoNewWindow -Wait -FilePath $SigntoolPath -ArgumentList $Arguments
     }
   }
-  else { Write-Error "We don't know how to handle this file type: ($([System.IO.Path]::GetExtension($_.Name))" }
-
-}
+  else { Write-Error "We don't know how to handle this file type: ($([System.IO.Path]::GetExtension($_.Name))" }}
 }
 function Backup-MySql {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 401b32f3-314a-47cf-b910-04c7f2492db2
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 401b32f3-314a-47cf-b910-04c7f2492db2.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will backup MySQL.
-
-.PARAMETER mySqlData
-Specifies the MySql Data folder. If unspecified C:\mySQL\data will be used.
-
-.PARAMETER BackupLocation
-Specifies the backup location. If unspecified C:\Local\MySqlBackups will be used.
-
-.PARAMETER ConfigFile
+This script will backup MySQL..PARAMETER mySqlData
+Specifies the MySql Data folder. If unspecified C:\mySQL\data will be used..PARAMETER BackupLocation
+Specifies the backup location. If unspecified C:\Local\MySqlBackups will be used..PARAMETER ConfigFile
 Specifies the config file used to connect to MySql Data folder. If unspecified .\my.cnf will be used. Below is an example config file.
 [client]
 user="User"
-password="password"
-
-[mysqldump]
+password="password"[mysqldump]
 single-transaction
 add-drop-database
-add-drop-table
-
-.PARAMETER mySqlDump
-Specifies the MySqlDump.exe location. If unspecified C:\mySQL\bin\mysqldump.exe will be used.
-
-.PARAMETER NoTrim
-This script will prevent trimming the number of backups to the specified number.
-
-.PARAMETER Copies
-This is the number of files to keep in the folder. If unspecified, it will keep 10 copies.
-
-.EXAMPLE
+add-drop-table.PARAMETER mySqlDump
+Specifies the MySqlDump.exe location. If unspecified C:\mySQL\bin\mysqldump.exe will be used..PARAMETER NoTrim
+This script will prevent trimming the number of backups to the specified number..PARAMETER Copies
+This is the number of files to keep in the folder. If unspecified, it will keep 10 copies..EXAMPLE
 Backup-MySql
-#>
-
-param(
+#>param(
   [ValidateScript( { Test-Path -Path $_ -PathType Container })][string]$mySqlData = "C:\mySQL\data", #Patch to datatbases files directory
   [ValidateScript( { Test-Path -Path $_ -PathType Container })][string]$BackupLocation = "C:\Local\MySqlBackups", #Backup Directory
   [ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$ConfigFile = ".\my.cnf", #Config file
@@ -1171,12 +494,8 @@ param(
   [ValidateRange(1, [int]::MaxValue)][int]$Copies = 10 #Number of copies to keep
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Write-Verbose "Get only names of the databases folders"
-$sqlDbDirList = Get-ChildItem -path $mySqlData | Where-Object { $_.PSIsContainer } | Select-Object Name
-
-Write-Verbose "Starting Backup"
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Write-Verbose "Get only names of the databases folders"
+$sqlDbDirList = Get-ChildItem -path $mySqlData | Where-Object { $_.PSIsContainer } | Select-Object NameWrite-Verbose "Starting Backup"
 Foreach ($dbDir in $sqlDbDirList) {
   Write-Verbose "Starting on $dbDir"
   $dbBackupDir = $BackupLocation + "\" + $dbDir.Name
@@ -1186,106 +505,32 @@ Foreach ($dbDir in $sqlDbDirList) {
   $sqlFile = $dbBackupFile + ".sql"
   Write-Verbose "Dumping to $sqlFile"
   & $mysqldump --defaults-extra-file=$ConfigFile -B $dbDir.Name -r $sqlFile
-}
-
-If (!$NoTrim) {
+}If (!$NoTrim) {
   Write-Verbose "Trimming backups. Keeping newest $Copies copies."
   Get-ChildItem $BackupLocation -Recurse | Where-Object { $_.PsIsContainer } | Sort-Object CreationTime -Descending | Select-Object -Skip $Copies | Remove-Item -Force
 }
 }
 function Clear-AdminCount {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID 5e42fd43-6940-434e-bb1c-aebb8ac32e44
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID 5e42fd43-6940-434e-bb1c-aebb8ac32e44.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will clear the AdminAcount for all user who have it set.
-
-.LINK
+This script will clear the AdminAcount for all user who have it set..LINK
 https://docs.microsoft.com/en-us/windows/win32/adschema/a-admincount
 #>
 Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Set-ADUser -Clear AdminCount
 }
 function Clear-PrintQueue {
-<#PSScriptInfo
-
-.VERSION 1.0.6
-
-.GUID 4656316e-19c9-4d45-a8cb-6c26f6548e22
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.6.GUID 4656316e-19c9-4d45-a8cb-6c26f6548e22.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This will clear all print jobs in the queue.
-
-.DESCRIPTION
-This will delete all *.shd and .spl file in %systemroot%\system32\spool\printers\ and restart the spooler service.
-
-.PARAMETER ComputerName
-This can be used to select a computer to clear the print jobs on. This option is required.
-
-.EXAMPLE
+This will clear all print jobs in the queue..DESCRIPTION
+This will delete all *.shd and .spl file in %systemroot%\system32\spool\printers\ and restart the spooler service..PARAMETER ComputerName
+This can be used to select a computer to clear the print jobs on. This option is required..EXAMPLE
 Clear-PrintQueue -ComputerName PrintServer
 #>
 param(
   [string]$ComputerName
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-while (!$ComputerName) { $ComputerName = Read-Host -Prompt "Enter the Computer Name." }
-
-Invoke-Command -ComputerName $ComputerName -ScriptBlock {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }while (!$ComputerName) { $ComputerName = Read-Host -Prompt "Enter the Computer Name." }Invoke-Command -ComputerName $ComputerName -ScriptBlock {
   Write-Verbose "Stopping spooler service."
   Stop-Service -Name spooler -Force
   Start-Sleep -Seconds 3
@@ -1299,59 +544,17 @@ Invoke-Command -ComputerName $ComputerName -ScriptBlock {
 }
 }
 function Connect-Office365 {
-<#PSScriptInfo
-
-.VERSION 2.1.5
-
-.GUID ab066274-cee5-401d-99ff-1eeced8ca9af
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 2.1.5.GUID ab066274-cee5-401d-99ff-1eeced8ca9af.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will connect to various Office 365 services.
-
-.DESCRIPTION
-To connect to Azure Active Directory, you must first install "Microsoft Online Services Sign-in Assistant". This script will install the "MSOnline" module if required. Instructions are availible here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=41950).
-
-To connect to Sharepoint Online, you must first install "SharePoint Online Management Shell". Instructions are availible here (https://docs.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online?view=sharepoint-ps) and download here (https://www.microsoft.com/en-ca/download/details.aspx?id=35588).
-
-To connect to Skype for Business Online, you must first install "Skype for Business Online, Windows PowerShell Module". Instructions are availible here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/manage-skype-for-business-online-with-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=39366).
-
-To connect to Exchange Online, you must first install "Microsoft.NET Framework 4.5" or later and then either the "Windows Management Framework 3.0" or the "Windows Management Framework 4.0". Instructions without MFA are availible here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps). Instructions with MFA are availible here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps)
-
-.LINK
+This script will connect to various Office 365 services..DESCRIPTION
+To connect to Azure Active Directory, you must first install "Microsoft Online Services Sign-in Assistant". This script will install the "MSOnline" module if required. Instructions are availible here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=41950).To connect to Sharepoint Online, you must first install "SharePoint Online Management Shell". Instructions are availible here (https://docs.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online?view=sharepoint-ps) and download here (https://www.microsoft.com/en-ca/download/details.aspx?id=35588).To connect to Skype for Business Online, you must first install "Skype for Business Online, Windows PowerShell Module". Instructions are availible here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/manage-skype-for-business-online-with-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=39366).To connect to Exchange Online, you must first install "Microsoft.NET Framework 4.5" or later and then either the "Windows Management Framework 3.0" or the "Windows Management Framework 4.0". Instructions without MFA are availible here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps). Instructions with MFA are availible here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps).LINK
 https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell
 .LINK
 https://www.microsoft.com/en-us/download/details.aspx?id=41950
 .LINK
 https://docs.microsoft.com/en-us/office365/enterprise/powershell/manage-skype-for-business-online-with-office-365-powershell
 .LINK
-https://www.microsoft.com/en-us/download/details.aspx?id=39366
-
-.LINK
+https://www.microsoft.com/en-us/download/details.aspx?id=39366.LINK
 https://docs.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online?view=sharepoint-ps
 .LINK
 https://www.microsoft.com/en-ca/download/details.aspx?id=35588
@@ -1362,45 +565,19 @@ https://www.microsoft.com/en-us/download/details.aspx?id=35588
 .LINK
 https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps
 .LINK
-https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps
-
-.PARAMETER Tenant
-Specifies the Microsoft 365 tenant name.
-
-.PARAMETER UPN
-used to autofill the UPN for supported services.
-
-.PARAMETER BasicAuth
-Use basic auth.
-
-.PARAMETER Credential
-The credentials for basic auth.
-
-.PARAMETER AzureAD
-Connect to Azure Active Directory.
-
-.PARAMETER MsolService
-Connect to Microsoft Online (MSOL).
-
-.PARAMETER SharepointOnline
-Connects to Sharepoint Online.
-
-.PARAMETER SkypeForBusinessOnline
-Connects to Skype for Business.
-
-.PARAMETER ExchangeOnline
-Connect to Exchange Online.
-
-.PARAMETER SecurityComplianceCenter
-Connects to Security and Compliance Center
-
-.PARAMETER Teams
-Connects to Microsoft Teams.
-
-.PARAMETER StaffHub
-Connects to StaffHub.
-
-.PARAMETER Disconnect
+https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps.PARAMETER Tenant
+Specifies the Microsoft 365 tenant name..PARAMETER UPN
+used to autofill the UPN for supported services..PARAMETER BasicAuth
+Use basic auth..PARAMETER Credential
+The credentials for basic auth..PARAMETER AzureAD
+Connect to Azure Active Directory..PARAMETER MsolService
+Connect to Microsoft Online (MSOL)..PARAMETER SharepointOnline
+Connects to Sharepoint Online..PARAMETER SkypeForBusinessOnline
+Connects to Skype for Business..PARAMETER ExchangeOnline
+Connect to Exchange Online..PARAMETER SecurityComplianceCenter
+Connects to Security and Compliance Center.PARAMETER Teams
+Connects to Microsoft Teams..PARAMETER StaffHub
+Connects to StaffHub..PARAMETER Disconnect
 Disconnects from supported services
 #>
 param(
@@ -1419,21 +596,13 @@ param(
 	[switch]$Disconnect
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tennant. Do not include `".onmicrosoft.com`"" }
-While (-NOT $UPN) { $UPN = Read-Host -Prompt "Enter your User Principal Name (UPN)" }
-
-InstallModule -Name AzureAD #-AltName AzureADPreview
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tennant. Do not include `".onmicrosoft.com`"" }
+While (-NOT $UPN) { $UPN = Read-Host -Prompt "Enter your User Principal Name (UPN)" }InstallModule -Name AzureAD #-AltName AzureADPreview
 InstallModule -Name MSOnline
 InstallModule -Name Microsoft.Online.SharePoint.PowerShell
 InstallModule -Name ExchangeOnlineManagement
 InstallModule -Name MicrosoftTeams
-InstallModule -Name MicrosoftStaffHub
-
-If ($BasicAuth -and (-not $Credential)) { $Credential = Get-Credential -UserName $UPN }
-
-If ($Disconnect) {
+InstallModule -Name MicrosoftStaffHubIf ($BasicAuth -and (-not $Credential)) { $Credential = Get-Credential -UserName $UPN }If ($Disconnect) {
 	Write-Verbose "$me Disconnecting from all services."
 	Remove-PSSession $sfboSession | Write-Verbose
 	Remove-PSSession $exchangeSession | Write-Verbose
@@ -1506,77 +675,21 @@ Else {
 }
 }
 function Convert-Image {
-<#PSScriptInfo
-
-.VERSION 1.0.12
-
-.GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.12.GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will resize an image using ImageMagick.
-
-.LINK
-https://imagemagick.org/
-
-.PARAMETER Path
-This is the file or folder containing images to resize. If unspecified, it will run in the current folder.
-
-.PARAMETER Dimensions
-The dimension to which the image should be resized in WxH. You must spesify either width or height.
-
-.PARAMETER Suffix
-The text to appear after the resized file.
-
-.PARAMETER Prefix
-The text to appear before the resized file.
-
-.PARAMETER OutName
-The name of the resized file. If specified, it will override the Prefix and Suffix parameters. If unspecified, it will be $Prefix$CurentFileName$Suffix.$OutExtension.
-
-.PARAMETER OutExtension
-The file extension to use for the converted image. If unspecified, the existing extension will will be used.
-
-.PARAMETER FileSize
-The file size of the final file. This paramater only functions when outputting to the JPEG format.
-
-.PARAMETER Filter
-Use this to limit the search to spesific files.
-
-.PARAMETER Force
-Use this paramater to bypass the check when overwriting an existing file.
-
-.PARAMETER Return
-The parameter will return the Name, FullName, InputName, InputFullName for each file.
-
-.EXAMPLE
-Convert-Image -Dimensions 1920x1080 -Suffix _1080p
-
-.EXAMPLE
+This script will resize an image using ImageMagick..LINK
+https://imagemagick.org/.PARAMETER Path
+This is the file or folder containing images to resize. If unspecified, it will run in the current folder..PARAMETER Dimensions
+The dimension to which the image should be resized in WxH. You must spesify either width or height..PARAMETER Suffix
+The text to appear after the resized file..PARAMETER Prefix
+The text to appear before the resized file..PARAMETER OutName
+The name of the resized file. If specified, it will override the Prefix and Suffix parameters. If unspecified, it will be $Prefix$CurentFileName$Suffix.$OutExtension..PARAMETER OutExtension
+The file extension to use for the converted image. If unspecified, the existing extension will will be used..PARAMETER FileSize
+The file size of the final file. This paramater only functions when outputting to the JPEG format..PARAMETER Filter
+Use this to limit the search to spesific files..PARAMETER Force
+Use this paramater to bypass the check when overwriting an existing file..PARAMETER Return
+The parameter will return the Name, FullName, InputName, InputFullName for each file..EXAMPLE
+Convert-Image -Dimensions 1920x1080 -Suffix _1080p.EXAMPLE
 Convert-Image -Path C:\Images -Dimensions 1920x1080 -Suffix _1080p -Prefix Resized_ -OutExtension jpeg -FileSize 750KB -Filter "*.jpg" -Force -Return
 Name                          FullName
 ----                          --------
@@ -1588,13 +701,9 @@ Resized_Image (5)_1080p.jpeg  C:\Images\Resized_Image (5)_1080p.jpeg
 Resized_Image (6)_1080p.jpeg  C:\Images\Resized_Image (6)_1080p.jpeg
 Resized_Image (7)_1080p.jpeg  C:\Images\Resized_Image (7)_1080p.jpeg
 Resized_Image (8)_1080p.jpeg  C:\Images\Resized_Image (8)_1080p.jpeg
-Resized_Image (9)_1080p.jpeg  C:\Images\Resized_Image (9)_1080p.jpeg
-
-.LINK
+Resized_Image (9)_1080p.jpeg  C:\Images\Resized_Image (9)_1080p.jpeg.LINK
 https://imagemagick.org/script/command-line-processing.php#geometry
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 param(
 	[string]$Filter,
 	[ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
@@ -1613,22 +722,14 @@ param(
 	[ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$Magick = ((Get-Command magick).Source)
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
 	Write-Error "magick.exe is not available in your PATH."
 	Break
-}
-
-[System.Collections.ArrayList]$Results = @()
-
-ForEach ($Image in $Path) {
+}[System.Collections.ArrayList]$Results = @()ForEach ($Image in $Path) {
 	Clear-Variable -Name OutName
 	$Image = Get-ChildItem $Image
 	if ([bool]([System.Uri]$Image.FullName).IsUnc) { throw "Path is not local." }
-	$count++ ; Progress -Index $count -Total $Path.count -Activity "Resizing images." -Name $Image.Name
-
-	$Arguments = $null
+	$count++ ; Progress -Index $count -Total $Path.count -Activity "Resizing images." -Name $Image.Name	$Arguments = $null
 	If (!$OutExtension) { $ImageOutExtension = [System.IO.Path]::GetExtension($Image.Name) } #If OutExtension not set, use current
 	Else { $ImageOutExtension = $OutExtension } #Otherwise use spesified extension
 	If (-not $OutName) { $OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension }
@@ -1645,17 +746,13 @@ ForEach ($Image in $Path) {
 			$Arguments += '-gravity "' + $Gravity + '" '
 			If ($Mode -eq "Crop") { $Arguments += '-crop "' + $Dimensions + '+0+0" ' }
 			ElseIf ($Mode -eq "Pad") { $Arguments += '-background none -extent "' + $Dimensions + '+0+0" ' }
-		}
-
-		If ($FileSize -And ($ImageOutExtension -ne ".jpg") -And ($ImageOutExtension -ne ".jpeg")) {
+		}		If ($FileSize -And ($ImageOutExtension -ne ".jpg") -And ($ImageOutExtension -ne ".jpeg")) {
 			Write-Warning "FileSize paramater is only valid for JPEG images. $OutName will ignore this parameter."
 		}
 		ElseIf ($FileSize) { $Arguments += '-define jpeg:extent=' + $FileSize + ' ' }
 		$Arguments += '+repage '
 		If ($ColorSpace) { $Arguments += '-colorspace ' + $ColorSpace + ' ' }
-		$Arguments += '"' + $Out + '"'
-
-		Write-Verbose $Arguments
+		$Arguments += '"' + $Out + '"'		Write-Verbose $Arguments
 		Start-Process -FilePath $Magick -ArgumentList $Arguments -NoNewWindow -Wait
 		$Result = [PSCustomObject]@{
 			Arguments     = $Arguments
@@ -1670,69 +767,27 @@ ForEach ($Image in $Path) {
 Return $Results
 }
 function ConvertTo-3CXRates {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 44859c27-bbf8-4831-8b02-ee12be6c726d
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 44859c27-bbf8-4831-8b02-ee12be6c726d.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will convert the rates from VoIP.ms to an XML file for use in 3CX. This script is not well optimized and will take a long time to run.
-
-.PARAMETER Path
-The path to export the rates to.
-
-.PARAMETER RatesPath
-The path to a CSV file containing the rates.
-
-.PARAMETER Rates
+This will convert the rates from VoIP.ms to an XML file for use in 3CX. This script is not well optimized and will take a long time to run..PARAMETER Path
+The path to export the rates to..PARAMETER RatesPath
+The path to a CSV file containing the rates..PARAMETER Rates
 An array of the current rates. Automatically generates from the file specified in RatesPath.
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 param(
   [string]$Path,
   [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$RatePath,
   [array]$Rates = (Import-Csv $RatePath)
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Write-Verbose "Generating file header"
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Write-Verbose "Generating file header"
 $Output = '<?xml version="1.0" encoding="utf-8"?>
 <TenantProperties>
   <TenantProperty>
     <name>BILL_0000</name>
     <type>String</type>
     <value n="default" p="default" r="15" />
-  </TenantProperty>'
-
-Write-Verbose "Generating file content"
+  </TenantProperty>'Write-Verbose "Generating file content"
 $Rates | ForEach-Object {
   $count++ ; Progress -Index $count -Total $Rates.count -Activity "Generating XML" -Name $("[" + $_.'Prefix ' + "] " + $_.'Description ')
   $Output += "
@@ -1740,65 +795,21 @@ $Rates | ForEach-Object {
     <name>BILL_$('{0:d4}' -f $count)</name>
     <type>String</type>
     <value n=`"$(($_.'Description ').replace("&","&amp;") )`" p=`"+$($_.'Prefix ')`" r=`"$([math]::Round([decimal]$_."Rate Value" * 100,2))`" />
-  </TenantProperty>"
-
-}
-
-Write-Verbose "Generating file footer"
+  </TenantProperty>"}Write-Verbose "Generating file footer"
 $Output += '
-</TenantProperties>'
-
-if ($Path) {
+</TenantProperties>'if ($Path) {
   Write-Verbose "Writing file to $Path"
   $Output | Out-File -FilePath $Path -Encoding utf8
 }
-else { Write-Verbose "No path specified. Not writing to file." }
-
-Write-Verbose "Done"
+else { Write-Verbose "No path specified. Not writing to file." }Write-Verbose "Done"
 return $Output
 }
 function ConvertTo-EndpointCertificate {
-<#PSScriptInfo
-
-.VERSION 2.0.4
-
-.GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 2.0.4.GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
     .SYNOPSIS
-    This script will convert a PFX certificate for use with various services.
-
-    .DESCRIPTION
-    This script will convert a PFX certificate for use with various services. If will also provide instructions for any system that has spesific requirements for setup. This script requires & .\openssl.exe  to be available on the computer.
-
-    .PARAMETER Path
-    This is the certificate file which will be converted. This option is required.
-
-    .PARAMETER Prefix
+    This script will convert a PFX certificate for use with various services.    .DESCRIPTION
+    This script will convert a PFX certificate for use with various services. If will also provide instructions for any system that has spesific requirements for setup. This script requires & .\openssl.exe  to be available on the computer.    .PARAMETER Path
+    This is the certificate file which will be converted. This option is required.    .PARAMETER Prefix
     This string appears before the filename for each converted certificate. If unspesified, will use the name if the file being resized.
   #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -1811,27 +822,17 @@ param(
   $Certificates = (Get-ChildItem -File -Path $Path -Filter $Filter)
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-ForEach ($Certificate in $Certificates) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }ForEach ($Certificate in $Certificates) {
   $count++ ; Progress -Index $count -Total @($Certificates).count -Activity "Resizing images." -Name $Certificate.Name
-  $Password = Read-Host "Enter Password"
-
-  If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Certificate")) {
+  $Password = Read-Host "Enter Password"  If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Certificate")) {
     $Prefix = $Prefix + [System.IO.Path]::GetFileNameWithoutExtension($Certificate.FullName) + "_"
-    $Path = $Certificate.FullName
-
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -out "$Prefix`PEM.txt" -nodes
+    $Path = $Certificate.FullName    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -out "$Prefix`PEM.txt" -nodes
     openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -out "$Prefix`PEM_Key.txt" -nodes
     openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert.txt" -nodes
     openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert_NoNodes.txt"
     openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert.cer" -nodes
-    openssl.exe pkcs12 -passin "pass:$Password" -export -in "$Prefix`PEM_Cert.txt" -inkey "$Prefix`PEM_Key.txt" -certfile "$Prefix`PEM_Cert.txt" -out "$Prefix`Unifi.p12" -name unifi -password pass:aircontrolenterprise
-
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -nodes | openssl.exe  rsa -out "$Prefix`RSA_Key.txt"
-    openssl.exe rsa  -passin "pass:$Password" -in "$Prefix`PEM.txt" -pubout -out "$Prefix`RSA_Pub.txt"
-
-    if ($Services -contains "Windows") {
+    openssl.exe pkcs12 -passin "pass:$Password" -export -in "$Prefix`PEM_Cert.txt" -inkey "$Prefix`PEM_Key.txt" -certfile "$Prefix`PEM_Cert.txt" -out "$Prefix`Unifi.p12" -name unifi -password pass:aircontrolenterprise    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -nodes | openssl.exe  rsa -out "$Prefix`RSA_Key.txt"
+    openssl.exe rsa  -passin "pass:$Password" -in "$Prefix`PEM.txt" -pubout -out "$Prefix`RSA_Pub.txt"    if ($Services -contains "Windows") {
       Write-Output "Windows: Run the following commands.
 `$mypwd = Get-Credential -UserName 'Enter password below' -Message 'Enter password below'
 `nImport-PfxCertificate -FilePath $($Certificate.FullName) -CertStoreLocation Cert:\LocalMachine\My -Password `$mypwd.Password
@@ -1850,9 +851,7 @@ Get-Item -Path `"cert:\localmachine\my\`$cert`" | New-Item -Force -Path IIS:\Ssl
       Write-Output "Always Up: Copy files to C:\Program Files (x86)\AlwaysUpWebService\certificates`n"
       New-Item -Force -Type Directory -Name AlwaysUp | Out-Null
       Copy-Item "$Prefix`PEM_Cert.txt" AlwaysUp\ctc-self-signed-certificate-exp-2024.pem
-      Copy-Item "$Prefix`PEM_Key.txt" AlwaysUp\ctc-self-signed-certificate-exp-2024-key.pem
-
-    }
+      Copy-Item "$Prefix`PEM_Key.txt" AlwaysUp\ctc-self-signed-certificate-exp-2024-key.pem    }
     if ($Services -contains "CiscoSG300") {
       Write-Output "Cisco SG300: Use RSA Key, RSA Pub, and PEM Cert
 For RSA Pub, remove the first 32 characters and change BEGIN/END PUBLIC KEY to BEGIN/END RSA PUBLIC KEY. Use only the primary certificate, not the entire chain. When importing, edit HTML to allow more than 2046 characters in certificate feild.
@@ -1933,50 +932,12 @@ kill -SIGINT `$(cat /var/run/lighttpd.pid)
 }
 }
 function ConvertTo-OutputImages {
-<#PSScriptInfo
-
-.VERSION 1.1.9
-
-.GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.9.GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will resize the spesified logos, wordmarks and banner images to the spesifications of various third party services. It will pull data from a json file.
-
-.PARAMETER Path
-This is the file or folder containing images to resize. If unspecified, it will run in the current folder.
-
-.PARAMETER Prefix
-The text to appear before the resized file.
-
-.PARAMETER All
-If specified, images will be created for all services, instead of just the common ones.
-
-.EXAMPLE
+This script will resize the spesified logos, wordmarks and banner images to the spesifications of various third party services. It will pull data from a json file..PARAMETER Path
+This is the file or folder containing images to resize. If unspecified, it will run in the current folder..PARAMETER Prefix
+The text to appear before the resized file..PARAMETER All
+If specified, images will be created for all services, instead of just the common ones..EXAMPLE
 ConvertTo-OutputImages
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -1992,9 +953,7 @@ param(
   [switch]$All
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-if (-not $Json) { throw "Json file not found." }
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }if (-not $Json) { throw "Json file not found." }
 ForEach ($Image in $Path) {
   foreach ($Type in $Types) {
     $Image = Get-ChildItem $Image
@@ -2011,41 +970,9 @@ ForEach ($Image in $Path) {
 }
 }
 function Copy-ToPublicDesktop {
-<#PSScriptInfo
-
-.VERSION 1.0.6
-
-.GUID f54d5874-3851-47a7-87f5-7841980e0c7a
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.6.GUID f54d5874-3851-47a7-87f5-7841980e0c7a.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will copy the specified file to the public desktop.
-
-.PARAMETER Path
+This script will copy the specified file to the public desktop..PARAMETER Path
 The path of the item to copy.
 #>
 param(
@@ -2073,54 +1000,18 @@ if ($Group -contains "Print") {
 }
 if ($Group -contains "IIS") {
     Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\IIS Manager.lnk"
-}
-
-if ($Group -contains "CA") {
+}if ($Group -contains "CA") {
     Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Certification Authority.lnk"
 }
 }
 function Disable-NetbiosTcpIp {
-<#PSScriptInfo
-
-.VERSION 1.1.3
-
-.GUID 460f5844-8755-46df-8fb5-a12fa88bf413
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.3.GUID 460f5844-8755-46df-8fb5-a12fa88bf413.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will disable Netbios TCP/IP on all interfaces.
-
-.DESCRIPTION
+This script will disable Netbios TCP/IP on all interfaces..DESCRIPTION
 This script will disable Netbios TCP/IP on all interfaces.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
-param ()
-
-function ParseGuid {
+param ()function ParseGuid {
     param (
         [string]$String,
         [ValidateSet("N", "D", "B", "P")][string]$Format = "B"
@@ -2144,90 +1035,20 @@ $Interfaces | ForEach-Object {
 }
 }
 function Disable-SelfServicePurchase {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID 1af7209d-520d-4d2c-90f4-de3bc5cf2f48
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID 1af7209d-520d-4d2c-90f4-de3bc5cf2f48.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will disallows self service purchases in Microsoft 365.
-
-.LINK
+This script will disallows self service purchases in Microsoft 365..LINK
 https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/commerce/subscriptions/allowselfservicepurchase-powershell.md
 #>
 Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase | ForEach-Object { Update-MSCommerceProductPolicy -PolicyId AllowSelfServicePurchase -ProductId $_.ProductID -Enabled $false }
 }
 function Enable-AdUserPermissionInheritance {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 7e41b659-a682-489a-830d-5a118f2e11be
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 7e41b659-a682-489a-830d-5a118f2e11be.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Enable permission interitance for the specified users.
-
-.PARAMETER Users
-An array of users to enable inheritence for.
-
-.PARAMETER Protected
-Set to $false to enable inheritance or $true to disable inheritance. Default is $false.
-
-.PARAMETER preserveInheritance
-Set to $true to keep inherited access rules or $false to remove inherited access rules. Ignored if Protected is $false. Default is $true.
-
-.LINK
+Enable permission interitance for the specified users..PARAMETER Users
+An array of users to enable inheritence for..PARAMETER Protected
+Set to $false to enable inheritance or $true to disable inheritance. Default is $false..PARAMETER preserveInheritance
+Set to $true to keep inherited access rules or $false to remove inherited access rules. Ignored if Protected is $false. Default is $true..LINK
 https://itomation.ca/enable-ad-object-inheritance-using-powershell/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -2235,15 +1056,9 @@ Param (
     $Users,
     $Protected = $false,
     $Preserve = $true
-)
-
-Test-Admin -Warn -Message "You likely need to must be an administrator to change permissions." | Out-Null
-
-$Users | ForEach-Object {
+)Test-Admin -Warn -Message "You likely need to must be an administrator to change permissions." | Out-Null$Users | ForEach-Object {
     $DistinguishedName = [ADSI]("LDAP://" + $_)
-    $Acl = $DistinguishedName.psbase.objectSecurity
-
-    if ($Acl.get_AreAccessRulesProtected()) {
+    $Acl = $DistinguishedName.psbase.objectSecurity    if ($Acl.get_AreAccessRulesProtected()) {
         If ($PSCmdlet.ShouldProcess($_.SamAccountName, "Enable-AdUserPermissionInheritance.ps1")) {
             $Acl.SetAccessRuleProtection($Protected, $Preserve)
             $DistinguishedName.psbase.commitchanges()
@@ -2259,90 +1074,26 @@ $Users | ForEach-Object {
 }
 }
 function Enable-LicenseOptions {
-<#PSScriptInfo
-
-.VERSION 1.3.4
-
-.GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
-
-.AUTHOR Jason Cook & Roman Zarka | Microsoft Services
-
-.COMPANYNAME Tectic & Microsoft Services
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.3.4.GUID 61ab8232-0c28-495f-9e44-3c511c2634ea.AUTHOR Jason Cook & Roman Zarka | Microsoft Services.COMPANYNAME Tectic & Microsoft Services.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script enable the spesified license options in Microsoft 365.
-
-.PARAMETER Return
-Whether to return what options have been set. If unspesified, this is False.
-
-.PARAMETER AccountSkuId
-Account SKU ID to run against.
-
-.PARAMETER KeepEnabled
-Whether to keep enabled services if nothing is spesified.
-
-.PARAMETER Users
-Array of users to run the command against. If unspesified, will run against all licensed users.
-
-.PARAMETER NoForms
-An array of users which will have Forms disabled.
-
-.PARAMETER NoFlow
-An array of users which will have Flow disabled.
-
-.PARAMETER NoPowerApps
-An array of users which will have PowerApps disabled.
-
-.PARAMETER NoPlanner
-An array of users which will have Planner disabled.
-
-.PARAMETER NoOfficeOnline
-An array of users which will have Office Online disabled.
-
-.PARAMETER NoSharepoint
-An array of users which will have Sharepoint disabled.
-
-.PARAMETER NoExchange
-An array of users which will have Exchange disabled.
-
-.EXAMPLE
-Enable-LicenseOptions
-
-.NOTES
-Credits    : Created by Roman Zarka at Microsoft. Available under Creative Commons Attribution 4.0 International License.
-
-.LINK
-https://blogs.technet.microsoft.com/zarkatech/2012/12/05/bulk-enable-office-365-license-options/
-
-.LINK
-https://docs.microsoft.com/en-us/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide
-
-.LINK
+This script enable the spesified license options in Microsoft 365..PARAMETER Return
+Whether to return what options have been set. If unspesified, this is False..PARAMETER AccountSkuId
+Account SKU ID to run against..PARAMETER KeepEnabled
+Whether to keep enabled services if nothing is spesified..PARAMETER Users
+Array of users to run the command against. If unspesified, will run against all licensed users..PARAMETER NoForms
+An array of users which will have Forms disabled..PARAMETER NoFlow
+An array of users which will have Flow disabled..PARAMETER NoPowerApps
+An array of users which will have PowerApps disabled..PARAMETER NoPlanner
+An array of users which will have Planner disabled..PARAMETER NoOfficeOnline
+An array of users which will have Office Online disabled..PARAMETER NoSharepoint
+An array of users which will have Sharepoint disabled..PARAMETER NoExchange
+An array of users which will have Exchange disabled..EXAMPLE
+Enable-LicenseOptions.NOTES
+Credits    : Created by Roman Zarka at Microsoft. Available under Creative Commons Attribution 4.0 International License..LINK
+https://blogs.technet.microsoft.com/zarkatech/2012/12/05/bulk-enable-office-365-license-options/.LINK
+https://docs.microsoft.com/en-us/microsoft-365/enterprise/assign-licenses-to-user-accounts-with-microsoft-365-powershell?view=o365-worldwide.LINK
 https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/LICENSE
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 param (
   [switch]$Return,
   [string]$AccountSkuId = "STANDARDWOFFPACK",
@@ -2358,9 +1109,7 @@ param (
   [array]$NoOfficeOnline = (Get-ADGroupMember -Recursive -Identity "Office 365-No Office Online" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName),
   [array]$NoSharepoint = (Get-ADGroupMember -Recursive -Identity "Office 365-No Sharepoint" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName),
   [array]$NoExchange = (Get-ADGroupMember -Recursive -Identity "Office 365-No Exchange" | ForEach-Object { Get-ADUser -Identity $_.SamAccountName } | Select-Object userPrincipalName)
-)
-
-[System.Collections.ArrayList]$Results = @()
+)[System.Collections.ArrayList]$Results = @()
 $count = 1; $PercentComplete = 0;
 ForEach ($User in $Users) {
   #Progress message
@@ -2368,9 +1117,7 @@ ForEach ($User in $Users) {
   $StatusMessage = ("Processing {0} of {1}: {2}" -f $count, @($Users).count, $User.UserPrincipalName.ToString())
   $PercentComplete = ($count / @($Users).count * 100)
   Write-Progress -Activity $ActivityMessage -Status $StatusMessage -PercentComplete $PercentComplete
-  $count++
-
-  # Mark all services as disabled.
+  $count++  # Mark all services as disabled.
   # Services.
   <#
 Name            SKU                     Notes
@@ -2392,13 +1139,9 @@ Office Online   SHAREPOINTWAC
 Skyper          MCOSTANDARD
 Sharepoint      SHAREPOINTSTANDARD
 Exchange        EXCHANGE_S_STANDARD
-#>
-
-  $Services = @{}
+#>  $Services = @{}
   If ($KeepEnabled) {
-    (Get-MsolUser -UserPrincipalName $User.UserPrincipalName).Licenses | Where-Object AccountSkuId -like "*:$AccountSkuId" | ForEach-Object {
-
-      ForEach-Object {
+    (Get-MsolUser -UserPrincipalName $User.UserPrincipalName).Licenses | Where-Object AccountSkuId -like "*:$AccountSkuId" | ForEach-Object {      ForEach-Object {
         # Mark currently enabled licenses services as enabled.
         # Comment out the lines for services you wish to force disable.
         # If ($_.ServiceStatus.ServicePlan.ServiceName -eq "WHITEBOARD_PLAN1" -and $_.ServiceStatus.ProvisioningStatus -ne "Disabled") { $Services.Whiteboard = $True }
@@ -2418,9 +1161,7 @@ Exchange        EXCHANGE_S_STANDARD
         If ($_.ServiceStatus.ServicePlan.ServiceName -eq "EXCHANGE_S_STANDARD" -and $_.ServiceStatus.ProvisioningStatus -ne "Disabled") { $Services.Exchange = $True }
       }
     }
-  }
-
-  # Services you wish to enable by default.
+  }  # Services you wish to enable by default.
   $Services.Todo = $True
   $Services.Forms = $True
   $Services.Stream = $True
@@ -2430,9 +1171,7 @@ Exchange        EXCHANGE_S_STANDARD
   $Services.Teams = $True
   $Services.OfficeOnline = $True
   $Services.Sharepoint = $True
-  $Services.Exchange = $True
-
-  # Disabling services for members of corrosponding group.
+  $Services.Exchange = $True  # Disabling services for members of corrosponding group.
   $SearchUpn = "*" + $User.UserPrincipalName + "*"
   If ($NoForms -like $SearchUpn) { $Services.Forms = $False }
   If ($NoStream -like $SearchUpn) { $Services.Stream = $False }
@@ -2442,9 +1181,7 @@ Exchange        EXCHANGE_S_STANDARD
   If ($NoTeams -like $SearchUpn) { $Services.Teams = $False }
   If ($NoOfficeOnline -like $SearchUpn) { $Services.OfficeOnline = $False }
   If ($NoSharepoint -like $SearchUpn) { $Services.Sharepoint = $False }
-  If ($NoExchange -like $SearchUpn) { $Services.Exchange = $False }
-
-  # Disable services still marked as disabled
+  If ($NoExchange -like $SearchUpn) { $Services.Exchange = $False }  # Disable services still marked as disabled
   $DisabledOptions = @()
   If (!$Services.Whiteboard) { $DisabledOptions += "WHITEBOARD_PLAN1" }
   If (!$Services.Todo) { $DisabledOptions += "BPOS_S_TODO_1" }
@@ -2461,9 +1198,7 @@ Exchange        EXCHANGE_S_STANDARD
   If (!$Services.OfficeOnline) { $DisabledOptions += "SHAREPOINTWAC" }
   If (!$Services.Skype) { $DisabledOptions += "MCOSTANDARD" }
   If (!$Services.Sharepoint) { $DisabledOptions += "SHAREPOINTSTANDARD" }
-  If (!$Services.Exchange) { $DisabledOptions += "EXCHANGE_S_STANDARD" }
-
-  if ($PSCmdlet.ShouldProcess($User.UserPrincipalName, "Enable-LicenseOptions")) {
+  If (!$Services.Exchange) { $DisabledOptions += "EXCHANGE_S_STANDARD" }  if ($PSCmdlet.ShouldProcess($User.UserPrincipalName, "Enable-LicenseOptions")) {
     If ($Assign) {
       Set-MsolUser -UserPrincipalName $User.UserPrincipalName -UsageLocation CA
       Start-Sleep -Seconds 5
@@ -2501,111 +1236,35 @@ Exchange        EXCHANGE_S_STANDARD
 If ($Return) { Return $Results }
 }
 function Enable-NestedVm {
-<#PSScriptInfo
-
-.VERSION 1.3.4
-
-.GUID 528bfa6d-27a7-4612-9092-faae014e3917
-
-.AUTHOR Jason Cook Drew Cross | Microsoft Services
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.3.4.GUID 528bfa6d-27a7-4612-9092-faae014e3917.AUTHOR Jason Cook Drew Cross | Microsoft Services.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Checks VM for nesting comatability and configures if not properly setup.
-
-.PARAMETER VMName
-Which VM should nesting be enabled for?
-
-.EXAMPLE
-Enable-NestedVm -VmName MyVM
-
-.NOTES
-Credits    : Created by Drew Cross at Microsoft. Available under Creative Commons Attribution 4.0 International License.
-
-.LINK
-https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/hyperv-tools/Nested/Enable-NestedVm.ps1
-
-.LINK
+Checks VM for nesting comatability and configures if not properly setup..PARAMETER VMName
+Which VM should nesting be enabled for?.EXAMPLE
+Enable-NestedVm -VmName MyVM.NOTES
+Credits    : Created by Drew Cross at Microsoft. Available under Creative Commons Attribution 4.0 International License..LINK
+https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/hyperv-tools/Nested/Enable-NestedVm.ps1.LINK
 https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/LICENSE
-#>
-
-param([string]$vmName)
-
-if ([string]::IsNullOrEmpty($vmName)) {
+#>param([string]$vmName)if ([string]::IsNullOrEmpty($vmName)) {
     Write-Host "No VM name passed"
     Exit;
-}
-
-$4GB = 4294967296
-
-$myWindowsID = [System.Security.Principal.WindowsIdentity]::GetCurrent();
-$myWindowsPrincipal = New-Object System.Security.Principal.WindowsPrincipal($myWindowsID);
-
-$adminRole = [System.Security.Principal.WindowsBuiltInRole]::Administrator;
-
-if ($myWindowsPrincipal.IsInRole($adminRole)) {
+}$4GB = 4294967296$myWindowsID = [System.Security.Principal.WindowsIdentity]::GetCurrent();
+$myWindowsPrincipal = New-Object System.Security.Principal.WindowsPrincipal($myWindowsID);$adminRole = [System.Security.Principal.WindowsBuiltInRole]::Administrator;if ($myWindowsPrincipal.IsInRole($adminRole)) {
     # We are running as an administrator, so change the title and background colour to indicate this
-    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)";
-
-}
+    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)";}
 else {
-    # We are not running as an administrator, so relaunch as administrator
-
-    # Create a new process object that starts PowerShell
-    $newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
-
-    # Specify the current script path and name as a parameter with added scope and support for scripts with spaces in it's path
-    $newProcess.Arguments = "& '" + $script:MyInvocation.MyCommand.Path + "'"
-
-    # Indicate that the process should be elevated
-    $newProcess.Verb = "runas";
-
-    # Start the new process
-    [System.Diagnostics.Process]::Start($newProcess) | Out-Null;
-
-    # Exit from the current, unelevated, process
+    # We are not running as an administrator, so relaunch as administrator    # Create a new process object that starts PowerShell
+    $newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";    # Specify the current script path and name as a parameter with added scope and support for scripts with spaces in it's path
+    $newProcess.Arguments = "& '" + $script:MyInvocation.MyCommand.Path + "'"    # Indicate that the process should be elevated
+    $newProcess.Verb = "runas";    # Start the new process
+    [System.Diagnostics.Process]::Start($newProcess) | Out-Null;    # Exit from the current, unelevated, process
     Exit;
-}
-
-$vm = Get-VM -Name $vmName
-
-$vmInfo = New-Object PSObject
-
-Add-Member -InputObject $vmInfo NoteProperty -Name "ExposeVirtualizationExtensions" -Value $false
+}$vm = Get-VM -Name $vmName$vmInfo = New-Object PSObjectAdd-Member -InputObject $vmInfo NoteProperty -Name "ExposeVirtualizationExtensions" -Value $false
 Add-Member -InputObject $vmInfo NoteProperty -Name "DynamicMemoryEnabled" -Value $vm.DynamicMemoryEnabled
 Add-Member -InputObject $vmInfo NoteProperty -Name "SnapshotEnabled" -Value $false
 Add-Member -InputObject $vmInfo NoteProperty -Name "State" -Value $vm.State
 Add-Member -InputObject $vmInfo NoteProperty -Name "MacAddressSpoofing" -Value ((Get-VmNetworkAdapter -VmName $vmName).MacAddressSpoofing)
-Add-Member -InputObject $vmInfo NoteProperty -Name "MemorySize" -Value (Get-VMMemory -VmName $vmName).Startup
-
-$vmInfo.ExposeVirtualizationExtensions = (Get-VMProcessor -VM $vm).ExposeVirtualizationExtensions
-
-Write-Host "This script will set the following for $vmName in order to enable nesting:"
-$prompt = $false;
-
-if ($vmInfo.State -eq 'Saved') {
+Add-Member -InputObject $vmInfo NoteProperty -Name "MemorySize" -Value (Get-VMMemory -VmName $vmName).Startup$vmInfo.ExposeVirtualizationExtensions = (Get-VMProcessor -VM $vm).ExposeVirtualizationExtensionsWrite-Host "This script will set the following for $vmName in order to enable nesting:"
+$prompt = $false;if ($vmInfo.State -eq 'Saved') {
     Write-Host "\tSaved state will be removed"
     $prompt = $true
 }
@@ -2629,23 +1288,13 @@ if ($vmInfo.MacAddressSpoofing -eq 'Off') {
 if ($vmInfo.MemorySize -lt $4GB) {
     Write-Host "    Optionally set vm memory to 4GB"
     $prompt = $true
-}
-
-if (-not $prompt) {
+}if (-not $prompt) {
     Write-Host "    None, vm is already setup for nesting"
     Exit;
-}
-
-Write-Host "Input Y to accept or N to cancel:" -NoNewline
-
-$char = Read-Host
-
-while (-not ($char.StartsWith('Y') -or $char.StartsWith('N'))) {
+}Write-Host "Input Y to accept or N to cancel:" -NoNewline$char = Read-Hostwhile (-not ($char.StartsWith('Y') -or $char.StartsWith('N'))) {
     Write-Host "Invalid Input, Y or N"
     $char = Read-Host
-}
-
-if ($char.StartsWith('Y')) {
+}if ($char.StartsWith('Y')) {
     if ($vmInfo.State -eq 'Saved') {
         Remove-VMSavedState -VMName $vmName
     }
@@ -2657,29 +1306,19 @@ if ($char.StartsWith('Y')) {
     }
     if ($vmInfo.DynamicMemoryEnabled -eq $true) {
         Set-VMMemory -VMName $vmName -DynamicMemoryEnabled $false
-    }
-
-    # Optionally turn on mac spoofing
+    }    # Optionally turn on mac spoofing
     if ($vmInfo.MacAddressSpoofing -eq 'Off') {
         Write-Host "Mac Address Spoofing isn't enabled (nested guests won't have network)." -ForegroundColor Yellow
         Write-Host "Would you like to enable MAC address spoofing? (Y/N)" -NoNewline
-        $Read = Read-Host
-
-        if ($Read -eq 'Y') {
+        $Read = Read-Host        if ($Read -eq 'Y') {
             Set-VMNetworkAdapter -VMName $vmName -MacAddressSpoofing on
         }
         else {
             Write-Host "Not enabling Mac address spoofing."
-        }
-
-    }
-
-    if ($vmInfo.MemorySize -lt $4GB) {
+        }    }    if ($vmInfo.MemorySize -lt $4GB) {
         Write-Host "VM memory is set less than 4GB, without 4GB or more, you may not be able to start VMs." -ForegroundColor Yellow
         Write-Host "Would you like to set Vm memory to 4GB? (Y/N)" -NoNewline
-        $Read = Read-Host
-
-        if ($Read -eq 'Y') {
+        $Read = Read-Host        if ($Read -eq 'Y') {
             Set-VMMemory -VMName $vmName -StartupBytes $4GB
         }
         else {
@@ -2687,73 +1326,23 @@ if ($char.StartsWith('Y')) {
         }
     }
     Exit;
-}
-
-if ($char.StartsWith('N')) {
+}if ($char.StartsWith('N')) {
     Write-Host "Exiting..."
     Exit;
-}
-
-Write-Host 'Invalid input'
+}Write-Host 'Invalid input'
 }
 function Export-AdUsersToAssetPanda {
-<#PSScriptInfo
-
-.VERSION 1.0.25
-
-.GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.25.GUID d201566e-c0d9-4dc4-9d3f-5f846c16c2a9.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Export AD user for Asset Panda
-
-.PARAMETER ActiveEmployeeType
-The default type for enabled users if not set for an employee.
-
-.PARAMETER InctiveEmployeeType
-The default type for disabled users if not set for an employee.
-
-.PARAMETER SearchBase
-The AD search base to pull users from.
-
-.PARAMETER Filter
-The filter when querying for AD users.
-
-.PARAMETER Properties
-An array of properties to query from AD.
-
-.PARAMETER Server
-The AD server to query.
-
-.LINK
+Export AD user for Asset Panda.PARAMETER ActiveEmployeeType
+The default type for enabled users if not set for an employee..PARAMETER InctiveEmployeeType
+The default type for disabled users if not set for an employee..PARAMETER SearchBase
+The AD search base to pull users from..PARAMETER Filter
+The filter when querying for AD users..PARAMETER Properties
+An array of properties to query from AD..PARAMETER Server
+The AD server to query..LINK
 https://help.assetpanda.com/Importing.html
-#>
-
-param(
+#>param(
     [string]$ActiveEmployeeType = "Full Time",
     [string]$InactiveEmployeeType = "Inactive",
     [string]$SearchBase,
@@ -2762,21 +1351,15 @@ param(
     [string]$Server
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$Arguments = @{}
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$Arguments = @{}
 if ($SearchBase) { $Arguments.SearchBase = $SearchBase }
 if ($Filter) { $Arguments.Filter = $Filter }
 if ($Properties) { $Arguments.Properties = $Properties }
-if ($Server) { $Arguments.Server = $Server }
-
-Get-ADUser @Arguments | ForEach-Object {
+if ($Server) { $Arguments.Server = $Server }Get-ADUser @Arguments | ForEach-Object {
     if ($_.employeeHireDate) { $HireDate = $_.employeeHireDate } else { $HireDate = $_.Created }
     if (-not $_.enabled) { $EmployeeType = $InactiveEmployeeType }
     elseif ($_.employeeType) { $EmployeeType = $_.employeeType }
-    else { $EmployeeType = $ActiveEmployeeType }
-
-    return [PSCustomObject]@{
+    else { $EmployeeType = $ActiveEmployeeType }    return [PSCustomObject]@{
         "Display Name"   = $_.DisplayName
         "E-mail"         = $_.EmailAddress -replace "`'"
         "First Name"     = $_.GivenName
@@ -2793,44 +1376,10 @@ Get-ADUser @Arguments | ForEach-Object {
 }
 }
 function Export-FortiClientConfig {
-<#PSScriptInfo
-
-.VERSION 1.2.10
-
-.GUID 6604b9e8-5c58-4524-b094-07b549c2dad8
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.2.10.GUID 6604b9e8-5c58-4524-b094-07b549c2dad8.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will export the current Forti Client configuration.
-
-.PARAMETER Path
-The location the configuration will be exported to.
-
-.EXAMPLE
+This will export the current Forti Client configuration..PARAMETER Path
+The location the configuration will be exported to..EXAMPLE
 Export-FortiClientConfig -Path backup.conf
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -2838,60 +1387,18 @@ param (
     $Path = "backup.conf",
     [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
     [SecureString]$Password
-)
-
-$Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
-if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
-
-if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
+)$Arguments = ("-m all", ("-f " + $Path), "-o export", "-i 1")
+if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }if ($PSCmdlet.ShouldProcess($Path, "Export FortiClient Config")) {
     Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
 }
 }
 function Export-FortiClientEmsZtnaRules {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID b0940c36-a968-4b62-bd39-be7e24d30c3c
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS
-
-.LICENSEURI
-
-.PROJECTURI
-
-.ICONURI
-
-.EXTERNALMODULEDEPENDENCIES
-
-.REQUIREDSCRIPTS
-
-.EXTERNALSCRIPTDEPENDENCIES
-
-.RELEASENOTES
-
-#>
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID b0940c36-a968-4b62-bd39-be7e24d30c3c.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS.LICENSEURI.PROJECTURI.ICONURI.EXTERNALMODULEDEPENDENCIES.REQUIREDSCRIPTS.EXTERNALSCRIPTDEPENDENCIES.RELEASENOTES#><#
 .DESCRIPTION
-This will generate a CSV for ZTNA rules.
-
-.PARAMETER Path
-CSV file containing the rule templates.
-
-.PARAMETER ImportRules
-A PS object containing the rules. By default, this will use the file specified by -Path.
-
-.PARAMETER Encryption
-If set, encryption with be enabled when not specified in the import.
-
-.PARAMETER Services
+This will generate a CSV for ZTNA rules..PARAMETER Path
+CSV file containing the rule templates..PARAMETER ImportRules
+A PS object containing the rules. By default, this will use the file specified by -Path..PARAMETER Encryption
+If set, encryption with be enabled when not specified in the import..PARAMETER Services
 A hastable of services and corrosponding ports.
 #>
 param(
@@ -2901,75 +1408,35 @@ param(
   $Services = @{
     SMB        = @(139, 445)
     HTTP       = @(80)
-    HTTPS      = @(443)
-
-    AD         = @(9389, 3269, 3268, 389, 636, 500, 4500, 135, 445)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#active-directory-local-security-authority
-
-    CA         = @(135, 445, 139)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#certificate-services
-
-    DFSN       = @(138, 139, 389, 445, 135)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#distributed-file-system-namespaces
-
-    DNS        = @(53)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#dns-server
-
-    GP         = @(389, 445, 135)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#group-policy
-
-    KDC        = @(88, 464, 389 )
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#kerberos-key-distribution-center
-
-    NetLogon   = @(138, 137, 139, 445, 389, 135)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#net-logon
-
-    Print      = @(135, 138, 137, 139, 445)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#print-spooler
-
-    RPC        = @(135, 593, 138, 137, 139, 445)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#remote-procedure-call-rpc
-
-    RPCL       = @(138, 137, 139, 445)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#remote-procedure-call-rpc-locator
-
-    TCPIPPrint = @(515)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#tcpip-print-server
-
-    RDS        = @(3389)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#remote-desktop-services-rds
-
-    RDSL       = @(135, 138, 137, 139, 445)
-    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#rds-licensing-rdsl
-
-  }
+    HTTPS      = @(443)    AD         = @(9389, 3269, 3268, 389, 636, 500, 4500, 135, 445)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#active-directory-local-security-authority    CA         = @(135, 445, 139)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#certificate-services    DFSN       = @(138, 139, 389, 445, 135)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#distributed-file-system-namespaces    DNS        = @(53)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#dns-server    GP         = @(389, 445, 135)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#group-policy    KDC        = @(88, 464, 389 )
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#kerberos-key-distribution-center    NetLogon   = @(138, 137, 139, 445, 389, 135)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#net-logon    Print      = @(135, 138, 137, 139, 445)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#print-spooler    RPC        = @(135, 593, 138, 137, 139, 445)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#remote-procedure-call-rpc    RPCL       = @(138, 137, 139, 445)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#remote-procedure-call-rpc-locator    TCPIPPrint = @(515)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#tcpip-print-server    RDS        = @(3389)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#remote-desktop-services-rds    RDSL       = @(135, 138, 137, 139, 445)
+    # https://learn.microsoft.com/en-us/troubleshoot/windows-server/networking/service-overview-and-network-port-requirements#rds-licensing-rdsl  }
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-foreach ($Hostname in $ImportRules) {
-  $count++ ; Progress -Index $count -Total $ImportRules.count -Activity "Generating ZTNA destination rules" -Name $Hostname.name
-
-  if ($Hostname.enabled -eq $false) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }foreach ($Hostname in $ImportRules) {
+  $count++ ; Progress -Index $count -Total $ImportRules.count -Activity "Generating ZTNA destination rules" -Name $Hostname.name  if ($Hostname.enabled -eq $false) {
     Write-Verbose "$($Hostname.name): Skipping disabled host"
     continue
-  }
-
-  if (($null -eq $Hostname.encryption) -or "" -eq $Hostname.encryption) {
+  }  if (($null -eq $Hostname.encryption) -or "" -eq $Hostname.encryption) {
     Write-Verbose "$($Hostname.name): Setting encryption to default of $Encryption."
     $Hostname.encryption = $Encryption
   }
-  else { Write-Verbose "$($Hostname.name): Setting encryption to $Encryption." }
-
-  Write-Debug "$($Hostname.name): Splitting import at seperators."
+  else { Write-Verbose "$($Hostname.name): Setting encryption to $Encryption." }  Write-Debug "$($Hostname.name): Splitting import at seperators."
   $Hostname.Services = $Hostname.Services.Split(",")
-  $Hostname.Ports = $Hostname.Ports.Split(";")
-
-  $Ports = @()
+  $Hostname.Ports = $Hostname.Ports.Split(";")  $Ports = @()
   Write-Debug "$($Hostname.name): Collecting explcit ports"
-  if ($Hostname.Ports) { $Ports += $Hostname.Ports }
-
-  Write-Debug "$($Hostname.name): Collecting service ports"
+  if ($Hostname.Ports) { $Ports += $Hostname.Ports }  Write-Debug "$($Hostname.name): Collecting service ports"
   if ($Hostname.Services -ne "") {
     $Hostname.Services | ForEach-Object {
       $Ports += $Services["$_"]
@@ -2988,56 +1455,14 @@ foreach ($Hostname in $ImportRules) {
 }
 }
 function Export-MatchingCertificates {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 31c7075a-49f8-4f99-ad29-aa9d83ab8dc3
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 31c7075a-49f8-4f99-ad29-aa9d83ab8dc3.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will fetch all certificates matching the chosen template.
-
-.DESCRIPTION
-This script will fetch all certificates matching the chosen template. Usefull for adding certificate to Trusted Publishers.
-
-.PARAMETER Path
-The location the certificates will be exported to.
-
-.PARAMETER CertificationAuthority
-The servername of the certification authority which issued the certificates.
-
-.PARAMETER Date
-Filter based on expiry date. By default, the current date will be used.
-
-.PARAMETER Templates
-A list of the templates to search for.
-
-.LINK
+This script will fetch all certificates matching the chosen template..DESCRIPTION
+This script will fetch all certificates matching the chosen template. Usefull for adding certificate to Trusted Publishers..PARAMETER Path
+The location the certificates will be exported to..PARAMETER CertificationAuthority
+The servername of the certification authority which issued the certificates..PARAMETER Date
+Filter based on expiry date. By default, the current date will be used..PARAMETER Templates
+A list of the templates to search for..LINK
 https://github.com/PKISolutions/PSPKI
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -3049,17 +1474,13 @@ param(
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-Requires -Modules PSPKI
-
-if (-not $Templates) { throw "You must specify the templates to search for." }
+Requires -Modules PSPKIif (-not $Templates) { throw "You must specify the templates to search for." }
 $Templates | Foreach-Object {
   Write-Verbose "Searching for $_"
   Get-IssuedRequest -CertificationAuthority $CertificationAuthority -Property RequestID, RawCertificate, Request.RequesterName, CertificateTemplate -Filter "NotAfter -ge $Date", "CertificateTemplate -eq $_" | ForEach-Object {
     $OutPath = Join-Path -Path $Path -ChildPath ("$($_.RequestID)-$($_.CommonName).crt")
     Write-Verbose "Found $($_.RequestID)-$($_.CommonName). Writing to $OutPath"
-    Set-Content -Path $OutPath -Value ("-----BEGIN CERTIFICATE-----`n" + $_.RawCertificate + "-----END CERTIFICATE-----")
-
-    $OutPath = (Get-Item $OutPath).FullName # Needed for use with PS drives
+    Set-Content -Path $OutPath -Value ("-----BEGIN CERTIFICATE-----`n" + $_.RawCertificate + "-----END CERTIFICATE-----")    $OutPath = (Get-Item $OutPath).FullName # Needed for use with PS drives
     $Thumbprint = (New-Object System.Security.Cryptography.X509Certificates.X509Certificate2 $OutPath).Thumbprint
     $Destination = Join-Path -Path (Split-Path -Path $OutPath -Parent) -ChildPath ("\$($_.RequestID)-$($_.CommonName)-$Thumbprint.crt")
     Write-Verbose "Moving file from $OutPath to $Destination"
@@ -3068,37 +1489,7 @@ $Templates | Foreach-Object {
 }
 }
 function Find-EmptyOu {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID a1800752-6b26-44fe-8056-573c7434ff1d
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID a1800752-6b26-44fe-8056-573c7434ff1d.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 This script will find all empty organizational units.
 #>
@@ -3115,145 +1506,47 @@ ForEach-Object {
 }
 }
 function Get-AdComputerInfo {
-<#PSScriptInfo
-
-.VERSION 1.0.6
-
-.GUID fc558d38-77a0-4b50-bd45-9f81aaf54984
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.6.GUID fc558d38-77a0-4b50-bd45-9f81aaf54984.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-The script will get information about computers from Active Directory.
-
-.PARAMETER Filter
-Filters the search based on the spesified parameters.
-
-.PARAMETER Properties
-The properties to return from the search.
-
-.PARAMETER SortKey
-The sort key to use when sorting the results. By default, this is the first property selected.
-
-.PARAMETER SearchBase
+The script will get information about computers from Active Directory..PARAMETER Filter
+Filters the search based on the spesified parameters..PARAMETER Properties
+The properties to return from the search..PARAMETER SortKey
+The sort key to use when sorting the results. By default, this is the first property selected..PARAMETER SearchBase
 Specifies the search base for the command.
-#>
-
-param(
+#>param(
     [string]$Filter = "*",
     $Properties = @("CN", "Enabled", "LastLogonDate", "Created", "Modified", "OperatingSystem", "OperatingSystemVersion", "OperatingSystemServicePack", "PasswordLastSet"),
     $SortKey = $Properties[0],
     [string]$SearchBase
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
-
-if ($SearchBase) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."if ($SearchBase) {
     $Computers = Get-ADComputer -Filter $Filter -SearchBase $SearchBase -Properties $Properties
 }
 else {
     $Computers = Get-ADComputer -Filter $Filter -Properties $Properties
-}
-
-return $Computers # | Sort-Object $SortKey | Select-Object $Properties
+}return $Computers # | Sort-Object $SortKey | Select-Object $Properties
 }
 function Get-ADInfo {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 868aac51-6c72-482e-8b54-42a3c5f87596
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 868aac51-6c72-482e-8b54-42a3c5f87596.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-The script can list and update UPN information for users.
-
-.PARAMETER ListUpn
-List the UPN for each user. Can be combined with -Filter.
-
-.PARAMETER LikeUpn
-Filters for a specific UPN. Must be used in conjunction with -ListUpn. This overrides -Filter.
-
-.PARAMETER Filter
-Filters the search based on the spesified parameters.
-
-.PARAMETER updateUpnSuffix
-Updates the Upn. Must be used with -OldUpn and -NewUpn. Can be combined with -SearchBase
-
-.PARAMETER oldUpnSuffix
-Specifes the UPN to be changed from.
-
-.PARAMETER newUpnSuffix
-Spesified the UPN to change to.
-
-.PARAMETER SearchBase
-Specifies the search base for the command.
-
-.EXAMPLE
+The script can list and update UPN information for users..PARAMETER ListUpn
+List the UPN for each user. Can be combined with -Filter..PARAMETER LikeUpn
+Filters for a specific UPN. Must be used in conjunction with -ListUpn. This overrides -Filter..PARAMETER Filter
+Filters the search based on the spesified parameters..PARAMETER updateUpnSuffix
+Updates the Upn. Must be used with -OldUpn and -NewUpn. Can be combined with -SearchBase.PARAMETER oldUpnSuffix
+Specifes the UPN to be changed from..PARAMETER newUpnSuffix
+Spesified the UPN to change to..PARAMETER SearchBase
+Specifies the search base for the command..EXAMPLE
 Get-ADInfo.ps1 -listUpn
 name       UserPrincipalName
 ----       -----------------
 Jane Doe   Jane.Doe@domain1.com
-John Doe   John.Doe@domain2.com
-
-.EXAMPLE
+John Doe   John.Doe@domain2.com.EXAMPLE
 Get-ADInfo.ps1 -listUpn -likeUpn domain2
 name       UserPrincipalName
 ----       -----------------
-John Doe   John.Doe@domain2.com
-
-#>
-
-param(
+John Doe   John.Doe@domain2.com#>param(
   [string]$Filter,
   [switch]$ListUpn,
   [string]$likeUpn,
@@ -3263,22 +1556,12 @@ param(
   [string]$SearchBase
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
-
-Requires ActiveDirectory
-
-If ($ListUpn) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."Requires ActiveDirectoryIf ($ListUpn) {
   If ($likeUpn) { $UpnFilter = "*" + $likeUpn + "*" }
   Elseif ($Filter) { $UpnFilter = $Filter }
-  Else { $UpnFilter = "*" }
-
-  Write-Verbose "Listing all users with a UPN like $UpnFilter. Sorting by UPN"
+  Else { $UpnFilter = "*" }  Write-Verbose "Listing all users with a UPN like $UpnFilter. Sorting by UPN"
   return Get-ADUser -Filter { UserPrincipalName -like $UpnFilter } -Properties distinguishedName, UserPrincipalName | Select-Object name, UserPrincipalName | Sort-Object -Property UserPrincipalName
-}
-
-If ($updateUpnSuffix) {
+}If ($updateUpnSuffix) {
   Write-Verbose "Setting old UPN, new UPN, and Search Base if not specified."
   $OldUpnSearch = "*" + $oldUpnSuffix
   Write-Verbose "Starting update..."
@@ -3295,218 +1578,59 @@ If ($updateUpnSuffix) {
 }
 }
 function Get-AdminCount {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID 11e3b42b-44ff-41e2-b70d-2ec61685f52f
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID 11e3b42b-44ff-41e2-b70d-2ec61685f52f.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will list all users with the AdminAcount attribute set.
-
-.LINK
+This script will list all users with the AdminAcount attribute set..LINK
 https://docs.microsoft.com/en-us/windows/win32/adschema/a-admincount
 #>
 Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Select-Object name, AdminCount
 }
 function Get-AdUserInfo {
-<#PSScriptInfo
-
-.VERSION 1.0.7
-
-.GUID 2102c95e-5402-43a2-ba4f-356a89fff4ca
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.7.GUID 2102c95e-5402-43a2-ba4f-356a89fff4ca.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-The script will get information about users from Active Directory.
-
-.PARAMETER Filter
-Filters the search based on the spesified parameters.
-
-.PARAMETER Properties
-The properties to return from the search.
-
-.PARAMETER SortKey
-The sort key to use when sorting the results. By default, this is the first property selected.
-
-.PARAMETER SearchBase
+The script will get information about users from Active Directory..PARAMETER Filter
+Filters the search based on the spesified parameters..PARAMETER Properties
+The properties to return from the search..PARAMETER SortKey
+The sort key to use when sorting the results. By default, this is the first property selected..PARAMETER SearchBase
 Specifies the search base for the command.
-#>
-
-param(
+#>param(
     [string]$Filter = "*",
     $Properties = @("SamAccountName", "DisplayName", "GivenName", "Surname", "Description", "Enabled", "LastLogonDate", "whenCreated" , "PasswordLastSet", "PasswordNeverExpires", "EmailAddress", "Title", "Department", "Company", "Organization", "Manager", "Office", "MobilePhone", "HomeDirectory"),
     $SortKey = $Properties[0],
     [string]$SearchBase
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
-
-if ($SearchBase) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."if ($SearchBase) {
     $Users = Get-ADUser -Filter $Filter -SearchBase $SearchBase -Properties $Properties
 }
 else {
     $Users = Get-ADUser -Filter $Filter -Properties $Properties
-}
-
-return $Users # | Sort-Object $SortKey | Select-Object $Properties
+}return $Users # | Sort-Object $SortKey | Select-Object $Properties
 }
 function Get-AdUserSid {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 0e4e3ea4-6fe3-4b89-98f0-a09f40baafed
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 0e4e3ea4-6fe3-4b89-98f0-a09f40baafed.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Find the user matching the given SID.
-
-.PARAMETER Sid
+Find the user matching the given SID..PARAMETER Sid
 The SID to search for.
-#>
-
-param(
+#>param(
     [Parameter(Mandatory = $true)][string]$Sid
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-return [ADSI]"LDAP://<SID=$Sid>"
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }return [ADSI]"LDAP://<SID=$Sid>"
 }
 function Get-AzureAdDirectLicenseAssignments {
-<#PSScriptInfo
-
-.VERSION 2.0.3
-
-.GUID f05dd4da-b51c-41e0-9bc2-92888c536c8e
-
-.AUTHOR Nicola Suter
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
+<#PSScriptInfo.VERSION 2.0.3.GUID f05dd4da-b51c-41e0-9bc2-92888c536c8e.AUTHOR Nicola Suter.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> 
 <#
 .DESCRIPTION
-Script to cleanup direct Azure AD license assignments. This script will only remove a direct assignment if there is an associated group assignment. Before running the script make sure that you have the MSOnline PowerShell module installed. Connect to MSOnline with: Connect-MsolService
-
-.PARAMETER WhatIf
-Predict changes
-
-.PARAMETER SaveReport
-Whether to save the report to the script location.
-
-.LINK
-https://github.com/nicolonsky/Techblog/tree/master/CleanupAzureADLicensing
-
-.LINK
-https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-groups-migrate-users
-
-#>
-
-[CmdletBinding(SupportsShouldProcess)]
+Script to cleanup direct Azure AD license assignments. This script will only remove a direct assignment if there is an associated group assignment. Before running the script make sure that you have the MSOnline PowerShell module installed. Connect to MSOnline with: Connect-MsolService.PARAMETER WhatIf
+Predict changes.PARAMETER SaveReport
+Whether to save the report to the script location..LINK
+https://github.com/nicolonsky/Techblog/tree/master/CleanupAzureADLicensing.LINK
+https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-groups-migrate-users#>[CmdletBinding(SupportsShouldProcess)]
 param (
   $Users = (Get-MsolUser -All -ErrorAction Stop),
   $Skus = ("ATP_ENTERPRISE", "ATP_ENTERPRISE", "ENTERPRISEPACK")
-)
-
-$Results = @()
-
-$Users | ForEach-Object {
+)$Results = @()$Users | ForEach-Object {
   Write-Verbose "Processing $($_.UserPrincipalName)"
   $count++ ; Progress -Index $count -Total $Users.count -Activity "Processing all licenses." -Name $_.UserPrincipalName
   $User = $_
@@ -3519,9 +1643,7 @@ $Users | ForEach-Object {
     $_.AccountSkuId -match '\:(.*)' | Out-Null ; $Sku = $Matches[1]
     if ($_.GroupsAssigningLicense -contains $User.ObjectId -and $Sku -in $Skus) {
       Write-Verbose "$($User.UserPrincipalName) ($($User.ObjectId)) has direct license assignment for '$($_.AccountSkuId)'"
-      $_.GroupsAssigningLicense.Remove($User.ObjectId) | Out-Null
-
-      $Result = [PSCustomObject]@{
+      $_.GroupsAssigningLicense.Remove($User.ObjectId) | Out-Null      $Result = [PSCustomObject]@{
         UserPrincipalName      = $user.UserPrincipalName
         ObjectId               = $user.ObjectId
         GroupsAssigningLicense = $_.GroupsAssigningLicense
@@ -3530,218 +1652,62 @@ $Users | ForEach-Object {
       $Results += $Result
       return $Result
     }
-  }
-
-}
-
-if ($Results) { Write-Warning "Found $($Results.Count) direct assigned license(s)." }
+  }}if ($Results) { Write-Warning "Found $($Results.Count) direct assigned license(s)." }
 else { Write-Output "No direct license assignments found" }
 }
 function Get-AzureAdMfaStatus {
-<#PSScriptInfo
-
-.VERSION 1.0.9
-
-.GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.9.GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-The script will get information about MFA setup from Azure Active Directory.
-
-.PARAMETER Filter
-Filters the AAD query based on the spesified parameters.
-
-.PARAMETER WhereObject
-Filters the returned results based on the spesified parameters.
-
-.PARAMETER Properties
-The properties to return from the search.
-
-.PARAMETER SortKey
+The script will get information about MFA setup from Azure Active Directory..PARAMETER Filter
+Filters the AAD query based on the spesified parameters..PARAMETER WhereObject
+Filters the returned results based on the spesified parameters..PARAMETER Properties
+The properties to return from the search..PARAMETER SortKey
 The sort key to use when sorting the results. By default, this is the first property selected.
-#>
-
-param(
+#>param(
     [string]$Filter,
     $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", "UserType", "BlockCredential", "IsLicensed", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
     $SortKey = $Properties[0]
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-return Get-MsolUser -All  | Sort-Object $SortKey | Select-Object $Properties
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }return Get-MsolUser -All  | Sort-Object $SortKey | Select-Object $Properties
 }
 function Get-AzureAdUserInfo {
-<#PSScriptInfo
-
-.VERSION 1.0.7
-
-.GUID 3af068df-1f2d-4e6b-b1a7-e18e09311471
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.7.GUID 3af068df-1f2d-4e6b-b1a7-e18e09311471.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-The script will get information about users from Azure Active Directory.
-
-.PARAMETER Filter
-Filters the AAD query based on the spesified parameters.
-
-.PARAMETER WhereObject
-Filters the returned results based on the spesified parameters.
-
-.PARAMETER Properties
-The properties to return from the search.
-
-.PARAMETER SortKey
+The script will get information about users from Azure Active Directory..PARAMETER Filter
+Filters the AAD query based on the spesified parameters..PARAMETER WhereObject
+Filters the returned results based on the spesified parameters..PARAMETER Properties
+The properties to return from the search..PARAMETER SortKey
 The sort key to use when sorting the results. By default, this is the first property selected.
-#>
-
-param(
+#>param(
     [string]$Filter,
     $Properties = @("UserPrincipalName", "DisplayName", "GivenName", "Surname", "UserType", "AccountEnabled", "PhysicalDeliveryOfficeName", "TelephoneNumber", "Mobile", "Mail", "MailNickName"),
     $WhereObject = { $_.DirSyncEnabled -ne $true },
     $SortKey = $Properties[0]
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-return Get-AzureADUser -Filter $Filter | Where-Object $WhereObject | Sort-Object $SortKey | Select-Object $Properties
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }return Get-AzureADUser -Filter $Filter | Where-Object $WhereObject | Sort-Object $SortKey | Select-Object $Properties
 }
 function Get-BiosProductKey {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID 8ccdb627-b33f-4be2-b6e0-f9cb992ee398
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID 8ccdb627-b33f-4be2-b6e0-f9cb992ee398.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Return the product key stored in the UEFI bios.
 #>
 return (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey
 }
 function Get-BitlockerStatus {
-<#PSScriptInfo
-
-.VERSION 1.1.4
-
-.GUID 674855a4-1cd1-43b7-8e41-fea3bc501f61
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.4.GUID 674855a4-1cd1-43b7-8e41-fea3bc501f61.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This commands checks the Bitlocker status and returns it in a human readable format.
-
-.DESCRIPTION
-This commands checks the Bitlocker status and returns it in a human readable format.
-
-.PARAMETER Drive
+This commands checks the Bitlocker status and returns it in a human readable format..DESCRIPTION
+This commands checks the Bitlocker status and returns it in a human readable format..PARAMETER Drive
 The drive to check for protection on. If unspesified, the System Drive will be used.
 #>
 param (
   [ValidateScript( { Test-Path $_ })][string]$Drive = $env:SystemDrive
-)
-
-If (!(Test-Path $Drive)) {
+)If (!(Test-Path $Drive)) {
   Write-Error "$Drive is not valid. Please choose a valid path."
   Break
-}
-
-switch ((Get-WmiObject -Namespace ROOT\CIMV2\Security\Microsoftvolumeencryption -Class Win32_encryptablevolume -Filter "DriveLetter = `'$( Split-Path -Path $Drive -Qualifier)`'" -ErrorAction Stop).protectionStatus) {
+}switch ((Get-WmiObject -Namespace ROOT\CIMV2\Security\Microsoftvolumeencryption -Class Win32_encryptablevolume -Filter "DriveLetter = `'$( Split-Path -Path $Drive -Qualifier)`'" -ErrorAction Stop).protectionStatus) {
   ("0") { $protectans = "Unprotected" }
   ("1") { $protectans = "Protected" }
   ("2") { $protectans = "Unknown" }
@@ -3750,37 +1716,7 @@ switch ((Get-WmiObject -Namespace ROOT\CIMV2\Security\Microsoftvolumeencryption 
 $protectans
 }
 function Get-DuplicateFileNames {
-<#PSScriptInfo
-
-.VERSION 1.0.12
-
-.GUID 5e6104a0-232a-4fb1-8858-62e1d8220721
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.12.GUID 5e6104a0-232a-4fb1-8858-62e1d8220721.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Find files with the same name.
 #>
@@ -3793,117 +1729,31 @@ param(
     }
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$Files = @()
-$Results = @()
-
-$Path | ForEach-Object { $Files += Get-ChildItem -Path $_  @Params }
-$Files | ForEach-Object { if (($Files.Name -eq $_.Name).count -gt 1 ) { $Results += $_ } }
-
-return $Results
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$Files = @()
+$Results = @()$Path | ForEach-Object { $Files += Get-ChildItem -Path $_  @Params }
+$Files | ForEach-Object { if (($Files.Name -eq $_.Name).count -gt 1 ) { $Results += $_ } }return $Results
 }
 function Get-ExchangeOnlineConnection {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 09be455e-f050-4430-a18e-fa5b4c346ba5
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 09be455e-f050-4430-a18e-fa5b4c346ba5.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Test for a connection to Exchange Online.
-
-.PARAMETER Session
-Which session to test.
-
-.LINK
+Test for a connection to Exchange Online..PARAMETER Session
+Which session to test..LINK
 https://www.reddit.com/r/PowerShell/comments/gupsze/comment/fsk09vo/?utm_source=share&utm_medium=web2x&context=3
 #>
 param($Session = (Get-PSSession | Where-Object { $_.Name -like "ExchangeOnlineInternalSession*" -and $_.State -eq "Opened" }))
 if ($Session) { return $Session } else { return $null }
 }
 function Get-ExchangePhoto {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 10b98a61-ebf3-499f-847f-4aa18b41a9dd
-
-.AUTHOR Jason Cook Rajeev Buggaveeti
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 10b98a61-ebf3-499f-847f-4aa18b41a9dd.AUTHOR Jason Cook Rajeev Buggaveeti.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This will download all profile photos from Office 365.
-
-.DESCRIPTION
-This will download all profile photos from Office 365. This can be used along with Set-AdPhotos to syn photos with Active Directory
-
-.PARAMETER Return
-Whether to return what options have been set. If unspesified, this is False.
-
-.PARAMETER Users
-Array of users to run the command against. If unspesified, will run against all Exchange mailboxes.
-
-.PARAMETER PhotoDirectory
-The directory where downloaded photos will be saved to.
-
-.PARAMETER CroppedPhotoDirectory
-The directory where cropped photos will be saved to.
-
-.PARAMETER ResultsFile
-A csv file to save the results to.
-
-.EXAMPLE
-Get-ExchangePhotos
-
-.LINK
+This will download all profile photos from Office 365..DESCRIPTION
+This will download all profile photos from Office 365. This can be used along with Set-AdPhotos to syn photos with Active Directory.PARAMETER Return
+Whether to return what options have been set. If unspesified, this is False..PARAMETER Users
+Array of users to run the command against. If unspesified, will run against all Exchange mailboxes..PARAMETER PhotoDirectory
+The directory where downloaded photos will be saved to..PARAMETER CroppedPhotoDirectory
+The directory where cropped photos will be saved to..PARAMETER ResultsFile
+A csv file to save the results to..EXAMPLE
+Get-ExchangePhotos.LINK
 https://blogs.technet.microsoft.com/rajbugga/2017/05/16/picture-sync-from-office-365-to-ad-powershell-way/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -3915,25 +1765,13 @@ Param(
     [string]$ResultsFile
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$Results = @()
-
-Get-ChildItem -Path $Path -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$Results = @()Get-ChildItem -Path $Path -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
 New-Item -Path $Path -ItemType Directory -Force -Confirm:$false | Out-Null
 Get-ChildItem -Path $CroppedPath -Recurse -ErrorAction SilentlyContinue | Remove-Item -Recurse -Force -Confirm:$false -ErrorAction SilentlyContinue | Out-Null
-New-Item -Path $CroppedPath -ItemType Directory -Force -Confirm:$false | Out-Null
-
-foreach ($User in $Users) {
-    $count++ ; Progress -Index $count -Total $Users.count -Activity "Downloading users photos." -Name $User.UserPrincipalName.ToString()
-
-    $Result = @{}
-
-    $PhotoPath = $Path + "\" + $User.Alias + ".jpg"
+New-Item -Path $CroppedPath -ItemType Directory -Force -Confirm:$false | Out-Nullforeach ($User in $Users) {
+    $count++ ; Progress -Index $count -Total $Users.count -Activity "Downloading users photos." -Name $User.UserPrincipalName.ToString()    $Result = @{}    $PhotoPath = $Path + "\" + $User.Alias + ".jpg"
     $CroppedPhotoPath = $CroppedPath + $User.Alias + ".jpg"
-    $Photo = Get-UserPhoto -Identity $User.UserPrincipalName -ErrorAction SilentlyContinue
-
-    If ($null -ne $Photo.PictureData) {
+    $Photo = Get-UserPhoto -Identity $User.UserPrincipalName -ErrorAction SilentlyContinue    If ($null -ne $Photo.PictureData) {
         If ($PSCmdlet.ShouldProcess("$User", "Get-ExchangePhoto")) {
             [io.file]::WriteAllBytes($PhotoPath, $Photo.PictureData)
             Resize-Image -InputFile $PhotoPath -Width 96 -Height 96 -OutputFile $CroppedPhotoPath
@@ -3944,119 +1782,45 @@ foreach ($User in $Users) {
     else {
         Write-Warning "$User does not have a profile photo."
         $Result.Add("PhotoStatus", $false)
-    }
-
-    $Result.Add("DisplayName", $user.DisplayName)
+    }    $Result.Add("DisplayName", $user.DisplayName)
     $Result.Add("UserPrincipalName", $user.UserPrincipalName)
     $Result.Add("RecipientType", $user.RecipientType)
     $Result.Add("Alias", $user.Alias)
     $Results += New-Object PSObject -Property $Result
-}
-
-If ($ResultsFile) { $Results | Export-CSV $ResultsFile -NoTypeInformation -Encoding UTF8 }
+}If ($ResultsFile) { $Results | Export-CSV $ResultsFile -NoTypeInformation -Encoding UTF8 }
 Return $Results
 }
 function Get-FirmwareType {
-<#PSScriptInfo
-
-.VERSION 1.1.3
-
-.GUID d15ce592-4b3e-4d42-82b6-d4a2dd5f15f2
-
-.AUTHOR Jason Cook Chris Warwick
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.3.GUID d15ce592-4b3e-4d42-82b6-d4a2dd5f15f2.AUTHOR Jason Cook Chris Warwick.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script shows three methods to determine the underlying system firmware (BIOS) type - either UEFI or Legacy BIOS.
-
-.DESCRIPTION
-This script shows three methods to determine the underlying system firmware (BIOS) type - either UEFI or Legacy BIOS.
-
-The first method relies on the fact that Windows setup detects the firmware type as a part of the Windows installation
+This script shows three methods to determine the underlying system firmware (BIOS) type - either UEFI or Legacy BIOS..DESCRIPTION
+This script shows three methods to determine the underlying system firmware (BIOS) type - either UEFI or Legacy BIOS.The first method relies on the fact that Windows setup detects the firmware type as a part of the Windows installation
 routine and records its findings in the setupact.log file in the \Windows\Panther folder.  It's a trivial task to use
-Select-String to extract the relevent line from this file and to pick off the (U)EFI or BIOS keyword it contains.
-
-To do a proper job there are two choices; both involve using Win32 APIs which we call from PowerShell through a compiled
-(Add-Type) class using P/Invoke.
-
-For Windows 7/Server 2008R2 and above, the GetFirmwareEnvironmentVariable Win32 API (designed to extract firmware environment
+Select-String to extract the relevent line from this file and to pick off the (U)EFI or BIOS keyword it contains.To do a proper job there are two choices; both involve using Win32 APIs which we call from PowerShell through a compiled
+(Add-Type) class using P/Invoke.For Windows 7/Server 2008R2 and above, the GetFirmwareEnvironmentVariable Win32 API (designed to extract firmware environment
 variables) can be used.  This API is not supported on non-UEFI firmware and will fail in a predictable way when called - this
 will identify a legacy BIOS.  On UEFI firmware, the API can be called with dummy parameters, and while it will still fail
-(probably!) the resulting error code will be different from the legacy BIOS case.
-
-For Windows 8/Server 2012 and above there's a more elegant solution in the form of the GetFirmwareType() API.  This
-returns an enum (integer) indicating the underlying firmware type.
-
-Chris Warwick, @cjwarwickps,  September 2013
-
-.EXAMPLE
-Get-FirmwareType
-
-.NOTES
-Credits    : Created by ChrisWarwick. Available under MIT License | https://opensource.org/licenses/MIT
-
-.LINK
-https://github.com/ChrisWarwick/GetUEFI/blob/master/GetFirmwareBIOSorUEFI.psm1
-
-.LINK
-https://github.com/ChrisWarwick/GetUEFI/blob/master/LICENSE
-
-.LINK
+(probably!) the resulting error code will be different from the legacy BIOS case.For Windows 8/Server 2012 and above there's a more elegant solution in the form of the GetFirmwareType() API.  This
+returns an enum (integer) indicating the underlying firmware type.Chris Warwick, @cjwarwickps,  September 2013.EXAMPLE
+Get-FirmwareType.NOTES
+Credits    : Created by ChrisWarwick. Available under MIT License | https://opensource.org/licenses/MIT.LINK
+https://github.com/ChrisWarwick/GetUEFI/blob/master/GetFirmwareBIOSorUEFI.psm1.LINK
+https://github.com/ChrisWarwick/GetUEFI/blob/master/LICENSE.LINK
 https://opensource.org/licenses/MIT
- #>
-
-(Select-String 'Detected boot environment' C:\Windows\Panther\setupact.log -AllMatches ).line -replace '.*:\s+'
-
-<#
-Second method, use the GetFirmwareEnvironmentVariable Win32 API.
-
-From MSDN (http://msdn.microsoft.com/en-ca/library/windows/desktop/ms724325%28v=vs.85%29.aspx):
-
-"Firmware variables are not supported on a legacy BIOS-based system. The GetFirmwareEnvironmentVariable function will
+ #>(Select-String 'Detected boot environment' C:\Windows\Panther\setupact.log -AllMatches ).line -replace '.*:\s+'<#
+Second method, use the GetFirmwareEnvironmentVariable Win32 API.From MSDN (http://msdn.microsoft.com/en-ca/library/windows/desktop/ms724325%28v=vs.85%29.aspx):"Firmware variables are not supported on a legacy BIOS-based system. The GetFirmwareEnvironmentVariable function will
 always fail on a legacy BIOS-based system, or if Windows was installed using legacy BIOS on a system that supports both
-legacy BIOS and UEFI.
-
-"To identify these conditions, call the function with a dummy firmware environment name such as an empty string ("") for
+legacy BIOS and UEFI."To identify these conditions, call the function with a dummy firmware environment name such as an empty string ("") for
 the lpName parameter and a dummy GUID such as "{00000000-0000-0000-0000-000000000000}" for the lpGuid parameter.
 On a legacy BIOS-based system, or on a system that supports both legacy BIOS and UEFI where Windows was installed using
 legacy BIOS, the function will fail with ERROR_INVALID_FUNCTION. On a UEFI-based system, the function will fail with
-an error specific to the firmware, such as ERROR_NOACCESS, to indicate that the dummy GUID namespace does not exist."
-
-From PowerShell, we can call the API via P/Invoke from a compiled C# class using Add-Type.  In Win32 any resulting
+an error specific to the firmware, such as ERROR_NOACCESS, to indicate that the dummy GUID namespace does not exist."From PowerShell, we can call the API via P/Invoke from a compiled C# class using Add-Type.  In Win32 any resulting
 API error is retrieved using GetLastError(), however, this is not reliable in .Net (see
 blogs.msdn.com/b/adam_nathan/archive/2003/04/25/56643.aspx), instead we mark the pInvoke signature for
-GetFirmwareEnvironmentVariableA with SetLastError=true and use Marshal.GetLastWin32Error()
-
-Note: The GetFirmwareEnvironmentVariable API requires the SE_SYSTEM_ENVIRONMENT_NAME privilege.  In the Security
+GetFirmwareEnvironmentVariableA with SetLastError=true and use Marshal.GetLastWin32Error()Note: The GetFirmwareEnvironmentVariable API requires the SE_SYSTEM_ENVIRONMENT_NAME privilege.  In the Security
 Policy editor this equates to "User Rights Assignment": "Modify firmware environment values" and is granted to
 Administrators by default.  Because we don't actually read any variables this permission appears to be optional.
-#>
-
-Function IsUEFI {
-
-    <#
+#>Function IsUEFI {    <#
 .Synopsis
    Determines underlying firmware (BIOS) type and returns True for UEFI or False for legacy BIOS.
 .DESCRIPTION
@@ -4067,66 +1831,28 @@ Function IsUEFI {
    [Bool] True = UEFI Firmware; False = Legacy BIOS
 .FUNCTIONALITY
    Determines underlying system firmware type
-#>
-
-    [OutputType([Bool])]
-    Param ()
-
-    Add-Type -Language CSharp -TypeDefinition @'
-
-    using System;
-    using System.Runtime.InteropServices;
-
-    public class CheckUEFI
+#>    [OutputType([Bool])]
+    Param ()    Add-Type -Language CSharp -TypeDefinition @'    using System;
+    using System.Runtime.InteropServices;    public class CheckUEFI
     {
         [DllImport("kernel32.dll", SetLastError=true)]
         static extern UInt32
-        GetFirmwareEnvironmentVariableA(string lpName, string lpGuid, IntPtr pBuffer, UInt32 nSize);
-
-        const int ERROR_INVALID_FUNCTION = 1;
-
-        public static bool IsUEFI()
+        GetFirmwareEnvironmentVariableA(string lpName, string lpGuid, IntPtr pBuffer, UInt32 nSize);        const int ERROR_INVALID_FUNCTION = 1;        public static bool IsUEFI()
         {
-            // Try to call the GetFirmwareEnvironmentVariable API.  This is invalid on legacy BIOS.
-
-            GetFirmwareEnvironmentVariableA("","{00000000-0000-0000-0000-000000000000}",IntPtr.Zero,0);
-
-            if (Marshal.GetLastWin32Error() == ERROR_INVALID_FUNCTION)
-
-                return false;     // API not supported; this is a legacy BIOS
-
-            else
-
-                return true;      // API error (expected) but call is supported.  This is UEFI.
+            // Try to call the GetFirmwareEnvironmentVariable API.  This is invalid on legacy BIOS.            GetFirmwareEnvironmentVariableA("","{00000000-0000-0000-0000-000000000000}",IntPtr.Zero,0);            if (Marshal.GetLastWin32Error() == ERROR_INVALID_FUNCTION)                return false;     // API not supported; this is a legacy BIOS            else                return true;      // API error (expected) but call is supported.  This is UEFI.
         }
     }
-'@
-
-    [CheckUEFI]::IsUEFI()
-}
-
-<#
-
-Third method, use GetFirmwareTtype() Win32 API.
-
-In Windows 8/Server 2012 and above there's an API that directly returns the firmware type and doesn't rely on a hack.
+'@    [CheckUEFI]::IsUEFI()
+}<#Third method, use GetFirmwareTtype() Win32 API.In Windows 8/Server 2012 and above there's an API that directly returns the firmware type and doesn't rely on a hack.
 GetFirmwareType() in kernel32.dll (http://msdn.microsoft.com/en-us/windows/desktop/hh848321%28v=vs.85%29.aspx) returns
-a pointer to a FirmwareType enum that defines the following:
-
-typedef enum _FIRMWARE_TYPE {
+a pointer to a FirmwareType enum that defines the following:typedef enum _FIRMWARE_TYPE {
   FirmwareTypeUnknown  = 0,
   FirmwareTypeBios     = 1,
   FirmwareTypeUefi     = 2,
   FirmwareTypeMax      = 3
-} FIRMWARE_TYPE, *PFIRMWARE_TYPE;
-
-Once again, this API call can be called in .Net via P/Invoke.  Rather than defining an enum the function below
+} FIRMWARE_TYPE, *PFIRMWARE_TYPE;Once again, this API call can be called in .Net via P/Invoke.  Rather than defining an enum the function below
 just returns an unsigned int.
-#>
-
-Function Get-BiosType {
-
-    <#
+#>Function Get-BiosType {    <#
 .Synopsis
    Determines underlying firmware (BIOS) type and returns an integer indicating UEFI, Legacy BIOS or Unknown.
    Supported on Windows 8/Server 2012 or later
@@ -4144,22 +1870,12 @@ Function Get-BiosType {
    Integer indicating firmware type (1 = Legacy BIOS, 2 = UEFI, Other = Unknown)
 .FUNCTIONALITY
    Determines underlying system firmware type
-#>
-
-    [OutputType([UInt32])]
-    Param()
-
-    Add-Type -Language CSharp -TypeDefinition @'
-
-    using System;
-    using System.Runtime.InteropServices;
-
-    public class FirmwareType
+#>    [OutputType([UInt32])]
+    Param()    Add-Type -Language CSharp -TypeDefinition @'    using System;
+    using System.Runtime.InteropServices;    public class FirmwareType
     {
         [DllImport("kernel32.dll")]
-        static extern bool GetFirmwareType(ref uint FirmwareType);
-
-        public static uint GetFirmwareType()
+        static extern bool GetFirmwareType(ref uint FirmwareType);        public static uint GetFirmwareType()
         {
             uint firmwaretype = 0;
             if (GetFirmwareType(ref firmwaretype))
@@ -4168,54 +1884,16 @@ Function Get-BiosType {
                 return 0;   // API call failed, just return 'unknown'
         }
     }
-'@
-
-    [FirmwareType]::GetFirmwareType()
+'@    [FirmwareType]::GetFirmwareType()
 }
 }
 function Get-GroupMembershipReport {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID b2ff192c-1106-4c52-ab8c-b7cab4524cc9
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID b2ff192c-1106-4c52-ab8c-b7cab4524cc9.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Gets group membership information for the specified groups.
-
-.PARAMETER Filter
-Filters the search based on the spesified parameters.
-
-.PARAMETER SearchBase
+Gets group membership information for the specified groups..PARAMETER Filter
+Filters the search based on the spesified parameters..PARAMETER SearchBase
 The LDAP search base.
-#>
-
-param (
+#>param (
     $Filter = "*",
     $SearchBase
 )
@@ -4232,68 +1910,12 @@ Get-ADGroup -SearchBase $SearchBase -Filter * -Properties Description | ForEach-
 }
 return $Results
 }
-function Get-ipPhone {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 51e2066f-785d-4ab1-b889-904c387fb2f9
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
-.DESCRIPTION
-Export all ipPhone information.
-
-.PARAMETER Path
-The location to export to.
-
-.PARAMETER Filter
-How to filter the AD query. By default, it will filter out any user which doesn't have the ipPhone attribute set.
-
-.LINK
-https://docs.microsoft.com/en-us/windows/win32/adschema/a-admincount
-#>
-[CmdletBinding(SupportsShouldProcess = $true)]
-param(
-    [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path,
-    $Filter = "ipphone -like `"*`""
-)
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$Results = Get-ADUser -Properties name, ipPhone, Company, Title, Department, DistinguishedName -Filter $Filter | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, ipPhone, Company, Title, Department | Sort-Object -Property Company, name
-if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
-return $Results
-}
-function Get-ITGlueExports {
+function Get-IpamReservations {
 <#PSScriptInfo
 
 .VERSION 1.0.1
 
-.GUID e456e40a-3a80-483a-8e0d-320bacc12d82
+.GUID e16d5930-dc98-4b09-9ef0-f94b8e117483
 
 .AUTHOR Jason Cook
 
@@ -4322,31 +1944,63 @@ function Get-ITGlueExports {
 #> 
 
 <#
-.SYNOPSIS
-Get a list of exports from IT Glue.
-
 .DESCRIPTION
-Get a list of exports from IT Glue.
+Get all reservations for a given managed service..PARAMETER ComputerName
+The computer hosting the IPAM service..PARAMETER ManagedByService
+The service to choose.
+#>
+param (
+  [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName,
+  [string]$ManagedByService,
+  [string]$AssignmentType = "Reserved",
+  [ValidateSet("IPv4", "IPv6")][string]$AddressFamily = "IPv4"
+)$Addresses = Get-IpamAddress -CimSession (CimSession $ComputerName) -AddressFamily $AddressFamily | Where-Object AssignmentType -like Reserved
+$Ranges = Get-IpamRange -Session (CimSession $ComputerName) -AddressFamily $AddressFamily | Where-Object ManagedByService -eq $ManagedByService
+$Subnets = Get-IpamSubnet -Session (CimSession $ComputerName) -AddressFamily $AddressFamily
+$Return = @()
+Foreach ($Address in $Addresses) {
+  $IPRange = $Address.IPRange -Split "-"
+  $Range = ($Ranges | Where-Object StartIPAddress -eq $IPRange[0] | Where-Object EndIPAddress -eq $IPRange[1])[0]
+  $Subnet = ($Subnets | Where-Object NetworkID -eq $Range.NetworkID)[0]
+  $Return += [pscustomobject]@{
+    name        = $Range.ServiceInstance
+    vlan        = ($Subnet.VlanID)[0]
+    ip          = $Address.IPAddress.IPAddressToString
+    mac         = $Address.MacAddress -replace "-", ":"
+    description = $Address.DeviceName
+  }
+}
+return $Return
+}
+function Get-ipPhone {
+<#PSScriptInfo.VERSION 1.0.5.GUID 51e2066f-785d-4ab1-b889-904c387fb2f9.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
+.DESCRIPTION
+Export all ipPhone information..PARAMETER Path
+The location to export to..PARAMETER Filter
+How to filter the AD query. By default, it will filter out any user which doesn't have the ipPhone attribute set..LINK
+https://docs.microsoft.com/en-us/windows/win32/adschema/a-admincount
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+    [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path,
+    $Filter = "ipphone -like `"*`""
+)
 
-.PARAMETER Sort
-Field to sort the exports by. Default is "updated-at".
-
-.PARAMETER Count
-Number of exports to return. Default is one.
-
-.PARAMETER Count
-ID of a specific export to return.
-
-.PARAMETER BaseUri
-Base URI of the IT Glue API
-
-.PARAMETER APIKey
-Your IT Glue API Key.
-
-.EXAMPLE
-Get-ITGlueExports -Id 123456 -APIKey "ITG.*******************"
-
-.LINK
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$Results = Get-ADUser -Properties name, ipPhone, Company, Title, Department, DistinguishedName -Filter $Filter | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, ipPhone, Company, Title, Department | Sort-Object -Property Company, name
+if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
+return $Results
+}
+function Get-ITGlueExports {
+<#PSScriptInfo.VERSION 1.0.1.GUID e456e40a-3a80-483a-8e0d-320bacc12d82.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2025.TAGS.LICENSEURI.PROJECTURI.ICONURI.EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS.EXTERNALSCRIPTDEPENDENCIES.RELEASENOTES.PRIVATEDATA#> <#
+.SYNOPSIS
+Get a list of exports from IT Glue..DESCRIPTION
+Get a list of exports from IT Glue..PARAMETER Sort
+Field to sort the exports by. Default is "updated-at"..PARAMETER Count
+Number of exports to return. Default is one..PARAMETER Count
+ID of a specific export to return..PARAMETER BaseUri
+Base URI of the IT Glue API.PARAMETER APIKey
+Your IT Glue API Key..EXAMPLE
+Get-ITGlueExports -Id 123456 -APIKey "ITG.*******************".LINK
 https://github.com/IT-Glue-Public/automation/tree/main/Exports
 #>
 [CmdletBinding(DefaultParameterSetName = 'Multiple')]
@@ -4359,136 +2013,46 @@ param (
   $Headers = @{
     "x-api-key" = $APIKey
   }
-)
-
-switch ($PSCmdlet.ParameterSetName) {
+)switch ($PSCmdlet.ParameterSetName) {
   Multiple { $ResourceUri = "/exports?page[number]=1&sort=$Sort&page[size]=$Count" }
   Id { $ResourceUri = ('/exports/{0}' -f $id) }
 }
-Write-Debug "ResourceUri: $ResourceUri "
-
-return (Invoke-RestMethod -Method get -Uri ($BaseUri + $ResourceUri) -Headers $Headers -ContentType application/vnd.api+json).data
+Write-Debug "ResourceUri: $ResourceUri "return (Invoke-RestMethod -Method get -Uri ($BaseUri + $ResourceUri) -Headers $Headers -ContentType application/vnd.api+json).data
 }
 function Get-ITGlueExportZip {
-<#PSScriptInfo
-
-.VERSION 1.0.1
-
-.GUID fc1c5ecb-9dfd-48a3-956b-b9cd702e136c
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2025
-
-.TAGS
-
-.LICENSEURI
-
-.PROJECTURI
-
-.ICONURI
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS
-
-.EXTERNALSCRIPTDEPENDENCIES
-
-.RELEASENOTES
-
-.PRIVATEDATA
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.1.GUID fc1c5ecb-9dfd-48a3-956b-b9cd702e136c.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2025.TAGS.LICENSEURI.PROJECTURI.ICONURI.EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS.EXTERNALSCRIPTDEPENDENCIES.RELEASENOTES.PRIVATEDATA#> <#
 .SYNOPSIS
-Downloads an export from IT Glue.
-
-.DESCRIPTION
-Downloads an export from IT Glue.
-
-.PARAMETER Export
-The export to download, usually passed in from Get-ITGlueExports.
-
-.PARAMETER Path
-The location to save the export to. If you only pass in a directory, the file will be named automatically based on the export information.
-
-.EXAMPLE
-Get-ITGlueExports -Id 123456 -APIKey "ITG.*******************" Get-ITGlueExportZip -Path C:\Backups\
-
-.LINK
+Downloads an export from IT Glue..DESCRIPTION
+Downloads an export from IT Glue..PARAMETER Export
+The export to download, usually passed in from Get-ITGlueExports..PARAMETER Path
+The location to save the export to. If you only pass in a directory, the file will be named automatically based on the export information..EXAMPLE
+Get-ITGlueExports -Id 123456 -APIKey "ITG.*******************" Get-ITGlueExportZip -Path C:\Backups\.LINK
 https://github.com/IT-Glue-Public/automation/tree/main/Exports
 #>
 param (
   [ValidateScript( { [uint64]$_.Id -and [System.URI]$_.attributes."download-url" })][Parameter(ParameterSetName = "Export", ValueFromPipeline = $true)]$Export,
   [ValidateScript( { Test-Path -Path $_ -Isvalid })]$Path
-)
-
-Write-Verbose "Validating Uri: $Uri"
+)Write-Verbose "Validating Uri: $Uri"
 [System.URI]$Uri = $Export.attributes."download-url"
-if ($Uri.Scheme -ne "https") { throw "Invalid download-url: $Uri" }
-
-Write-Debug "Building output file path"
+if ($Uri.Scheme -ne "https") { throw "Invalid download-url: $Uri" }Write-Debug "Building output file path"
 if (Test-Path -Path $Path -PathType Container) {
   if ($Export.attributes."export-all" -eq $true) { $FileName = "Account" }
   else { $FileName = $Export.attributes."organization-id".ToString() + "-" + $Export.attributes."organization-name" }
   $FileName += "-" + ($Export.attributes."created-at" -replace ":", "-")
   $OutFile = Join-Path -Path $Path -ChildPath "$FileName.zip"
 }
-else { $OutFile = $Path }
-
-Write-Verbose "Starting export to $OutFile"
-$Response = Invoke-RestMethod -Uri $Uri -OutFile $OutFile
-
-$Return = $Export.attributes
+else { $OutFile = $Path }Write-Verbose "Starting export to $OutFile"
+$Response = Invoke-RestMethod -Uri $Uri -OutFile $OutFile$Return = $Export.attributes
 $Return | Add-Member -NotePropertyName Path -NotePropertyValue $OutFile
 $Return | Add-Member -NotePropertyName Response -NotePropertyValue $Response
 return $Return
 }
 function Get-LapsInfo {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 2a3f5ec5-e6c3-4a0b-a8ca-67f98b359144
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 2a3f5ec5-e6c3-4a0b-a8ca-67f98b359144.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Shows the percentage of machines which have LAPS configured.
-
-.PARAMETER Details
-If set, will show which computers have a password set.
-
-.PARAMETER Filter
-Filters the search based on the spesified parameters.
-
-.PARAMETER ShowPasswords
+Shows the percentage of machines which have LAPS configured..PARAMETER Details
+If set, will show which computers have a password set..PARAMETER Filter
+Filters the search based on the spesified parameters..PARAMETER ShowPasswords
 Will also output passwords.
 #>
 param(
@@ -4497,9 +2061,7 @@ param(
     [string]$Show
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$Results = @()
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$Results = @()
 Get-ADComputer -Filter $Filter -Properties ms-Mcs-AdmPwd | Sort-Object ms-Mcs-AdmPwd, Name | ForEach-Object {
     if ($Show) { $Password = $_.'ms-Mcs-AdmPwd' } else { $Password = '********' }
     if ($_.'ms-Mcs-AdmPwd') { $Status = $true } else { $Status = $false }
@@ -4510,13 +2072,9 @@ Get-ADComputer -Filter $Filter -Properties ms-Mcs-AdmPwd | Sort-Object ms-Mcs-Ad
     }
     $Results += $Result
 }
-if ($Details) { return $Results } else {
-
-    $EnabledCount = ($Results | Where-Object Status -eq $true).Count
+if ($Details) { return $Results } else {    $EnabledCount = ($Results | Where-Object Status -eq $true).Count
     $DisabledCount = ($Results | Where-Object Status -eq $false).Count
-    $TotalCount = $Results.count
-
-    return [PSCustomObject]@{
+    $TotalCount = $Results.count    return [PSCustomObject]@{
         Enabled         = $EnabledCount
         Disabed         = $DisabledCount
         Total           = $TotalCount
@@ -4525,48 +2083,12 @@ if ($Details) { return $Results } else {
 }
 }
 function Get-MailboxAddresses {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID f3ba5497-54b4-4b33-8c6f-33a678f5551c
-
-.AUTHOR Jason Cook Laeeq Qazi - www.HostingController.com
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID f3ba5497-54b4-4b33-8c6f-33a678f5551c.AUTHOR Jason Cook Laeeq Qazi - www.HostingController.com.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will get all email addresses for the organization.
-
-.DESCRIPTION
-This script will get all email addresses for the organization. It is based on the answer located here: https://social.technet.microsoft.com/Forums/exchange/en-US/a234ba3b-37b4-4333-8954-5f46885c5e20/how-to-list-email-addresses-and-aliases-for-each-user?forum=exchangesvrgenerallegacy
-
-.LINK
+This script will get all email addresses for the organization..DESCRIPTION
+This script will get all email addresses for the organization. It is based on the answer located here: https://social.technet.microsoft.com/Forums/exchange/en-US/a234ba3b-37b4-4333-8954-5f46885c5e20/how-to-list-email-addresses-and-aliases-for-each-user?forum=exchangesvrgenerallegacy.LINK
 https://social.technet.microsoft.com/Forums/exchange/en-US/a234ba3b-37b4-4333-8954-5f46885c5e20/how-to-list-email-addresses-and-aliases-for-each-user?forum=exchangesvrgenerallegacy
-#>
-
-Get-Mailbox | ForEach-Object {
+#>Get-Mailbox | ForEach-Object {
 	$host.UI.Write("Blue", $host.UI.RawUI.BackgroundColor, "'nUser Name: " + $$.DisplayName + "'n")
 	For ($i = 0; $i -lt $_.EmailAddresses.Count; $i++) {
 		$Address = $_.EmailAddresses[$i]
@@ -4581,62 +2103,20 @@ Get-Mailbox | ForEach-Object {
 }
 }
 function Get-MemoryType {
-<#PSScriptInfo
-
-.VERSION 1.1.6
-
-.GUID 4625bce9-661a-4a70-bb4e-46ea09333f33
-
-.AUTHOR Jason Cook Microsoft
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.6.GUID 4625bce9-661a-4a70-bb4e-46ea09333f33.AUTHOR Jason Cook Microsoft.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will output the amount of memory and the type using WMI information.
-
-.DESCRIPTION
-This script will output the amount of memory and the type using WMI information. Type information is taken from here: https://msdn.microsoft.com/en-us/library/aa394347(v=vs.85).aspx
-
-.EXAMPLE
+This script will output the amount of memory and the type using WMI information..DESCRIPTION
+This script will output the amount of memory and the type using WMI information. Type information is taken from here: https://msdn.microsoft.com/en-us/library/aa394347(v=vs.85).aspx.EXAMPLE
 Get-MemoryType
 moduleCapacityMB : {8192, 8192}
 moduleCapacityGB : {8, 8}
 totalCapacityMB  : 16384
 totalCapacityGB  : 16
 Dimm             : {24, 24}
-DimmType         : DDR3
-
-.NOTES
-Credits    : Created by Microsoft. Available under Creative Commons Attribution 4.0 International License.
-
-.LINK
-https://msdn.microsoft.com/en-us/library/aa394347(v=vs.85).aspx
-
-.LINK
-https://github.com/MicrosoftDocs/win32/blob/docs/desktop-src/CIMWin32Prov/win32-physicalmemory.md
-
-.LINK
+DimmType         : DDR3.NOTES
+Credits    : Created by Microsoft. Available under Creative Commons Attribution 4.0 International License..LINK
+https://msdn.microsoft.com/en-us/library/aa394347(v=vs.85).aspx.LINK
+https://github.com/MicrosoftDocs/win32/blob/docs/desktop-src/CIMWin32Prov/win32-physicalmemory.md.LINK
 https://github.com/MicrosoftDocs/win32/blob/docs/LICENSE
 #>
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSUseDeclaredVarsMoreThanAssignments', '', Justification = "False positive")]
@@ -4681,56 +2161,14 @@ $Result = [PSCustomObject]@{
 Return $Result
 }
 function Get-MfpEmails {
-<#PSScriptInfo
-
-.VERSION 2.0.9
-
-.GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS
-
-.LICENSEURI
-
-.PROJECTURI
-
-.ICONURI
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS
-
-.EXTERNALSCRIPTDEPENDENCIES
-
-.RELEASENOTES
-
-.PRIVATEDATA
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 2.0.9.GUID 9ee43161-d2de-4792-a59e-19ff0ef0717e.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS.LICENSEURI.PROJECTURI.ICONURI.EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS.EXTERNALSCRIPTDEPENDENCIES.RELEASENOTES.PRIVATEDATA#> <#
 .DESCRIPTION
-This script will output the email addresses needed for the scan to email function on MFPs.
-
-.PARAMETER Path
-The location where the results will be exported to.
-
-.PARAMETER Properties
-The properties to export.
-
-.PARAMETER SearchBase
-The base OU to search from.
-
-.PARAMETER Filter
+This script will output the email addresses needed for the scan to email function on MFPs..PARAMETER Path
+The location where the results will be exported to..PARAMETER Properties
+The properties to export..PARAMETER SearchBase
+The base OU to search from..PARAMETER Filter
 How should the AD results be filtered?
-#>
-
-param(
+#>param(
   [ValidateSet("Canon", "KonicaMinolta", "Xerox")][string]$Vendor,
   [ValidateSet("csv", "abk")][string]$Format = "csv",
   [ValidateScript( { Test-Path (Split-Path $_ -Parent) })][string]$Path,
@@ -4742,30 +2180,20 @@ param(
   [string]$Filter = "*"
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$Arguments = @{}
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$Arguments = @{}
 if ($Properties) { $Arguments.Properties = $Properties }
 if ($SearchBase) { $Arguments.SearchBase = $SearchBase }
 if ($Server) { $Arguments.Server = $Server }
-if ($Filter) { $Arguments.Filter = $Filter }
-
-Write-Verbose "Searching AD"
-$Users = Get-ADUser @Arguments
-
-Write-Verbose "Searching for additional users"
+if ($Filter) { $Arguments.Filter = $Filter }Write-Verbose "Searching AD"
+$Users = Get-ADUser @ArgumentsWrite-Verbose "Searching for additional users"
 if ($AdditionalUsers) {
   $Arguments.Remove("SearchBase")
   $AdditionalUsers | ForEach-Object {
     $Arguments.Identity = $_
     $Users += Get-ADUser @Arguments
   }
-}
-
-Write-Verbose "Sorting results"
-$Users = $Users | Where-Object $WhereObject | Select-Object $Properties | Sort-Object $Properties[0]
-
-if ($Vendor -eq "Canon") {
+}Write-Verbose "Sorting results"
+$Users = $Users | Where-Object $WhereObject | Select-Object $Properties | Sort-Object $Properties[0]if ($Vendor -eq "Canon") {
   $Results = @()
   $Index = 200
   if ($Format -eq "csv") {
@@ -4825,9 +2253,7 @@ if ($Vendor -eq "Canon") {
       }
       $Results += $Result
     }
-    If ($Path) {
-
-      $Results | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
+    If ($Path) {      $Results | Export-Csv -Path $Path -NoTypeInformation -Encoding UTF8
       $(
         "# Canon AddressBook CSV version: 0x0002
 "
@@ -4844,9 +2270,7 @@ if ($Vendor -eq "Canon") {
     $Users | ForEach-Object {
       $Index++
       Write-Verbose "$($_.DisplayName + ": " + $_.Enabled)"
-      $Results += "
-
-subdbid: 1
+      $Results += "subdbid: 1
 dn: $Index
 cn: $($_.DisplayName)
 cnread: $($_.DisplayName)
@@ -4857,12 +2281,8 @@ protocol: smtp
 objectclass: top
 objectclass: extensibleobject
 objectclass: email"
-    }
-
-    If ($Path) { [IO.File]::WriteAllLines($Path, $Results) }
-  }
-
-}
+    }    If ($Path) { [IO.File]::WriteAllLines($Path, $Results) }
+  }}
 elseif ($Vendor -eq "KonicaMinolta") {
   Write-Verbose "Starting export for KonicaMinolta"
   $Users = $Users | Select-Object name, mail
@@ -4909,62 +2329,18 @@ elseif ($Vendor -eq "Xerox") {
   if ($Path) { $Results | Export-Csv -NoTypeInformation -Path $Path }
 }
 elseif ($Null -eq $Vendor) { throw "Vendor must be specified" }
-else { throw "Vendor `'$Vendor`' not supported" }
-
-Write-Verbose "Finished"
+else { throw "Vendor `'$Vendor`' not supported" }Write-Verbose "Finished"
 return $Results
 }
 function Get-MsGraphAuthenticationMethod {
-<#PSScriptInfo
-
-.VERSION 1.2.4
-
-.GUID c42317a3-3385-41d1-821d-8622b798259a
-
-.AUTHOR paul@thesysadminchannel.com & Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.2.4.GUID c42317a3-3385-41d1-821d-8622b798259a.AUTHOR paul@thesysadminchannel.com & Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-List MFA Authentication Methods for users using Graph API. A session using Connect-Graph must be open as a requirement.
-
-.PARAMETER UserId
-The UserId or UserPrincipalName to check.
-
-.NOTES
-    DateCreated: 2021-Jan-20
-
-.EXAMPLE
-    Get-MsGraphAuthenticationMethod -UserId user1@domain.com, user2@domain.com
-
-.EXAMPLE
-    Get-MsGraphAuthenticationMethod -UserId user1@domain.com, user2@domain.com -MethodType MicrosoftAuthenticatorApp, EmailAuthencation
-
-.LINK
-    https://thesysadminchannel.com/get-mfa-methods-using-msgraph-api-and-powershell-sdk/ -
-
-#>
+List MFA Authentication Methods for users using Graph API. A session using Connect-Graph must be open as a requirement..PARAMETER UserId
+The UserId or UserPrincipalName to check..NOTES
+    DateCreated: 2021-Jan-20.EXAMPLE
+    Get-MsGraphAuthenticationMethod -UserId user1@domain.com, user2@domain.com.EXAMPLE
+    Get-MsGraphAuthenticationMethod -UserId user1@domain.com, user2@domain.com -MethodType MicrosoftAuthenticatorApp, EmailAuthencation.LINK
+    https://thesysadminchannel.com/get-mfa-methods-using-msgraph-api-and-powershell-sdk/ -#>
 [CmdletBinding()]
 param(
     [Parameter(
@@ -4972,159 +2348,81 @@ param(
         Position = 0
     )]
     [Alias('UserPrincipalName')]
-    [string[]]  $UserId,
-
-    [Parameter(
+    [string[]]  $UserId,    [Parameter(
         Mandatory = $false
     )]
     [ValidateSet('AuthenticatorApp', 'PhoneAuthentication', 'Fido2', 'WindowsHelloForBusiness', 'EmailAuthentication', 'TemporaryAccessPass', 'Passwordless', 'SoftwareOath')]
     [string[]]   $MethodType
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-BEGIN {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }BEGIN {
     $ConnectionGraph = Get-MgContext
     if (-not $ConnectionGraph) {
         Write-Error "Please connect to Microsoft Graph" -ErrorAction Stop
-    }
-
-}
-
-PROCESS {
+    }}PROCESS {
     foreach ($User in $UserId) {
         try {
             $DeviceList = Get-MgUserAuthenticationMethod -UserId $User -ErrorAction Stop
-            $DeviceOutput = foreach ($Device in $DeviceList) {
-
-                #Converting long method to short-hand human readable method type.
+            $DeviceOutput = foreach ($Device in $DeviceList) {                #Converting long method to short-hand human readable method type.
                 switch ($Device.AdditionalProperties["@odata.type"]) {
                     '#microsoft.graph.microsoftAuthenticatorAuthenticationMethod' {
                         $MethodAuthType = 'AuthenticatorApp'
                         $AdditionalProperties = $Device.AdditionalProperties["displayName"]
-                    }
-
-                    '#microsoft.graph.phoneAuthenticationMethod' {
+                    }                    '#microsoft.graph.phoneAuthenticationMethod' {
                         $MethodAuthType = 'PhoneAuthentication'
                         $AdditionalProperties = $Device.AdditionalProperties["phoneType", "phoneNumber"] -join ' '
-                    }
-
-                    '#microsoft.graph.passwordAuthenticationMethod' {
+                    }                    '#microsoft.graph.passwordAuthenticationMethod' {
                         $MethodAuthType = 'PasswordAuthentication'
                         $AdditionalProperties = $Device.AdditionalProperties["displayName"]
-                    }
-
-                    '#microsoft.graph.fido2AuthenticationMethod' {
+                    }                    '#microsoft.graph.fido2AuthenticationMethod' {
                         $MethodAuthType = 'Fido2'
                         $AdditionalProperties = $Device.AdditionalProperties["model"]
-                    }
-
-                    '#microsoft.graph.windowsHelloForBusinessAuthenticationMethod' {
+                    }                    '#microsoft.graph.windowsHelloForBusinessAuthenticationMethod' {
                         $MethodAuthType = 'WindowsHelloForBusiness'
                         $AdditionalProperties = $Device.AdditionalProperties["displayName"]
-                    }
-
-                    '#microsoft.graph.emailAuthenticationMethod' {
+                    }                    '#microsoft.graph.emailAuthenticationMethod' {
                         $MethodAuthType = 'EmailAuthentication'
                         $AdditionalProperties = $Device.AdditionalProperties["emailAddress"]
-                    }
-
-                    '#microsoft.graph.temporaryAccessPassAuthenticationMethod' {
+                    }                    '#microsoft.graph.temporaryAccessPassAuthenticationMethod' {
                         $MethodAuthType = 'TemporaryAccessPass'
                         $AdditionalProperties = 'TapLifetime:' + $Device.AdditionalProperties["lifetimeInMinutes"] + 'm - Status:' + $Device.AdditionalProperties["methodUsabilityReason"]
-                    }
-
-                    '#microsoft.graph.passwordlessMicrosoftAuthenticatorAuthenticationMethod' {
+                    }                    '#microsoft.graph.passwordlessMicrosoftAuthenticatorAuthenticationMethod' {
                         $MethodAuthType = 'Passwordless'
                         $AdditionalProperties = $Device.AdditionalProperties["displayName"]
-                    }
-
-                    '#microsoft.graph.softwareOathAuthenticationMethod' {
+                    }                    '#microsoft.graph.softwareOathAuthenticationMethod' {
                         $MethodAuthType = 'SoftwareOath'
                         $AdditionalProperties = $Device.AdditionalProperties["displayName"]
                     }
-                }
-
-                [PSCustomObject]@{
+                }                [PSCustomObject]@{
                     UserPrincipalName      = $User
                     AuthenticationMethodId = $Device.Id
                     MethodType             = $MethodAuthType
                     AdditionalProperties   = $AdditionalProperties
                 }
-            }
-
-            if ($PSBoundParameters.ContainsKey('MethodType')) {
+            }            if ($PSBoundParameters.ContainsKey('MethodType')) {
                 $DeviceOutput | Where-Object { $_.MethodType -in $MethodType }
             }
             else {
                 $DeviceOutput
-            }
-
-        }
+            }        }
         catch {
-            Write-Error $_.Exception.Message
-
-        }
+            Write-Error $_.Exception.Message        }
         finally {
             $DeviceList = $null
             $MethodAuthType = $null
-            $AdditionalProperties = $null
-
-        }
+            $AdditionalProperties = $null        }
     }
-}
-
-END {}
+}END {}
 }
 function Get-NewComputerName {
-<#PSScriptInfo
-
-.VERSION 1.0.8
-
-.GUID f0c0a88c-be5c-46ee-ab03-86272a36b5d7
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.8.GUID f0c0a88c-be5c-46ee-ab03-86272a36b5d7.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will rename the computer based on the prefix and serial number.
-
-.PARAMETER Prefix
-The prefix to use for the computer name.
-
-.PARAMETER Serial
-The serial nubmer to use for the computer name.
-
-.PARAMETER PrefixLenght
-The lenght of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
-
-.PARAMETER NewName
+This script will rename the computer based on the prefix and serial number..PARAMETER Prefix
+The prefix to use for the computer name..PARAMETER Serial
+The serial nubmer to use for the computer name..PARAMETER PrefixLenght
+The lenght of the prefix. This is used to truncate the prefix so the total length is less than 15 characters..PARAMETER NewName
 The new name to use for the computer.
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
 param (
     [string]$Prefix,
@@ -5133,68 +2431,22 @@ param (
 )
 $Models = @{
     Razer = "BY21\d{2}M(\d{8})"
-}
-
-$Models.Keys | ForEach-Object { if ($Serial -match $Models[$_]) { $Serial = $Matches[1] } }
-
-$PrefixLenght = ($($MaxLength - $Serial.length), $Prefix.Length | Measure-Object -Minimum ).Minimum
+}$Models.Keys | ForEach-Object { if ($Serial -match $Models[$_]) { $Serial = $Matches[1] } }$PrefixLenght = ($($MaxLength - $Serial.length), $Prefix.Length | Measure-Object -Minimum ).Minimum
 return $Prefix.Substring(0, $PrefixLenght) + $Serial
 }
 function Get-NewIP {
-<#PSScriptInfo
-
-.VERSION 1.1.4
-
-.GUID 9eea8e22-18f9-4cf7-b019-602c7d71dcf8
-
-.AUTHOR Jason Cook Aman Dhally - amandhally@gmail.com
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.4.GUID 9eea8e22-18f9-4cf7-b019-602c7d71dcf8.AUTHOR Jason Cook Aman Dhally - amandhally@gmail.com.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This powershell script will renew DHCP leaces on all network interfaces with DHCP enabled.
-
-.DESCRIPTION
-This powershell script will renew DHCP leaces on all network interfaces with DHCP enabled. Based off of a script by Aman Dhally located here https://newdelhipowershellusergroup.blogspot.ca/2012/04/ip-address-release-renew-using.html
-
-.LINK
-https://newdelhipowershellusergroup.blogspot.ca/2012/04/ip-address-release-renew-using.html
-
-.EXAMPLE
+This powershell script will renew DHCP leaces on all network interfaces with DHCP enabled..DESCRIPTION
+This powershell script will renew DHCP leaces on all network interfaces with DHCP enabled. Based off of a script by Aman Dhally located here https://newdelhipowershellusergroup.blogspot.ca/2012/04/ip-address-release-renew-using.html.LINK
+https://newdelhipowershellusergroup.blogspot.ca/2012/04/ip-address-release-renew-using.html.EXAMPLE
 .\Get-NewIP.ps1
 Get-NewIP: Flushing IP addresses for Intel(R) Dual Band Wireless-AC 8260
 Get-NewIP: Renewing IP Addresses
-Get-NewIP: Lease on 192.168.2.18 fe80::24b7:e4ab:2901:6688 expires in 21 hours 2935 minutes on May 2, 2017 9:44:03 AM
-
-.LINK
-http://www.amandhally.net/blog
-
-.LINK
+Get-NewIP: Lease on 192.168.2.18 fe80::24b7:e4ab:2901:6688 expires in 21 hours 2935 minutes on May 2, 2017 9:44:03 AM.LINK
+http://www.amandhally.net/blog.LINK
 https://newdelhipowershellusergroup.blogspot.com/2012/04/ip-address-release-renew-using.html
-#>
-
-$Ethernet = Get-CimInstance -Class Win32_NetworkAdapterConfiguration | Where-Object { $_.IpEnabled -eq $true -and $_.DhcpEnabled -eq $true }
+#>$Ethernet = Get-CimInstance -Class Win32_NetworkAdapterConfiguration | Where-Object { $_.IpEnabled -eq $true -and $_.DhcpEnabled -eq $true }
 foreach ($lan in $ethernet) {
 	$lanDescription = $lan.Description
 	Write-Output "Flushing IP addresses for $lanDescription"
@@ -5202,9 +2454,7 @@ foreach ($lan in $ethernet) {
 	$lan | Invoke-CimMethod -MethodName ReleaseDHCPLease | Out-Null
 	Write-Output "Renewing IP Addresses"
 	$lan | Invoke-CimMethod -MethodName RenewDHCPLease | Out-Null
-	#$lan | select Description, ServiceName, IPAddress,  IPSubnet, DefaultIPGateway, DNSServerSearchOrder, DNSDomain, DHCPLeaseExpires, DHCPServer, MACAddress
-
-	#$expireTime = [datetime]::ParseExact($lan.DHCPLeaseExpires,'yyyyMMddHHmmss.000000-300',$null)
+	#$lan | select Description, ServiceName, IPAddress,  IPSubnet, DefaultIPGateway, DNSServerSearchOrder, DNSDomain, DHCPLeaseExpires, DHCPServer, MACAddress	#$expireTime = [datetime]::ParseExact($lan.DHCPLeaseExpires,'yyyyMMddHHmmss.000000-300',$null)
 	$expireTime = $lan.DHCPLeaseExpires
 	$expireTimeFormated = Get-Date -Date $expireTime -Format F
 	$expireTimeUntil = New-TimeSpan -Start (Get-Date) -End $expireTime
@@ -5220,54 +2470,16 @@ foreach ($lan in $ethernet) {
 }
 }
 function Get-OrphanedGPO {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 4ec63b79-6484-43eb-90f8-bef7e2642564
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 4ec63b79-6484-43eb-90f8-bef7e2642564.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will find all orphaned GPOs.
-
-.LINK
+This script will find all orphaned GPOs..LINK
 https://4sysops.com/archives/find-orphaned-active-directory-gpos-in-the-sysvol-share-with-powershell/
-#>
-
-[CmdletBinding()]
+#>[CmdletBinding()]
 param (
     [string]$ForestName = (Get-ADForest).Name,
     $Domains = (Get-AdForest -Identity $ForestName | Select-Object -ExpandProperty Domains)
-)
-
-try {
-    ## Find all domains in the forest
-
-    $gpoGuids = @()
+)try {
+    ## Find all domains in the forest    $gpoGuids = @()
     $sysvolGuids = @()
     foreach ($domain in $Domains) {
         $gpoGuids += Get-GPO -All -Domain $domain | Select-Object @{ n = 'GUID'; e = { $_.Id.ToString() } } | Select-Object -ExpandProperty GUID
@@ -5278,65 +2490,21 @@ try {
                 $sysvolGuids += $folder -replace '{|}'
             }
         }
-    }
-
-    Compare-Object -ReferenceObject $sysvolGuids -DifferenceObject $gpoGuids | Select-Object -ExpandProperty InputObject
+    }    Compare-Object -ReferenceObject $sysvolGuids -DifferenceObject $gpoGuids | Select-Object -ExpandProperty InputObject
 }
 catch {
     $PSCmdlet.ThrowTerminatingError($_)
 }
 }
 function Get-RecentEvents {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 05dad3a6-57cf-4747-b3bd-57bc12b7628e
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 05dad3a6-57cf-4747-b3bd-57bc12b7628e.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will search the event log for events a specified number of minutes before or after a given time.
-
-.DESCRIPTION
-This script will search the event log for events a specified number of minutes before or after a given time.
-
-.PARAMETER Before
-To search before -Time. Either -Before or -After must be spesified. -Before will take precedence if both are set.
-
-.PARAMETER After
-To search after -Time. Either -Before or -After must be spesified. -Before will take precedence if both are set.
-
-.PARAMETER Time
-The number of minutes from now to begin the search. This paramater is required.
-
-.EXAMPLE
-.\Get-RecentEvents.ps1 -After -Time -1
-
-   Index Time          EntryType   Source                 InstanceID Message
+This script will search the event log for events a specified number of minutes before or after a given time..DESCRIPTION
+This script will search the event log for events a specified number of minutes before or after a given time..PARAMETER Before
+To search before -Time. Either -Before or -After must be spesified. -Before will take precedence if both are set..PARAMETER After
+To search after -Time. Either -Before or -After must be spesified. -Before will take precedence if both are set..PARAMETER Time
+The number of minutes from now to begin the search. This paramater is required..EXAMPLE
+.\Get-RecentEvents.ps1 -After -Time -1   Index Time          EntryType   Source                 InstanceID Message
    ----- ----          ---------   ------                 ---------- -------
    31568 Sep 05 12:18  Information Service Control M...   1073748864 The start type of the Background Intelligent Transfer Service service was changed from auto start to demand start.
 #>
@@ -5346,59 +2514,17 @@ param(
   [switch]$After
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Test-Admin -Message "You are not running this script with Administrator rights. Some events may be missing." | Out-Null
-
-If ($Before -eq $True) { Get-EventLog System -Before (Get-Date).AddMinutes($Time) }
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Test-Admin -Message "You are not running this script with Administrator rights. Some events may be missing." | Out-NullIf ($Before -eq $True) { Get-EventLog System -Before (Get-Date).AddMinutes($Time) }
 ElseIf ($After -eq $True) { Get-EventLog System -After (Get-Date).AddMinutes($Time) }
 Else { Write-Error "You must specify either -Before or -After" }
 }
 function Get-SecureBoot {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 421f45c1-3a42-4c17-83a8-bb109f412a19
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 421f45c1-3a42-4c17-83a8-bb109f412a19.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script with gather information about  Secure Boot from the specified marchines.
-
-.DESCRIPTION
-This script with gather information about TPM and Secure Boot from the spesified specified. It can request information from just the local computer or from a list of remote computers. It can also export the results as a CSV file.
-
-.PARAMETER ComputerList
-This can be used to select a text file with a list of computers to run this command against. Each device must appear on a new line. If unspesified, it will run againt the local machine.
-
-.PARAMETER ReportFile
-This can be used to export the results to a CSV file.
-
-.EXAMPLE
+This script with gather information about  Secure Boot from the specified marchines..DESCRIPTION
+This script with gather information about TPM and Secure Boot from the spesified specified. It can request information from just the local computer or from a list of remote computers. It can also export the results as a CSV file..PARAMETER ComputerList
+This can be used to select a text file with a list of computers to run this command against. Each device must appear on a new line. If unspesified, it will run againt the local machine..PARAMETER ReportFile
+This can be used to export the results to a CSV file..EXAMPLE
 Get-TPMInfo
 System Information for: localhost
 Secure Boot Status: TRUE
@@ -5408,9 +2534,7 @@ param(
   [string]$ReportFile
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Function Get-SystemInfo($ComputerSystem) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Function Get-SystemInfo($ComputerSystem) {
   If (-NOT (Test-Connection -ComputerName $ComputerSystem -Count 1 -ErrorAction SilentlyContinue)) {
     Write-Warning "$ComputerSystem is not accessible."
     $script:Report += New-Object psobject -Property @{
@@ -5431,49 +2555,15 @@ Function Get-SystemInfo($ComputerSystem) {
     ComputerSecureBoot = $ComputerSecureBoot;
   }
   If ($script:ReportFile) { $script:Report | Export-Csv $script:ReportFile }
-}
-
-$script:Report = @()
+}$script:Report = @()
 If ($ComputerList) { foreach ($ComputerSystem in Get-Content $ComputerList) { Get-SystemInfo -ComputerSystem $ComputerSystem } }
 Else { Get-SystemInfo -ComputerSystem $env:COMPUTERNAME }
 If ($ReportFile) { $Report | Export-Csv $ReportFile }
 }
 function Get-Spns {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 086f7358-170c-4f90-ab37-9b06888cd963
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 086f7358-170c-4f90-ab37-9b06888cd963.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-List all SPNs in Active Directory
-
-.LINK
+List all SPNs in Active Directory.LINK
 https://social.technet.microsoft.com/wiki/contents/articles/18996.active-directory-powershell-script-to-list-all-spns-used.aspx
 #>
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingWriteHost", "")]
@@ -5481,17 +2571,13 @@ param()
 Clear-Host
 $search = New-Object DirectoryServices.DirectorySearcher([ADSI]"")
 $search.filter = "(servicePrincipalName=*)"
-$results = $search.Findall()
-
-foreach ($result in $results) {
+$results = $search.Findall()foreach ($result in $results) {
   $userEntry = $result.GetDirectoryEntry()
   Write-Host "Object Name  =  "$userEntry.name -backgroundcolor "yellow" -foregroundcolor "black"
   Write-Host "DN           =  "$userEntry.distinguishedName
   Write-Host "Object Cat.  =  "$userEntry.objectCategory
   Write-Host "servicePrincipalNames"
-  $i = 1
-
-  foreach ($SPN in $userEntry.servicePrincipalName) {
+  $i = 1  foreach ($SPN in $userEntry.servicePrincipalName) {
     $Output = "SPN (" + $i.ToString('000') + ")  =  " + $SPN
     Write-Host $Output
     $i += 1
@@ -5500,90 +2586,32 @@ foreach ($result in $results) {
 }
 }
 function Get-StaleAADGuestAccounts {
-<#PSScriptInfo
-
-.VERSION 1.1.5
-
-.GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
-
-.AUTHOR Jason Cook Darren J Robinson
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.5.GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de.AUTHOR Jason Cook Darren J Robinson.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-FIND State/Dormant B2B Accounts and Stale/Dormant B2B Guest Invitations
-
-.DESCRIPTION
-Get all AAD Accounts which haven't signed in, in the last XX Days, or haven't accepted a B2B Guest Invitation in last XX Days. This is based on the blog post from Darren Robinson.
-
-.LINK
-https://blog.darrenjrobinson.com/finding-stale-azure-ad-b2b-guest-accounts-based-on-lastsignindatetime/
-
-.PARAMETER TenantId
-Microsoft 365 Tenant ID
-
-.PARAMETER Credential
-Registered AAD App ID and Secret
-
-.PARAMETER StaleDays
-Number of days over which an Azure AD Account that hasn't signed in is considered stale'
-
-.PARAMETER StaleDate
-Spesify a date to use as stale before which all sign ins are considered stale. This overrides the StaleDays oparameter
-
-.PARAMETER GetLastSignIn
-Should we find the last sign in date for stale users? This will take longer to process
-
-.EXAMPLE
+FIND State/Dormant B2B Accounts and Stale/Dormant B2B Guest Invitations.DESCRIPTION
+Get all AAD Accounts which haven't signed in, in the last XX Days, or haven't accepted a B2B Guest Invitation in last XX Days. This is based on the blog post from Darren Robinson..LINK
+https://blog.darrenjrobinson.com/finding-stale-azure-ad-b2b-guest-accounts-based-on-lastsignindatetime/.PARAMETER TenantId
+Microsoft 365 Tenant ID.PARAMETER Credential
+Registered AAD App ID and Secret.PARAMETER StaleDays
+Number of days over which an Azure AD Account that hasn't signed in is considered stale'.PARAMETER StaleDate
+Spesify a date to use as stale before which all sign ins are considered stale. This overrides the StaleDays oparameter.PARAMETER GetLastSignIn
+Should we find the last sign in date for stale users? This will take longer to process.EXAMPLE
 Get-StaleAADGuestAccounts
-#>
-
-param (
+#>param (
 	[Parameter(Mandatory = $true, ValueFromPipeline = $true)]$TenantId , # Tenant ID
 	[Parameter(Mandatory = $true, ValueFromPipeline = $true)][PSCredential]$Credential, # Registered AAD App ID and Secret
 	$StaleDays = '90', # Number of days over which an Azure AD Account that hasn't signed in is considered stale'
 	$StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a spesific date to use as stale
 	[switch]$GetLastSignIn
-)
-
-Requires -Modules MSAL.PS
-
-$StaleGuests = GetAADSignIns -date $StaleDate | Select-Object | Where-Object { $_.userType -eq 'Guest' }
+)Requires -Modules MSAL.PS$StaleGuests = GetAADSignIns -date $StaleDate | Select-Object | Where-Object { $_.userType -eq 'Guest' }
 Write-Host -ForegroundColor Green "$($StaleGuests.count) Guest accounts haven't signed in since $($StaleDate)"
-Write-Host -ForegroundColor Yellow "    $(($StaleGuests | Select-Object | Where-Object { $_.accountEnabled -eq $false }).Count) Guest accounts haven't signed in since $($StaleDate) and are flagged as 'Account Disabled'."
-
-$PendingGuests = GetAADPendingGuests
+Write-Host -ForegroundColor Yellow "    $(($StaleGuests | Select-Object | Where-Object { $_.accountEnabled -eq $false }).Count) Guest accounts haven't signed in since $($StaleDate) and are flagged as 'Account Disabled'."$PendingGuests = GetAADPendingGuests
 Write-Host -ForegroundColor Green "$($PendingGuests.count) Guest accounts are still 'pending' B2B Guest invitation acceptance."
 $StalePendingGuests = $PendingGuests | Select-Object | Where-Object { [datetime]$_.externalUserStateChangeDateTime -le [datetime]"$($StaleDate)T00:00:00Z" }
-Write-Host -ForegroundColor Yellow "    $($StalePendingGuests.count) Guest accounts were invited before '$($StaleDate)'"
-
-$StaleAndPendingGuests = $null
+Write-Host -ForegroundColor Yellow "    $($StalePendingGuests.count) Guest accounts were invited before '$($StaleDate)'"$StaleAndPendingGuests = $null
 $StaleAndPendingGuests += $StaleGuests
 $StaleAndPendingGuests += $StalePendingGuests
-Write-Host -ForegroundColor Green "$($StaleAndPendingGuests.count) Guest accounts are still 'pending' B2B Guest invitation acceptance or haven't signed in since '$($StaleDate)'."
-
-If ($GetLastSignIn) {
+Write-Host -ForegroundColor Green "$($StaleAndPendingGuests.count) Guest accounts are still 'pending' B2B Guest invitation acceptance or haven't signed in since '$($StaleDate)'."If ($GetLastSignIn) {
 	# Add lastSignInDateTime to the User PowerShell Object
 	foreach ($Guest in $StaleGuests) {
 		#Progress message
@@ -5592,9 +2620,7 @@ If ($GetLastSignIn) {
 		$signIns = GetAADUserSignInActivity -ID $Guest.id
 		$Guest | Add-Member -Type NoteProperty -Name "lastSignInDateTime" -Value $signIns.signInActivity.lastSignInDateTime
 	}
-}
-
-$defaultProperties = @("mail", "accountEnabled", "creationType", "externalUserState", "userType")
+}$defaultProperties = @("mail", "accountEnabled", "creationType", "externalUserState", "userType")
 If ($GetLastSignIn) { $defaultProperties += "lastSignInDateTime" }
 $defaultDisplayPropertySet = New-Object System.Management.Automation.PSPropertySet('DefaultDisplayPropertySet', [string[]]$defaultProperties)
 $PSStandardMembers = [System.Management.Automation.PSMemberInfo[]]@($defaultDisplayPropertySet)
@@ -5602,45 +2628,11 @@ $StaleAndPendingGuests | Add-Member MemberSet PSStandardMembers $PSStandardMembe
 return $StaleAndPendingGuests
 }
 function Get-TermsOfUse {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 7c954769-1a02-4bbb-b1e0-8e9ea3dbb0c8
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 7c954769-1a02-4bbb-b1e0-8e9ea3dbb0c8.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Get AAD Terms of Use details.
-#>
-
-Requires -Module AzureADPreview
-[System.Collections.ArrayList]$Results = @()
-
-Get-AzureADAuditDirectoryLogs -Filter "loggedByService eq 'Terms Of Use'" | ForEach-Object {
+#>Requires -Module AzureADPreview
+[System.Collections.ArrayList]$Results = @()Get-AzureADAuditDirectoryLogs -Filter "loggedByService eq 'Terms Of Use'" | ForEach-Object {
   $Result = [PSCustomObject]@{
     PolicyName  = $_.TargetResources[0].DisplayName
     DisplayName = $_.TargetResources[1].DisplayName
@@ -5655,50 +2647,12 @@ Get-AzureADAuditDirectoryLogs -Filter "loggedByService eq 'Terms Of Use'" | ForE
 return $Results
 }
 function Get-TpmInfo {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 14062539-2775-4450-bb0b-a3406d1db091
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 14062539-2775-4450-bb0b-a3406d1db091.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script with gather information about TPM and Secure Boot from the spesified marchines.
-
-.DESCRIPTION
-This script with gather information about TPM and Secure Boot from the spesified marchines. It can request information from just the local computer or from a list of remote computers. It can also export the results as a CSV file.
-
-.PARAMETER ComputerList
-This can be used to select a text file with a list of computers to run this command against. Each device must appear on a new line. If unspesified, it will run againt the local machine.
-
-.PARAMETER ReportFile
-This can be used to export the results to a CSV file.
-
-.EXAMPLE
+This script with gather information about TPM and Secure Boot from the spesified marchines..DESCRIPTION
+This script with gather information about TPM and Secure Boot from the spesified marchines. It can request information from just the local computer or from a list of remote computers. It can also export the results as a CSV file..PARAMETER ComputerList
+This can be used to select a text file with a list of computers to run this command against. Each device must appear on a new line. If unspesified, it will run againt the local machine..PARAMETER ReportFile
+This can be used to export the results to a CSV file..EXAMPLE
 Get-TPMInfo
 System Information for: XXXX
 Manufacturer: LENOVO
@@ -5720,9 +2674,7 @@ param(
   [string]$ReportFile
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Function Get-SystemInfo($ComputerSystem) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Function Get-SystemInfo($ComputerSystem) {
   If (-NOT (Test-Connection -ComputerName $ComputerSystem -Count 1 -ErrorAction SilentlyContinue)) {
     Write-Warning "$ComputerSystem is not accessible."
     $script:Report += New-Object psobject -Property @{
@@ -5748,9 +2700,7 @@ Function Get-SystemInfo($ComputerSystem) {
       LastSignIn          = "";
     }
     Return
-		}
-
-  $ComputerInfo = Get-CimInstance -ComputerName $ComputerSystem Win32_ComputerSystem
+		}  $ComputerInfo = Get-CimInstance -ComputerName $ComputerSystem Win32_ComputerSystem
   $ComputerGptSystem = Get-CimInstance -ComputerName $ComputerSystem -query 'Select * from Win32_DiskPartition Where Type = "GPT: System"' | Select-Object Name, Index, Bootable, BootPartition, PrimaryPartition, @{n = "SizeInMB"; e = { $_.Size / 1MB } }
   $ComputerBios = Get-CimInstance -ComputerName $ComputerSystem Win32_BIOS
   $ComputerBiosType = Invoke-Command -ComputerName $ComputerSystem -ScriptBlock { if (Test-Path $env:windir\Panther\setupact.log) { (Select-String 'Detected boot environment' -Path "$env:windir\Panther\setupact.log"  -AllMatches).line -replace '.*:\s+' } else { if (Test-Path HKLM:\System\CurrentControlSet\control\SecureBoot\State) { "UEFI" } else { "BIOS" } } }
@@ -5814,55 +2764,17 @@ Function Get-SystemInfo($ComputerSystem) {
     LastReboot          = $ComputerOs.LastBootUpTime
   }
   If ($script:ReportFile) { $script:Report | Export-Csv $script:ReportFile }
-}
-
-$script:Report = @()
+}$script:Report = @()
 If ($ComputerList) { foreach ($ComputerSystem in Get-Content $ComputerList) { Get-SystemInfo -ComputerSystem $ComputerSystem } }
 Else { Get-SystemInfo -ComputerSystem $env:COMPUTERNAME }
 If ($ReportFile) { $Report | Export-Csv $ReportFile }
 }
 function Get-UserInfo {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID c64f1f09-036c-471d-898c-c9b3da6f53a8
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID c64f1f09-036c-471d-898c-c9b3da6f53a8.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Shows the percentage of machines which have LAPS configured.
-
-.PARAMETER Details
-If set, will show which computers have a password set.
-
-.PARAMETER Filter
-Filters the search based on the spesified parameters.
-
-.PARAMETER ShowPasswords
+Shows the percentage of machines which have LAPS configured..PARAMETER Details
+If set, will show which computers have a password set..PARAMETER Filter
+Filters the search based on the spesified parameters..PARAMETER ShowPasswords
 Will also output passwords.
 #>
 param(
@@ -5871,19 +2783,13 @@ param(
     [string]$Show
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-function ParseDate {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }function ParseDate {
     param ($Date)
     if ($null -ne $Date -and $Date -ne 0) { return [datetime]::FromFileTime($Date) }
-}
-
-$Results = @()
+}$Results = @()
 Get-ADUser -Filter * -Properties name, givenName, sn, mail, title, department, company, lastLogonTimestamp, pwdLastSet, whenCreated, whenChanged | `
     Select-Object name, givenName, sn, mail, title, department, company, lastLogonTimestamp, pwdLastSet, whenCreated, whenChanged | `
-    Sort-Object lastLogonTimestamp, name | ForEach-Object {
-
-    $Result = [PSCustomObject]@{
+    Sort-Object lastLogonTimestamp, name | ForEach-Object {    $Result = [PSCustomObject]@{
         Name            = $_.name
         FirstName       = $_.givenName
         LastName        = $_.sn
@@ -5901,44 +2807,10 @@ Get-ADUser -Filter * -Properties name, givenName, sn, mail, title, department, c
 return $Results
 }
 function Get-Wallpaper {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID b30e98ad-cd0c-4f83-a10d-d5d976221b66.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Download the latest wallpaper and add to the system wallpaper folder.
-
-.PARAMETER Path
-The location the file will be downloaded to.
-
-.PARAMETER Uri
+Download the latest wallpaper and add to the system wallpaper folder..PARAMETER Path
+The location the file will be downloaded to..PARAMETER Uri
 The location from from which to download the wallpaper.
 #>
 param(
@@ -5946,63 +2818,19 @@ param(
     [Parameter(Mandatory = $true)][uri]$Uri
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Test-Admin -Warn -Message "You do not have Administrator rights to run this script! This may not work correctly." | Out-Null
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Test-Admin -Warn -Message "You do not have Administrator rights to run this script! This may not work correctly." | Out-Null
 Invoke-WebRequest -OutFile $Path -Uri $Uri -ErrorAction SilentlyContinue
 }
 function Grant-Matching {
-<#PSScriptInfo
-
-.VERSION 1.0.10
-
-.GUID 8e42dd4d-c91c-420c-99f5-7b233590ae2c
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.10.GUID 8e42dd4d-c91c-420c-99f5-7b233590ae2c.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This powershell script will grant NTFS permissions on folders where the username and folder name match.
-
-.DESCRIPTION
+This powershell script will grant NTFS permissions on folders where the username and folder name match..DESCRIPTION
 This powershell script will grant NTFS permissions on folders where the username and folder name match. It accepts three parameters, AccessRights, Domain, and Folder.
-This script requires the NTFSSecurity module: https://github.com/raandree/NTFSSecurity
-
-.LINK
-https://github.com/raandree/NTFSSecurity
-
-.PARAMETER AccessRights
-This can be used to set the access right on the child folders. If unspecified, it will give FullControl. See documentation of the NTFSSecurity module for options.
-
-.PARAMETER Domain
-This can be used to set the domain of the users. If unspecified, it will use the current domain ($Env:USERDOMAIN).
-
-.PARAMETER Folder
-This can be used to select a folder in which to run these commands on. If unspecified, it will run in the PowerShell has active.
-
-.EXAMPLE
+This script requires the NTFSSecurity module: https://github.com/raandree/NTFSSecurity.LINK
+https://github.com/raandree/NTFSSecurity.PARAMETER AccessRights
+This can be used to set the access right on the child folders. If unspecified, it will give FullControl. See documentation of the NTFSSecurity module for options..PARAMETER Domain
+This can be used to set the domain of the users. If unspecified, it will use the current domain ($Env:USERDOMAIN)..PARAMETER Folder
+This can be used to select a folder in which to run these commands on. If unspecified, it will run in the PowerShell has active..EXAMPLE
 .\Grant-Matching.ps1 -AccessRights FullControl -Folder C:\Users
 Grant-Matching: Granting DOMAIN\user FullControl on C:\Users\user
 #>
@@ -6013,11 +2841,7 @@ param(
   [string]$Domain = $Env:USERDOMAIN
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Requires -Modules NTFSSecurity
-
-foreach ($UserFolder in $Path) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Requires -Modules NTFSSecurityforeach ($UserFolder in $Path) {
   $Account = $Domain + '\' + $UserFolder
   $count++ ; Progress -Index $count -Total $Path.count -Activity "Granting $Account $AccessRights." -Name $UserFolder.FullName
   If ($PSCmdlet.ShouldProcess("$($UserFolder.FullName)", "Add-NTFSAccess")) {
@@ -6026,47 +2850,11 @@ foreach ($UserFolder in $Path) {
 }
 }
 function Import-FortiClientConfig {
-<#PSScriptInfo
-
-.VERSION 1.2.10
-
-.GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.2.10.GUID 309e82fe-9a41-4ba2-afb4-8ef85e0fe38d.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will import the current Forti Client configuration.
-
-.PARAMETER Path
-The location the configuration will be imported from.
-
-.EXAMPLE
-Import-FortiClientConfig -Path backup.conf
-
-.LINK
+This will import the current Forti Client configuration..PARAMETER Path
+The location the configuration will be imported from..EXAMPLE
+Import-FortiClientConfig -Path backup.conf.LINK
 https://getmodern.co.uk/automating-the-install-of-forticlient-vpn-via-mem-intune
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -6074,118 +2862,94 @@ param (
     $Path = "backup.conf",
     [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
     [SecureString]$Password
-)
-
-$Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
-if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
-
-if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
+)$Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
+if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
     Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
 }
 }
-function Initialize-BiosUsbKey {
+function Import-Ipam {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.1
 
-.GUID 0c7d4d03-0299-400f-92a8-f857f9b8dc6e
+.GUID af4b08fb-f7ab-4e9c-a200-efe99f2ac411
 
 .AUTHOR Jason Cook
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
+
+.PRIVATEDATA
 
 #> 
 
 <#
 .DESCRIPTION
-This script will create a bootable BIOS key and apply an appropriate label.
+This runs a one-time import of into Windows IPAM. This script will only add new entries..PARAMETER ComputerName
+The computer hosting the IPAM service..PARAMETER Path
+The location the configuration will be imported from..PARAMETER Actions
+The type of data to be imported, either Subnet, Range, Addresses. Subnet & Range can be specified in the same command using the same file.
 #>
-
 param (
+  [string]$ComputerName,
+  [string]$Path,
+  [ValidateSet("Subnet", "Range", "Addresses", IgnoreCase = $true)][array][Parameter(Position = 0, Mandatory = $true)]$Actions
+)if ($Actions -contains "Subnet" -or $Actions -contains "Range") {
+    (Import-Csv -Path $Path) | Foreach-object {    if ($Actions -contains "Subnet") {
+      Write-Output "$($_.Name): Creating Subnet"
+      Add-IpamSubnet -CimSession (CimSession $ComputerName) -Name $_.Name -CustomConfiguration $_.CustomConfiguration -NetworkId $_.NetworkId -VlanId $_.VlanId
+    }
+    if ($Actions -contains "Range") {
+      Write-Output "$($_.Name): Creating Range"
+      Add-IpamRange -CimSession (CimSession $ComputerName) -AssignmentType $_.AssignmentType -AssociatedReverseLookupZone $_.AssociatedReverseLookupZone -ConnectionSpecificDnsSuffix $_.ConnectionSpecificDnsSuffix -CustomConfiguration $_.CustomConfiguration -Description $_.Name -DnsServer ($_.DnsServer -split ",") -DnsSuffix ($_.DnsSuffix -split ",") -Gateway "$($_.Gateway)/Automatic"  -NetworkId $_.NetworkId -ManagedByService $_.ManagedByService -ServiceInstance $_.ServiceInstance
+    }  }
+}if ($Actions -contains "Addresses") {
+    (Import-Csv $Path) | ForEach-Object {
+    Write-Output "$($_.IpAddress): Adding IP $($_.DeviceName)"
+    Add-IpamAddress  -CimSession (CimSession $ComputerName) -IpAddress $_.IpAddress -MacAddress $_.MacAddress -DeviceType $_.DeviceType -IpAddressState $_.AddressState -AssignmentType $_.AssignmentType -Description $_.Description -DeviceName $_.DeviceName -ForwardLookupZone $_.ForwardLookupZone -ForwardLookupPrimaryServer $_.ForwardLookupPrimaryServer -ReverseLookupZone $_.ReverseLookupZone -ReverseLookupPrimaryServer $_.ReverseLookupPrimaryServer -ManagedByService $_.ManagedByService -ServiceInstance $_.ServiceInstance -CustomConfiguration $_.CustomConfiguration
+  }
+}
+}
+function Initialize-BiosUsbKey {
+<#PSScriptInfo.VERSION 1.0.4.GUID 0c7d4d03-0299-400f-92a8-f857f9b8dc6e.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
+.DESCRIPTION
+This script will create a bootable BIOS key and apply an appropriate label.
+#>param (
     [string]$Path,
     [string]$Drive,
     [ValidateSet("Lenovo")][string]$Manufacturer = "Lenovo"
-)
-
-Push-Location $Path
-
-Write-Verbose "Erasing $Drive"
-Get-ChildItem -Path $Drive`:\ -Recurse | Remove-Item -Force -Recurse
-
-Write-Verbose "Creating USB Drive"
-if ($Manufacturer -eq "Lenovo") { & .\mkusbkey.bat $Drive`: | Write-Verbose }
-
-Write-Verbose "Building drive label."
+)Push-Location $PathWrite-Verbose "Erasing $Drive"
+Get-ChildItem -Path $Drive`:\ -Recurse | Remove-Item -Force -RecurseWrite-Verbose "Creating USB Drive"
+if ($Manufacturer -eq "Lenovo") { & .\mkusbkey.bat $Drive`: | Write-Verbose }Write-Verbose "Building drive label."
 [string]$Model = (Get-Item (Split-Path -Parent -Path (Get-Location))).Name
 $Label = ($Model -replace " ", "" -replace "Type", "" -replace "Gen", "G" -replace "\(", "" -replace "\)", "" -replace ",", "")
-$Label = $Label.Substring(0, ($Label.Length, 11 | Measure-Object -Minimum).Minimum)
-
-$AutoRun = "
+$Label = $Label.Substring(0, ($Label.Length, 11 | Measure-Object -Minimum).Minimum)$AutoRun = "
 [AutoRun]
 label=$Model
-"
-
-Write-Verbose "Setting drive label: $Label"
-Set-Volume -DriveLetter $Drive -NewFileSystemLabel $Label
-
-Write-Verbose "Setting AutoRun label: $Model"
-$AutoRun | Out-File -FilePath "$Drive`:\autorun.inf"
-
-Pop-Location
-
-Write-Verbose "Copying Logos"
+"Write-Verbose "Setting drive label: $Label"
+Set-Volume -DriveLetter $Drive -NewFileSystemLabel $LabelWrite-Verbose "Setting AutoRun label: $Model"
+$AutoRun | Out-File -FilePath "$Drive`:\autorun.inf"Pop-LocationWrite-Verbose "Copying Logos"
 if ($Manufacturer -eq "Lenovo") { Copy-Item -Path .\LOGO*.gif -Destination $Drive`:\Flash\ }
 }
 function Initialize-OneDrive {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 983e1108-74f9-41a5-8de9-f12145fbeffc
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 983e1108-74f9-41a5-8de9-f12145fbeffc.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 This will remove and reinstall OneDrive.
 #>
@@ -6195,44 +2959,10 @@ Write-Verbose "Installing OneDrive..."
 Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 }
 function Initialize-Workstation {
-<#PSScriptInfo
-
-.VERSION 1.2.18
-
-.GUID 8ab0507b-8af2-4916-8de2-9457194fb454
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.2.18.GUID 8ab0507b-8af2-4916-8de2-9457194fb454.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will install the neccesary applications and services on a given machine.
-
-.DESCRIPTION
-This script will install the neccesary applications and services on a given machine. It will also check for updates to third-party applications. This script will also configure certain items not able to be configured by Group Policy,
-
-.PARAMETER Action
+This script will install the neccesary applications and services on a given machine..DESCRIPTION
+This script will install the neccesary applications and services on a given machine. It will also check for updates to third-party applications. This script will also configure certain items not able to be configured by Group Policy,.PARAMETER Action
 An array of actions to run.
     Rename: Rename the computer. Use -HostNamePrefix to set a prefix.
     LabelDrive: Label the drive, by default, the $env:SystemDrive will be labelled "Windows". Use -DriveToLabel to change the drive and -DriveLabel to change the label.
@@ -6245,48 +2975,20 @@ An array of actions to run.
     Ninte: Run Ninite.
     Winget: Install the spesified packages and update existing applications using Winget. Use -Winget to select the appropriate package.
     RemoveDesktopShortcuts: Remove all desktop shortcuts from the Public desktop.
-    Reboot: Reboot the machine.
-
-.PARAMETER HostNamePrefix
-The prefix to use for the hostname.
-
-.PARAMETER BitLockerProtector
-Enable BitLocker using the spesified protector. If unspecified, TPM will be used. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker
-
-.PARAMETER BitLockerEncryptionMethod
-Used to specify the encryption method for BitLocker. If unspecified, XtsAes256 will be used.
-
-.PARAMETER BitLockerUSB
-If the USB protector is spesified, use this to specify the USB drive to use.
-
-.PARAMETER DriveLabel
-This specifies what the drive will be labeled as. If unspecified, "Windows" will be used.
-
-.PARAMETER DriveToLabel
-This specifies which drive to label. If unspecified, the system drive will be used.
-
-.PARAMETER Ninite
-If specified, Ninite will be run and install the default third party applications.
-
-.PARAMETER InstallTo
-Specifies the defgault install device type for Ninite. Will use Ninite's default if unspecified.
-
-.PARAMETER NetFX3
-If specified, ".NET Framework 3.5 (includes .NET 2.0 and 3.0)" will be installed.
-
-.PARAMETER ProvisioningPackage
-The path to the Provisioning Package to be installed.
-
-.PARAMETER RSAT
-If specified, Remote Server Administrative Tools will be installed.
-
-.PARAMETER OfficeVersion
-Specifes the version of Office to install. If unspecified, Office will not be installed.
-
-.PARAMETER WingetPackages
-A hashtable of winget packages to install. The key is the package name and the value are any custom options required.
-
-#>
+    Reboot: Reboot the machine..PARAMETER HostNamePrefix
+The prefix to use for the hostname..PARAMETER BitLockerProtector
+Enable BitLocker using the spesified protector. If unspecified, TPM will be used. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker.PARAMETER BitLockerEncryptionMethod
+Used to specify the encryption method for BitLocker. If unspecified, XtsAes256 will be used..PARAMETER BitLockerUSB
+If the USB protector is spesified, use this to specify the USB drive to use..PARAMETER DriveLabel
+This specifies what the drive will be labeled as. If unspecified, "Windows" will be used..PARAMETER DriveToLabel
+This specifies which drive to label. If unspecified, the system drive will be used..PARAMETER Ninite
+If specified, Ninite will be run and install the default third party applications..PARAMETER InstallTo
+Specifies the defgault install device type for Ninite. Will use Ninite's default if unspecified..PARAMETER NetFX3
+If specified, ".NET Framework 3.5 (includes .NET 2.0 and 3.0)" will be installed..PARAMETER ProvisioningPackage
+The path to the Provisioning Package to be installed..PARAMETER RSAT
+If specified, Remote Server Administrative Tools will be installed..PARAMETER OfficeVersion
+Specifes the version of Office to install. If unspecified, Office will not be installed..PARAMETER WingetPackages
+A hashtable of winget packages to install. The key is the package name and the value are any custom options required.#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
   [int]$Step,
@@ -6306,34 +3008,18 @@ param(
   [string]$DriveToLabel = ($env:SystemDrive.Substring(0, 1))
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Test-Admin -Throw | Out-Null
-Requires TecticPS
-
-if ($Step -eq 1) { $Action = @( "LabelDrive", "Wallpaper", "MicrosoftStore", "Winget") }
-if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Reboot") }
-
-if ($Action -contains "MicrosoftStore") { Update-MicrosoftStoreApps }
-
-if ($Action -contains "Rename") { Set-ComputerName -Prefix $HostNamePrefix }
-
-if ($Action -contains "LabelDrive") {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Test-Admin -Throw | Out-Null
+Requires TecticPSif ($Step -eq 1) { $Action = @( "LabelDrive", "Wallpaper", "MicrosoftStore", "Winget") }
+if ($Step -eq 2) { $Action = @("BitLocker", "Office", "Reboot") }if ($Action -contains "MicrosoftStore") { Update-MicrosoftStoreApps }if ($Action -contains "Rename") { Set-ComputerName -Prefix $HostNamePrefix }if ($Action -contains "LabelDrive") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel")) {
     Set-Volume -DriveLetter $DriveToLabel -NewFileSystemLabel $DriveLabel
   }
-}
-
-if ($Action -contains "ProvisioningPackage" -or $ProvisioningPackage) {
+}if ($Action -contains "ProvisioningPackage" -or $ProvisioningPackage) {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage")) {
     If (Test-Path -PathType Leaf -Path $ProvisioningPackage) { Install-ProvisioningPackage -QuietInstall -PackagePath $ProvisioningPackage }
     else { Write-Warning "The provisioning file specified is not valid." }
   }
-}
-
-if ($Action -contains "JoinDomain") { Add-Computer -DomainName $DomainName -JoinDomain }
-
-if ($Action -contains "BitLocker") {
+}if ($Action -contains "JoinDomain") { Add-Computer -DomainName $DomainName -JoinDomain }if ($Action -contains "BitLocker") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Enable-Bitlocker with `'$BitLockerProtector`' protector using $BitLockerEncryptionMethod")) {
     If ($BitLockerProtector -eq "Disable") { Disable-BitLocker -MountPoint $env:SystemDrive }
     Else {
@@ -6360,39 +3046,27 @@ if ($Action -contains "BitLocker") {
       }
     }
   }
-}
-
-if ($Action -contains "Office") {
+}if ($Action -contains "Office") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Office $OfficeVersion")) {
     Install-MicrosoftOffice -Version $OfficeVersion
   }
-}
-
-if ($Action -contains "Wallpaper") { Set-DefaultWallpapers -SourcePath $Wallpapers ; Set-WallPaper }
-
-if ($Action -contains "RSAT") {
+}if ($Action -contains "Wallpaper") { Set-DefaultWallpapers -SourcePath $Wallpapers ; Set-WallPaper }if ($Action -contains "RSAT") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install Remote Server Administrative Tools")) {
     Write-Verbose "Install Remote Server Administrative Tools"
     Get-WindowsCapability -Online -Name "RSAT*" | Add-WindowsCapability -Online
   }
-}
-
-if ($Action -contains "NetFX3") {
+}if ($Action -contains "NetFX3") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername)", "Install .NET Framework 3.5 (includes .NET 2.0 and 3.0)")) {
     Write-Verbose "Installing .NET Framework 3.5 (includes .NET 2.0 and 3.0)"
     Get-WindowsCapability -Online -Name NetFx3* | Add-WindowsCapability -Online
   }
-}
-
-if ($Action -contains "Ninite") {
+}if ($Action -contains "Ninite") {
   If ($PSCmdlet.ShouldProcess("localhost ($env:computername) $NiniteInstallTo", "Install apps using Ninite")) {
     Write-Verbose "Running Ninite"
     $parent = Split-Path $script:MyInvocation.MyCommand.Path
     & $parent\..\Ninite\Ninite.ps1 -Local -InstallTo $NiniteInstallTo
   }
-}
-
-if ($Action -contains "winget") {
+}if ($Action -contains "winget") {
   if ($null -ne $WingetPackages) {
     $WingetPackages.Keys | ForEach-Object {
       $Arguments = @( "install $_", "--accept-package-agreements", "--accept-source-agreements" )
@@ -6401,177 +3075,63 @@ if ($Action -contains "winget") {
         Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList $Arguments
       }
     }
-  }
-
-  if ($PsCmdlet.ShouldProcess("localhost ($env:computername)", "Upgrading packages with winget")) {
+  }  if ($PsCmdlet.ShouldProcess("localhost ($env:computername)", "Upgrading packages with winget")) {
     Start-Process -Wait -NoNewWindow -FilePath winget -ArgumentList "upgrade --all"
   }
-}
-
-if ($Action -contains "RemoveDesktopShortcuts") { Get-ChildItem C:\Users\Public\Desktop\*.lnk | Remove-Item }
-
-Write-Verbose "Checking for reboot."
+}if ($Action -contains "RemoveDesktopShortcuts") { Get-ChildItem C:\Users\Public\Desktop\*.lnk | Remove-Item }Write-Verbose "Checking for reboot."
 If ( $Reboot -or $Action -contains "Reboot" -or (Test-Path "HKLM:\SOFTWARE­\Microsoft­\Windows­\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired") ) {
   Write-Verbose "A reboot is required. Reboot now?"
   Restart-Computer -Confirm
 }
 }
 function Install-GCPW {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 24dd6c1f-cc9a-44a4-b8e8-dd831d7a51b4
-
-.AUTHOR Jason Cook Google
-
-.COMPANYNAME Tectic Google
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 24dd6c1f-cc9a-44a4-b8e8-dd831d7a51b4.AUTHOR Jason Cook Google.COMPANYNAME Tectic Google.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script downloads Google Credential Provider for Windows from https://tools.google.com/dlpage/gcpw/, then installs and configures it. Windows administrator access is required to use the script.
-
-.DESCRIPTION
-This script downloads Google Credential Provider for Windows from https://tools.google.com/dlpage/gcpw/, then installs and configures it. Windows administrator access is required to use the script.
-
-.PARAMETER DomainsAllowedToLogin
-Set the following key to the domains you want to allow users to sign in from.
-
-For example: Install-GCPW -DomainsAllowedToLogin "acme1.com,acme2.com"
-
-.LINK
+This script downloads Google Credential Provider for Windows from https://tools.google.com/dlpage/gcpw/, then installs and configures it. Windows administrator access is required to use the script..DESCRIPTION
+This script downloads Google Credential Provider for Windows from https://tools.google.com/dlpage/gcpw/, then installs and configures it. Windows administrator access is required to use the script..PARAMETER DomainsAllowedToLogin
+Set the following key to the domains you want to allow users to sign in from.For example: Install-GCPW -DomainsAllowedToLogin "acme1.com,acme2.com".LINK
 https://support.google.com/a/answer/9250996?hl=en
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 param (
   [ValidatePattern("^((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\.)+([a-zA-Z0-9-]{2,63})$", ErrorMessage = "{0} is not a valid domain name.")][Parameter(Mandatory = $true)][string]$DomainsAllowedToLogin
-)
-
-if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Credential Provider for Windows')) {
-
-  Add-Type -AssemblyName System.Drawing
-  Add-Type -AssemblyName PresentationFramework
-
-  #If (!(Test-Admin -Warn)) { Break }
-
-  <# Choose the GCPW file to download. 32-bit and 64-bit versions have different names #>
+)if ($PSCmdlet.ShouldProcess($DomainsAllowedToLogin, 'Install Google Cloud Credential Provider for Windows')) {  Add-Type -AssemblyName System.Drawing
+  Add-Type -AssemblyName PresentationFramework  #If (!(Test-Admin -Warn)) { Break }  <# Choose the GCPW file to download. 32-bit and 64-bit versions have different names #>
   if ([Environment]::Is64BitOperatingSystem) {
     $gcpwFileName = 'gcpwstandaloneenterprise64.msi'
   }
   else {
     $gcpwFileName = 'gcpwstandaloneenterprise.msi'
-  }
-
-  <# Download the GCPW installer. #>
-  $gcpwUri = 'https://dl.google.com/credentialprovider/' + $gcpwFileName
-
-  Write-Host 'Downloading GCPW from' $gcpwUri
-  Invoke-WebRequest -Uri $gcpwUri -OutFile $gcpwFileName
-
-  <# Run the GCPW installer and wait for the installation to finish #>
-
-  Write-Output "Installing Office 2019"
+  }  <# Download the GCPW installer. #>
+  $gcpwUri = 'https://dl.google.com/credentialprovider/' + $gcpwFileName  Write-Host 'Downloading GCPW from' $gcpwUri
+  Invoke-WebRequest -Uri $gcpwUri -OutFile $gcpwFileName  <# Run the GCPW installer and wait for the installation to finish #>  Write-Output "Installing Office 2019"
   $run = $InstallPath + 'Office Deployment Tool\setup.exe'
   $Arguments = "/configure `"" + $InstallPath + "Office Deployment Tool\2019-ProPlus-Default.xml"
-  Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait
-
-  $arguments = "/i `"$gcpwFileName`""
-  $installProcess = (Start-Process msiexec.exe -ArgumentList $arguments -PassThru -Wait)
-
-  <# Check if installation was successful #>
+  Start-Process -FilePath $run -ArgumentList $Arguments -NoNewWindow -Wait  $arguments = "/i `"$gcpwFileName`""
+  $installProcess = (Start-Process msiexec.exe -ArgumentList $arguments -PassThru -Wait)  <# Check if installation was successful #>
   if ($installProcess.ExitCode -ne 0) {
     [System.Windows.MessageBox]::Show('Installation failed!', 'GCPW', 'OK', 'Error')
     exit $installProcess.ExitCode
   }
   else {
     [System.Windows.MessageBox]::Show('Installation completed successfully!', 'GCPW', 'OK', 'Info')
-  }
-
-  <# Set the required registry key with the allowed domains #>
+  }  <# Set the required registry key with the allowed domains #>
   $registryPath = 'HKEY_LOCAL_MACHINE\Software\Google\GCPW'
   $name = 'domains_allowed_to_login'
-  [microsoft.win32.registry]::SetValue($registryPath, $name, $domainsAllowedToLogin)
-
-  $domains = Get-ItemPropertyValue HKLM:\Software\Google\GCPW -Name $name
-
-  if ($domains -eq $domainsAllowedToLogin) {
+  [microsoft.win32.registry]::SetValue($registryPath, $name, $domainsAllowedToLogin)  $domains = Get-ItemPropertyValue HKLM:\Software\Google\GCPW -Name $name  if ($domains -eq $domainsAllowedToLogin) {
     [System.Windows.MessageBox]::Show('Configuration completed successfully!', 'GCPW', 'OK', 'Info')
   }
   else {
-    [System.Windows.MessageBox]::Show('Could not write to registry. Configuration was not completed.', 'GCPW', 'OK', 'Error')
-
-  }
+    [System.Windows.MessageBox]::Show('Could not write to registry. Configuration was not completed.', 'GCPW', 'OK', 'Error')  }
 }
 }
 function Install-MicrosoftOffice {
-<#PSScriptInfo
-
-.VERSION 1.2.6
-
-.GUID 12bacb17-e597-4588-8a86-0e05142301b6
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.2.6.GUID 12bacb17-e597-4588-8a86-0e05142301b6.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will install the specified version of Microsoft Office on the local machine.
-
-.DESCRIPTION
-This script will install the specified version of Microsoft Office on the local machine.
-
-.PARAMETER Version
-Specifes the version of Office to install. If unspecified, Office 2019 64 bit will be installed.
-
-.EXAMPLE
-Install-MicrosoftOffice
-
-.EXAMPLE
-Install-MicrosoftOffice -Version 2019Visio
-
-.EXAMPLE
+This script will install the specified version of Microsoft Office on the local machine..DESCRIPTION
+This script will install the specified version of Microsoft Office on the local machine..PARAMETER Version
+Specifes the version of Office to install. If unspecified, Office 2019 64 bit will be installed..EXAMPLE
+Install-MicrosoftOffice.EXAMPLE
+Install-MicrosoftOffice -Version 2019Visio.EXAMPLE
 Install-MicrosoftOffice -Version 201932
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -6580,12 +3140,8 @@ param (
   [ValidateSet("Visio", "x86", "Standard", $null)]$Options,
   [string]$InstallerPath,
   [ValidateSet("configure", "download", $null)][string]$Mode = "configure"
-)
-
-while (!$InstallerPath) { $InstallerPath = Read-Host -Prompt "Enter the installer path." }
-if (!(Test-Path $InstallerPath)) { throw "Installer path is not valid" }
-
-If ( $Version -eq "2007" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath "2007 Pro Plus SP2\setup.exe" }
+)while (!$InstallerPath) { $InstallerPath = Read-Host -Prompt "Enter the installer path." }
+if (!(Test-Path $InstallerPath)) { throw "Installer path is not valid" }If ( $Version -eq "2007" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath "2007 Pro Plus SP2\setup.exe" }
 ElseIf ( $Version -eq "2010" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2010 Pro Plus SP2\setup.exe' }
 ElseIf ( $Version -eq "2013" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2013 Pro Plus SP1 x86 x64\setup.exe' }
 ElseIf ( $Version -eq "2016" ) { $Exe = Join-Path -Path $InstallerPath -ChildPath '2016 Pro Plus x86 41353\setup.exe' }
@@ -6616,66 +3172,18 @@ if (Test-Path -Path $Exe -PathType Leaf) {
 else { throw "Cannot find installer at $Exe" }
 }
 function Install-RSAT {
-<#PSScriptInfo
-
-.VERSION 1.2.4
-
-.GUID 44daac91-76d4-41f5-a2ab-688d548ad0d1
-
-.AUTHOR Jason Cook Martin Bengtsson
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.2.4.GUID 44daac91-76d4-41f5-a2ab-688d548ad0d1.AUTHOR Jason Cook Martin Bengtsson.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-Install RSAT features for Windows 10 1809 or 1903
-
-.DESCRIPTION
-Install RSAT features for Windows 10 1809 or 1903. All features are installed online from Microsoft Update thus the script requires Internet access
-
-.PARAMETER All
-Installs all the features within RSAT. This takes several minutes, depending on your Internet connection
-
-.PARAMETER Basic
-Installs ADDS, DHCP, DNS, GPO, ServerManager
-
-.PARAMETER ServerManager
-Installs ServerManager
-
-.PARAMETER Uninstall
-Uninstalls all the RSAT features
-
-.LINK
-https://gist.github.com/PeterUpfold/0c83c5ad0bfa821c8a6948eeef5cd932
-
-.LINK
-https://www.imab.dk
-
-.LINK
+Install RSAT features for Windows 10 1809 or 1903.DESCRIPTION
+Install RSAT features for Windows 10 1809 or 1903. All features are installed online from Microsoft Update thus the script requires Internet access.PARAMETER All
+Installs all the features within RSAT. This takes several minutes, depending on your Internet connection.PARAMETER Basic
+Installs ADDS, DHCP, DNS, GPO, ServerManager.PARAMETER ServerManager
+Installs ServerManager.PARAMETER Uninstall
+Uninstalls all the RSAT features.LINK
+https://gist.github.com/PeterUpfold/0c83c5ad0bfa821c8a6948eeef5cd932.LINK
+https://www.imab.dk.LINK
 https://twitter.com/mwbengtsson
-#>
-
-[CmdletBinding()]
+#>[CmdletBinding()]
 param(
     [parameter(Mandatory = $false)]
     [ValidateNotNullOrEmpty()]
@@ -6691,18 +3199,12 @@ param(
     [switch]$Uninstall
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-if (-NOT([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }if (-NOT([Security.Principal.WindowsPrincipal][Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) {
     Write-Warning -Message "The script requires elevation"
     break
-}
-
-$1809Build = "17763"
+}$1809Build = "17763"
 $1903Build = "18362"
-$WindowsBuild = (Get-WmiObject -Class Win32_OperatingSystem).BuildNumber
-
-if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
+$WindowsBuild = (Get-WmiObject -Class Win32_OperatingSystem).BuildNumberif (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
     Write-Verbose -Verbose "Running correct Windows 10 build number for installing RSAT with Features on Demand. Build number is: $WindowsBuild"
     if ($PSBoundParameters["All"]) {
         Write-Verbose -Verbose "Script is running with -All parameter. Installing all available RSAT features"
@@ -6723,9 +3225,7 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
         else {
             Write-Verbose -Verbose "All RSAT features seems to be installed already"
         }
-    }
-
-    if ($PSBoundParameters["Basic"]) {
+    }    if ($PSBoundParameters["Basic"]) {
         Write-Verbose -Verbose "Script is running with -Basic parameter. Installing basic RSAT features"
         # Querying for what I see as the basic features of RSAT. Modify this if you think something is missing. :-)
         $Install = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat.ActiveDirectory*" -OR $_.Name -like "Rsat.DHCP.Tools*" -OR $_.Name -like "Rsat.Dns.Tools*" -OR $_.Name -like "Rsat.GroupPolicy*" -AND $_.State -eq "NotPresent" }
@@ -6745,9 +3245,7 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
         else {
             Write-Verbose -Verbose "The basic features of RSAT seems to be installed already"
         }
-    }
-
-    if ($PSBoundParameters["ServerManager"]) {
+    }    if ($PSBoundParameters["ServerManager"]) {
         Write-Verbose -Verbose "Script is running with -ServerManager parameter. Installing Server Manager RSAT feature"
         $Install = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat.ServerManager*" -AND $_.State -eq "NotPresent" }
         if ($null -ne $Install) {
@@ -6760,14 +3258,10 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
                 Write-Verbose -Verbose "Failed to add $RsatItem to Windows"
                 Write-Warning -Message $_.Exception.Message ; break
             }
-        }
-
-        else {
+        }        else {
             Write-Verbose -Verbose "$RsatItem seems to be installed already"
         }
-    }
-
-    if ($PSBoundParameters["Uninstall"]) {
+    }    if ($PSBoundParameters["Uninstall"]) {
         Write-Verbose -Verbose "Script is running with -Uninstall parameter. Uninstalling all RSAT features"
         # Querying for installed RSAT features first time
         $Installed = Get-WindowsCapability -Online | Where-Object { $_.Name -like "Rsat*" -AND $_.State -eq "Installed" -AND $_.Name -notlike "Rsat.ServerManager*" -AND $_.Name -notlike "Rsat.GroupPolicy*" -AND $_.Name -notlike "Rsat.ActiveDirectory*" }
@@ -6809,56 +3303,16 @@ if (($WindowsBuild -eq $1809Build) -OR ($WindowsBuild -eq $1903Build)) {
     }
 }
 else {
-    Write-Warning -Message "Not running correct Windows 10 build: $WindowsBuild"
-
-}
+    Write-Warning -Message "Not running correct Windows 10 build: $WindowsBuild"}
 }
 function Install-WingetFromCsv {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID a2fd3f34-5e6e-4bab-a860-ce9048a23348
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID a2fd3f34-5e6e-4bab-a860-ce9048a23348.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Installs multiple apps using Winget
-
-.PARAMETER Path
-Path the the CSV file containing the list of apps to install. Must contain an "ID" column.
-
-.PARAMETER Apps
-An array of apps to install. Usually generated from the file specified in Path.
-
-.PARAMETER Scope
+Installs multiple apps using Winget.PARAMETER Path
+Path the the CSV file containing the list of apps to install. Must contain an "ID" column..PARAMETER Apps
+An array of apps to install. Usually generated from the file specified in Path..PARAMETER Scope
 The install scope for the application. Machine by default. Can specify $null to use the default scope.
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 param (
   [ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path,
   [array]$Apps = ((Import-Csv $Path | Where-Object Source -eq "winget" | Where-Object Skip -ne $true | Sort-Object Id).Id),
@@ -6871,90 +3325,18 @@ return $Apps | ForEach-Object {
 }
 }
 function Invoke-CommandSimple {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID b757fe20-fd8f-489d-bb21-9d01146274cd
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID b757fe20-fd8f-489d-bb21-9d01146274cd.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will run the specified file.
-
-.PARAMETER Path
+This will run the specified file..PARAMETER Path
 The file you wish to run.
-#>
-
-param ([ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path)
+#>param ([ValidateScript( { Test-Path $_ -PathType Leaf })][string]$Path)
 & $Path
 }
 function Invoke-TickleMailRecipients {
-<#PSScriptInfo
-
-.VERSION 1.2.5
-
-.GUID ece98adc-3c44-4a02-a254-d4e7f2888f4f
-
-.AUTHOR Jason Cook Joseph Palarchio
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.2.5.GUID ece98adc-3c44-4a02-a254-d4e7f2888f4f.AUTHOR Jason Cook Joseph Palarchio.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-Address Lists in Exchange Online do not automatically populate during provisioning and there is no "Update-AddressList" cmdlet.  This script "tickles" mailboxes, mail users and distribution groups so the Address List populates.
-
-.DESCRIPTION
-Address Lists in Exchange Online do not automatically populate during provisioning and there is no "Update-AddressList" cmdlet.  This script "tickles" mailboxes, mail users and distribution groups so the Address List populates.
-
-Usage: Additional information on the usage of this script can found at the following blog post:  http://blogs.perficient.com/microsoft/?p=25536
-
-Disclaimer:  This script is provided AS IS without any support. Please test in a lab environment prior to production use.
-
-.LINK
+Address Lists in Exchange Online do not automatically populate during provisioning and there is no "Update-AddressList" cmdlet.  This script "tickles" mailboxes, mail users and distribution groups so the Address List populates..DESCRIPTION
+Address Lists in Exchange Online do not automatically populate during provisioning and there is no "Update-AddressList" cmdlet.  This script "tickles" mailboxes, mail users and distribution groups so the Address List populates.Usage: Additional information on the usage of this script can found at the following blog post:  http://blogs.perficient.com/microsoft/?p=25536Disclaimer:  This script is provided AS IS without any support. Please test in a lab environment prior to production use..LINK
 http://blogs.perficient.com/microsoft/?p=25536
 #>
 param(
@@ -6963,55 +3345,19 @@ param(
   $DistributionGroups = (Get-DistributionGroup -Resultsize Unlimited)
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-foreach ($Mailbox in $Mailboxes) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }foreach ($Mailbox in $Mailboxes) {
   $count1++ ; Progress -Index $count1 -Total $Mailboxes.count -Activity "Tickling mailboxes. Step 1 of 3" -Name $Mailbox.alias
   Set-Mailbox $Mailbox.alias -SimpleDisplayName $Mailbox.SimpleDisplayName -WarningAction silentlyContinue
-}
-
-foreach ($MailUser in $MailUsers) {
+}foreach ($MailUser in $MailUsers) {
   $count2++ ; Progress -Index $count2 -Total $MailUsers.count -Activity "Tickling mail users. Step 2 of 3" -Name $Mailuser.alias
   Set-MailUser $Mailuser.alias -SimpleDisplayName $Mailuser.SimpleDisplayName -WarningAction silentlyContinue
-}
-
-foreach ($DistributionGroup in $DistributionGroups) {
+}foreach ($DistributionGroup in $DistributionGroups) {
   $count3++ ; Progress -Index $count3 -Total $DistributionGroups.count -Activity "Tickling distribution groups. Step 3 of 3" -Name $DistributionGroup.alias
   Set-DistributionGroup $DistributionGroup.alias -SimpleDisplayName $DistributionGroup.SimpleDisplayName -WarningAction silentlyContinue
 }
 }
 function Invoke-TouchFile {
-<#PSScriptInfo
-
-.VERSION 1.0.12
-
-.GUID edfc8010-fc8d-4eba-8934-4c3a75725d33
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.12.GUID edfc8010-fc8d-4eba-8934-4c3a75725d33.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 This will update the LastWriteTime of the specifeid file to the current time.
 #>
@@ -7021,67 +3367,25 @@ Param(
     [Parameter(ValueFromPipeline = $true)][System.DateTime]$Date = (Get-Date)
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-If ($PSCmdlet.ShouldProcess($Path)) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }If ($PSCmdlet.ShouldProcess($Path)) {
     try { return (Get-ChildItem $Path -ErrorAction Stop).LastWriteTime = $Date }
     catch { return (New-Item -Path $Path).CreationTime }
 }
 }
 function Measure-AverageDuration {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID f4c6b8ab-e5d2-4967-b803-a410619bd191
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID f4c6b8ab-e5d2-4967-b803-a410619bd191.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will run the specified command several times and report the average duration for execution.
-
-.PARAMETER Command
-The command that will be run.
-
-.PARAMETER Times
-How many times the command will be repeated
-
-.PARAMETER Name
+This will run the specified command several times and report the average duration for execution..PARAMETER Command
+The command that will be run..PARAMETER Times
+How many times the command will be repeated.PARAMETER Name
 The name or description to use in the progress bar.
 #>
 param(
     [string]$Command,
     [ValidateRange(1, [int]::MaxValue)][int]$Times = 100,
-    [string]$Name = $Command
+    [string]$Name = $Command)
 
-)
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-1..$Times | ForEach-Object {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }1..$Times | ForEach-Object {
     Write-Progress -Id 1 -Activity $Name -PercentComplete $_
     $Duration += (Measure-Command {
             pwsh -noprofile -command $Command
@@ -7094,113 +3398,31 @@ return @{
 }
 }
 function Move-ArchivedEventLogs {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID 3b856f02-1f78-48c0-afb8-a0ce75e6d6ff
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID 3b856f02-1f78-48c0-afb8-a0ce75e6d6ff.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will move archived event logs to the specified directory.
-
-.PARAMETER Path
-The destination folder for the log files. A child folder will be created for the $env:COMPUTERNAME
-
-.PARAMETER Source
-The source location of the log files. By default, this will be "C:\Windows\System32\winevt\Logs"
-
-.PARAMETER Destination
-The actual destination of the log files, combining Path and $env:COMPUTERNAME.
-
-.EXAMPLE
+This will move archived event logs to the specified directory..PARAMETER Path
+The destination folder for the log files. A child folder will be created for the $env:COMPUTERNAME.PARAMETER Source
+The source location of the log files. By default, this will be "C:\Windows\System32\winevt\Logs".PARAMETER Destination
+The actual destination of the log files, combining Path and $env:COMPUTERNAME..EXAMPLE
 Move-ArchivedEventLogs -Path \\server\folder
-#>
-
-param(
+#>param(
   [ValidateScript( { Test-Path -Path $_ -PathType Container })][string]$Path,
   [ValidateScript( { Test-Path -Path $_ -PathType Container })][string]$Source = "C:\Windows\System32\winevt\Logs",
   $Destination = (Join-Path -Path $Path -ChildPath $env:COMPUTERNAME)
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-if (-not (Test-Path -Path $Destination)) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }if (-not (Test-Path -Path $Destination)) {
   Write-Verbose "Creating a directory for $env:COMPUTERNAME"
   New-Item -Path $Destination -ItemType Directory
-}
-
-Get-ChildItem -Path $Source -Filter "Archive-*.evtx" | Move-Item -Destination $Destination
+}Get-ChildItem -Path $Source -Filter "Archive-*.evtx" | Move-Item -Destination $Destination
 }
 function Move-ArchiveEventLogs {
-<#PSScriptInfo
-
-.VERSION 1.0.6
-
-.GUID f12cad80-f34f-402f-aa4a-e92d80f725a9
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.6.GUID f12cad80-f34f-402f-aa4a-e92d80f725a9.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Archive Windows Event logs.
-
-.PARAMETER Path
-The location log files should be moved to.
-
-.PARAMETER EventPath
-The location log files should be moved from.
-
-.PARAMETER IgnoreHostname
-Exclude the hostname from the path when moving the log files.
-
-.EXAMPLE
+Archive Windows Event logs..PARAMETER Path
+The location log files should be moved to..PARAMETER EventPath
+The location log files should be moved from..PARAMETER IgnoreHostname
+Exclude the hostname from the path when moving the log files..EXAMPLE
 Move-ArchiveEventLogs -Path \\server\logs
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -7210,15 +3432,11 @@ param(
     [switch]$IgnoreHostname
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-if (-not $IgnoreHostname) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }if (-not $IgnoreHostname) {
     $NewPath = (Join-Path -Path $Path -ChildPath $Env:computername)
     New-Item -Path $NewPath -ItemType Directory -Force | Out-Null
     $Path = $NewPath
-}
-
-Write-Verbose "Moving log files to $Path"
+}Write-Verbose "Moving log files to $Path"
 $Files = Get-ChildItem -Path $EventPath -Filter "Archive-*.evtx" -File | Sort-Object -Property LastWriteTime
 $Files | ForEach-Object {
     $count++ ; Progress -Index $count -Total $Files.count -Activity "Moving archive event logs." -Name $_.Name
@@ -7226,57 +3444,15 @@ $Files | ForEach-Object {
 }
 }
 function New-FortiClientConfig {
-<#PSScriptInfo
-
-.VERSION 1.0.8
-
-.GUID 93f5aa38-3ef7-4d57-8225-1ba9e7167243
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.8.GUID 93f5aa38-3ef7-4d57-8225-1ba9e7167243.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Used to generate a config file for FortiClient VPN.
-
-.PARAMETER Path
-Where should the config file be saved?
-
-.PARAMETER Locations
-A hastable of the location names and gateways.
-
-.PARAMETER AllGateways
-The name of the VPN conections to create containing all gateways.
-
-.PARAMETER Start
-The start of the XML file.
-
-.PARAMETER End
+Used to generate a config file for FortiClient VPN..PARAMETER Path
+Where should the config file be saved?.PARAMETER Locations
+A hastable of the location names and gateways..PARAMETER AllGateways
+The name of the VPN conections to create containing all gateways..PARAMETER Start
+The start of the XML file..PARAMETER End
 The end of the XML file, after all the connections are created.
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [Parameter(ValueFromPipeline = $true)][string]$Path,
     [Parameter(ValueFromPipeline = $true)][hashtable]$Locations,
@@ -7505,9 +3681,7 @@ param (
     </vpn>
 </forticlient_configuration>
 '
-)
-
-function BuildConfig {
+)function BuildConfig {
     Param(
         [ValidateLength(1, 31)][string]$Name,
         [ValidatePattern('(?m)^(?:\w|.)*:[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]')][string]$Gateway
@@ -7544,289 +3718,183 @@ function BuildConfig {
             </script>
         </on_disconnect>
     </connection>"
-}
-
-$Mid = ""
+}$Mid = ""
 if ($AllGateways) { $Mid += BuildConfig -Name $AllGateways -Gateway (($Locations.Values | Sort-Object ) -join ";") }
 $Locations.Keys | ForEach-Object { $Mid += BuildConfig -Name $_ -Gateway $Locations[$_] }
 $Config = ($Start + $Mid + $End)
 If ($PSCmdlet.ShouldProcess("$Path", "Create-FortiClientConfig")) { Set-Content -Path $Path -Value $Config }
 else { return $Config }
 }
-function New-Password {
+function New-IpamDhcpReservationConfig {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.1
 
-.GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
+.GUID 94788e2a-23d9-4aaf-89e0-668c62bc27e6
 
 .AUTHOR Jason Cook
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
+
+.PRIVATEDATA
 
 #> 
 
 <#
 .DESCRIPTION
+Build a DHCP reservation script for the given service. Currently, only FortiGate is supported..PARAMETER ComputerName
+The computer hosting the IPAM service..PARAMETER ManagedByService
+The service to choose.
+#>
+param (
+  [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName,
+  [ValidateSet("FortiGate", IgnoreCase = $true)]$ManagedByService = "FortiGate"
+)$ConfigScript = ""
+$Reservations = Get-IpamReservationList -ManagedByService $ManagedByService -ComputerName $ComputerName
+foreach ($Firewall in $Reservations.name | Get-Unique ) {
+  $FirewallIps = $Reservations | Where-Object name -eq $Firewall
+  $ConfigScript += "
+{% if DVMDB.name == '$Firewall' %}
+config system dhcp server"
+  foreach ($Vlan in $FirewallIps.vlan | Get-Unique) {
+    $ConfigScript += "
+  edit $VLAN
+    config reserved-address
+      purge
+    end
+    config reserved-address"
+    foreach ($Ip in $FirewallIps | Where-Object Vlan -eq $Vlan) {
+      $ConfigScript += "
+      edit 0
+        set ip $($Ip.Ip)
+        set mac $($Ip.mac)
+        set description '$($Ip.description)'
+      next"
+    }
+    $ConfigScript += "
+    end
+  next"
+  }
+  $ConfigScript += "
+end
+{% endif %}"
+}
+return $ConfigScript
+}
+function New-Password {
+<#PSScriptInfo.VERSION 1.0.5.GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
+.DESCRIPTION
 This will return a random password which meets Active Directory's complexity requirements.
 .PARAMETER Lenght
-The lenght of the password to return. The default is 8 characters.
-
-.PARAMETER Symbols
-The number of symbols to include in the password. The default is 2 symbols.
-
-.LINK
-http://woshub.com/generating-random-password-with-powershell/
-
-.LINK
-https://docs.microsoft.com/en-us/dotnet/api/system.web.security.membership.generatepassword?view=netframework-4.8
-
-#>
+The lenght of the password to return. The default is 8 characters..PARAMETER Symbols
+The number of symbols to include in the password. The default is 2 symbols..LINK
+http://woshub.com/generating-random-password-with-powershell/.LINK
+https://docs.microsoft.com/en-us/dotnet/api/system.web.security.membership.generatepassword?view=netframework-4.8#>
 param (
   [int]$Lenght = 8,
   [int]$Symbols = 2
-)
-
-Add-Type -AssemblyName System.Web
-
-do {
+)Add-Type -AssemblyName System.Webdo {
   $Password = [System.Web.Security.Membership]::GeneratePassword($Lenght, $Symbols)
   If (     ($Password -cmatch "[A-Z\p{Lu}\s]") `
       -and ($Password -cmatch "[a-z\p{Ll}\s]") `
       -and ($Password -match "[\d]") `
       -and ($Password -match "[^\w]")
   ) { $Complex = $True }
-} While (-not $Complex)
-
-return $Password
+} While (-not $Complex)return $Password
 }
 function New-RandomCharacters {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 9f443ca7-e536-40ee-a774-7d94c5d3c569
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 9f443ca7-e536-40ee-a774-7d94c5d3c569.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will return random characters.
-
-.PARAMETER Lenght
-The number of characters to return.
-
-.PARAMETER Characters
+This will return random characters..PARAMETER Lenght
+The number of characters to return..PARAMETER Characters
 A string of characters to use.
 #>
 param (
   [ValidateRange(1, [int]::MaxValue)][int]$Length = 1,
   $Characters = "abcdefghiklmnoprstuvwxyzABCDEFGHKLMNOPRSTUVWXYZ1234567890!@#$%^&*()_+-=[]\{}|;:,./<>?"
-)
-
-$Random = 1..$Length | ForEach-Object { Get-Random -Maximum $Characters.length }
+)$Random = 1..$Length | ForEach-Object { Get-Random -Maximum $Characters.length }
 $private:ofs = ""
 return [String]$Characters[$Random]
 }
 function Ping-Hosts {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 0603a3ee-bff9-464a-aa86-44903c476fe9
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 0603a3ee-bff9-464a-aa86-44903c476fe9.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Ping a list of hosts
-
-.LINK
+Ping a list of hosts.LINK
 https://geekeefy.wordpress.com/2015/07/16/powershell-fancy-test-connection/
 #>
 Param
 (
     [Parameter(position = 0)] $Hosts,
     [Parameter] $ToCsv
-)
-
-Function MakeSpace($l, $Maximum) {
+)Function MakeSpace($l, $Maximum) {
     $space = ""
     $s = [int]($Maximum - $l) + 1
-    1..$s | ForEach-Object { $space += " " }
-
-    return [String]$space
+    1..$s | ForEach-Object { $space += " " }    return [String]$space
 }
 $LengthArray = @()
-$Hosts | ForEach-Object { $LengthArray += $_.length }
-
-$Maximum = ($LengthArray | Measure-object -Maximum).maximum
-$Count = $hosts.Count
-
-$Success = New-Object int[] $Count
+$Hosts | ForEach-Object { $LengthArray += $_.length }$Maximum = ($LengthArray | Measure-object -Maximum).maximum
+$Count = $hosts.Count$Success = New-Object int[] $Count
 $Failure = New-Object int[] $Count
 $Total = New-Object int[] $Count
 Clear-Host
-while ($true) {
-
-    $i = 0 #Index number of the host stored in the array
+while ($true) {    $i = 0 #Index number of the host stored in the array
     $out = "| HOST$(MakeSpace 4 $Maximum)| STATUS | SUCCESS  | FAILURE  | ATTEMPTS  |"
     $Firstline = ""
-    1..$out.length | ForEach-Object { $firstline += "_" }
-
-    #output the Header Row on the screen
+    1..$out.length | ForEach-Object { $firstline += "_" }    #output the Header Row on the screen
     Write-Host $Firstline
-    Write-host $out -ForegroundColor White -BackgroundColor Black
-
-    $Hosts | ForEach-Object {
+    Write-host $out -ForegroundColor White -BackgroundColor Black    $Hosts | ForEach-Object {
         $total[$i]++
         If (Test-Connection $_ -Count 1 -Quiet -ErrorAction SilentlyContinue) {
             $success[$i] += 1
             #Percent calclated on basis of number of attempts made
             $SuccessPercent = $("{0:N2}" -f (($success[$i] / $total[$i]) * 100))
-            $FailurePercent = $("{0:N2}" -f (($Failure[$i] / $total[$i]) * 100))
-
-            #Print status UP in GREEN if above condition is met
+            $FailurePercent = $("{0:N2}" -f (($Failure[$i] / $total[$i]) * 100))            #Print status UP in GREEN if above condition is met
             Write-Host "| $_$(MakeSpace $_.Length $Maximum)| UP$(MakeSpace 2 4)  | $SuccessPercent`%$(MakeSpace ([string]$SuccessPercent).length 6) | $FailurePercent`%$(MakeSpace ([string]$FailurePercent).length 6) | $($Total[$i])$(MakeSpace ([string]$Total[$i]).length 9)|" -BackgroundColor Green
         }
         else {
-            $Failure[$i] += 1
-
-            #Percent calclated on basis of number of attempts made
+            $Failure[$i] += 1            #Percent calclated on basis of number of attempts made
             $SuccessPercent = $("{0:N2}" -f (($success[$i] / $total[$i]) * 100))
-            $FailurePercent = $("{0:N2}" -f (($Failure[$i] / $total[$i]) * 100))
-
-            #Print status DOWN in RED if above condition is met
+            $FailurePercent = $("{0:N2}" -f (($Failure[$i] / $total[$i]) * 100))            #Print status DOWN in RED if above condition is met
             Write-Host "| $_$(MakeSpace $_.Length $Maximum)| DOWN$(MakeSpace 4 4)  | $SuccessPercent`%$(MakeSpace ([string]$SuccessPercent).length 6) | $FailurePercent`%$(MakeSpace ([string]$FailurePercent).length 6) | $($Total[$i])$(MakeSpace ([string]$Total[$i]).length 9)|" -BackgroundColor Red
         }
-        $i++
-
-    }
-
-    #Pause the loop for few seconds so that output
-    #stays on screen for a while and doesn't refreshes
-
-    Start-Sleep -Seconds 4
+        $i++    }    #Pause the loop for few seconds so that output
+    #stays on screen for a while and doesn't refreshes    Start-Sleep -Seconds 4
     Clear-Host
 }
 }
 function Remove-AuthenticodeSignature {
-<#PSScriptInfo
-
-.VERSION 1.0.9
-
-.GUID 3262ca7f-d1f0-4539-9fee-90fb4580623b
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.9.GUID 3262ca7f-d1f0-4539-9fee-90fb4580623b.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will sign remove all authenicode signatures from a file.
-
-.LINK
-http://psrdrgz.github.io/RemoveAuthenticodeSignature/#:~:text=%20Removing%20Authenticode%20Signatures%20%201%20Open%20the,the%20bottom.%203%20Save%20the%20file.%20More%20
-
-.LINK
-https://stackoverflow.com/questions/1928158/how-can-i-remove-signing-from-powershell
-
-.EXAMPLE
+This script will sign remove all authenicode signatures from a file..LINK
+http://psrdrgz.github.io/RemoveAuthenticodeSignature/#:~:text=%20Removing%20Authenticode%20Signatures%20%201%20Open%20the,the%20bottom.%203%20Save%20the%20file.%20More%20.LINK
+https://stackoverflow.com/questions/1928158/how-can-i-remove-signing-from-powershell.EXAMPLE
 Remove-AuthenticodeSignature -File Script.ps1
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 Param(
     [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
     [Alias('Path')]
     [system.io.fileinfo[]]$FilePath
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
     try {
         $Content = Get-Content $FilePath
         $SignatureLineNumber = (Get-Content $FilePath | select-string "SIG # Begin signature block").LineNumber
@@ -7836,72 +3904,25 @@ If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
         else {
             $Content = Get-Content $FilePath
             $Content[0..($SignatureLineNumber - 2)] | Set-Content $FilePath
-        }
-
-    }
+        }    }
     catch {
         Write-Error "Failed to remove signature. $($_.Exception.Message)"
     }
 }
 }
 function Remove-AzureAdDirectLicenseAssignments {
-<#PSScriptInfo
-
-.VERSION 2.0.3
-
-.GUID 0677b108-26b5-409b-a169-b0eb45399dcf
-
-.AUTHOR Nicola Suter
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
+<#PSScriptInfo.VERSION 2.0.3.GUID 0677b108-26b5-409b-a169-b0eb45399dcf.AUTHOR Nicola Suter.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> 
 <#
 .DESCRIPTION
-Script to cleanup direct Azure AD license assignments. This script will only remove a direct assignment if there is an associated group assignment. Before running the script make sure that you have the MSOnline PowerShell module installed. Connect to MSOnline with: Connect-MsolService
-
-.PARAMETER WhatIf
-Predict changes
-
-.PARAMETER SaveReport
-Whether to save the report to the script location.
-
-.LINK
-https://github.com/nicolonsky/Techblog/tree/master/CleanupAzureADLicensing
-
-.LINK
-https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-groups-migrate-users
-
-#>
-
-[CmdletBinding(SupportsShouldProcess)]
+Script to cleanup direct Azure AD license assignments. This script will only remove a direct assignment if there is an associated group assignment. Before running the script make sure that you have the MSOnline PowerShell module installed. Connect to MSOnline with: Connect-MsolService.PARAMETER WhatIf
+Predict changes.PARAMETER SaveReport
+Whether to save the report to the script location..LINK
+https://github.com/nicolonsky/Techblog/tree/master/CleanupAzureADLicensing.LINK
+https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-groups-migrate-users#>[CmdletBinding(SupportsShouldProcess)]
 param (
   $Users = (Get-MsolUser -All -ErrorAction Stop),
   $Skus = (Get-MgSubscribedSku)
-)
-
-$Results = @()
-
-$Users | ForEach-Object {
+)$Results = @()$Users | ForEach-Object {
   Write-Verbose "Processing $($_.UserPrincipalName)"
   $count++ ; Progress -Index $count -Total $Users.count -Activity "Processing all licenses." -Name $_.UserPrincipalName
   $User = $_
@@ -7913,12 +3934,8 @@ $Users | ForEach-Object {
       #>
     if ($_.GroupsAssigningLicense -contains $User.ObjectId -and $_.GroupsAssigningLicense.Count -gt 1) {
       Write-Verbose "$($User.UserPrincipalName) ($($User.ObjectId)) has direct license assignment for '$($_.AccountSkuId)'"
-      $_.GroupsAssigningLicense.Remove($User.ObjectId) | Out-Null
-
-      # TODO Repalce static strings with regex matches.
-      $SkuGUID = ($Skus | Where-Object SkuPartNumber -eq (($_.AccountSkuId) -replace ("\w\:", ""))).Id -replace ("[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?_", "")
-
-      if ($PSCmdlet.ShouldProcess($user.UserPrincipalName, "Remove license assignment for sku '$($_.AccountSkuId)'")) {
+      $_.GroupsAssigningLicense.Remove($User.ObjectId) | Out-Null      # TODO Repalce static strings with regex matches.
+      $SkuGUID = ($Skus | Where-Object SkuPartNumber -eq (($_.AccountSkuId) -replace ("\w\:", ""))).Id -replace ("[{]?[0-9a-fA-F]{8}-([0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}[}]?_", "")      if ($PSCmdlet.ShouldProcess($user.UserPrincipalName, "Remove license assignment for sku '$($_.AccountSkuId)'")) {
         Write-Verbose "Removing license assignment for sku '$($_.AccountSkuId) on target '$($User.UserPrincipalName)'"
         Set-MgUserLicense -UserId $User.objectId -AddLicenses @() -RemoveLicenses $SkuGUID | Out-Null
       }
@@ -7932,92 +3949,22 @@ $Users | ForEach-Object {
       $Results += $Result
       return $Result
     }
-  }
-
-}
-
-if ($Results) { Write-Warning "Found $($Results.Count) direct assigned license(s)." }
+  }}if ($Results) { Write-Warning "Found $($Results.Count) direct assigned license(s)." }
 else { Write-Output "No direct license assignments found" }
 }
 function Remove-BlankLines {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID c0df5582-8e43-491d-92ce-410392bb9912
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID c0df5582-8e43-491d-92ce-410392bb9912.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 This will remove superfluous blank lines from a string.
-#>
-
-param([string]$String)
+#>param([string]$String)
 while ($String.Contains("`r`n`r`n`r`n")) { $String = ($String -replace "`r`n`r`n`r`n", "`r`n`r`n").Trim() }
 return $String
 }
 function Remove-CachedWallpaper {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 2a1c91e6-58fd-4f37-9daf-370b954c31e4
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 2a1c91e6-58fd-4f37-9daf-370b954c31e4.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script removes the caches wallpaper.
-
-.DESCRIPTION
-This script removes the caches wallpaper by deleting %appdata%\Microsoft\Windows\Themes\TranscodedWallpaper
-
-.EXAMPLE
+This script removes the caches wallpaper..DESCRIPTION
+This script removes the caches wallpaper by deleting %appdata%\Microsoft\Windows\Themes\TranscodedWallpaper.EXAMPLE
 Remove-CachedWallpaper
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -8026,130 +3973,34 @@ Remove-Item "$Env:appdata\Microsoft\Windows\Themes\TranscodedWallpaper" -ErrorAc
 Remove-Item "$Env:appdata\Microsoft\Windows\Themes\CachedFiles\*.*" -ErrorAction SilentlyContinue
 }
 function Remove-GroupEmail {
-<#PSScriptInfo
-
-.VERSION 1.0.7
-
-.GUID 214ed066-0271-4c0b-8210-8554f8de4f4a
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.7.GUID 214ed066-0271-4c0b-8210-8554f8de4f4a.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-Remove an email address to an existing Microsoft 365 group.
-
-.DESCRIPTION
-Remove an email address to an existing Microsoft 365 group. You can also use this to set the primary address for the group.
-
-.PARAMETER Identity
-The identity of the group you wish to change.
-
-.PARAMETER EmailAddress
-The email address you whish to Remove.
-
-.PARAMETER SetPrimary
-If set, this will set the email adress you specified as the primary address for the group.
-
-.EXAMPLE
+Remove an email address to an existing Microsoft 365 group..DESCRIPTION
+Remove an email address to an existing Microsoft 365 group. You can also use this to set the primary address for the group..PARAMETER Identity
+The identity of the group you wish to change..PARAMETER EmailAddress
+The email address you whish to Remove..PARAMETER SetPrimary
+If set, this will set the email adress you specified as the primary address for the group..EXAMPLE
 Remove-GroupEmail -Identity staff -EmailAddress staff@example.com
-#>
-
-param (
+#>param (
   [string]$GroupName,
   [string]$EmailAddress
-)
-
-Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Remove = $EmailAddress }
+)Set-UnifiedGroup -Identity $GroupName -EmailAddresses: @{Remove = $EmailAddress }
 }
 function Remove-MailboxOrphanedSids {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID fc0d9531-8d08-4b67-8247-7ade678c2d31
-
-.AUTHOR Jason Cook CarlosDZRZ
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID fc0d9531-8d08-4b67-8247-7ade678c2d31.AUTHOR Jason Cook CarlosDZRZ.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-Remove Mailbox Orphaned_SIDs Access Control Lists (ACLs) and Access Control Entries (ACEs)
-
-.DESCRIPTION
-Remove Mailbox Orphaned_SIDs Access Control Lists (ACLs) and Access Control Entries (ACEs)
-
-.PARAMETER  Alias
-The Alias parameter specifies the alias (mail nickname) of the user.
-
-.PARAMETER  PathFolder
-Specifies a path to log folder location.The default location is $env:USERPROFILE+'\EXCH_RemoveSIDs\'
-
-.EXAMPLE
-Remove-MailboxOrphaned_SIDs -Alias test_mailbox
-
-.EXAMPLE
-Get-Mailbox test_mailbox | Remove-MailboxOrphaned_SIDs
-
-.EXAMPLE
+Remove Mailbox Orphaned_SIDs Access Control Lists (ACLs) and Access Control Entries (ACEs).DESCRIPTION
+Remove Mailbox Orphaned_SIDs Access Control Lists (ACLs) and Access Control Entries (ACEs).PARAMETER  Alias
+The Alias parameter specifies the alias (mail nickname) of the user..PARAMETER  PathFolder
+Specifies a path to log folder location.The default location is $env:USERPROFILE+'\EXCH_RemoveSIDs\'.EXAMPLE
+Remove-MailboxOrphaned_SIDs -Alias test_mailbox.EXAMPLE
+Get-Mailbox test_mailbox | Remove-MailboxOrphaned_SIDs.EXAMPLE
 $mailboxes = Get-Mailbox -ResultSize 0
-$mailboxes | Remove-MailboxOrphaned_SIDs
-
-.OUTPUTS
-Log file.
-
-.NOTES
-Date Created: 04/08/2016
-
-.LINK
-https://technet.microsoft.com/es-es/library/aa998218(v=exchg.160).aspx
-
-.LINK
-https://technet.microsoft.com/en-us/library/hh360993.aspx
-
-#>
+$mailboxes | Remove-MailboxOrphaned_SIDs.OUTPUTS
+Log file..NOTES
+Date Created: 04/08/2016.LINK
+https://technet.microsoft.com/es-es/library/aa998218(v=exchg.160).aspx.LINK
+https://technet.microsoft.com/en-us/library/hh360993.aspx#>
 [CmdletBinding()]
 Param
 (
@@ -8206,101 +4057,27 @@ End {
 }
 }
 function Remove-OldFolders {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID cb98c8e9-cb35-4db2-9fe8-33afb9eb2272
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID cb98c8e9-cb35-4db2-9fe8-33afb9eb2272.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will trim the spesified folder to the number of items specified.
-
-.DESCRIPTION
-This script will trim the spesified folder to the number of items specified.
-
-.PARAMETER Path
-This can be used to select a folder in which to run these commands on. If unspecified, it will run in the current folder.
-
-.PARAMETER Keep
-This is the number of files to keep in the folder. If unspecified, it will keep 10 copies.
-
-.EXAMPLE
+This script will trim the spesified folder to the number of items specified..DESCRIPTION
+This script will trim the spesified folder to the number of items specified..PARAMETER Path
+This can be used to select a folder in which to run these commands on. If unspecified, it will run in the current folder..PARAMETER Keep
+This is the number of files to keep in the folder. If unspecified, it will keep 10 copies..EXAMPLE
 Remove-OldFolders -Folder C:\Backups\ -Keep 10
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 param (
   [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
   [ValidateRange(1, [int]::MaxValue)][int]$Keep = 10
-)
-
-Get-ChildItem $Path -Directory | Sort-Object CreationTime -Descending | Select-Object -Skip $Keep | ForEach-Object {
+)Get-ChildItem $Path -Directory | Sort-Object CreationTime -Descending | Select-Object -Skip $Keep | ForEach-Object {
   If ($PSCmdlet.ShouldProcess("$_", "Trim-Folder -Keep $Keep")) {
     Remove-Item -Path $_ -Recurse -Force
   }
 }
 }
 function Remove-OldModuleVersions {
-<#PSScriptInfo
-
-.VERSION 0.0.14
-
-.GUID 975b5e06-eee0-461b-9b98-49351c762dcd
-
-.AUTHOR Jason Cook Luke Murray (Luke.Geek.NZ)
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 0.0.14.GUID 975b5e06-eee0-461b-9b98-49351c762dcd.AUTHOR Jason Cook Luke Murray (Luke.Geek.NZ).COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Removes old version of installed PowerShell modules. Usefull for cleaning up after module updates.
-
-.LINK
+Removes old version of installed PowerShell modules. Usefull for cleaning up after module updates..LINK
 https://luke.geek.nz/powershell/remove-old-powershell-modules-versions-using-powershell/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -8309,9 +4086,7 @@ param(
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-Requires -Version 2.0 -Modules PowerShellGet
-
-foreach ($Module in $Modules) {
+Requires -Version 2.0 -Modules PowerShellGetforeach ($Module in $Modules) {
     $count++ ; Progress -Index $count -Total $Modules.count -Activity "Uninstalling old versions of $($Module.Name). [latest is $($Module.Version)]" -Name $Image.Name -ErrorAction SilentlyContinue
     $Installed = Get-InstalledModule -Name $Module.Name -AllVersions
     If ($Installed.count -gt 1) {
@@ -8323,41 +4098,9 @@ foreach ($Module in $Modules) {
 }
 }
 function Remove-UserPASSWD_NOTREQD {
-<#PSScriptInfo
-
-.VERSION 1.0.7
-
-.GUID 6309e154-81f6-4bd1-aff7-deaea3274934
-
-.AUTHOR Jason Cook Robin Granberg (robin.granberg@microsoft.com)
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.7.GUID 6309e154-81f6-4bd1-aff7-deaea3274934.AUTHOR Jason Cook Robin Granberg (robin.granberg@microsoft.com).COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Search for user accounts with "ADS_UF_PASSWD_NOTREQD" enabled and remove the flag
-
-.NOTES
+Search for user accounts with "ADS_UF_PASSWD_NOTREQD" enabled and remove the flag.NOTES
 TODO Build better help
 #>
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", Scope = "Function", Target = "*")]
@@ -8365,16 +4108,12 @@ param([string]$Path,
     [string]$Server,
     [switch]$Subtree,
     [string]$LogFile,
-    [switch]$help)
-
-function funHelp() {
+    [switch]$help)function funHelp() {
     Clear-Host
     $helpText = @"
 THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR
-FITNESS FOR A PARTICULAR PURPOSE.
-
-This sample is not supported under any Microsoft standard support program or service.
+FITNESS FOR A PARTICULAR PURPOSE.This sample is not supported under any Microsoft standard support program or service.
 The script is provided AS IS without warranty of any kind. Microsoft further disclaims all
 implied warranties including, without limitation, any implied warranties of merchantability
 or of fitness for a particular purpose. The entire risk arising out of the use or performance
@@ -8382,66 +4121,24 @@ of the sample and documentation remains with you. In no event shall Microsoft, i
 or anyone else involved in the creation, production, or delivery of the script be liable for
 any damages whatsoever (including, without limitation, damages for loss of business profits,
 business interruption, loss of business information, or other pecuniary loss) arising out of
-the use of or inability to use the sample or documentation, even if Microsoft has been advised
-
-DESCRIPTION:
+the use of or inability to use the sample or documentation, even if Microsoft has been advisedDESCRIPTION:
 NAME: RemoveUserPASSWD_NOTREQD.ps1
 Search for user accounts with "ADS_UF_PASSWD_NOTREQD" enabled and remove the flag
 This script requires Active Directory Module for Windows PowerShell.
-Run "import-module activedirectory" before running the script.
-
-SYSTEM REQUIREMENTS:
-
-- Windows Powershell
-
-- Active Directory Module for Windows PowerShell
-
-- Connection to a Active Directory Domain
-
-- Modify User Object Permissions in Active Directory
-
-PARAMETERS:
-
--Path          Where to start search, DistinguishedName within quotation mark (")
+Run "import-module activedirectory" before running the script.SYSTEM REQUIREMENTS:- Windows Powershell- Active Directory Module for Windows PowerShell- Connection to a Active Directory Domain- Modify User Object Permissions in Active DirectoryPARAMETERS:-Path          Where to start search, DistinguishedName within quotation mark (")
 -Server        Name of Domain Controller
 -Subtree       Do a subtree search (Optional)
--help          Prints the HelpFile (Optional)
-
-SYNTAX:
- -------------------------- EXAMPLE 1 --------------------------
-
-.\RemoveUserPASSWD_NOTREQD.ps1 -Server DC1 -Path "OU=Sales,DC=contoso,DC=com"
-
- Description
+-help          Prints the HelpFile (Optional)SYNTAX:
+ -------------------------- EXAMPLE 1 --------------------------.\RemoveUserPASSWD_NOTREQD.ps1 -Server DC1 -Path "OU=Sales,DC=contoso,DC=com" Description
  -----------
- This command will remove "ADS_UF_PASSWD_NOTREQD" on all user accounts under OU=Sales,DC=contoso,DC=com.
-
- -------------------------- EXAMPLE 2 --------------------------
-
-.\RemoveUserPASSWD_NOTREQD.ps1 -Server DC1 -Path "OU=Sales,DC=contoso,DC=com" -subtree
-
- Description
+ This command will remove "ADS_UF_PASSWD_NOTREQD" on all user accounts under OU=Sales,DC=contoso,DC=com. -------------------------- EXAMPLE 2 --------------------------.\RemoveUserPASSWD_NOTREQD.ps1 -Server DC1 -Path "OU=Sales,DC=contoso,DC=com" -subtree Description
+ -----------
+ This command will remove "ADS_UF_PASSWD_NOTREQD" on all user accounts under OU=Sales,DC=contoso,DC=com and in all sub OU's. -------------------------- EXAMPLE 3 --------------------------.\RemoveUserPASSWD_NOTREQD.ps1 -Server DC1 -Path "OU=Sales,DC=contoso,DC=com" -subtree -logfile c:\log.txt Description
  -----------
  This command will remove "ADS_UF_PASSWD_NOTREQD" on all user accounts under OU=Sales,DC=contoso,DC=com and in all sub OU's.
-
- -------------------------- EXAMPLE 3 --------------------------
-
-.\RemoveUserPASSWD_NOTREQD.ps1 -Server DC1 -Path "OU=Sales,DC=contoso,DC=com" -subtree -logfile c:\log.txt
-
- Description
+ The output will also be put in a logfile. -------------------------- EXAMPLE 4 --------------------------.\RemoveUserPASSWD_NOTREQD.ps1  -help Description
  -----------
- This command will remove "ADS_UF_PASSWD_NOTREQD" on all user accounts under OU=Sales,DC=contoso,DC=com and in all sub OU's.
- The output will also be put in a logfile.
-
- -------------------------- EXAMPLE 4 --------------------------
-
-.\RemoveUserPASSWD_NOTREQD.ps1  -help
-
- Description
- -----------
- Displays the help topic for the script
-
-"@
+ Displays the help topic for the script"@
     write-host $helpText
     exit
 }
@@ -8450,9 +4147,7 @@ function reqHelp() {
     $helpText = @"
 THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR
-FITNESS FOR A PARTICULAR PURPOSE.
-
-This sample is not supported under any Microsoft standard support program or service.
+FITNESS FOR A PARTICULAR PURPOSE.This sample is not supported under any Microsoft standard support program or service.
 The script is provided AS IS without warranty of any kind. Microsoft further disclaims all
 implied warranties including, without limitation, any implied warranties of merchantability
 or of fitness for a particular purpose. The entire risk arising out of the use or performance
@@ -8460,25 +4155,11 @@ of the sample and documentation remains with you. In no event shall Microsoft, i
 or anyone else involved in the creation, production, or delivery of the script be liable for
 any damages whatsoever (including, without limitation, damages for loss of business profits,
 business interruption, loss of business information, or other pecuniary loss) arising out of
-the use of or inability to use the sample or documentation, even if Microsoft has been advised
-
-DESCRIPTION:
+the use of or inability to use the sample or documentation, even if Microsoft has been advisedDESCRIPTION:
 NAME: RemoveUserPASSWD_NOTREQD.ps1
 Search for user accounts with "ADS_UF_PASSWD_NOTREQD" enabled and remove the flag
 This script requires Active Directory Module for Windows PowerShell.
-Run "import-module activedirectory" before running the script.
-
-SYSTEM REQUIREMENTS:
-
-- Windows Powershell
-
-- Active Directory Module for Windows PowerShell
-
-- Connection to a Active Directory Domain
-
-- Modify User Object Permissions in Active Directory
-
-"@
+Run "import-module activedirectory" before running the script.SYSTEM REQUIREMENTS:- Windows Powershell- Active Directory Module for Windows PowerShell- Connection to a Active Directory Domain- Modify User Object Permissions in Active Directory"@
     write-host $helpText
     exit
 }
@@ -8487,13 +4168,7 @@ if ($null -eq $(Get-Module | Where-Object { $_.name -eq "activedirectory" })) {
     exit
 }
 $script:ErrCtrlrActionPreference = "SilentlyContinue"
-Function GetUserAccCtrlStatus ($userDN) {
-
-    $objUser = get-aduser -server $Server $userDN -properties useraccountcontrol
-
-    [string] $strStatus = ""
-
-    if ($objUser.useraccountcontrol -band 2)
+Function GetUserAccCtrlStatus ($userDN) {    $objUser = get-aduser -server $Server $userDN -properties useraccountcontrol    [string] $strStatus = ""    if ($objUser.useraccountcontrol -band 2)
     { $strStatus = $strStatus + ",ADS_UF_ACCOUNT_DISABLE" }
     if ($objUser.useraccountcontrol -band 8)
     { $strStatus = $strStatus + ",ADS_UF_HOMEDIR_REQUIRED" }
@@ -8534,18 +4209,10 @@ Function GetUserAccCtrlStatus ($userDN) {
     if ($objUser.useraccountcontrol -band 33554432)
     { $strStatus = $strStatus + ",ADS_UF_NO_AUTH_DATA_REQUIRED" }
     if ($objUser.useraccountcontrol -band 67108864)
-    { $strStatus = $strStatus + ",ADS_UF_PARTIAL_SECRETS_ACCOUNT" }
-
-    [int] $index = $strStatus.IndexOf(",")
+    { $strStatus = $strStatus + ",ADS_UF_PARTIAL_SECRETS_ACCOUNT" }    [int] $index = $strStatus.IndexOf(",")
     If ($index -eq 0) {
         $strStatus = $strStatus.substring($strStatus.IndexOf(",") + 1, $strStatus.Length - 1 )
-    }
-
-    return $strStatus
-
-}#End function
-
-function CheckDNExist {
+    }    return $strStatus}#End functionfunction CheckDNExist {
     Param (
         $sADobjectName
     )
@@ -8554,11 +4221,7 @@ function CheckDNExist {
     If ($null -eq $ADobject.distinguishedName)
     { return $false }
     else
-    { return $true }
-
-}#End function
-
-if ($help -or !($Path) -or !($Server)) { funHelp }
+    { return $true }}#End functionif ($help -or !($Path) -or !($Server)) { funHelp }
 if (!($LogFile -eq "")) {
     if (Test-Path $LogFile) {
         Remove-Item $LogFile
@@ -8567,9 +4230,7 @@ if (!($LogFile -eq "")) {
 If (CheckDNExist $Path) {
     $index = 0
     if ($Subtree) {
-        $users = get-aduser -server $Server -LDAPfilter "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2048)(userAccountControl:1.2.840.113556.1.4.803:=32))" -searchbase $Path -properties useraccountcontrol -SearchScope Subtree
-
-    }
+        $users = get-aduser -server $Server -LDAPfilter "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2048)(userAccountControl:1.2.840.113556.1.4.803:=32))" -searchbase $Path -properties useraccountcontrol -SearchScope Subtree    }
     else {
         $users = get-aduser -server $Server -LDAPfilter "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2048)(userAccountControl:1.2.840.113556.1.4.803:=32))" -searchbase $Path -properties useraccountcontrol -SearchScope OneLevel
     }
@@ -8578,13 +4239,9 @@ If (CheckDNExist $Path) {
             $global:ErrCtrl = $false
             $global:strUserDN = $users[$index]
             $objUser = [ADSI]"LDAP://$global:strUserDN"
-            $global:strUserName = $objUser.cn
-
-            & { #Try
+            $global:strUserName = $objUser.cn            & { #Try
                 set-aduser -server $Server $users[$index] -PasswordNotRequired $false
-            }
-
-            Trap [SystemException] {
+            }            Trap [SystemException] {
                 $global:ErrCtrl = $true
                 Write-host $users[$index].name";Failed;"$_ -Foreground red
                 if (!($LogFile -eq "")) {
@@ -8592,9 +4249,7 @@ If (CheckDNExist $Path) {
                     Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
                 }
                 ; Continue
-            }
-
-            if ($ErrCtrl -eq $false) {
+            }            if ($ErrCtrl -eq $false) {
                 Write-host $users[$index].name";Success;Status:"(GetUserAccCtrlStatus($users[$index])) -Foreground green
                 if (!($LogFile -eq "")) {
                     [string] $strUserNames = $global:strUserName
@@ -8610,15 +4265,9 @@ If (CheckDNExist $Path) {
         $global:ErrCtrl = $false
         $global:strUserDN = $users
         $objUser = [ADSI]"LDAP://$global:strUserDN"
-        $global:strUserName = $objUser.cn
-
-        & { #Try
+        $global:strUserName = $objUser.cn        & { #Try
             $global:ErrCtrl = $false
-            set-aduser -server $Server $users -PasswordNotRequired $false
-
-        }
-
-        Trap [SystemException] {
+            set-aduser -server $Server $users -PasswordNotRequired $false        }        Trap [SystemException] {
             $global:ErrCtrl = $true
             Write-host $users.name";Failed;"$_ -Foreground red
             if (!($LogFile -eq "")) {
@@ -8626,11 +4275,7 @@ If (CheckDNExist $Path) {
                 Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
             }
             ; Continue
-        }
-
-        if ($ErrCtrl -eq $false) {
-
-            Write-host $users.name";Success;Status:"(GetUserAccCtrlStatus($users)) -Foreground green
+        }        if ($ErrCtrl -eq $false) {            Write-host $users.name";Success;Status:"(GetUserAccCtrlStatus($users)) -Foreground green
             if (!($LogFile -eq "")) {
                 [string] $strUserNames = $global:strUserName
                 [string] $strUrsStatus = GetUserAccCtrlStatus($global:strUserDN)
@@ -8645,99 +4290,25 @@ else {
 }
 }
 function Remove-VsResistInstallFiles {
-<#PSScriptInfo
-
-.VERSION 1.1.5
-
-.GUID 0775cf89-1a99-44ec-ac4e-7c80c95d87a2
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.5.GUID 0775cf89-1a99-44ec-ac4e-7c80c95d87a2.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script removes the files leftover from a VCRedist from VC++ 2008 install.
-
-.DESCRIPTION
-This script will remove the extra files from a VCRedist from VC++ 2008 install, as per https://support.microsoft.com/en-ca/help/950683/vcredist-from-vc-2008-installs-temporary-files-in-root-directory
-
-.LINK
-https://support.microsoft.com/en-ca/help/950683/vcredist-from-vc-2008-installs-temporary-files-in-root-directory
-
-.PARAMETER Drive
-The drive from which to remove the files. If unspesified, the System Drive is used.
-
-.EXAMPLE
-Clean-VCRedist
-
-.EXAMPLE
+This script removes the files leftover from a VCRedist from VC++ 2008 install..DESCRIPTION
+This script will remove the extra files from a VCRedist from VC++ 2008 install, as per https://support.microsoft.com/en-ca/help/950683/vcredist-from-vc-2008-installs-temporary-files-in-root-directory.LINK
+https://support.microsoft.com/en-ca/help/950683/vcredist-from-vc-2008-installs-temporary-files-in-root-directory.PARAMETER Drive
+The drive from which to remove the files. If unspesified, the System Drive is used..EXAMPLE
+Clean-VCRedist.EXAMPLE
 Clean-VCRedist.ps1 -Drive D
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
   [string]$Drive = $env:SystemDrive
-)
-
-$Files = "install.exe", "install.res.1028.dll", "install.res.1031.dll", "install.res.1033.dll", "install.res.1036.dll", "install.res.1040.dll", "install.res.1041.dll", "install.res.1042.dll", "install.res.2052.dll", "install.res.3082.dll", "vcredist.bmp", "globdata.ini", "install.ini", "eula.1028.txt", "eula.1031.txt", "eula.1033.txt", "eula.1036.txt", "eula.1040.txt", "eula.1041.txt", "eula.1042.txt", "eula.2052.txt", "eula.3082.txt", "VC_RED.MSI", "VC_RED.cab"
+)$Files = "install.exe", "install.res.1028.dll", "install.res.1031.dll", "install.res.1033.dll", "install.res.1036.dll", "install.res.1040.dll", "install.res.1041.dll", "install.res.1042.dll", "install.res.2052.dll", "install.res.3082.dll", "vcredist.bmp", "globdata.ini", "install.ini", "eula.1028.txt", "eula.1031.txt", "eula.1033.txt", "eula.1036.txt", "eula.1040.txt", "eula.1041.txt", "eula.1042.txt", "eula.2052.txt", "eula.3082.txt", "VC_RED.MSI", "VC_RED.cab"
 Foreach ($File in $Files) { Remove-Item $Drive\$File -ErrorAction SilentlyContinue }
 }
 function Repair-AdAttributes {
-<#PSScriptInfo
-
-.VERSION 1.0.20
-
-.GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.20.GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Repair attributes for user in Active Directory.
-
-.PARAMETER Actions
+Repair attributes for user in Active Directory..PARAMETER Actions
 A array of actions to perform. By default, all actions except SetTelephoneNumber are performed.
  - Remove legacy Exchange attributes
  - Remove legacy proxy addresses
@@ -8746,32 +4317,14 @@ A array of actions to perform. By default, all actions except SetTelephoneNumber
  - Set mailNickname to SamAccountName
  - Set title to mail attirubte for shared mailboxes. This is used for better display in SharePoint.
  - Clear telephoneNumber attribute if mail atrribute is empty
- - Set telephoneNumber attribute to main line and extension, if present.
-
-.PARAMETER SearchBase
-The AD search base when gettings users and groups.
-
-.PARAMETER Server
-The AD server to search and run updates on.
-
-.PARAMETER DefaltPhoneNumber
-The default phone number to use when no phone number is already set.
-
-.PARAMETER OnMicrosoft
-The OnMicrosoft.com domain to remove from the proxy addresses.
-
-.PARAMETER Filter
-The AD filter when getting users and groups.
-
-.PARAMETER LegacyExchangeAttributes
-An array of the legacy exchange attributes to remove.
-
-.PARAMETER Properties
-An array of properties to search against.
-
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+ - Set telephoneNumber attribute to main line and extension, if present..PARAMETER SearchBase
+The AD search base when gettings users and groups..PARAMETER Server
+The AD server to search and run updates on..PARAMETER DefaltPhoneNumber
+The default phone number to use when no phone number is already set..PARAMETER OnMicrosoft
+The OnMicrosoft.com domain to remove from the proxy addresses..PARAMETER Filter
+The AD filter when getting users and groups..PARAMETER LegacyExchangeAttributes
+An array of the legacy exchange attributes to remove..PARAMETER Properties
+An array of properties to search against.#>[CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [array]$Actions = @("LegacyExchange", "LegacyProxyAddresses", "ExtraProxyAddresses", "ClearMailNickname", "SetMailNickname", "ClearTelephoneNumber"),
     [string]$SearchBase,
@@ -8781,30 +4334,20 @@ param (
     [string]$Filter = "*",
     $LegacyExchangeAttributes = @("msExchMailboxGuid", "msexchhomeservername", "legacyexchangedn", "mailNickname", "msexchmailboxsecuritydescriptor", "msexchpoliciesincluded", "msexchrecipientdisplaytype", "msexchrecipienttypedetails", "msexchumdtmfmap", "msexchuseraccountcontrol", "msexchversion", "targetAddress"),
     $Properties = @("ProxyAddresses", "mail", "mailNickname", "ipPhone", "telephoneNumber")
-)
-
-$SetAdOptions = @{
+)$SetAdOptions = @{
     Verbose = $VerbosePreference
 }
-if ($Server) { $SetAdOptions.Server = $Server }
-
-$GetAdOptions = @{
+if ($Server) { $SetAdOptions.Server = $Server }$GetAdOptions = @{
     Verbose = $VerbosePreference
 }
 if ($SearchBase) { $GetAdOptions.SearchBase = $SearchBase }
 if ($Server) { $GetAdOptions.Server = $Server }
 if ($Properties) { $GetAdOptions.Properties = $Properties }
-if ($Filter) { $GetAdOptions.Filter = $Filter } else { $GetAdOptions.Filter = "*" }
-
-$Users = Get-ADUser @GetAdOptions
-$Groups = Get-ADGroup @GetAdOptions
-
-If ($Actions -contains "LegacyExchange" -and $PSCmdlet.ShouldProcess("Remove legacy exchange attributes")) {
+if ($Filter) { $GetAdOptions.Filter = $Filter } else { $GetAdOptions.Filter = "*" }$Users = Get-ADUser @GetAdOptions
+$Groups = Get-ADGroup @GetAdOptionsIf ($Actions -contains "LegacyExchange" -and $PSCmdlet.ShouldProcess("Remove legacy exchange attributes")) {
     $Users | Set-ADUser -Clear $LegacyExchangeAttributes @SetAdOptions
     $Groups | Where-Object Name -notlike "Group_*" | Set-ADGroup -Clear $LegacyExchangeAttributes @SetAdOptions
-}
-
-If ($Actions -contains "LegacyProxyAddresses" -and $PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes")) {
+}If ($Actions -contains "LegacyProxyAddresses" -and $PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes")) {
     $Users | ForEach-Object {
         $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
         ForEach ($proxyAddress in $Remove) {
@@ -8818,31 +4361,19 @@ If ($Actions -contains "LegacyProxyAddresses" -and $PSCmdlet.ShouldProcess("Remo
             Write-Verbose "Removing $ProxyAddress from $($_.Name)"
             Set-ADGroup -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } @SetAdOptions
         }
-    }
-
-}
-
-If ($Actions -contains "ExtraProxyAddresses" -and $PSCmdlet.ShouldProcess("Clear ProxyAddresses if only one exists")) {
+    }}If ($Actions -contains "ExtraProxyAddresses" -and $PSCmdlet.ShouldProcess("Clear ProxyAddresses if only one exists")) {
     $Users | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADUser -Clear ProxyAddresses @SetAdOptions
     $Groups | Where-Object Name -notlike "Group_*" | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADGroup -Clear ProxyAddresses @SetAdOptions
-}
-
-If ($Actions -contains "ClearMailNickname" -and $PSCmdlet.ShouldProcess("Clear mailNickname if mail attribute empty")) {
+}If ($Actions -contains "ClearMailNickname" -and $PSCmdlet.ShouldProcess("Clear mailNickname if mail attribute empty")) {
     $Users | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
     $Groups | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
-}
-
-If ($Actions -contains "SetMailNickname" -and $PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName")) {
+}If ($Actions -contains "SetMailNickname" -and $PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName")) {
     return $Users
     $Users | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
     $Groups | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
-}
-
-If ($Actions -contains "ClearTelephoneNumber" -and $PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty")) {
+}If ($Actions -contains "ClearTelephoneNumber" -and $PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty")) {
     $Users | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber @SetAdOptions
-}
-
-If ($Actions -contains "SetTelephoneNumber" -and $PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension")) {
+}If ($Actions -contains "SetTelephoneNumber" -and $PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension")) {
     while (!$DefaultPhoneNumber) { $DefaultPhoneNumber = Read-Host -Prompt "Enter the default phone number." }
     $Users | Where-Object mail -ne $null | ForEach-Object {
         if ($null -ne $_.ipphone) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
@@ -8852,52 +4383,14 @@ If ($Actions -contains "SetTelephoneNumber" -and $PSCmdlet.ShouldProcess("Set te
 }
 }
 function Repair-VmPermissions {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 8bd63288-3b9f-44dc-bc34-c25aea4b5452
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 8bd63288-3b9f-44dc-bc34-c25aea4b5452.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will repair VM permission to allow the VM to start.
-
-.LINK
+This will repair VM permission to allow the VM to start..LINK
 https://foxdeploy.com/2016/04/05/fix-hyper-v-account-does-not-have-permission-error/
-#>
-
-Requires -Modules NTFSSecurity
-
-$VMs = Get-VM
+#>Requires -Modules NTFSSecurity$VMs = Get-VM
 ForEach ($VM in $VMs) {
     $disks = Get-VMHardDiskDrive -VMName $VM.Name
-    Write-Output "This VM $($VM.Name), contains $($disks.Count) disks, checking permissions..."
-
-    ForEach ($disk in $disks) {
+    Write-Output "This VM $($VM.Name), contains $($disks.Count) disks, checking permissions..."    ForEach ($disk in $disks) {
         $permissions = Get-NTFSAccess -Path $disk.Path
         If ($permissions.Account -notcontains "NT Virtual Mach*") {
             $disk.Path
@@ -8909,47 +4402,11 @@ ForEach ($VM in $VMs) {
                 Write-Host -ForegroundColor red "[ERROR]"
                 Write-Warning "Try rerunning as Administrator, or validate your user ID has FullControl on the above path"
                 break
-            }
-
-            Write-Host -ForegroundColor Green "[OK]"
-
-        }
-
-    }
+            }            Write-Host -ForegroundColor Green "[OK]"        }    }
 }
 }
 function Reset-CSC {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID a4176bef-cf00-42a8-b097-8c9be952931c
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID a4176bef-cf00-42a8-b097-8c9be952931c.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 This will reset the CSC (offline files) cache.
 #>
@@ -8958,55 +4415,17 @@ param ()
 Set-ItemProperty -Path HKLM:\SYSTEM\CurrentControlSet\Services\CSC\Parameters\ -Name FormatDatabase -Value 1 -Type DWord
 }
 function Reset-GitBranch {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID ba7e96d7-1170-4cc0-9e58-4062d6821790
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID ba7e96d7-1170-4cc0-9e58-4062d6821790.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will reset the current directory to the specified Git branch.
-
-.PARAMETER Branch
-The name of the branch to set to.
-
-.PARAMETER Path
+This will reset the current directory to the specified Git branch..PARAMETER Branch
+The name of the branch to set to..PARAMETER Path
 The location of the Git repository. Default to the current directory.
-#>
-
-param(
+#>param(
   [string]$Branch = "master",
   [ValidateScript( { Test-Path $_ -PathType Container })][string]$Path
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-if ($Path) { Push-Location -Path $Path }
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }if ($Path) { Push-Location -Path $Path }
 git clean -fd
 git fetch origin
 git checkout $Branch
@@ -9014,84 +4433,30 @@ git reset --hard origin/$Branch
 Pop-Location
 }
 function Reset-InviteRedepmtion {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 8697df26-a171-4f10-9929-fbff1e58ab4b
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 8697df26-a171-4f10-9929-fbff1e58ab4b.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will reset the invite status for guest AAD users.
-
-.PARAMETER All
-If specified, all guest users will be processed.
-
-.PARAMETER Email
-The email addresses to process. This can be omitted if spesifing UPNs.
-
-.PARAMETER UPN
-The UPNs to process. By default, it will generate for the email addresses specified.
-
-.PARAMETER RedirectURL
-The URL to redirect users to after sucessfull invite redeption.
-
-.PARAMETER SkipSendingInvitation
-Whether to skip sekping the invitation.
-
-.PARAMETER SkipResettingRedeption
-Whether to skip resetting the redeption status.
-
-.LINK
+This will reset the invite status for guest AAD users..PARAMETER All
+If specified, all guest users will be processed..PARAMETER Email
+The email addresses to process. This can be omitted if spesifing UPNs..PARAMETER UPN
+The UPNs to process. By default, it will generate for the email addresses specified..PARAMETER RedirectURL
+The URL to redirect users to after sucessfull invite redeption..PARAMETER SkipSendingInvitation
+Whether to skip sekping the invitation..PARAMETER SkipResettingRedeption
+Whether to skip resetting the redeption status..LINK
 https://docs.microsoft.com/en-us/azure/active-directory/external-identities/reset-redemption-status
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 param(
     [switch]$All,
     [array]$Email,
     [array]$UPN = ($Email.replace("@", "_") + "#EXT#@" + ((Get-AzureADTenantDetail).VerifiedDomains | Where-Object Initial -eq $true).Name),
     [Uri]$RecirectURL = "http://myapps.microsoft.com",
     [boolean]$SkipSendingInvitation,
-    [boolean]$SkipResettingRedemtion
+    [boolean]$SkipResettingRedemtion)
 
-)
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$SkipSendingInvitation = -not $SkipSendingInvitation
-$SkipResettingRedemtion = -not $SkipResettingRedemtion
-
-if ($All) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$SkipSendingInvitation = -not $SkipSendingInvitation
+$SkipResettingRedemtion = -not $SkipResettingRedemtionif ($All) {
     $UPN = (Get-AzureADUser -Filter "UserType eq 'Guest'").UserPrincipalName
     Write-Warning "This will reset invites for all guest users. Are you sure?"
-    Wait-ForKey "y"
-
-}
+    Wait-ForKey "y"}
 [System.Collections.ArrayList]$Results = @()
 $UPN | ForEach-Object {
     $count++ ; Progress -Index $count -Total $UPN.count -Activity "Resetting Invite Redemption" -Name $_
@@ -9101,90 +4466,34 @@ $UPN | ForEach-Object {
         $Result = New-AzureADMSInvitation -InvitedUserEmailAddress $AzureAdUser.mail -SendInvitationMessage $SkipSendingInvitation -InviteRedirectUrl $RecirectURL -InvitedUser $MsGraphUser -ResetRedemption $SkipResettingRedemtion
         $Results += $Result
     }
-}
-
-Return $Results
+}Return $Results
 }
 function Reset-WindowsUpdate {
-<#PSScriptInfo
-
-.VERSION 1.20.3
-
-.GUID b4f15462-2ab3-45e5-b2e2-ecb649f1f1a6
-
-.AUTHOR Jason Cook Ryan Nemeth
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
+<#PSScriptInfo.VERSION 1.20.3.GUID b4f15462-2ab3-45e5-b2e2-ecb649f1f1a6.AUTHOR Jason Cook Ryan Nemeth.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES
 V1.00, 05/21/2015 - Initial version
 V1.10, 09/22/2016 - Fixed bug with call to sc.exe
-V1.20, 11/13/2017 - Fixed environment variables
-
-#> 
-
-<#
+V1.20, 11/13/2017 - Fixed environment variables#> <#
 .SYNOPSIS
-Resets the Windows Update components
-
-.DESCRIPTION
-This script will reset all of the Windows Updates components to DEFAULT SETTINGS.
-
-.OUTPUTS
-Results are printed to the console. Future releases will support outputting to a log file.
-
-.NOTES
-Written by: Ryan Nemeth
-
-Find me on:
+Resets the Windows Update components.DESCRIPTION
+This script will reset all of the Windows Updates components to DEFAULT SETTINGS..OUTPUTS
+Results are printed to the console. Future releases will support outputting to a log file..NOTES
+Written by: Ryan NemethFind me on:
 * My Blog:	http://www.geekyryan.com
 * Twitter:	https://twitter.com/geeky_ryan
 * LinkedIn:	https://www.linkedin.com/in/ryan-nemeth-b0b1504b/
 * Github:	https://github.com/rnemeth90
 * TechNet:  https://social.technet.microsoft.com/profile/ryan%20nemeth/
-#>
-
-$arch = Get-WMIObject -Class Win32_Processor -ComputerName LocalHost | Select-Object AddressWidth
-
-Write-Host "1. Stopping Windows Update Services..."
+#>$arch = Get-WMIObject -Class Win32_Processor -ComputerName LocalHost | Select-Object AddressWidthWrite-Host "1. Stopping Windows Update Services..."
 Stop-Service -Name BITS
 Stop-Service -Name wuauserv
 Stop-Service -Name appidsvc
-Stop-Service -Name cryptsvc
-
-Write-Host "2. Remove QMGR Data file..."
-Remove-Item "$env:allusersprofile\Application Data\Microsoft\Network\Downloader\qmgr*.dat" -ErrorAction SilentlyContinue
-
-Write-Host "3. Renaming the Software Distribution and CatRoot Folder..."
+Stop-Service -Name cryptsvcWrite-Host "2. Remove QMGR Data file..."
+Remove-Item "$env:allusersprofile\Application Data\Microsoft\Network\Downloader\qmgr*.dat" -ErrorAction SilentlyContinueWrite-Host "3. Renaming the Software Distribution and CatRoot Folder..."
 Rename-Item $env:systemroot\SoftwareDistribution SoftwareDistribution.bak -ErrorAction SilentlyContinue
-Rename-Item $env:systemroot\System32\Catroot2 catroot2.bak -ErrorAction SilentlyContinue
-
-Write-Host "4. Removing old Windows Update log..."
-Remove-Item $env:systemroot\WindowsUpdate.log -ErrorAction SilentlyContinue
-
-Write-Host "5. Resetting the Windows Update Services to defualt settings..."
+Rename-Item $env:systemroot\System32\Catroot2 catroot2.bak -ErrorAction SilentlyContinueWrite-Host "4. Removing old Windows Update log..."
+Remove-Item $env:systemroot\WindowsUpdate.log -ErrorAction SilentlyContinueWrite-Host "5. Resetting the Windows Update Services to defualt settings..."
 "sc.exe sdset bits D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)"
-"sc.exe sdset wuauserv D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)"
-
-Set-Location $env:systemroot\system32
-
-Write-Host "6. Registering some DLLs..."
+"sc.exe sdset wuauserv D:(A;;CCLCSWRPWPDTLOCRRC;;;SY)(A;;CCDCLCSWRPWPDTLOCRSDRCWDWO;;;BA)(A;;CCLCSWLOCRRC;;;AU)(A;;CCLCSWRPWPDTLOCRRC;;;PU)"Set-Location $env:systemroot\system32Write-Host "6. Registering some DLLs..."
 regsvr32.exe /s atl.dll
 regsvr32.exe /s urlmon.dll
 regsvr32.exe /s mshtml.dll
@@ -9220,112 +4529,46 @@ regsvr32.exe /s qmgr.dll
 regsvr32.exe /s qmgrprxy.dll
 regsvr32.exe /s wucltux.dll
 regsvr32.exe /s muweb.dll
-regsvr32.exe /s wuwebv.dll
-
-Write-Host "7) Removing WSUS client settings..."
+regsvr32.exe /s wuwebv.dllWrite-Host "7) Removing WSUS client settings..."
 REG DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate" /v AccountDomainSid /f
 REG DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate" /v PingID /f
-REG DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate" /v SusClientId /f
-
-Write-Host "8) Resetting the WinSock..."
+REG DELETE "HKLM\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate" /v SusClientId /fWrite-Host "8) Resetting the WinSock..."
 netsh winsock reset
-netsh winhttp reset proxy
-
-Write-Host "9) Delete all BITS jobs..."
-Get-BitsTransfer | Remove-BitsTransfer
-
-Write-Host "10) Attempting to install the Windows Update Agent..."
+netsh winhttp reset proxyWrite-Host "9) Delete all BITS jobs..."
+Get-BitsTransfer | Remove-BitsTransferWrite-Host "10) Attempting to install the Windows Update Agent..."
 if ($arch -eq 64) {
     wusa Windows8-RT-KB2937636-x64 /quiet
 }
 else {
     wusa Windows8-RT-KB2937636-x86 /quiet
-}
-
-Write-Host "11) Starting Windows Update Services..."
+}Write-Host "11) Starting Windows Update Services..."
 Start-Service -Name BITS
 Start-Service -Name wuauserv
 Start-Service -Name appidsvc
-Start-Service -Name cryptsvc
-
-Write-Host "12) Forcing discovery..."
-wuauclt /resetauthorization /detectnow
-
-Write-Host "Process complete. Please reboot your computer."
+Start-Service -Name cryptsvcWrite-Host "12) Forcing discovery..."
+wuauclt /resetauthorization /detectnowWrite-Host "Process complete. Please reboot your computer."
 }
 function Resize-Image {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 144cbae4-8208-4df5-a801-42316e9db97e
-
-.AUTHOR Jason Cook Patrick Lambert - http://dendory.net
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 144cbae4-8208-4df5-a801-42316e9db97e.AUTHOR Jason Cook Patrick Lambert - http://dendory.net.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-Resize-Image resizes an image file
-
-.DESCRIPTION
+Resize-Image resizes an image file.DESCRIPTION
 This function uses the native .NET API to resize an image file, and optionally save it to a file or display it on the screen. You can specify a scale or a new resolution for the new image.
-It supports the following image formats: BMP, GIF, JPEG, PNG, TIFF
-
-.EXAMPLE
+It supports the following image formats: BMP, GIF, JPEG, PNG, TIFF.EXAMPLE
 Resize-Image -InputFile "C:\kitten.jpg" -Display
-Resize the image by 50% and display it on the screen.
-
-.EXAMPLE
+Resize the image by 50% and display it on the screen..EXAMPLE
 Resize-Image -InputFile "C:\kitten.jpg" -Width 200 -Height 400 -Display
-Resize the image to a specific size and display it on the screen.
-
-.EXAMPLE
+Resize the image to a specific size and display it on the screen..EXAMPLE
 Resize-Image -InputFile "C:\kitten.jpg" -Scale 30 -OutputFile "C:\kitten2.jpg"
-Resize the image to 30% of its original size and save it to a new file.
-
-.LINK
+Resize the image to 30% of its original size and save it to a new file..LINK
 http://dendory.net
 #>
-Param([Parameter(Mandatory = $true)][string]$InputFile, [string]$OutputFile, [int32]$Width, [int32]$Height, [int32]$Scale, [Switch]$Display)
-
-Add-Type -AssemblyName System.Drawing
-
-$img = [System.Drawing.Image]::FromFile((Get-Item $InputFile))
-
-if ($Width -gt 0) { [int32]$new_width = $Width }
+Param([Parameter(Mandatory = $true)][string]$InputFile, [string]$OutputFile, [int32]$Width, [int32]$Height, [int32]$Scale, [Switch]$Display)Add-Type -AssemblyName System.Drawing$img = [System.Drawing.Image]::FromFile((Get-Item $InputFile))if ($Width -gt 0) { [int32]$new_width = $Width }
 elseif ($Scale -gt 0) { [int32]$new_width = $img.Width * ($Scale / 100) }
 else { [int32]$new_width = $img.Width / 2 }
 if ($Height -gt 0) { [int32]$new_height = $Height }
 elseif ($Scale -gt 0) { [int32]$new_height = $img.Height * ($Scale / 100) }
-else { [int32]$new_height = $img.Height / 2 }
-
-$img2 = New-Object System.Drawing.Bitmap($new_width, $new_height)
-
-$graph = [System.Drawing.Graphics]::FromImage($img2)
-$graph.DrawImage($img, 0, 0, $new_width, $new_height)
-
-if ($Display) {
+else { [int32]$new_height = $img.Height / 2 }$img2 = New-Object System.Drawing.Bitmap($new_width, $new_height)$graph = [System.Drawing.Graphics]::FromImage($img2)
+$graph.DrawImage($img, 0, 0, $new_width, $new_height)if ($Display) {
     Add-Type -AssemblyName System.Windows.Forms
     $win = New-Object Windows.Forms.Form
     $box = New-Object Windows.Forms.PictureBox
@@ -9335,59 +4578,17 @@ if ($Display) {
     $win.Controls.Add($box)
     $win.AutoSize = $true
     $win.ShowDialog()
-}
-
-if ($OutputFile -ne "") {
+}if ($OutputFile -ne "") {
     $img2.Save($OutputFile);
-}
-
-Export-ModuleMember Resize-Image
+}Export-ModuleMember Resize-Image
 }
 function Save-Password {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 70496d42-6d10-460f-9e42-132a6b70e09d
-
-.AUTHOR Jason Cook Vincent Christiansen - vincent@sameie.com
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 70496d42-6d10-460f-9e42-132a6b70e09d.AUTHOR Jason Cook Vincent Christiansen - vincent@sameie.com.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will store a password to the specified file.
-
-.PARAMETER Path
-The location the password will be stored.
-
-.EXAMPLE
-Store-Password
-
-.EXAMPLE
-Store-Password -Path .\Password.txt
-
-.LINK
+This will store a password to the specified file..PARAMETER Path
+The location the password will be stored..EXAMPLE
+Store-Password.EXAMPLE
+Store-Password -Path .\Password.txt.LINK
 http://www.sameie.com/2017/10/05/create-hashed-password-file-for-powershell-use/
 #>
 param(
@@ -9395,87 +4596,25 @@ param(
   [pscredential]$credential = (Get-Credential)
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$Credential.Password | ConvertFrom-SecureString | Set-Content $Path
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$Credential.Password | ConvertFrom-SecureString | Set-Content $Path
 }
 function Search-Registry {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 029cd8de-13e9-4169-ae20-72c021290013
-
-.AUTHOR Rohn Edwards
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 029cd8de-13e9-4169-ae20-72c021290013.AUTHOR Rohn Edwards.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-Searches registry key names, value names, and value data (limited).
-
-.DESCRIPTION
-This function can search registry key names, value names, and value data (in a limited fashion). It outputs custom objects that contain the key and the first match type (KeyName, ValueName, or ValueData).
-
-.PARAMETER PATH
-Registry path to search
-
-.PARAMETER Recurse
-Specifies whether or not all subkeys should also be searched
-
-.PARAMETER SearchRegex
-A regular expression that will be checked against key names, value names, and value data (depending on the specified switches)
-
-.PARAMETER KeyName
-When the -SearchRegex parameter is used, this switch means that key names will be tested (if none of the three switches are used, keys will be tested)
-
-.PARAMETER ValueName
-When the -SearchRegex parameter is used, this switch means that the value data will be tested (if none of the three switches are used, value names will be tested)
-
-.PARAMETER ValueData
-
-.PARAMETER ValueData
-When the -SearchRegex parameter is used, this switch means that the value data will be tested (if none of the three switches are used, value data will be tested)
-
-.PARAMETER KeyNameRegex
-Specifies a regex that will be checked against key names only
-
-.PARAMETER ValueNameRegex
-Specifies a regex that will be checked against value names only
-
-.PARAMETER ValueDataRegex
-Specifies a regex that will be checked against value data only
-
-.EXAMPLE
-Search-Registry -Path HKLM:\SYSTEM\CurrentControlSet\Services\* -SearchRegex "svchost" -ValueData
-
-.EXAMPLE
-Search-Registry -Path HKLM:\SOFTWARE\Microsoft -Recurse -ValueNameRegex "ValueName1|ValueName2" -ValueDataRegex "ValueData" -KeyNameRegex "KeyNameToFind1|KeyNameToFind2"
-
-.LINK
-https://stackoverflow.com/questions/42963661/use-powershell-to-search-for-string-in-registry-keys-and-values
-
-.LINK
+Searches registry key names, value names, and value data (limited)..DESCRIPTION
+This function can search registry key names, value names, and value data (in a limited fashion). It outputs custom objects that contain the key and the first match type (KeyName, ValueName, or ValueData)..PARAMETER PATH
+Registry path to search.PARAMETER Recurse
+Specifies whether or not all subkeys should also be searched.PARAMETER SearchRegex
+A regular expression that will be checked against key names, value names, and value data (depending on the specified switches).PARAMETER KeyName
+When the -SearchRegex parameter is used, this switch means that key names will be tested (if none of the three switches are used, keys will be tested).PARAMETER ValueName
+When the -SearchRegex parameter is used, this switch means that the value data will be tested (if none of the three switches are used, value names will be tested).PARAMETER ValueData.PARAMETER ValueData
+When the -SearchRegex parameter is used, this switch means that the value data will be tested (if none of the three switches are used, value data will be tested).PARAMETER KeyNameRegex
+Specifies a regex that will be checked against key names only.PARAMETER ValueNameRegex
+Specifies a regex that will be checked against value names only.PARAMETER ValueDataRegex
+Specifies a regex that will be checked against value data only.EXAMPLE
+Search-Registry -Path HKLM:\SYSTEM\CurrentControlSet\Services\* -SearchRegex "svchost" -ValueData.EXAMPLE
+Search-Registry -Path HKLM:\SOFTWARE\Microsoft -Recurse -ValueNameRegex "ValueName1|ValueName2" -ValueDataRegex "ValueData" -KeyNameRegex "KeyNameToFind1|KeyNameToFind2".LINK
+https://stackoverflow.com/questions/42963661/use-powershell-to-search-for-string-in-registry-keys-and-values.LINK
 https://gallery.technet.microsoft.com/scriptcenter/Search-Registry-Find-Keys-b4ce08b4
 #>
 [CmdletBinding()]
@@ -9489,9 +4628,7 @@ param(
     [Parameter(ParameterSetName = "MultipleSearchStrings")][string] $KeyNameRegex,
     [Parameter(ParameterSetName = "MultipleSearchStrings")][string] $ValueNameRegex,
     [Parameter(ParameterSetName = "MultipleSearchStrings")][string] $ValueDataRegex
-)
-
-begin {
+)begin {
     switch ($PSCmdlet.ParameterSetName) {
         SingleSearchString {
             $NoSwitchesSpecified = -not ($PSBoundParameters.ContainsKey("KeyName") -or $PSBoundParameters.ContainsKey("ValueName") -or $PSBoundParameters.ContainsKey("ValueData"))
@@ -9503,42 +4640,28 @@ begin {
             # No extra work needed
         }
     }
-}
-
-process {
+}process {
     foreach ($CurrentPath in $Path) {
         Get-ChildItem $CurrentPath -Recurse:$Recurse |
         ForEach-Object {
-            $Key = $_
-
-            if ($KeyNameRegex) {
-                Write-Verbose ("{0}: Checking KeyNamesRegex" -f $Key.Name)
-
-                if ($Key.PSChildName -match $KeyNameRegex) {
+            $Key = $_            if ($KeyNameRegex) {
+                Write-Verbose ("{0}: Checking KeyNamesRegex" -f $Key.Name)                if ($Key.PSChildName -match $KeyNameRegex) {
                     Write-Verbose "  -> Match found!"
                     return [PSCustomObject] @{
                         Key    = $Key
                         Reason = "KeyName"
                     }
                 }
-            }
-
-            if ($ValueNameRegex) {
-                Write-Verbose ("{0}: Checking ValueNamesRegex" -f $Key.Name)
-
-                if ($Key.GetValueNames() -match $ValueNameRegex) {
+            }            if ($ValueNameRegex) {
+                Write-Verbose ("{0}: Checking ValueNamesRegex" -f $Key.Name)                if ($Key.GetValueNames() -match $ValueNameRegex) {
                     Write-Verbose "  -> Match found!"
                     return [PSCustomObject] @{
                         Key    = $Key
                         Reason = "ValueName"
                     }
                 }
-            }
-
-            if ($ValueDataRegex) {
-                Write-Verbose ("{0}: Checking ValueDataRegex" -f $Key.Name)
-
-                if (($Key.GetValueNames() | ForEach-Object { $Key.GetValue($_) }) -match $ValueDataRegex) {
+            }            if ($ValueDataRegex) {
+                Write-Verbose ("{0}: Checking ValueDataRegex" -f $Key.Name)                if (($Key.GetValueNames() | ForEach-Object { $Key.GetValue($_) }) -match $ValueDataRegex) {
                     Write-Verbose "  -> Match!"
                     return [PSCustomObject] @{
                         Key    = $Key
@@ -9551,53 +4674,13 @@ process {
 }
 }
 function Set-AdPhoto {
-<#PSScriptInfo
-
-.VERSION 1.1.4
-
-.GUID 5dcbac67-cebe-4cb8-bf95-8ad720c25e72
-
-.AUTHOR Jason Cook Rajeev Buggaveeti
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.4.GUID 5dcbac67-cebe-4cb8-bf95-8ad720c25e72.AUTHOR Jason Cook Rajeev Buggaveeti.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This will set Active Directory thumbnailPhoto from matching files in the specified directory.
-
-.DESCRIPTION
-This will set Active Directory thumbnailPhoto from matching files in the specified directory.
-
-.PARAMETER Path
-The directory where photos will be pulled from.
-
-.PARAMETER Users
-Array of users to run the command against. If unspesified, it will run against all files in the specified directory.
-
-.EXAMPLE
-Set-AdPhoto
-
-.LINK
+This will set Active Directory thumbnailPhoto from matching files in the specified directory..DESCRIPTION
+This will set Active Directory thumbnailPhoto from matching files in the specified directory..PARAMETER Path
+The directory where photos will be pulled from..PARAMETER Users
+Array of users to run the command against. If unspesified, it will run against all files in the specified directory..EXAMPLE
+Set-AdPhoto.LINK
 https://blogs.technet.microsoft.com/rajbugga/2017/05/16/picture-sync-from-office-365-to-ad-powershell-way/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -9606,18 +4689,12 @@ Param(
     [array]$Users = (Get-ChildItem $Path -File)
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Test-Admin -Warn -Message "You are not running this script as an administrator. It may not work as expected." | Out-null
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Test-Admin -Warn -Message "You are not running this script as an administrator. It may not work as expected." | Out-null
 foreach ($User in $Users) {
-    $count++ ; Progress -Index $count -Total $Users.count -Activity "Setting users photos." -Name [System.IO.Path]::GetFileNameWithoutExtension($User.Name)
-
-    $Account = [System.IO.Path]::GetFileNameWithoutExtension($User.Name)
+    $count++ ; Progress -Index $count -Total $Users.count -Activity "Setting users photos." -Name [System.IO.Path]::GetFileNameWithoutExtension($User.Name)    $Account = [System.IO.Path]::GetFileNameWithoutExtension($User.Name)
     $Search = [System.DirectoryServices.DirectorySearcher]([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()).GetDirectoryEntry()
     $Search.Filter = "(&(objectclass=user)(objectcategory=person)(samAccountName=$account))"
-    $Result = $Search.FindOne()
-
-    if ($null -ne $Result) {
+    $Result = $Search.FindOne()    if ($null -ne $Result) {
         If ($PSCmdlet.ShouldProcess("$Account", "Set-AdPhotos")) {
             try {
                 Write-Verbose "Setting photo for user `"$($UserResult.displayname)`""
@@ -9636,62 +4713,14 @@ foreach ($User in $Users) {
 }
 }
 function Set-ADUserPrimaryGroup {
-<#PSScriptInfo
-
-.VERSION 1.0.6
-
-.GUID 32f72580-a957-48f1-ba2e-da24f5550bb6
-
-.AUTHOR saw-friendship
-
-.COMPANYNAME 
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS ActiveDirectory AD User Primary Group Member
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
-
-.EXAMPLE
-Get-ADUser -Filter {Name -like 'u6*'} -Properties primaryGroupID,MemberOf | Set-ADUserPrimaryGroup -Group (Get-ADGroup 'Domain Users')
-
-.EXAMPLE
-Set-ADUserPrimaryGroup u676 'Domain Users'
-
-.EXAMPLE
-Set-ADUserPrimaryGroup u676,u677 'Domain Users'
-
-.EXAMPLE
-Get-ADUser u676 | Set-ADUserPrimaryGroup -Group (Get-ADGroup 'Domain Users')
-
-.EXAMPLE
-Get-ADUser -Filter {Name -like 'u6*'} | Set-ADUserPrimaryGroup -Group 'Domain Users'
-
-.DESCRIPTION
-Script for change the primary group of an AD user
-
-.LINK
-https://www.powershellgallery.com/packages/Set-ADUserPrimaryGroup/1.0.3/Content/Set-ADUserPrimaryGroup.ps1
-
-#>
-
-Param (
+<#PSScriptInfo.VERSION 1.0.6.GUID 32f72580-a957-48f1-ba2e-da24f5550bb6.AUTHOR saw-friendship.COMPANYNAME .COPYRIGHT Copyright (c) Tectic 2024.TAGS ActiveDirectory AD User Primary Group Member.LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#.EXAMPLE
+Get-ADUser -Filter {Name -like 'u6*'} -Properties primaryGroupID,MemberOf | Set-ADUserPrimaryGroup -Group (Get-ADGroup 'Domain Users').EXAMPLE
+Set-ADUserPrimaryGroup u676 'Domain Users'.EXAMPLE
+Set-ADUserPrimaryGroup u676,u677 'Domain Users'.EXAMPLE
+Get-ADUser u676 | Set-ADUserPrimaryGroup -Group (Get-ADGroup 'Domain Users').EXAMPLE
+Get-ADUser -Filter {Name -like 'u6*'} | Set-ADUserPrimaryGroup -Group 'Domain Users'.DESCRIPTION
+Script for change the primary group of an AD user.LINK
+https://www.powershellgallery.com/packages/Set-ADUserPrimaryGroup/1.0.3/Content/Set-ADUserPrimaryGroup.ps1#>Param (
     [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$User,
     [Parameter(Mandatory = $true)]$Group
 )
@@ -9701,22 +4730,14 @@ Begin {
     }
     else {
         $ADGroup = $Group | Get-ADGroup
-    }
-
-    $primaryGroupID = $ADGroup.SID -replace @('.+\-', '')
-
-}
-
-Process {
+    }    $primaryGroupID = $ADGroup.SID -replace @('.+\-', '')}Process {
     $User | ForEach-Object {
         if ($_.PropertyNames -contains 'primaryGroupID' -and $_.PropertyNames -contains 'MemberOf') {
             $ADUser = $_
         }
         else {
             $ADUser = $_ | Get-ADUser -Properties primaryGroupID, MemberOf
-        }
-
-        if ($ADUser.MemberOf -notcontains $ADGroup.DistinguishedName) {
+        }        if ($ADUser.MemberOf -notcontains $ADGroup.DistinguishedName) {
             try {
                 Add-ADGroupMember -Identity $ADGroup.DistinguishedName -Members $ADUser.SID -ErrorAction SilentlyContinue
             }
@@ -9724,77 +4745,23 @@ Process {
                 # Write-Error $Error[0]
                 exit
             }
-        }
-
-        $ADUser | Set-ADUser -Replace @{'primaryGroupID' = $primaryGroupID } -ErrorAction SilentlyContinue -PassThru | Get-ADUser -Properties primaryGroup, primaryGroupID, MemberOf
+        }        $ADUser | Set-ADUser -Replace @{'primaryGroupID' = $primaryGroupID } -ErrorAction SilentlyContinue -PassThru | Get-ADUser -Properties primaryGroup, primaryGroupID, MemberOf
     }
-}
-
-End {}
+}End {}
 }
 function Set-AzureAdPhoto {
-<#PSScriptInfo
-
-.VERSION 1.1.23
-
-.GUID 688addc9-7585-4953-b9ab-c99d55df2729
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.23.GUID 688addc9-7585-4953-b9ab-c99d55df2729.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This will upload all profile photos to Office 365.
-
-.DESCRIPTION
-This will upload all profile photos to Office 365. It will match the filename to the mailbox identity. This can be used along with Set-AdPhotos to sync photos with Active Directory.
-
-.PARAMETER Photos
-An array of photos to process. Photo names should match the user principal name, excluding the file extension.
-
-.PARAMETER TenantId
-The Azure AD tenant id. If not specified, it will try and use the current user's tennant.
-
-.PARAMETER ClientId
-When authenticating as an application, the ClientId of that application.
-
-.PARAMETER Certificate
-When authenticating as an application, the certificate used for authentication.
-
-.PARAMETER Substitute
-An array of substitutions to make in the between the file name and the user principal name. Can be used to upload for guest accounts.
-
-.PARAMETER Suffix
-The suffix to add to the end of the mailbox identity. Can be used to upload for guest accounts.
-
-.EXAMPLE
-Set-AzureAdPhoto -Path C:\Photos\
-
-.EXAMPLE
-Set-AzureAdPhoto -Path C:\Photos\ -Suffix "_fabrikam.com#EXT#@contoso.com"
-
-.LINK
+This will upload all profile photos to Office 365..DESCRIPTION
+This will upload all profile photos to Office 365. It will match the filename to the mailbox identity. This can be used along with Set-AdPhotos to sync photos with Active Directory..PARAMETER Photos
+An array of photos to process. Photo names should match the user principal name, excluding the file extension..PARAMETER TenantId
+The Azure AD tenant id. If not specified, it will try and use the current user's tennant..PARAMETER ClientId
+When authenticating as an application, the ClientId of that application..PARAMETER Certificate
+When authenticating as an application, the certificate used for authentication..PARAMETER Substitute
+An array of substitutions to make in the between the file name and the user principal name. Can be used to upload for guest accounts..PARAMETER Suffix
+The suffix to add to the end of the mailbox identity. Can be used to upload for guest accounts..EXAMPLE
+Set-AzureAdPhoto -Path C:\Photos\.EXAMPLE
+Set-AzureAdPhoto -Path C:\Photos\ -Suffix "_fabrikam.com#EXT#@contoso.com".LINK
 https://www.michev.info/Blog/Post/3908/updating-your-profile-photo-as-guest-via-the-microsoft-graph-sdk-for-powershell
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -9807,11 +4774,7 @@ Param(
     [string]$Suffix
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Requires Microsoft.Graph.Users
-
-$MgContext = Get-MgContext
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Requires Microsoft.Graph.Users$MgContext = Get-MgContext
 $ConnectMgGraph = @{}
 if ($TenantId) { $ConnectMgGraph.TenantId = $TenantId }
 if ($ClientId -and $Certificate) {
@@ -9819,31 +4782,19 @@ if ($ClientId -and $Certificate) {
     $ConnectMgGraph.Certificate = $Certificate
 }
 elseif ($ClientId -or $Certificate) { throw "You must specify both or neither -ClientId and -Certificate" }
-else { $ConnectMgGraph.Scopes = "User.ReadWrite.All" }
-
-while (($TenantId -and $MgContext.TenantId -ne $TenantId) -or $MgContext.Scopes -notcontains "User.ReadWrite.All") {
+else { $ConnectMgGraph.Scopes = "User.ReadWrite.All" }while (($TenantId -and $MgContext.TenantId -ne $TenantId) -or $MgContext.Scopes -notcontains "User.ReadWrite.All") {
     Connect-MgGraph @ConnectMgGraph | Write-Verbose
     $MgContext = Get-MgContext
-}
-
-$Photos | ForEach-Object {
-    $count++ ; Progress -Index $count -Total $Photos.count -Activity "Uploading profile photos." -Name $_.Name
-
-    Clear-Variable -ErrorAction SilentlyContinue -Name UploadError
-    Clear-Variable -ErrorAction SilentlyContinue -Name User
-
-    Write-Debug "Adding `'$Suffix`' to `$UserId"
-    $UserId = ([System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix)
-
-    If ($Substitute) {
+}$Photos | ForEach-Object {
+    $count++ ; Progress -Index $count -Total $Photos.count -Activity "Uploading profile photos." -Name $_.Name    Clear-Variable -ErrorAction SilentlyContinue -Name UploadError
+    Clear-Variable -ErrorAction SilentlyContinue -Name User    Write-Debug "Adding `'$Suffix`' to `$UserId"
+    $UserId = ([System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix)    If ($Substitute) {
         $Substitute.GetEnumerator() | ForEach-Object {
             Write-Debug "Replacing $($_.Name) with $($_.Value)"
             $UserId = $UserId -replace $_.Name, $_.Value
         }
     }
-    $User = Get-MgUser -UserId $UserId -ErrorAction SilentlyContinue
-
-    If ($PSCmdlet.ShouldProcess($User.DisplayName, "Set-MgUserPhotoContent")) {
+    $User = Get-MgUser -UserId $UserId -ErrorAction SilentlyContinue    If ($PSCmdlet.ShouldProcess($User.DisplayName, "Set-MgUserPhotoContent")) {
         if ($User.Id) {
             Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName -ErrorVariable UploadError
             return [PSCustomObject]@{
@@ -9869,71 +4820,27 @@ $Photos | ForEach-Object {
 }
 }
 function Set-ComputerName {
-<#PSScriptInfo
-
-.VERSION 1.0.10
-
-.GUID 0e319076-a254-46aa-948c-203373b9e47d
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.10.GUID 0e319076-a254-46aa-948c-203373b9e47d.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This script will rename the computer based on the prefix and serial number.
-
-.PARAMETER Prefix
-The prefix to use for the computer name.
-
-.PARAMETER Serial
-The serial nubmer to use for the computer name.
-
-.PARAMETER PrefixLenght
-The lenght of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
-
-.PARAMETER NewName
+This script will rename the computer based on the prefix and serial number..PARAMETER Prefix
+The prefix to use for the computer name..PARAMETER Serial
+The serial nubmer to use for the computer name..PARAMETER PrefixLenght
+The lenght of the prefix. This is used to truncate the prefix so the total length is less than 15 characters..PARAMETER NewName
 The new name to use for the computer.
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
 param (
     [string]$Prefix,
     [string]$User,
     [string]$Password,
     $NewName = (Get-NewComputerName -Prefix $Prefix)
-)
-
-$Arguments = @{}
+)$Arguments = @{}
 if ($NewName) { $Arguments.NewName = $NewName }
 if ($User -and $Password) {
     [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force)
     [pscredential]$DomainCredential = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
     $Arguments.DomainCredential = $DomainCredential
-}
-
-Write-Verbose "Renaming computer to `'$NewName`'"
+}Write-Verbose "Renaming computer to `'$NewName`'"
 try { return Rename-Computer @Arguments -ErrorAction Stop }
 catch [System.InvalidOperationException] {
     if ($_.FullyQualifiedErrorId -eq "NewNameIsOldName,Microsoft.PowerShell.Commands.RenameComputerCommand") {
@@ -9944,53 +4851,13 @@ catch [System.InvalidOperationException] {
 }
 }
 function Set-DefaultWallpapers {
-<#PSScriptInfo
-
-.VERSION 1.0.9
-
-.GUID 910cea1b-4c78-4282-ac1d-7a64897475ea
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.9.GUID 910cea1b-4c78-4282-ac1d-7a64897475ea.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Change the default Windows wallpaper for new users and copies wallpapers to system folder.
-
-.PARAMETER SourcePath
-The lcoation to search for images in.
-
-.PARAMETER Images
-An array of images to use. By default, this will select all *.jpg files in $SourcePath
-
-.PARAMETER Name
-The name of the folder to copy the images to. If not specified, this script will use "Defaults" and copy to $env:windir\Web\Wallpaper\$Name
-
-.PARAMETER LockScreen
-Sets the lock screen wallpaper and prevents the user from changing it.
-
-.LINK
+Change the default Windows wallpaper for new users and copies wallpapers to system folder..PARAMETER SourcePath
+The lcoation to search for images in..PARAMETER Images
+An array of images to use. By default, this will select all *.jpg files in $SourcePath.PARAMETER Name
+The name of the folder to copy the images to. If not specified, this script will use "Defaults" and copy to $env:windir\Web\Wallpaper\$Name.PARAMETER LockScreen
+Sets the lock screen wallpaper and prevents the user from changing it..LINK
 https://ccmexec.com/2015/08/replacing-default-wallpaper-in-windows-10-using-scriptmdtsccm/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -9999,28 +4866,16 @@ Param (
     $Images = (Get-ChildItem $SourcePath -Filter *.jpg),
     [string]$Name = "Defaults",
     [switch]$LockScreen
-)
-
-Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers." | Out-Null
-
-$DestinationPath = (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\$Name")
+)Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers." | Out-Null$DestinationPath = (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\$Name")
 $SystemPath = (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\Windows")
 $ResolutionPath = (Join-Path -Path $env:windir -ChildPath "Web\4K\Wallpaper\Windows")
-$DefaultImagePath = (Join-Path -Path $SystemPath -ChildPath "img0.jpg")
-
-Write-Verbose "Copying all wallpapers from $SourcePath to $DestinationPath"
+$DefaultImagePath = (Join-Path -Path $SystemPath -ChildPath "img0.jpg")Write-Verbose "Copying all wallpapers from $SourcePath to $DestinationPath"
 try { Remove-Item -Path $DestinationPath -Recurse -Force | Out-null }
-catch [System.Management.Automation.ItemNotFoundException] { Write-Verbose "$DestinationPath does not exists." }
-
-New-Item -ItemType Directory -Path $DestinationPath -ErrorAction Stop | Out-null
-
-$count = -1
+catch [System.Management.Automation.ItemNotFoundException] { Write-Verbose "$DestinationPath does not exists." }New-Item -ItemType Directory -Path $DestinationPath -ErrorAction Stop | Out-null$count = -1
 $Images | ForEach-Object {
     $count++ ; Progress -Index $count -Total $Images.count -Activity "Copying wallpapers." -Name $_.Name
     Copy-Item -Path $_.FullName -Destination (Join-Path -Path $DestinationPath -ChildPath ("img" + $count + ".jpg")) -Force
-}
-
-Write-Verbose "Removing existing wallpapers."
+}Write-Verbose "Removing existing wallpapers."
 Get-ChildItem -Path $SystemPath, $ResolutionPath -Recurse | ForEach-Object {
     Write-Verbose "Removing $($_.Name)"
     takeown /f $_.FullName
@@ -10028,25 +4883,13 @@ Get-ChildItem -Path $SystemPath, $ResolutionPath -Recurse | ForEach-Object {
     Remove-Item $_.FullName
 }
 if ($Images.Count -lt 2) { $Image = $Images[0] }
-else { $Image = $Images[(Get-Random -Minimum 0 -Maximum ($Images.Count - 1))] }
-
-Write-Verbose "Setting default wallpaper to $($Image.Name)"
-Copy-Item -Path $Image.FullName -Destination $DefaultImagePath
-
-if ($LockScreen) {
+else { $Image = $Images[(Get-Random -Minimum 0 -Maximum ($Images.Count - 1))] }Write-Verbose "Setting default wallpaper to $($Image.Name)"
+Copy-Item -Path $Image.FullName -Destination $DefaultImagePathif ($LockScreen) {
     try {
         $RegistryPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\"
-        $RegistryParent = (Split-Path -Path $RegistryPath -Parent)
-
-        if (-not (Test-Path -Path $RegistryPath)) { New-Item -Path $RegistryParent -Name (Split-Path -Path $RegistryPath -Leaf) -ItemType RegistryKey }
-
-        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImagePath)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImagePath -Value "file:///C:\Windows\Web\Wallpaper\Windows\img0.jpg" -PropertyType "String" }
-        else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImagePath -Value "C:\Windows\Web\Wallpaper\Windows\img0.jpg" -Type String }
-
-        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImageUrl)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImageUrl -Value "file:///C:\Windows\Web\Wallpaper\Windows\img0.jpg" -PropertyType "String" }
-        else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImageUrl -Value "C:\Windows\Web\Wallpaper\Windows\img0.jpg" -Type String }
-
-        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImageStatus)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImageStatus -Value 1 -PropertyType "DWord" }
+        $RegistryParent = (Split-Path -Path $RegistryPath -Parent)        if (-not (Test-Path -Path $RegistryPath)) { New-Item -Path $RegistryParent -Name (Split-Path -Path $RegistryPath -Leaf) -ItemType RegistryKey }        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImagePath)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImagePath -Value "file:///C:\Windows\Web\Wallpaper\Windows\img0.jpg" -PropertyType "String" }
+        else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImagePath -Value "C:\Windows\Web\Wallpaper\Windows\img0.jpg" -Type String }        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImageUrl)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImageUrl -Value "file:///C:\Windows\Web\Wallpaper\Windows\img0.jpg" -PropertyType "String" }
+        else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImageUrl -Value "C:\Windows\Web\Wallpaper\Windows\img0.jpg" -Type String }        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImageStatus)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImageStatus -Value 1 -PropertyType "DWord" }
         else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImageStatus -Value 1 -Type DWord }
     }
     catch {
@@ -10056,50 +4899,12 @@ if ($LockScreen) {
 }
 }
 function Set-ExchangePhoto {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 0887fff3-2d78-4028-8440-92c1196c6891
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 0887fff3-2d78-4028-8440-92c1196c6891.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This will upload all profile photos to Office 365.
-
-.DESCRIPTION
-This will upload all profile photos to Office 365. It will match the filename to the mailbox identity. This can be used along with Set-AdPhotos to sync photos with Active Directory.
-
-.PARAMETER Suffix
-The suffix to add to the end of the mailbox identity. Can be used to upload for guest accounts.
-
-.EXAMPLE
-Set-ExchangePhoto -Path C:\Photos\
-
-.EXAMPLE
+This will upload all profile photos to Office 365..DESCRIPTION
+This will upload all profile photos to Office 365. It will match the filename to the mailbox identity. This can be used along with Set-AdPhotos to sync photos with Active Directory..PARAMETER Suffix
+The suffix to add to the end of the mailbox identity. Can be used to upload for guest accounts..EXAMPLE
+Set-ExchangePhoto -Path C:\Photos\.EXAMPLE
 Set-ExchangePhoto -Path C:\Photos\ -Suffix "_fabrikam.com#EXT#@contoso.com"
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -10108,13 +4913,7 @@ Param(
     [string]$Suffix
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Requires ExchangeOnlineManagement
-
-if (!(Get-ExchangeOnlineConnection)) { Connect-ExchangeOnline }
-
-Get-ChildItem $Path | ForEach-Object {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Requires ExchangeOnlineManagementif (!(Get-ExchangeOnlineConnection)) { Connect-ExchangeOnline }Get-ChildItem $Path | ForEach-Object {
     $User = [System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix
     If ($PSCmdlet.ShouldProcess($User, "Set-UserPhoto")) {
         return Set-UserPhoto -Identity $User -PictureData ([System.IO.File]::ReadAllBytes($_.FullName)) -Confirm:$false
@@ -10122,86 +4921,26 @@ Get-ChildItem $Path | ForEach-Object {
 }
 }
 function Set-Owner {
-<#PSScriptInfo
-
-.VERSION 1.1.3
-
-.GUID fb1d15b5-4681-4f99-90d6-1fd44ed4219b
-
-.AUTHOR Jason Cook Boe Prox
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.1.3.GUID fb1d15b5-4681-4f99-90d6-1fd44ed4219b.AUTHOR Jason Cook Boe Prox.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-    Changes owner of a file or folder to another user or group.
-
-.DESCRIPTION
-    Changes owner of a file or folder to another user or group.
-
-.PARAMETER Path
-    The folder or file that will have the owner changed.
-
-.PARAMETER Account
-    Optional parameter to change owner of a file or folder to specified account.
-
-    Default value is 'Builtin\Administrators'
-
-.PARAMETER Recurse
-    Recursively set ownership on subfolders and files beneath given folder.
-
-.EXAMPLE
-    Set-Owner -Path C:\temp\test.txt
-
-    Description
+    Changes owner of a file or folder to another user or group..DESCRIPTION
+    Changes owner of a file or folder to another user or group..PARAMETER Path
+    The folder or file that will have the owner changed..PARAMETER Account
+    Optional parameter to change owner of a file or folder to specified account.    Default value is 'Builtin\Administrators'.PARAMETER Recurse
+    Recursively set ownership on subfolders and files beneath given folder..EXAMPLE
+    Set-Owner -Path C:\temp\test.txt    Description
     -----------
-    Changes the owner of test.txt to Builtin\Administrators
-
-.EXAMPLE
-    Set-Owner -Path C:\temp\test.txt -Account 'Domain\bprox
-
-    Description
+    Changes the owner of test.txt to Builtin\Administrators.EXAMPLE
+    Set-Owner -Path C:\temp\test.txt -Account 'Domain\bprox    Description
     -----------
-    Changes the owner of test.txt to Domain\bprox
-
-.EXAMPLE
-    Set-Owner -Path C:\temp -Recurse
-
-    Description
+    Changes the owner of test.txt to Domain\bprox.EXAMPLE
+    Set-Owner -Path C:\temp -Recurse    Description
     -----------
-    Changes the owner of all files and folders under C:\Temp to Builtin\Administrators
-
-.EXAMPLE
-    Get-ChildItem C:\Temp | Set-Owner -Recurse -Account 'Domain\bprox'
-
-    Description
+    Changes the owner of all files and folders under C:\Temp to Builtin\Administrators.EXAMPLE
+    Get-ChildItem C:\Temp | Set-Owner -Recurse -Account 'Domain\bprox'    Description
     -----------
-    Changes the owner of all files and folders under C:\Temp to Domain\bprox
-
-.LINK
-https://learn-powershell.net/2014/06/24/changing-ownership-of-file-or-folder-using-powershell/
-
-.LINK
+    Changes the owner of all files and folders under C:\Temp to Domain\bprox.LINK
+https://learn-powershell.net/2014/06/24/changing-ownership-of-file-or-folder-using-powershell/.LINK
 http://gallery.technet.microsoft.com/scriptcenter/Set-Owner-ff4db177
     #>
 [cmdletbinding(
@@ -10227,9 +4966,7 @@ Begin {
     Catch {
         $AdjustTokenPrivileges = @"
             using System;
-            using System.Runtime.InteropServices;
-
-             public class TokenAdjuster
+            using System.Runtime.InteropServices;             public class TokenAdjuster
              {
               [DllImport("advapi32.dll", ExactSpelling = true, SetLastError = true)]
               internal static extern bool AdjustTokenPrivileges(IntPtr htok, bool disall,
@@ -10298,9 +5035,7 @@ Begin {
              }
 "@
         Add-Type $AdjustTokenPrivileges
-    }
-
-    #Activate necessary admin privileges to make changes without NTFS perms
+    }    #Activate necessary admin privileges to make changes without NTFS perms
     [void][TokenAdjuster]::AddPrivilege("SeRestorePrivilege") #Necessary to set Owner Permissions
     [void][TokenAdjuster]::AddPrivilege("SeBackupPrivilege") #Necessary to bypass Traverse Checking
     [void][TokenAdjuster]::AddPrivilege("SeTakeOwnershipPrivilege") #Necessary to override FilePermissions
@@ -10362,147 +5097,51 @@ End {
 }
 }
 function Set-RoomCalendarPermissions {
-<#PSScriptInfo
-
-.VERSION 1.0.6
-
-.GUID 9d477618-5530-413c-bdf8-3ddf1580dbfa
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.6.GUID 9d477618-5530-413c-bdf8-3ddf1580dbfa.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Makes Availability information available to all users.
-
-.PARAMETER User
-What user should the permissions be set for. If not specified, the DEFAULT user is used.
-
-.PARAMETER AccessRight
+Makes Availability information available to all users..PARAMETER User
+What user should the permissions be set for. If not specified, the DEFAULT user is used..PARAMETER AccessRight
 The access right to set. By default, the access right is set to LimitedDetails.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     $User = "Default",
     $AccessRights = "LimitedDetails"
-)
-
-Get-Mailbox -RecipientTypeDetails RoomMailbox | ForEach-Object {
+)Get-Mailbox -RecipientTypeDetails RoomMailbox | ForEach-Object {
     If ($PSCmdlet.ShouldProcess("$_", "Set-RoomCalendarPermissions")) {
         Set-MailboxFolderPermission -Identity $($_.Identity + ":\Calendar") -User $User -AccessRights $AccessRights
     }
 }
 }
 function Set-Wallpaper {
-<#PSScriptInfo
-
-.VERSION 1.0.7
-
-.GUID 5367e6e7-1177-4f3f-a345-1633446ad628
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.7.GUID 5367e6e7-1177-4f3f-a345-1633446ad628.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Change the default Windows wallpaper for new users and copies wallpapers to system folder.
-
-.PARAMETER SourcePath
-The lcoation to search for images in.
-
-.PARAMETER Images
-An array of images to use. By default, this will select all *.jpg files in $SourcePath
-
-.PARAMETER Name
-The name of the folder to copy the images to. If not specified, this script will use "Defaults" and copy to $env:windir\Web\Wallpaper\$Name
-
-.LINK
+Change the default Windows wallpaper for new users and copies wallpapers to system folder..PARAMETER SourcePath
+The lcoation to search for images in..PARAMETER Images
+An array of images to use. By default, this will select all *.jpg files in $SourcePath.PARAMETER Name
+The name of the folder to copy the images to. If not specified, this script will use "Defaults" and copy to $env:windir\Web\Wallpaper\$Name.LINK
 https://ccmexec.com/2015/08/replacing-default-wallpaper-in-windows-10-using-scriptmdtsccm/
-#><#
-
-.DESCRIPTION
-Applies a specified wallpaper to the current user's desktop.
-
-.PARAMETER Image
-Provide the exact path to the image. If unspecified, it will use the default system wallpaper from $env:windir\Web\Wallpaper\Windows
-
-.PARAMETER Style
-Provide wallpaper style (Example: Fill, Fit, Stretch, Tile, Center, or Span). Default is Fit.
-
-.EXAMPLE
+#><#.DESCRIPTION
+Applies a specified wallpaper to the current user's desktop..PARAMETER Image
+Provide the exact path to the image. If unspecified, it will use the default system wallpaper from $env:windir\Web\Wallpaper\Windows.PARAMETER Style
+Provide wallpaper style (Example: Fill, Fit, Stretch, Tile, Center, or Span). Default is Fit..EXAMPLE
 Set-WallPaper -Image "C:\Wallpaper\Default.jpg"
-Set-WallPaper -Image "C:\Wallpaper\Background.jpg" -Style Fit
-
-.LINK
-https://www.joseespitia.com/2017/09/15/set-wallpaper-powershell-function/
-
-#>
-
-param (
+Set-WallPaper -Image "C:\Wallpaper\Background.jpg" -Style Fit.LINK
+https://www.joseespitia.com/2017/09/15/set-wallpaper-powershell-function/#>param (
     [ValidateScript({ Test-Path $_ })][string]$Image = ((Get-ChildItem -Path (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\Windows"))[0].FullName),
     [ValidateSet('Fill', 'Fit', 'Stretch', 'Tile', 'Center', 'Span')][string]$Style = "Fit"
-)
-
-$WallpaperStyle = Switch ($Style) {
+)$WallpaperStyle = Switch ($Style) {
     "Fill" { "10" }
     "Fit" { "6" }
     "Stretch" { "2" }
     "Tile" { "0" }
     "Center" { "0" }
     "Span" { "22" }
-}
-
-New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -PropertyType String -Value $WallpaperStyle -Force
+}New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -PropertyType String -Value $WallpaperStyle -Force
 If ($Style -eq "Tile") { New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 1 -Force }
-Else { New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 0 -Force }
-
-Add-Type -TypeDefinition @"
+Else { New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name TileWallpaper -PropertyType String -Value 0 -Force }Add-Type -TypeDefinition @"
 using System;
-using System.Runtime.InteropServices;
-
-public class Params
+using System.Runtime.InteropServices;public class Params
 {
 [DllImport("User32.dll",CharSet=CharSet.Unicode)]
 public static extern int SystemParametersInfo (Int32 uAction,
@@ -10510,66 +5149,20 @@ Int32 uParam,
 String lpvParam,
 Int32 fuWinIni);
 }
-"@
-
-$SPI_SETDESKWALLPAPER = 0x0014
+"@$SPI_SETDESKWALLPAPER = 0x0014
 $UpdateIniFile = 0x01
-$SendChangeEvent = 0x02
-
-$fWinIni = $UpdateIniFile -bor $SendChangeEvent
-
-return [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni)
+$SendChangeEvent = 0x02$fWinIni = $UpdateIniFile -bor $SendChangeEventreturn [Params]::SystemParametersInfo($SPI_SETDESKWALLPAPER, 0, $Image, $fWinIni)
 }
 function Set-WindowsAccountAvatar {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID 240b7f82-8102-45be-9080-2cf28a7c5b3d
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID 240b7f82-8102-45be-9080-2cf28a7c5b3d.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Sets windows account avatar from data in Active Directory.
-
-.LINK
-http://woshub.com/how-to-set-windows-user-account-picture-from-active-directory/#h2_2
-
-.LINK
+Sets windows account avatar from data in Active Directory..LINK
+http://woshub.com/how-to-set-windows-user-account-picture-from-active-directory/#h2_2.LINK
 https://www.codetwo.com/admins-blog/use-active-directory-user-photos-windows-10/
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]Param()
-function Test-Null($InputObject) { return !([bool]$InputObject) }
-
-$ADuser = ([ADSISearcher]"(&(objectCategory=User)(SAMAccountName=$env:username))").FindOne().Properties
+#>[CmdletBinding(SupportsShouldProcess = $true)]Param()
+function Test-Null($InputObject) { return !([bool]$InputObject) }$ADuser = ([ADSISearcher]"(&(objectCategory=User)(SAMAccountName=$env:username))").FindOne().Properties
 $ADuser_photo = $ADuser.thumbnailphoto
-$ADuser_sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value
-
-If ((Test-Null $ADuser_photo) -eq $false) {
+$ADuser_sid = [System.Security.Principal.WindowsIdentity]::GetCurrent().User.ValueIf ((Test-Null $ADuser_photo) -eq $false) {
   $img_sizes = @(32, 40, 48, 96, 192, 200, 240, 448)
   $img_mask = "Image{0}.jpg"
   $img_base = "C:\Users\Public\AccountPictures"
@@ -10593,54 +5186,16 @@ If ((Test-Null $ADuser_photo) -eq $false) {
 }
 }
 function Show-BitlockerEncryptionStatus {
-<#PSScriptInfo
-
-.VERSION 1.0.7
-
-.GUID 85c8702c-7117-4050-8629-51fc36de0cd8
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.7.GUID 85c8702c-7117-4050-8629-51fc36de0cd8.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Show BitLocker encryption status on a loop. Used to monitor encryption progress.
-
-.PARAMETER Sleep
+Show BitLocker encryption status on a loop. Used to monitor encryption progress..PARAMETER Sleep
 The lenght of time to sleep between checks.
 #>
 param(
     [ValidateRange(0, [Int32]::MaxValue)][Int32]$Sleep = 5
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-Test-Admin -Throw | Out-Null
-
-Get-BitLockerVolume
-
-while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }Test-Admin -Throw | Out-NullGet-BitLockerVolumewhile (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
     $Result = Get-BitLockerVolume  | Where-Object { $_.VolumeStatus -ne "FullyEncrypted" -and $_.VolumeStatus -ne "FullyDecrypted" } | Format-Table
     Clear-Host
     (Get-Date).DateTime
@@ -10649,53 +5204,13 @@ while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
 }
 }
 function Start-KioskApp {
-<#PSScriptInfo
-
-.VERSION 1.0.6
-
-.GUID fb250771-93be-4da0-a4ec-edad2ccf7476
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.6.GUID fb250771-93be-4da0-a4ec-edad2ccf7476.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This will run a kiosk app.
-
-.DESCRIPTION
-This will run a kiosk app. Primarily, this is used to launch a web brower however can be used to launch any application. It will periodically check if the app is running and restart if it has been closed.
-
-.PARAMETER Path
-The location of the program to run.
-
-.PARAMETER Url
-The url to open. By default, this it designed to launch a web browser.
-
-.PARAMETER Arguments
-The argumnets to be passed to the program.
-
-.PARAMETER Sleep
+This will run a kiosk app..DESCRIPTION
+This will run a kiosk app. Primarily, this is used to launch a web brower however can be used to launch any application. It will periodically check if the app is running and restart if it has been closed..PARAMETER Path
+The location of the program to run..PARAMETER Url
+The url to open. By default, this it designed to launch a web browser..PARAMETER Arguments
+The argumnets to be passed to the program..PARAMETER Sleep
 How long to sleep before checking that the app is running.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -10703,11 +5218,7 @@ param (
   [ValidateScript({ Test-Path $_ -PathType Leaf })][string]$Path = ${env:ProgramFiles(x86)} + "\Microsoft\Edge\Application\msedge.exe", #"\Google\Chrome\Application\chrome.exe",
   [string]$Url,
   [array]$Arguments = "--kiosk $($Url)",
-  [ValidateRange(1, [int]::MaxValue)][int]$Sleep = 5
-
-)
-
-If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
+  [ValidateRange(1, [int]::MaxValue)][int]$Sleep = 5)If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
   while ($true) {
     If (-Not (Get-Process | Select-Object Path | Where-Object Path -eq $Path)) { Start-Process -FilePath $Path -ArgumentList $Arguments }
     Start-Sleep -Seconds $Sleep
@@ -10715,57 +5226,17 @@ If ($PSCmdlet.ShouldProcess("$Path", "Starting kiosk app.")) {
 }
 }
 function Start-PaperCutClient {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 090b7063-ddf4-4e5f-91ab-24127dec0d57
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 090b7063-ddf4-4e5f-91ab-24127dec0d57.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will run the PaperCut client.
-
-.DESCRIPTION
-This script will run the PaperCut client. It will first check the network location and fall back to the local cache is that fails.
-
-.PARAMETER SearchLocations
-Specifies the folders to search for the client in.
-
-.EXAMPLE
-Start-PaperCutClient
-
-.EXAMPLE
+This script will run the PaperCut client..DESCRIPTION
+This script will run the PaperCut client. It will first check the network location and fall back to the local cache is that fails..PARAMETER SearchLocations
+Specifies the folders to search for the client in..EXAMPLE
+Start-PaperCutClient.EXAMPLE
 Start-PaperCutClient -SearchLocations "\\print\PCClient\win","C:\Cache"
 #>
 param (
   [string[]]$SearchLocations = @("\\print\PCClient\win", "C:\Cache")
-)
-
-$SearchLocations | ForEach-Object {
+)$SearchLocations | ForEach-Object {
   Write-Verbose "Searching in $_"
   $NetworkPath = $_ + "\pc-client-local-cache.exe"
   If (Test-Path -PathType Leaf -Path $NetworkPath) {
@@ -10783,116 +5254,38 @@ $SearchLocations | ForEach-Object {
 }
 }
 function Start-WindowsActivation {
-<#PSScriptInfo
-
-.VERSION 1.0.6
-
-.GUID 625c264b-e5ec-4c6a-8478-39ec90518250
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.6.GUID 625c264b-e5ec-4c6a-8478-39ec90518250.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Activate windows using the spesified key, or fall back to the key in the BIOS.
-#>
-
-param (
+#>param (
     [string]$ProductKey
-)
-
-Function ActivationStatus { return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" |  Where-Object { $_.PartialProductKey })[0].LicenseStatus }
+)Function ActivationStatus { return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" |  Where-Object { $_.PartialProductKey })[0].LicenseStatus }
 function ActivateWindows {
     param ([Parameter(ValueFromPipeline = $true)][ValidatePattern('^([A-Z0-9]{5}-){4}[A-Z0-9]{5}$')][string]$ProductKey)
     $Service = Get-WmiObject -query "select * from SoftwareLicensingService"
     $Service.InstallProductKey($ProductKey)
     $Service.RefreshLicenseStatus()
     return ActivationStatus
-}
-
-$Status = ActivationStatus | Out-Null
-if ($Status -eq 1) { return "Windows is already activated." }
-
-if ($ProductKey) {
+}$Status = ActivationStatus | Out-Null
+if ($Status -eq 1) { return "Windows is already activated." }if ($ProductKey) {
     ActivateWindows $ProductKey
     $Status = ActivationStatus | Out-Null
     if ($Status -eq 1) { return "Windows was activated using the specified key." }
     Write-Error "Windows could not be activated using the specified key."
-}
-
-$BiosProductKey = (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey
+}$BiosProductKey = (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey
 if ($BiosProductKey) {
     ActivateWindows $BiosProductKey | Out-Null
     $Status = ActivationStatus | Out-Null
     if ($Status -eq 1) { return "Windows was activated using the BIOS key." }
     Write-Error "Windows could not be activated BIOS key."
-}
-
-Write-Error "Windows could not be activated."
+}Write-Error "Windows could not be activated."
 }
 function Stop-ForKey {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID 9b9dfb07-a7ea-4afd-94ab-74a5bf2ee340
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID 9b9dfb07-a7ea-4afd-94ab-74a5bf2ee340.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This will break if the spesified key it press. Otherwise, it will continue.
-
-.DESCRIPTION
-This script will run the PaperCut client. It will first check the network location and fall back to the local cache is that fails.
-
-.PARAMETER Key
-The key that this will listen for.
-
-.EXAMPLE
+This will break if the spesified key it press. Otherwise, it will continue..DESCRIPTION
+This script will run the PaperCut client. It will first check the network location and fall back to the local cache is that fails..PARAMETER Key
+The key that this will listen for..EXAMPLE
 Stop-ForKey -Key q
 Press q to abort, any other key to continue.: q
 #>
@@ -10903,109 +5296,53 @@ $Response = Read-Host "Press $Key to abort, any other key to continue."
 If ($Response -eq $Key) { Break }
 }
 function Sync-MailContacts {
-<#PSScriptInfo
-
-.VERSION 1.0.8
-
-.GUID 6da14011-187b-4176-a61b-16836f8a0ad7
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.8.GUID 6da14011-187b-4176-a61b-16836f8a0ad7.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 This script will sync users from one AD domain to another as Contacts.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [string]$SourceDomain,
-    [string]$SourceSearchBase,
-
-    [string]$DestinationDomain,
+    [string]$SourceSearchBase,    [string]$DestinationDomain,
     [string]$DestinationOU,
-    [string]$DestinationGroup,
-
-    $WhereObject = { $null -ne $_.mail -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },
-
-    [array]$SourceProperties = ("displayName", "givenName", "sn", "initials", "mail", "SamAccountName", "description", "wWWHomePage", "title", "department", "company", "manager", "telephoneNumber", "mobile", "facsimileTelephoneNumber", "homePhone", "pager", "physicalDeliveryOfficeName", "streetAddress", "l", "st", "postalCode", "co", "info", "enabled", "msExchHideFromAddressLists"),
+    [string]$DestinationGroup,    $WhereObject = { $null -ne $_.mail -and $_.Enabled -ne $false -and $_.msExchHideFromAddressLists -ne $true },    [array]$SourceProperties = ("displayName", "givenName", "sn", "initials", "mail", "SamAccountName", "description", "wWWHomePage", "title", "department", "company", "manager", "telephoneNumber", "mobile", "facsimileTelephoneNumber", "homePhone", "pager", "physicalDeliveryOfficeName", "streetAddress", "l", "st", "postalCode", "co", "info", "enabled", "msExchHideFromAddressLists"),
     [string]$SourceFilter = "*",
     [string]$DestinationFilter = "*"
-)
-
-$Source = @{}
+)$Source = @{}
 if ($SourceSearchBase) { $Source.SearchBase = $SourceSearchBase }
 if ($SourceDomain) { $Source.Server = $SourceDomain }
 if ($SourceFilter) { $Source.Filter = $SourceFilter }
-if ($SourceProperties) { $Source.Properties = $SourceProperties }
-
-if ($DestinationGroup) {
+if ($SourceProperties) { $Source.Properties = $SourceProperties }if ($DestinationGroup) {
     $GroupMembers = (Get-ADGroup -Identity $DestinationGroup -Properties Members).Members
     $GroupMembers | ForEach-Object {
         $i++ ; Progress -Index $i -Total $GroupMembers.count -Activity "Removing all members from $DestinationGroup." -Status "$_"
         Get-ADGroup $DestinationGroup -Server $DestinationDomain | Set-ADObject -Server $DestinationDomain -Remove @{'member' = $_ }
     }
     $i = 0
-}
-
-$SyncedUsers = Get-ADUser @Source | Where-Object $WhereObject
+}$SyncedUsers = Get-ADUser @Source | Where-Object $WhereObject
 $SyncedUsers | ForEach-Object {
     $i++ ; Progress -Index $i -Total $SyncedUsers.count -Activity "Syncing users from $SourceSearchBase to $DestinationOU" -Status "$_"
     $Properties = @{}
     if ($_.displayName) { $Properties.displayName = $_.DisplayName }
     if ($_.givenName) { $Properties.givenName = $_.GivenName }
     if ($_.sn) { $Properties.sn = $_.Surname }
-    if ($_.initials) { $Properties.initials = $_.Initials }
-
-    if ($_.mail) { $Properties.mail = $_.mail }
-    # if ($_.SamAccountName) {$Properties.mailNickname = $_.SamAccountName}
-
-    if ($_.description) { $Properties.description = $_.Description }
-    if ($_.wWWHomePage) { $Properties.wWWHomePage = $_.wWWHomePage }
-
-    if ($_.title) { $Properties.title = $_.Title }
+    if ($_.initials) { $Properties.initials = $_.Initials }    if ($_.mail) { $Properties.mail = $_.mail }
+    # if ($_.SamAccountName) {$Properties.mailNickname = $_.SamAccountName}    if ($_.description) { $Properties.description = $_.Description }
+    if ($_.wWWHomePage) { $Properties.wWWHomePage = $_.wWWHomePage }    if ($_.title) { $Properties.title = $_.Title }
     if ($_.department) { $Properties.department = $_.Department }
     if ($_.company) { $Properties.company = $_.Company }
-    # if ($_.manager) { $Properties.manager = $_.Manager }
-
-    if ($_.telephoneNumber) { $Properties.telephoneNumber = $_.TelephoneNumber }
+    # if ($_.manager) { $Properties.manager = $_.Manager }    if ($_.telephoneNumber) { $Properties.telephoneNumber = $_.TelephoneNumber }
     if ($_.mobile) { $Properties.mobile = $_.mobile }
     if ($_.facsimileTelephoneNumber) { $Properties.facsimileTelephoneNumber = $_.Fax }
     if ($_.homePhone) { $Properties.homePhone = $_.HomePhone }
-    if ($_.pager) { $Properties.pager = $_.Pager }
-
-    if ($_.physicalDeliveryOfficeName) { $Properties.physicalDeliveryOfficeName = $_.physicalDeliveryOfficeName }
+    if ($_.pager) { $Properties.pager = $_.Pager }    if ($_.physicalDeliveryOfficeName) { $Properties.physicalDeliveryOfficeName = $_.physicalDeliveryOfficeName }
     if ($_.streetAddress) { $Properties.streetAddress = $_.StreetAddress }
     if ($_.l) { $Properties.l = $_.City }
     if ($_.st) { $Properties.st = $_.State }
     if ($_.postalCode) { $Properties.postalCode = $_.PostalCode }
     if ($_.co) { $Properties.co = $_.Country }
-    if ($_.info) { $Properties.info = $_.Notes }
-
-    $ObjectPath = ( "CN=" + $_.DisplayName + ',' + $DestinationOU )
-    $DisplayName = $_.DisplayName
-
-    # Write-Verbose command occurs after the user is created to prevent logging when an error occurs.
+    if ($_.info) { $Properties.info = $_.Notes }    $ObjectPath = ( "CN=" + $_.DisplayName + ',' + $DestinationOU )
+    $DisplayName = $_.DisplayName    # Write-Verbose command occurs after the user is created to prevent logging when an error occurs.
     try {
         New-ADObject -Type "contact" -Name $_.DisplayName -Server $DestinationDomain -Path $DestinationOU -OtherAttributes $Properties
         Write-Verbose "Created contact for $DisplayName in $DestinationOU"
@@ -11019,164 +5356,58 @@ $SyncedUsers | ForEach-Object {
             Write-Warning "Failed to update $DisplayName in $DestinationOU"
             Write-Error $_
         }
-    }
-
-    if ($DestinationGroup) {
+    }    if ($DestinationGroup) {
         Write-Verbose "Adding $($_.DisplayName) to $DestinationGroup"
         Set-ADGroup -Identity $DestinationGroup -Server $DestinationDomain -Add @{'member' = ("cn=" + $_.DisplayName + "," + $DestinationOU) }
     }
 }
 }
 function Sync-Nps {
-<#PSScriptInfo
-
-.VERSION 1.0.12
-
-.GUID 6e7a4d29-1b73-490f-91aa-fc074a886716
-
-.AUTHOR Joseph Moody & Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.12.GUID 6e7a4d29-1b73-490f-91aa-fc074a886716.AUTHOR Joseph Moody & Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Network Policy Server Synchronization Script
 This script copies the configuration from the NPS Master Server and imports it on this server.
 The Account that this script runs under must have Local Administrator rights to the NPS Master.
 This was designed to be run as a scheduled task on the NPS Secondary Servers on an hourly,daily, or as-needed basis.
-Last Modified 01 Dec 2009 by JGrote <jgrote AT enpointe NOSPAM-DOTCOM>
-
-.PARAMETER Source
-Your Primary Network Policy Server you want to copy the config from.
-
-.PARAMETER Path
-A temporary location to store the XML config. Use a UNC path so that the primary can save the XML file across the network. Be sure to set secure permissions on this folder, as the configuration including pre-shared keys is temporarily stored here during the import process.
-
-.LINK
-https://deployhappiness.com/two-network-policy-server-tricks-subnets-and-syncing/
-
-.LINK
-https://gist.github.com/Jamesits/6c742087bca908327d51ad1b3bbed5dc
-
-.LINK
-http://directoryadmin.blogspot.com/2018/04/syncing-nps-settings-between-two-servers.html
-
-#>
+Last Modified 01 Dec 2009 by JGrote <jgrote AT enpointe NOSPAM-DOTCOM>.PARAMETER Source
+Your Primary Network Policy Server you want to copy the config from..PARAMETER Path
+A temporary location to store the XML config. Use a UNC path so that the primary can save the XML file across the network. Be sure to set secure permissions on this folder, as the configuration including pre-shared keys is temporarily stored here during the import process..LINK
+https://deployhappiness.com/two-network-policy-server-tricks-subnets-and-syncing/.LINK
+https://gist.github.com/Jamesits/6c742087bca908327d51ad1b3bbed5dc.LINK
+http://directoryadmin.blogspot.com/2018/04/syncing-nps-settings-between-two-servers.html#>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
     [Parameter(Mandatory = $true)]$Source,
     $Path = "\\$Source\C$\NPSConfig-$Source.xml"
-)
-
-$ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
-
-Write-Debug "Write an error and exit the script if an exception is ever thrown"
+)$ErrorActionPreference = [System.Management.Automation.ActionPreference]::StopWrite-Debug "Write an error and exit the script if an exception is ever thrown"
 trap {
     Write-EventLog -LogName "System" -eventID 1 -Source "NPS-Sync" -EntryType "Error" -Message "An Error occured during NPS Sync: $_. Script run from $($MyInvocation.MyCommand.Definition)"
     $_
     exit
-}
-
-Write-Debug "Create an NPS Sync Event Source if it doesn't already exist"
-if (-not [System.Diagnostics.EventLog]::SourceExists("NPS-Sync")) { New-Eventlog -LogName "System" -Source "NPS-Sync" }
-
-If ($PSCmdlet.ShouldProcess("$Source", "Export NPS Config")) {
+}Write-Debug "Create an NPS Sync Event Source if it doesn't already exist"
+if (-not [System.Diagnostics.EventLog]::SourceExists("NPS-Sync")) { New-Eventlog -LogName "System" -Source "NPS-Sync" }If ($PSCmdlet.ShouldProcess("$Source", "Export NPS Config")) {
     Write-Debug "Connect to NPS Master and export configuration"
     $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -ScriptBlock { param ($Path) netsh nps export filename = $Path exportPSK = yes }
     Write-Debug "Verify that the import XML file was created. If it is not there, it will throw an exception caught by the trap above that will exit the script."
     Get-Item $Path -ErrorAction Stop | Out-Null
-}
-
-If ($PSCmdlet.ShouldProcess("$Source", "Reset NPS Config")) {
+}If ($PSCmdlet.ShouldProcess("$Source", "Reset NPS Config")) {
     Write-Debug "Clear existing configuration and import new NPS config"
     netsh nps reset config | Out-Null
-}
-
-If ($PSCmdlet.ShouldProcess("$Source", "Import NPS Config")) {
+}If ($PSCmdlet.ShouldProcess("$Source", "Import NPS Config")) {
     Get-Item -Path $Path -ErrorAction Stop
     netsh nps import filename = $Path | Out-Null
     Write-Debug "Delete Temporary File"
-    Remove-Item -path $Path
-
-    Write-Debug "Compose and Write Success Event"
-    Write-EventLog -LogName "System" -eventID 1 -Source "NPS-Sync" -EntryType "Information" -Message "Network Policy Server configuration successfully synchronized from $Source.
-
-Export Results: $ExportResult
-
-Import Results: $ImportResult
-
-Script was run from $($MyInvocation.MyCommand.Definition)"
-
-}
+    Remove-Item -path $Path    Write-Debug "Compose and Write Success Event"
+    Write-EventLog -LogName "System" -eventID 1 -Source "NPS-Sync" -EntryType "Information" -Message "Network Policy Server configuration successfully synchronized from $Source.Export Results: $ExportResultImport Results: $ImportResultScript was run from $($MyInvocation.MyCommand.Definition)"}
 }
 function Test-Admin {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID d96e4855-2468-4294-8475-4b954ad009dd
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID d96e4855-2468-4294-8475-4b954ad009dd.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This will test is the we are running as an addministrator.
-
-.DESCRIPTION
-This will test is the we are running as an addministrator. If will return True or False.
-
-.PARAMETER Message
-The message that will be shown to the user. The message is only shown when -Warn or -Throw are specified.
-
-.PARAMETER Warn
-The script will present a waiting if not running as an admin.
-
-.PARAMETER Thow
-The script will throw if not running as an admin.
-
-.EXAMPLE
+This will test is the we are running as an addministrator..DESCRIPTION
+This will test is the we are running as an addministrator. If will return True or False..PARAMETER Message
+The message that will be shown to the user. The message is only shown when -Warn or -Throw are specified..PARAMETER Warn
+The script will present a waiting if not running as an admin..PARAMETER Thow
+The script will throw if not running as an admin..EXAMPLE
 Test-Admin
 False
 #>
@@ -11184,9 +5415,7 @@ param (
   [string]$Message = "You do not have Administrator rights to run this script!`nPlease re-run this script as an Administrator!",
   [switch]$Warn,
   [switch]$Throw
-)
-
-If (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { return $true }
+)If (([Security.Principal.WindowsPrincipal] [Security.Principal.WindowsIdentity]::GetCurrent()).IsInRole([Security.Principal.WindowsBuiltInRole] "Administrator")) { return $true }
 else {
   If ($Warn) { Write-Warning $Message }
   If ($Throw) { Throw $Message }
@@ -11194,73 +5423,27 @@ else {
 }
 }
 function Test-CVE202134470 {
-<#PSScriptInfo
-
-.VERSION 22.11.13
-
-.GUID 83ac6137-696a-496a-a746-0372e8a20797
-
-.AUTHOR Microsoft Corporation
-
-.COMPANYNAME Microsoft Corporation
-
-.COPYRIGHT Copyright (c) Microsoft Corporation
-
-.TAGS 
-
-.LICENSEURI https://opensource.org/license/mit/
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 22.11.13.GUID 83ac6137-696a-496a-a746-0372e8a20797.AUTHOR Microsoft Corporation.COMPANYNAME Microsoft Corporation.COPYRIGHT Copyright (c) Microsoft Corporation.TAGS .LICENSEURI https://opensource.org/license/mit/.PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-    Test for and addresses CVE-2021-34470.
-
-.DESCRIPTION
+    Test for and addresses CVE-2021-34470..DESCRIPTION
     Environments running supported versions of Exchange Server should address
     CVE-2021-34470 by applying the CU and/or SU for the respective versions of
     Exchange, as described in
-    https://techcommunity.microsoft.com/t5/exchange-team-blog/released-july-2021-exchange-server-security-updates/ba-p/2523421.
-
-    Environments where the latest version of Exchange Server is any version before
+    https://techcommunity.microsoft.com/t5/exchange-team-blog/released-july-2021-exchange-server-security-updates/ba-p/2523421.    Environments where the latest version of Exchange Server is any version before
     Exchange 2013, or environments where all Exchange servers have been removed, can
-    use this script to address the vulnerability.
-
-.EXAMPLE
+    use this script to address the vulnerability..EXAMPLE
     PS> .\Test-CVE-2021-34470.ps1
     Reports whether the vulnerability is present.
 .EXAMPLE
     PS> .\Test-CVE-2021-34470.ps1 -ApplyFix
-    Fixes the vulnerability if found. Note that this syntax requires Schema Admin.
-
-<#
-MIT License
-
-Copyright (c) Microsoft Corporation.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
+    Fixes the vulnerability if found. Note that this syntax requires Schema Admin.<#
+MIT LicenseCopyright (c) Microsoft Corporation.Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+furnished to do so, subject to the following conditions:The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
 AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
@@ -11273,30 +5456,14 @@ param (
     [Parameter()]
     [switch]
     $ApplyFix
-)
-
-$ErrorActionPreference = "Stop"
-
-$schemaMaster = [System.DirectoryServices.ActiveDirectory.Domain]::GetComputerDomain().Forest.SchemaRoleOwner
-
-$schemaDN = ([ADSI]"LDAP://$($schemaMaster)/RootDSE").schemaNamingContext
-
-$storageGroupSchemaEntryDN = "LDAP://$($schemaMaster)/CN=ms-Exch-Storage-Group,$schemaDN"
-
-if (-not ([System.DirectoryServices.DirectoryEntry]::Exists($storageGroupSchemaEntryDN))) {
+)$ErrorActionPreference = "Stop"$schemaMaster = [System.DirectoryServices.ActiveDirectory.Domain]::GetComputerDomain().Forest.SchemaRoleOwner$schemaDN = ([ADSI]"LDAP://$($schemaMaster)/RootDSE").schemaNamingContext$storageGroupSchemaEntryDN = "LDAP://$($schemaMaster)/CN=ms-Exch-Storage-Group,$schemaDN"if (-not ([System.DirectoryServices.DirectoryEntry]::Exists($storageGroupSchemaEntryDN))) {
     Write-Host "Exchange was not installed in this forest. Therefore, CVE-2021-34470 vulnerability is not present."
     return
-}
-
-$storageGroupSchemaEntry = [ADSI]($storageGroupSchemaEntryDN)
+}$storageGroupSchemaEntry = [ADSI]($storageGroupSchemaEntryDN)
 if ($storageGroupSchemaEntry.Properties["possSuperiors"].Count -eq 0) {
     Write-Host "CVE-2021-34470 vulnerability is not present."
     return
-}
-
-$hasUnexpectedValues = $false
-
-foreach ($val in $storageGroupSchemaEntry.Properties["possSuperiors"]) {
+}$hasUnexpectedValues = $falseforeach ($val in $storageGroupSchemaEntry.Properties["possSuperiors"]) {
     if ($val -eq "computer") {
         Write-Warning "CVE-2021-34470 vulnerability is present."
     }
@@ -11304,27 +5471,17 @@ foreach ($val in $storageGroupSchemaEntry.Properties["possSuperiors"]) {
         $hasUnexpectedValues = $true
         Write-Warning "CVE-2021-34470 vulnerability may be present due to an unexpected superior: $val"
     }
-}
-
-if ($ApplyFix) {
+}if ($ApplyFix) {
     if ($hasUnexpectedValues) {
         $OutputFile = "$PSScriptRoot\Test-CVE-2021-34470.log"
         "Attempting fix at $(Get-Date)." | Out-File $OutputFile -Append
         "Value prior to fix:" | Out-File $OutputFile -Append
         $storageGroupSchemaEntry.Properties["possSuperiors"] | Out-File $OutputFile -Append
-    }
-
-    try {
-        Write-Host "Attempting to apply fix..."
-
-        $rootDSE = [ADSI]("LDAP://$($schemaMaster)/RootDSE")
+    }    try {
+        Write-Host "Attempting to apply fix..."        $rootDSE = [ADSI]("LDAP://$($schemaMaster)/RootDSE")
         [void]$rootDSE.Properties["schemaUpgradeInProgress"].Add(1)
-        $rootDSE.CommitChanges()
-
-        $storageGroupSchemaEntry.Properties["possSuperiors"].Clear()
-        $storageGroupSchemaEntry.CommitChanges()
-
-        Write-Host "Fix was applied successfully."
+        $rootDSE.CommitChanges()        $storageGroupSchemaEntry.Properties["possSuperiors"].Clear()
+        $storageGroupSchemaEntry.CommitChanges()        Write-Host "Fix was applied successfully."
     }
     catch {
         Write-Warning "Failed to apply fix. Please ensure you have Schema Admin rights. Error was: `n$_"
@@ -11332,70 +5489,22 @@ if ($ApplyFix) {
 }
 }
 function Test-DmaDevices {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID a2d15653-e7ac-4246-b3a4-adf73af11a06
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID a2d15653-e7ac-4246-b3a4-adf73af11a06.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This is used to test which DMA devices are blocking automatic BitLocker encryption.
-
-.PARAMETER File
-The text file where the list of devices will be saved.
-
-.PARAMETER LastDeviceFile
-The text file where the last modified device will be saved.
-
-.PARAMETER Action
+This is used to test which DMA devices are blocking automatic BitLocker encryption..PARAMETER File
+The text file where the list of devices will be saved..PARAMETER LastDeviceFile
+The text file where the last modified device will be saved..PARAMETER Action
 An array of actions to run.
     RemoveFirst: Remove the first entry from the list of allowed buses.
     AddLast: Re-add the most recently removed device to the list of allowed buses.
     AddAll: Add all devices to the list of allowed buses.
     Export: Export the list of all device to $File
-    Reset: Remove all devices from the list of allowed buses.
-
-.PARAMETER Path
-The registry path for allowed buses.
-
-.PARAMETER Parent
-The parent of $Path
-
-.EXAMPLE
-Test-DmaDevices -Action Export,AddAll
-
-.EXAMPLE
-Test-DmaDevices -Action RemoveFirst
-
-.EXAMPLE
-Test-DmaDevices -Action AddLast
-
-.EXAMPLE
+    Reset: Remove all devices from the list of allowed buses..PARAMETER Path
+The registry path for allowed buses..PARAMETER Parent
+The parent of $Path.EXAMPLE
+Test-DmaDevices -Action Export,AddAll.EXAMPLE
+Test-DmaDevices -Action RemoveFirst.EXAMPLE
+Test-DmaDevices -Action AddLast.EXAMPLE
 Test-DmaDevices -Action Reset
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -11411,9 +5520,7 @@ If ($(Test-Path -Path $Path) -eq $False) { New-Item $Path }
 function ParseInstanceId {
     param([Parameter(Mandatory = $true, ValueFromPipeline = $true)][string[]]$Id)
     return ($Id -replace '&SUBSYS.*', '' -replace '\s+PCI\\', '"="PCI\\')
-}
-
-if ($Action -contains "AddAll" -or $Action -contains "Export") {
+}if ($Action -contains "AddAll" -or $Action -contains "Export") {
     Get-PnpDevice -InstanceId PCI\* | ForEach-Object {
         $i++
         $Name = $_.FriendlyName + " " + $i
@@ -11427,9 +5534,7 @@ if ($Action -contains "RemoveFirst") {
     Write-Host $LastDeviceFile
     Remove-ItemProperty $Path -Name $CurrentDevice -Force
     Set-Content -Path $LastDeviceFile -Value $CurrentDevice
-    Get-Content $File | Select-Object -Skip 1 | Set-Content $File
-
-}
+    Get-Content $File | Select-Object -Skip 1 | Set-Content $File}
 if ($Action -contains "AddLast") {
     Get-PnpDevice -FriendlyName $([regex]::Match((Get-Content $LastDeviceFile), "^(.*)( \d*)$").captures.groups[1].value) | ForEach-Object {
         $i++
@@ -11440,55 +5545,13 @@ if ($Action -contains "AddLast") {
 if ($Action -contains "Reset") { Remove-ItemProperty $Path -Name "*" }
 }
 function Test-PendingFileRename {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 98d059e8-6686-4643-bf07-2a2fd9729ca6
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 98d059e8-6686-4643-bf07-2a2fd9729ca6.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Returns any pending file renames present in the PendingFileRenameOperations registry key.
-
-.PARAMETER IgnoreDeletes
-Ignore any delete options and only return file neames.
-
-.LINK
-https://stackoverflow.com/questions/47867949/how-can-i-check-for-a-pending-reboot/68627581#68627581
-
-.LINK
-https://forensicatorj.wordpress.com/2014/06/25/interpreting-the-pendingfilerenameoperations-registry-key-for-forensics/
-
-.LINK
-https://learn.microsoft.com/en-us/sysinternals/downloads/pendmoves#movefile-usage
-
-#>
-
-[OutputType('bool')]
+Returns any pending file renames present in the PendingFileRenameOperations registry key..PARAMETER IgnoreDeletes
+Ignore any delete options and only return file neames..LINK
+https://stackoverflow.com/questions/47867949/how-can-i-check-for-a-pending-reboot/68627581#68627581.LINK
+https://forensicatorj.wordpress.com/2014/06/25/interpreting-the-pendingfilerenameoperations-registry-key-for-forensics/.LINK
+https://learn.microsoft.com/en-us/sysinternals/downloads/pendmoves#movefile-usage#>[OutputType('bool')]
 [CmdletBinding()]
 param(
     [switch]$IgnoreDeletes
@@ -11517,52 +5580,12 @@ else {
 }
 }
 function Test-PendingReboot {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID eb35ecd5-48d9-4b6d-97d9-ad4b5893fb6a
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID eb35ecd5-48d9-4b6d-97d9-ad4b5893fb6a.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Returns true if a reboot is pending.
-
-.LINK
-https://stackoverflow.com/questions/47867949/how-can-i-check-for-a-pending-reboot/68627581#68627581
-
-.LINK
-https://gist.github.com/altrive/5329377
-
-.LINK
-http://gallery.technet.microsoft.com/scriptcenter/Get-PendingReboot-Query-bdb79542
-
-#>
-
-if (Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending" -EA Ignore) { return "Component Based Servicing\RebootPending" }
+Returns true if a reboot is pending..LINK
+https://stackoverflow.com/questions/47867949/how-can-i-check-for-a-pending-reboot/68627581#68627581.LINK
+https://gist.github.com/altrive/5329377.LINK
+http://gallery.technet.microsoft.com/scriptcenter/Get-PendingReboot-Query-bdb79542#>if (Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Component Based Servicing\RebootPending" -EA Ignore) { return "Component Based Servicing\RebootPending" }
 if (Get-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired" -EA Ignore) { return "WindowsUpdate\Auto Update\RebootRequired" }
 if (Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager" -Name PendingFileRenameOperations -EA Ignore) { return "PendingFileRenameOperations" }
 try {
@@ -11572,42 +5595,10 @@ try {
         return "CCM_ClientUtilities"
     }
 }
-catch { }
-
-return $false
+catch { }return $false
 }
 function Test-Photo {
-<#PSScriptInfo
-
-.VERSION 1.0.11
-
-.GUID a3cdb0bc-2c01-4aa3-b702-707a5060c071
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) TectTectic
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.11.GUID a3cdb0bc-2c01-4aa3-b702-707a5060c071.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) TectTectic.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Test that a photo meets the requrements.
 #>
@@ -11636,93 +5627,23 @@ $Photos | ForEach-Object {
 return $Results
 }
 function Test-RegistryValue {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 73abfeda-2bad-4f83-a401-e34757afcbc0
-
-.AUTHOR Jonathan Medd
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Jonathan Medd 2014
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 73abfeda-2bad-4f83-a401-e34757afcbc0.AUTHOR Jonathan Medd.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Jonathan Medd 2014.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Tests is a given registry key exists.
-
-.PARAMETER Path
-The registry key to test.
-
-.PARAMETER Value
-The registry value withing the key to test.
-
-.LINK
+Tests is a given registry key exists..PARAMETER Path
+The registry key to test..PARAMETER Value
+The registry value withing the key to test..LINK
 https://www.jonathanmedd.net/2014/02/testing-for-the-presence-of-a-registry-key-and-value.html
-#>
-
-param (
+#>param (
     [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Path,
     [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Value
-)
-
-try {
+)try {
     Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
     return $true
 }
 catch { return $false }
 }
 function Test-ScriptMetadata {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID a0017a8d-5a3d-49a1-9c7f-5e0dbb5ee7d8
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID a0017a8d-5a3d-49a1-9c7f-5e0dbb5ee7d8.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 This is used to validate the existence of metadata on the individual scripts
 #>
@@ -11732,9 +5653,7 @@ $SourceScripts | ForEach-Object {
     try { $Info = Test-ScriptFileInfo  $_.FullName } catch { $Info = $false ; Write-Verbose "$_.Name does not have a valid PSScriptInfo block" }
     try { $Description = (Get-Help $_.FullName).Description } catch { $Description = $false ; Write-Verbose "$_.Name does not have a valid help block" }
     if ($Info) { $Info = $true } else { $Info = $False }
-    if ($Description) { $Description = $true } else { $Description = $False }
-
-    $Result = [PSCustomObject]@{
+    if ($Description) { $Description = $true } else { $Description = $False }    $Result = [PSCustomObject]@{
         File        = $_.Name
         Info        = $Info
         Description = $Description
@@ -11744,37 +5663,7 @@ $SourceScripts | ForEach-Object {
 return $Results
 }
 function Test-Scripts {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID dd50132f-8bc5-4825-918d-9fd0afd3f36b
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID dd50132f-8bc5-4825-918d-9fd0afd3f36b.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Used to test LoadDefaults and ensure defaults parameters are being loaded correctly.
 #>
@@ -11786,7 +5675,6 @@ Param(
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 $MyInvocation
-
 Write-Output "params"
 write-output "foo: $foo"
 write-output "bar: $bar"
@@ -11794,51 +5682,13 @@ write-output "baz: $baz"
 write-output "test: $test"
 }
 function Test-VoipMs {
-<#PSScriptInfo
-
-.VERSION 1.2.6
-
-.GUID 17fff57c-cce9-4977-a26d-aeded706a85f
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.2.6.GUID 17fff57c-cce9-4977-a26d-aeded706a85f.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
-This script will test the VoIP.ms servers to find one with the lowest latency.
-
-.DESCRIPTION
-This script will test the VoIP.ms servers to find one with the lowest latency. If you spesify your credentials, it will use the API to get the most current list of servers. Otherwise, it will fallback to the static list you see below.
-
-.PARAMETER ServerList
-The fallback server list used when API credentials are not spesified. You can also pass in a custom list of servers.
-
-.LINK
+This script will test the VoIP.ms servers to find one with the lowest latency..DESCRIPTION
+This script will test the VoIP.ms servers to find one with the lowest latency. If you spesify your credentials, it will use the API to get the most current list of servers. Otherwise, it will fallback to the static list you see below..PARAMETER ServerList
+The fallback server list used when API credentials are not spesified. You can also pass in a custom list of servers..LINK
 https://wiki.voip.ms/article/Choosing_Server
-#>
-
-<# TODO use credential/secure string for $username and $password #>
+#><# TODO use credential/secure string for $username and $password #>
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
 param(
   [string]$Username,
@@ -11849,9 +5699,7 @@ param(
   [array]$ServerList = @("amsterdam.voip.ms", "atlanta.voip.ms", "atlanta2.voip.ms", "chicago.voip.ms", "chicago2.voip.ms", "chicago3.voip.ms", "chicago4.voip.ms", "dallas.voip.ms", "dallas2.voip.ms", "denver.voip.ms", "denver2.voip.ms", "houston.voip.ms", "houston2.voip.ms", "london.voip.ms", "losangeles.voip.ms", "losangeles2.voip.ms", "melbourne.voip.ms", "montreal.voip.ms", "montreal2.voip.ms", "montreal3.voip.ms", "montreal4.voip.ms", "montreal5.voip.ms", "montreal6.voip.ms", "montreal7.voip.ms", "montreal8.voip.ms", "newyork.voip.ms", "newyork2.voip.ms", "newyork3.voip.ms", "newyork4.voip.ms", "newyork5.voip.ms", "newyork6.voip.ms", "newyork7.voip.ms", "newyork8.voip.ms", "paris.voip.ms", "sanjose.voip.ms", "sanjose2.voip.ms", "seattle.voip.ms", "seattle2.voip.ms", "seattle3.voip.ms", "tampa.voip.ms", "tampa2.voip.ms", "toronto.voip.ms", "toronto2.voip.ms", "toronto3.voip.ms", "toronto4.voip.ms", "toronto5.voip.ms", "toronto6.voip.ms", "toronto7.voip.ms", "toronto8.voip.ms", "vancouver.voip.ms", "vancouver2.voip.ms", "washington.voip.ms", "washington2.voip.ms") #Get the list of servers into an array
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-function Progress {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }function Progress {
   param(
     [int]$Index,
     [int]$Total,
@@ -11861,9 +5709,7 @@ function Progress {
     [int]$PercentComplete = ($Index / $Total * 100)
   )
   if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentComplete $PercentComplete }
-}
-
-if ($Username) {
+}if ($Username) {
   $ApiServers = (Invoke-RestMethod -Uri ("https://voip.ms/api/v1/rest.php?api_username=" + $Username + "&api_password=" + $Password + "&method=getServersInfo")).servers
   If ($Fax) {
     $Servers = ($ApiServers | Where-Object server_hostname -Like fax*).server_hostname
@@ -11874,14 +5720,8 @@ if ($Username) {
 }
 else {
   $Servers = $ServerList
-}
-
-Clear-Variable best* -Scope Global #Clear the best* variables in case you run it more than once...
-
-ForEach ($Server in $Servers) {
-  $count++ ; Progress -Index $count -Total $Servers.count -Activity "Testing server latency." -Name $Server #Add to the counting varable. Update the progress bar.
-
-  $i = 0 #Counting variable for number of times we tried to ping a given server
+}Clear-Variable best* -Scope Global #Clear the best* variables in case you run it more than once...ForEach ($Server in $Servers) {
+  $count++ ; Progress -Index $count -Total $Servers.count -Activity "Testing server latency." -Name $Server #Add to the counting varable. Update the progress bar.  $i = 0 #Counting variable for number of times we tried to ping a given server
   Do {
     $pingsuccess = $false #assume a failure
     $i++ #Add one to the counting variable.....1st try....2nd try....3rd try etc...
@@ -11895,9 +5735,7 @@ ForEach ($Server in $Servers) {
     Catch {
       $pingsuccess = $false #Catch the failure and set the success variable to false
     }
-  }  While ($pingsuccess -eq $false -and $i -le $Retries)  #Try everything between Do and While up to $Retry times, or while $pingsuccess is not true
-
-  #Compare the last ping test with the best known ping test....if there is no known best ping test, assume this one is the best $bestping = $currentping
+  }  While ($pingsuccess -eq $false -and $i -le $Retries)  #Try everything between Do and While up to $Retry times, or while $pingsuccess is not true  #Compare the last ping test with the best known ping test....if there is no known best ping test, assume this one is the best $bestping = $currentping
   If ($pingsuccess -and ($currentping -lt $bestping -or (!($bestping)))) {
     #If this is the best ping...save it
     $bestserver = $server    #Save the best server
@@ -11909,37 +5747,7 @@ write-host "`r`n The server with the best ping is: $bestserver at $bestping ms`r
 Pause
 }
 function Uninstall-MicrosoftTeams {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 81af22bb-f7a1-42a0-8570-1ac57f49e6bf
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 81af22bb-f7a1-42a0-8570-1ac57f49e6bf.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .SYNOPSIS
 This script allows you to uninstall the Microsoft Teams app and remove Teams directory for a user.
 .DESCRIPTION
@@ -11964,45 +5772,11 @@ if ($decision -eq 0) {
 else { Break }
 }
 function Update-AadSsoKey {
-<#PSScriptInfo
-
-.VERSION 1.0.2
-
-.GUID 324df81c-9595-4025-b826-08aff404f533
-
-.AUTHOR Jason Cook, Wybe Smits http://www.wybesmits.nl
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-* 1.0 - initial release 15/04/2019
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.2.GUID 324df81c-9595-4025-b826-08aff404f533.AUTHOR Jason Cook, Wybe Smits http://www.wybesmits.nl.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES
+* 1.0 - initial release 15/04/2019#> <#
 .SYNOPSIS
-This script will preform a roll over of Azure SSO Kerberos key. Run this script on the server running Azure AD Connect.
-
-.DESCRIPTION
-This script will preform a roll over of Azure SSO Kerberos key. Run this script on the server running Azure AD Connect.
-
-.LINK
+This script will preform a roll over of Azure SSO Kerberos key. Run this script on the server running Azure AD Connect..DESCRIPTION
+This script will preform a roll over of Azure SSO Kerberos key. Run this script on the server running Azure AD Connect..LINK
 https://docs.microsoft.com/en-us/azure/active-directory/hybrid/how-to-connect-sso-faq#how-can-i-roll-over-the-kerberos-decryption-key-of-the-azureadssoacc-computer-account
 #>
 Import-Module $Env:ProgramFiles'\Microsoft Azure Active Directory Connect\AzureADSSO.psd1d'
@@ -12010,56 +5784,14 @@ New-AzureADSSOAuthenticationContext #Office 365 Global Admin
 Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domain Admin credentials" -UserName ($env:USERDOMAIN + "\" + $env:USERNAME))
 }
 function Update-MerakiSwitchPortNames {
-<#PSScriptInfo
-
-.VERSION 1.0.7
-
-.GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS
-
-.LICENSEURI
-
-.PROJECTURI
-
-.ICONURI
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS
-
-.EXTERNALSCRIPTDEPENDENCIES
-
-.RELEASENOTES
-
-.PRIVATEDATA
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.7.GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS.LICENSEURI.PROJECTURI.ICONURI.EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS.EXTERNALSCRIPTDEPENDENCIES.RELEASENOTES.PRIVATEDATA#> <#
 .DESCRIPTION
-Update the switch port names in Meraki based on the CSV file you specify.
-
-.PARAMETER APIKey
-Your Meraki API key.
-
-.PARAMETER networkid
-The network ID that contains the switches you wish to update.
-
-.PARAMETER Path
-The CSV file containing records you wish to update. Must contain the following columns 'Switch Name', 'Switch Port', and 'Switch Label'.
-
-.PARAMETER Headers
+Update the switch port names in Meraki based on the CSV file you specify..PARAMETER APIKey
+Your Meraki API key..PARAMETER networkid
+The network ID that contains the switches you wish to update..PARAMETER Path
+The CSV file containing records you wish to update. Must contain the following columns 'Switch Name', 'Switch Port', and 'Switch Label'..PARAMETER Headers
 An array of headers to send in each API request. Automatically generated using the APIKey paramater.
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 param (
   [string]$APIKey,
   [string]$networkid,
@@ -12070,20 +5802,14 @@ param (
     "Accept"                 = "application/json"
     "X-Cisco-Meraki-API-Key" = $APIKey
   }
-)
-
-Write-Verbose "Getting devices for $networkid"
-$Switches = Invoke-RestMethod -Method Get -Uri "https://api.meraki.com/api/v1/networks/$($networkid)/devices" -Headers $headers
-
-function UpdateSwitchPortName {
+)Write-Verbose "Getting devices for $networkid"
+$Switches = Invoke-RestMethod -Method Get -Uri "https://api.meraki.com/api/v1/networks/$($networkid)/devices" -Headers $headersfunction UpdateSwitchPortName {
   [CmdletBinding(SupportsShouldProcess = $true)]
   param (
     [string]$SwitchName,
     [int]$Port,
     [string]$Name
-  )
-
-  $Serial = ($Switches | Where-Object name -eq $SwitchName).Serial
+  )  $Serial = ($Switches | Where-Object name -eq $SwitchName).Serial
   $Body = @{ name = $Name } | ConvertTo-Json -Compress
   If ($PSCmdlet.ShouldProcess("$SwitchName $Port", "UpdateSwitchPortName to $Name")) {
     try { return Invoke-RestMethod -Method Put -Uri "https://api.meraki.com/api/v1/devices/$($Serial)/switch/ports/$($Port)" -Headers $headers -Body $Body }
@@ -12095,56 +5821,18 @@ function UpdateSwitchPortName {
       }
     }
   }
-}
-
-$JackLocations | ForEach-Object {
+}$JackLocations | ForEach-Object {
   $count++ ; Progress -Index $count -Total $JackLocations.count -Activity "Updating switch port names" -Name $($_.Switch + " / " + $_.Port + ": " + $_.Label)
   return UpdateSwitchPortName -SwitchName $_.Switch -Port $_.Port -Name $_.Label
 }
 }
 function Update-MicrosoftStoreApps {
-<#PSScriptInfo
-
-.VERSION 1.0.9
-
-.GUID 4cac6972-9cb0-4755-bfc1-ae2eb6dfc0d1
-
-.AUTHOR Tony MCP
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tony MCP 2016
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.9.GUID 4cac6972-9cb0-4755-bfc1-ae2eb6dfc0d1.AUTHOR Tony MCP.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tony MCP 2016.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-Updates Microsoft Store apps. Equivalent to clicking "Check for Updates" and "Update All" in the Microsoft Store app. Tt doesn't wait for the updates to complete before returning. Check the store app for the status of the updates.
-
-.PARAMETER DontCheckStatus
-Prevents the script from opening the store app to monitor the status of the updates.
-
-.LINK
+Updates Microsoft Store apps. Equivalent to clicking "Check for Updates" and "Update All" in the Microsoft Store app. Tt doesn't wait for the updates to complete before returning. Check the store app for the status of the updates..PARAMETER DontCheckStatus
+Prevents the script from opening the store app to monitor the status of the updates..LINK
 https://social.technet.microsoft.com/Forums/windows/en-US/5ac7daa9-54e6-43c0-9746-293dcb8ef2ec/how-to-force-update-of-windows-store-apps-without-launching-the-store-app
-#>
-
-param([switch]$DontCheckStatus)
+#>param([switch]$DontCheckStatus)
 Test-Admin -Throw | Out-Null
 $namespaceName = "root\cimv2\mdm\dmmap"
 $className = "MDM_EnterpriseModernAppManagement_AppManagement01"
@@ -12153,50 +5841,16 @@ $wmiObj.UpdateScanMethod() | Out-Null
 if (-not $DontCheckStatus) { Start-Process "ms-windows-store://downloadsandupdates" }
 }
 function Update-OfficeCache {
-<#PSScriptInfo
-
-.VERSION 1.0.5
-
-.GUID 97314a7e-aba8-41e8-8b1d-ca81372ae070
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.5.GUID 97314a7e-aba8-41e8-8b1d-ca81372ae070.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Update the office cache for each XML file in the current folder.
-#>
-
-[CmdletBinding(SupportsShouldProcess = $true)]
+#>[CmdletBinding(SupportsShouldProcess = $true)]
 param(
     $Path = (Get-ChildItem -Filter "*.xml"),
     $Setup = ".\setup.exe"
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$Path | ForEach-Object {
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$Path | ForEach-Object {
     If ($PSCmdlet.ShouldProcess("$($_.Name)", "Update-OfficeCache")) {
         Push-Location -Path (Split-Path -Parent -Path $_.FullName)
         Start-Process -FilePath $Setup -ArgumentList @("/download", $_.Name) -NoNewWindow -Wait
@@ -12205,37 +5859,7 @@ $Path | ForEach-Object {
 }
 }
 function Update-PKI {
-<#PSScriptInfo
-
-.VERSION 1.0.6
-
-.GUID 8f760b1c-0ccc-43b7-bfed-9370fa84b7f8
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.6.GUID 8f760b1c-0ccc-43b7-bfed-9370fa84b7f8.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Upload CRLs to GitHub if changed.
 #>
@@ -12247,9 +5871,7 @@ param (
     $RepositoryName = "",
     $BranchName = "",
     [switch]$Force
-)
-
-Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
+)Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
     If ($PSCmdlet.ShouldProcess($_.Name, "Update-PKI")) {
         $NewHash = (Get-FileHash $_.FullName).Hash
         if ((Get-Content -Path ($_.FullName + ".sha256") -ErrorAction SilentlyContinue) -ne $NewHash -OR $Force) {
@@ -12260,37 +5882,7 @@ Get-ChildItem -Path $Path -Exclude *.sha256 | ForEach-Object {
 }
 }
 function Update-UsersAcademyStudents {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 4fc14578-f8eb-4ae2-8e39-77c0f197cff8
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 4fc14578-f8eb-4ae2-8e39-77c0f197cff8.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Automatically update Academy student users.
 #>
@@ -12302,14 +5894,8 @@ param (
     $Company,
     $Office,
     $Title,
-    $Path
-
-)
-
-Get-ADUser -Filter * -SearchBase $Path | Set-ADUser -Enabled $false
-[System.Collections.ArrayList]$Results = @()
-
-$Users | ForEach-Object {
+    $Path)Get-ADUser -Filter * -SearchBase $Path | Set-ADUser -Enabled $false
+[System.Collections.ArrayList]$Results = @()$Users | ForEach-Object {
     $Name = $_."FirstName LastName"
     $GivenName = $Name.split(" ")[0]
     $Surname = $Name.split(" ")[1]
@@ -12317,12 +5903,8 @@ $Users | ForEach-Object {
     $SamAccountName = $GivenName + "." + $Surname
     $UserPrincipalName = $SamAccountName + "@" + $HomePage
     $EmailAddress = $UserPrincipalName
-    $PasswordSecure = Get-Password
-
-    try {
-        New-ADUser -DisplayName $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $Name -AccountPassword $PasswordSecure -Path $Path
-
-        $Result = [PSCustomObject]@{
+    $PasswordSecure = Get-Password    try {
+        New-ADUser -DisplayName $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $Name -AccountPassword $PasswordSecure -Path $Path        $Result = [PSCustomObject]@{
             Grade        = $Department
             Name         = $Name
             EmailAddress = $UserPrincipalName
@@ -12332,9 +5914,7 @@ $Users | ForEach-Object {
         $Results += $Result
     }
     catch [Microsoft.ActiveDirectory.Management.ADIdentityAlreadyExistsException] {
-        Set-ADUser -Identity $SamAccountName -DisplayName $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true
-
-        $Result = [PSCustomObject]@{
+        Set-ADUser -Identity $SamAccountName -DisplayName $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true        $Result = [PSCustomObject]@{
             Grade        = $Department
             Name         = $Name
             EmailAddress = $UserPrincipalName
@@ -12357,37 +5937,7 @@ Search-ADAccount -AccountDisabled -SearchBase $Path | ForEach-Object {
 Return $Results
 }
 function Update-UsersStaff {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID 120db2ff-3cb8-43ea-aa2c-f044ff52c144
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.3.GUID 120db2ff-3cb8-43ea-aa2c-f044ff52c144.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
 Automatically update staff users.
 #>
@@ -12399,11 +5949,7 @@ param (
   $Company,
   $Office,
   $Path
-)
-
-[System.Collections.ArrayList]$Results = @()
-
-$Users | ForEach-Object {
+)[System.Collections.ArrayList]$Results = @()$Users | ForEach-Object {
   If ($_.PreferredGivenName) { $GivenName = $_.PreferredGivenName } Else { $GivenName = $_.GivenName }
   If ($_.PreferredSurname) { $Surname = $_.PreferredSurname } Else { $Surname = $_.Surname }
   $DisplayName = $GivenName + " " + $Surname
@@ -12412,17 +5958,9 @@ $Users | ForEach-Object {
   $EmailAddress = $UserPrincipalName
   $Department = $_.Title.split("\s-\s")[0]
   $Title = $_.Title.split(" - ")[1]
-  $Office = $_.Office.split(" - ")[0]
-
-  $StreetAddress = $_.StreetAddress
-  If ($_.StreetAddress2) { $StreetAddress += `n + $_.StreetAddress2 }
-
-  try {
-    $Password = ConvertTo-SecureString (Get-RandomPassword) -AsPlainText -Force
-
-    New-ADUser -DisplayName $DisplayName -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $SamAccountName -StreetAddress $StreetAddress -City $_.City -State $_.State -PostalCode $_.PostalCode -OfficePhone $_.OfficePhone -AccountPassword $PasswordSecure -Path $Path -WhatIf
-
-    $Result = [PSCustomObject]@{
+  $Office = $_.Office.split(" - ")[0]  $StreetAddress = $_.StreetAddress
+  If ($_.StreetAddress2) { $StreetAddress += `n + $_.StreetAddress2 }  try {
+    $Password = ConvertTo-SecureString (Get-RandomPassword) -AsPlainText -Force    New-ADUser -DisplayName $DisplayName -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $SamAccountName -StreetAddress $StreetAddress -City $_.City -State $_.State -PostalCode $_.PostalCode -OfficePhone $_.OfficePhone -AccountPassword $PasswordSecure -Path $Path -WhatIf    $Result = [PSCustomObject]@{
       DisplayName  = $DisplayName
       Department   = $Department
       Title        = $Title
@@ -12433,9 +5971,7 @@ $Users | ForEach-Object {
     $Results += $Result
   }
   catch [Microsoft.ActiveDirectory.Management.ADIdentityAlreadyExistsException] {
-    Set-ADUser -Identity $SamAccountName -DisplayName $DisplayName -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $SamAccountName -StreetAddress $StreetAddress -City $_.City -State $_.State -PostalCode $_.PostalCode -OfficePhone $_.OfficePhone -WhatIf
-
-    $Result = [PSCustomObject]@{
+    Set-ADUser -Identity $SamAccountName -DisplayName $DisplayName -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $SamAccountName -StreetAddress $StreetAddress -City $_.City -State $_.State -PostalCode $_.PostalCode -OfficePhone $_.OfficePhone -WhatIf    $Result = [PSCustomObject]@{
       Name         = $Name
       Department   = $Department
       Title        = $Title
@@ -12449,9 +5985,7 @@ $Users | ForEach-Object {
 <#     Start-Sleep -Seconds 10
     Get-ADUser -Filter * -SearchBase $Path | Sort-Object Name | ForEach-Object {
         If (-NOT ($_.SamAccountName -in $Users)) { Write-Host $_.SamAccountName }
-    }
-
-    Search-ADAccount -AccountDisabled -SearchBase $Path | ForEach-Object {
+    }    Search-ADAccount -AccountDisabled -SearchBase $Path | ForEach-Object {
         $Result = [PSCustomObject]@{
             Name         = $_.Name
             EmailAddress = $_.UserPrincipalName
@@ -12463,44 +5997,10 @@ $Users | ForEach-Object {
 Return $Results
 }
 function Wait-ForKey {
-<#PSScriptInfo
-
-.VERSION 1.0.4
-
-.GUID 3642a129-3370-44a1-94ad-85fb88de7a6b
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS 
-
-.LICENSEURI 
-
-.PROJECTURI 
-
-.ICONURI 
-
-.EXTERNALMODULEDEPENDENCIES 
-
-.REQUIREDSCRIPTS 
-
-.EXTERNALSCRIPTDEPENDENCIES 
-
-.RELEASENOTES
-
-#> 
-
-<#
+<#PSScriptInfo.VERSION 1.0.4.GUID 3642a129-3370-44a1-94ad-85fb88de7a6b.AUTHOR Jason Cook.COMPANYNAME Tectic.COPYRIGHT Copyright (c) Tectic 2024.TAGS .LICENSEURI .PROJECTURI .ICONURI .EXTERNALMODULEDEPENDENCIES .REQUIREDSCRIPTS .EXTERNALSCRIPTDEPENDENCIES .RELEASENOTES#> <#
 .DESCRIPTION
-This will continue if the spesified key it press. Otherwise, it will break.
-
-.PARAMETER Key
-The key that this will listen for.
-
-.EXAMPLE
+This will continue if the spesified key it press. Otherwise, it will break..PARAMETER Key
+The key that this will listen for..EXAMPLE
 Wait-ForKey -Key c
 Press c to continue, any other key to abort.: c
 #>
@@ -12509,8 +6009,6 @@ param(
     [string]$Message = "Press $Key to continue, any other key to abort."
 )
 
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-$Response = Read-Host $Message
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }$Response = Read-Host $Message
 If ($Response -ne $Key) { Break }
 }
