@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
 .REQUIREDSCRIPTS
 
@@ -28,7 +28,7 @@
 
 .PRIVATEDATA
 
-#> 
+#>
 
 
 
@@ -44,5 +44,5 @@ param (
 )
 
 try { $Session = (Get-CimSession -ComputerName $ComputerName -ErrorAction SilentlyContinue)[0] }
-catch { $Session = (New-CimSession -ComputerName DGIIPAM1M) }
+catch { $Session = (New-CimSession -ComputerName $ComputerName) }
 return $Session
