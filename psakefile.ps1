@@ -93,7 +93,7 @@ Task ExportToPsm1 {
             $ScriptContent = $ScriptContent -replace '(?m)(param\(\s*$(?:.*$\n)*\))', "`$1`r`n`r`n$LoadDefaultsString"
         }
         else { Write-Debug "$($_.Name): skipping LoadDefaults" }
-        $ScriptContent = ($ScriptContent -replace "\n#[^>].*").Trim() -replace "\n\n" # Remove single linge comments and superfluous blank lines
+        $ScriptContent = ($ScriptContent -replace "\n#[^>].*").Trim() -replace "\n\n\n","`r`n`r`n" # Remove single linge comments and superfluous blank lines
 
         $ModuleContent += "function $($_.basename) {`n"
         $ModuleContent += $ScriptContent
