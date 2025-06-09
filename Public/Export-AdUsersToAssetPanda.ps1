@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -55,12 +55,12 @@ https://help.assetpanda.com/Importing.html
 #>
 
 param(
-    [string]$ActiveEmployeeType = "Full Time",
-    [string]$InactiveEmployeeType = "Inactive",
-    [string]$SearchBase,
-    [string]$Filter = "*",
-    [array]$Properties = ("DisplayName", "GivenName", "Surname", "EmailAddress", "Office", "Title", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Created", "Enabled", "employeeHireDate", "employeeType"),
-    [string]$Server
+  [string]$ActiveEmployeeType = "Full Time",
+  [string]$InactiveEmployeeType = "Inactive",
+  [string]$SearchBase,
+  [string]$Filter = "*",
+  [array]$Properties = ("DisplayName", "GivenName", "Surname", "EmailAddress", "Office", "Title", "Department", "telephoneNumber", "ipPhone", "MobilePhone", "Created", "Enabled", "employeeHireDate", "employeeType"),
+  [string]$Server
 )
 
 $Arguments = @{}
@@ -70,23 +70,23 @@ if ($Properties) { $Arguments.Properties = $Properties }
 if ($Server) { $Arguments.Server = $Server }
 
 Get-ADUser @Arguments | ForEach-Object {
-    if ($_.employeeHireDate) { $HireDate = $_.employeeHireDate } else { $HireDate = $_.Created }
-    if (-not $_.enabled) { $EmployeeType = $InactiveEmployeeType }
-    elseif ($_.employeeType) { $EmployeeType = $_.employeeType }
-    else { $EmployeeType = $ActiveEmployeeType }
+  if ($_.employeeHireDate) { $HireDate = $_.employeeHireDate } else { $HireDate = $_.Created }
+  if (-not $_.enabled) { $EmployeeType = $InactiveEmployeeType }
+  elseif ($_.employeeType) { $EmployeeType = $_.employeeType }
+  else { $EmployeeType = $ActiveEmployeeType }
 
-    return [PSCustomObject]@{
-        "Display Name"   = $_.DisplayName
-        "E-mail"         = $_.EmailAddress -replace "`'"
-        "First Name"     = $_.GivenName
-        "Last Name"      = $_.Surname
-        "Office"         = ($_.Office -split ",")[0]
-        "Type"           = $EmployeeType
-        "Title"          = $_.Title
-        "Department"     = $_.Department
-        "Work Phone"     = ([regex]::Match($_.telephoneNumber, "^((?:\+1)? ?(?:\d{10}|\d{7}))(?:.*)$")).Groups[1].Value
-        "Work Extension" = $_.ipPhone
-        "Cell Phone"     = $_.MobilePhone
-        "Hire Date"      = $HireDate.ToString("MM\/dd\/yyyy")
-    }
+  return [PSCustomObject]@{
+    "Display Name"   = $_.DisplayName
+    "E-mail"         = $_.EmailAddress -replace "`'"
+    "First Name"     = $_.GivenName
+    "Last Name"      = $_.Surname
+    "Office"         = ($_.Office -split ",")[0]
+    "Type"           = $EmployeeType
+    "Title"          = $_.Title
+    "Department"     = $_.Department
+    "Work Phone"     = ([regex]::Match($_.telephoneNumber, "^((?:\+1)? ?(?:\d{10}|\d{7}))(?:.*)$")).Groups[1].Value
+    "Work Extension" = $_.ipPhone
+    "Cell Phone"     = $_.MobilePhone
+    "Hire Date"      = $HireDate.ToString("MM\/dd\/yyyy")
+  }
 }

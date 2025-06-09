@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -34,9 +34,9 @@ This script will create a bootable BIOS key and apply an appropriate label.
 #>
 
 param (
-    [string]$Path,
-    [string]$Drive,
-    [ValidateSet("Lenovo")][string]$Manufacturer = "Lenovo"
+  [string]$Path,
+  [string]$Drive,
+  [ValidateSet("Lenovo")][string]$Manufacturer = "Lenovo"
 )
 
 Push-Location $Path

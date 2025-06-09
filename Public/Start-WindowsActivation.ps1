@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -34,34 +34,34 @@ Activate windows using the spesified key, or fall back to the key in the BIOS.
 #>
 
 param (
-    [string]$ProductKey
+  [string]$ProductKey
 )
 
 Function ActivationStatus { return (Get-CimInstance SoftwareLicensingProduct -Filter "Name like 'Windows%'" |  Where-Object { $_.PartialProductKey })[0].LicenseStatus }
 function ActivateWindows {
-    param ([Parameter(ValueFromPipeline = $true)][ValidatePattern('^([A-Z0-9]{5}-){4}[A-Z0-9]{5}$')][string]$ProductKey)
-    $Service = Get-WmiObject -query "select * from SoftwareLicensingService"
-    $Service.InstallProductKey($ProductKey)
-    $Service.RefreshLicenseStatus()
-    return ActivationStatus
+  param ([Parameter(ValueFromPipeline = $true)][ValidatePattern('^([A-Z0-9]{5}-){4}[A-Z0-9]{5}$')][string]$ProductKey)
+  $Service = Get-WmiObject -query "select * from SoftwareLicensingService"
+  $Service.InstallProductKey($ProductKey)
+  $Service.RefreshLicenseStatus()
+  return ActivationStatus
 }
 
 $Status = ActivationStatus | Out-Null
 if ($Status -eq 1) { return "Windows is already activated." }
 
 if ($ProductKey) {
-    ActivateWindows $ProductKey
-    $Status = ActivationStatus | Out-Null
-    if ($Status -eq 1) { return "Windows was activated using the specified key." }
-    Write-Error "Windows could not be activated using the specified key."
+  ActivateWindows $ProductKey
+  $Status = ActivationStatus | Out-Null
+  if ($Status -eq 1) { return "Windows was activated using the specified key." }
+  Write-Error "Windows could not be activated using the specified key."
 }
 
 $BiosProductKey = (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOriginalProductKey
 if ($BiosProductKey) {
-    ActivateWindows $BiosProductKey | Out-Null
-    $Status = ActivationStatus | Out-Null
-    if ($Status -eq 1) { return "Windows was activated using the BIOS key." }
-    Write-Error "Windows could not be activated BIOS key."
+  ActivateWindows $BiosProductKey | Out-Null
+  $Status = ActivationStatus | Out-Null
+  if ($Status -eq 1) { return "Windows was activated using the BIOS key." }
+  Write-Error "Windows could not be activated BIOS key."
 }
 
 Write-Error "Windows could not be activated."

@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -52,12 +52,12 @@ The credentials object to use for the join.
 #>
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
 param(
-    [string]$Domain,
-    [string]$User,
-    [string]$Password,
-    [string]$OU,
-    [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force),
-    [pscredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
+  [string]$Domain,
+  [string]$User,
+  [string]$Password,
+  [string]$OU,
+  [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force),
+  [pscredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
 )
 
 if ($OU) { Add-Computer -DomainName $Domain -Credential $Credentials -Force -OU $OU }

@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -43,24 +43,24 @@ Should a single or multiple package be selected?
 #>
 
 param(
-    [Parameter(Mandatory = $True, ValuefromPipeline = $True)][hashtable]$Packages,
-    [Parameter(ValuefromPipeline = $True)][string]$Title = "Select the packages to install",
-    [Parameter(ValuefromPipeline = $True)][ValidateSet("Single" , "Multiple")][string]$Mode = "Single"
+  [Parameter(Mandatory = $True, ValuefromPipeline = $True)][hashtable]$Packages,
+  [Parameter(ValuefromPipeline = $True)][string]$Title = "Select the packages to install",
+  [Parameter(ValuefromPipeline = $True)][ValidateSet("Single" , "Multiple")][string]$Mode = "Single"
 )
 
 if ($Packages.count -gt 1) {
-    $SelectedPackage = $Packages | Out-GridView -OutputMode $Mode -Title $Title
-    return @{ $SelectedPackage.Name = $SelectedPackage.Value }
+  $SelectedPackage = $Packages | Out-GridView -OutputMode $Mode -Title $Title
+  return @{ $SelectedPackage.Name = $SelectedPackage.Value }
 }
 
 elseif ($Packages.count -eq 1) {
-    while ("y", "n" -notcontains $Install ) { $Install = Read-Host "Do you want to install $($Packages.Keys)? [y/n] " }
+  while ("y", "n" -notcontains $Install ) { $Install = Read-Host "Do you want to install $($Packages.Keys)? [y/n] " }
 
-    if ($Install -eq "Y" ) { return @{ $($Packages.Keys) = $($Packages.Values) } }
-    else { return @{} }
+  if ($Install -eq "Y" ) { return @{ $($Packages.Keys) = $($Packages.Values) } }
+  else { return @{} }
 }
 
 else {
-    Write-Warning "No packages to install. Press enter to continue."
-    return @{}
+  Write-Warning "No packages to install. Press enter to continue."
+  return @{}
 }

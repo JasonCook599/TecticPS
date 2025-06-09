@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -34,13 +34,13 @@ Automatically update Academy student users.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [ValidateScript( { Test-Path $_ })][string] $UserPath = ".\Students.csv",
-    [array]$Users = (Import-Csv $UserPath | Sort-Object -Property "Grade Level", "FirstName LastName"),
-    $HomePage,
-    $Company,
-    $Office,
-    $Title,
-    $Path
+  [ValidateScript( { Test-Path $_ })][string] $UserPath = ".\Students.csv",
+  [array]$Users = (Import-Csv $UserPath | Sort-Object -Property "Grade Level", "FirstName LastName"),
+  $HomePage,
+  $Company,
+  $Office,
+  $Title,
+  $Path
 
 )
 
@@ -48,48 +48,48 @@ Get-ADUser -Filter * -SearchBase $Path | Set-ADUser -Enabled $false
 [System.Collections.ArrayList]$Results = @()
 
 $Users | ForEach-Object {
-    $Name = $_."FirstName LastName"
-    $GivenName = $Name.split(" ")[0]
-    $Surname = $Name.split(" ")[1]
-    $Department = "Grade " + $_."Grade Level" -replace "0", ""
-    $SamAccountName = $GivenName + "." + $Surname
-    $UserPrincipalName = $SamAccountName + "@" + $HomePage
-    $EmailAddress = $UserPrincipalName
-    $PasswordSecure = Get-Password
+  $Name = $_."FirstName LastName"
+  $GivenName = $Name.split(" ")[0]
+  $Surname = $Name.split(" ")[1]
+  $Department = "Grade " + $_."Grade Level" -replace "0", ""
+  $SamAccountName = $GivenName + "." + $Surname
+  $UserPrincipalName = $SamAccountName + "@" + $HomePage
+  $EmailAddress = $UserPrincipalName
+  $PasswordSecure = Get-Password
 
-    try {
-        New-ADUser -DisplayName $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $Name -AccountPassword $PasswordSecure -Path $Path
+  try {
+    New-ADUser -DisplayName $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true -Name $Name -AccountPassword $PasswordSecure -Path $Path
 
-        $Result = [PSCustomObject]@{
-            Grade        = $Department
-            Name         = $Name
-            EmailAddress = $UserPrincipalName
-            Password     = $Password
-            Status       = "New"
-        }
-        $Results += $Result
+    $Result = [PSCustomObject]@{
+      Grade        = $Department
+      Name         = $Name
+      EmailAddress = $UserPrincipalName
+      Password     = $Password
+      Status       = "New"
     }
-    catch [Microsoft.ActiveDirectory.Management.ADIdentityAlreadyExistsException] {
-        Set-ADUser -Identity $SamAccountName -DisplayName $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true
+    $Results += $Result
+  }
+  catch [Microsoft.ActiveDirectory.Management.ADIdentityAlreadyExistsException] {
+    Set-ADUser -Identity $SamAccountName -DisplayName $Name -GivenName $GivenName -Surname $Surname -SamAccountName $SamAccountName -UserPrincipalName $UserPrincipalName -EmailAddress $EmailAddress -Title $Title -Department $Department -Office $Office -Company $Company -HomePage $HomePage -Enabled $true
 
-        $Result = [PSCustomObject]@{
-            Grade        = $Department
-            Name         = $Name
-            EmailAddress = $UserPrincipalName
-            Password     = ""
-            Status       = "Updated"
-        }
-        $Results += $Result
+    $Result = [PSCustomObject]@{
+      Grade        = $Department
+      Name         = $Name
+      EmailAddress = $UserPrincipalName
+      Password     = ""
+      Status       = "Updated"
     }
+    $Results += $Result
+  }
 }
 Start-Sleep -Seconds 10
 Search-ADAccount -AccountDisabled -SearchBase $Path | ForEach-Object {
-    $Result = [PSCustomObject]@{
-        Name         = $_.Name
-        EmailAddress = $_.UserPrincipalName
-        Password     = ""
-        Status       = "Disabled"
-    }
-    $Results += $Result
+  $Result = [PSCustomObject]@{
+    Name         = $_.Name
+    EmailAddress = $_.UserPrincipalName
+    Password     = ""
+    Status       = "Disabled"
+  }
+  $Results += $Result
 }
 Return $Results

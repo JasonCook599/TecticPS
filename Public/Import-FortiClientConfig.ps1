@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -43,14 +43,14 @@ https://getmodern.co.uk/automating-the-install-of-forticlient-vpn-via-mem-intune
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    $Path = "backup.conf",
-    [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
-    [SecureString]$Password
+  $Path = "backup.conf",
+  [ValidateScript( { Test-Path -Path $_ })]$FCConfig = 'C:\Program Files\Fortinet\FortiClient\FCConfig.exe',
+  [SecureString]$Password
 )
 
 $Arguments = ("-m all", ("-f " + $Path), "-o import", "-i 1")
 if ($Password) { $Arguments += "-p $([System.Runtime.InteropServices.Marshal]::PtrToStringAuto([System.Runtime.InteropServices.Marshal]::SecureStringToBSTR($Password)))" }
 
 if ($PSCmdlet.ShouldProcess($Path, "Import FortiClient Config")) {
-    Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
+  Start-Process -FilePath $FCConfig -ArgumentList $Arguments -NoNewWindow -Wait
 }

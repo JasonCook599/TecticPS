@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -49,33 +49,33 @@ https://blogs.technet.microsoft.com/rajbugga/2017/05/16/picture-sync-from-office
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
-    [array]$Users = (Get-ChildItem $Path -File)
+  [ValidateScript( { Test-Path $_ })][string]$Path = (Get-Location),
+  [array]$Users = (Get-ChildItem $Path -File)
 )
 
 Test-Admin -Warn -Message "You are not running this script as an administrator. It may not work as expected." | Out-null
 foreach ($User in $Users) {
-    $count++ ; Progress -Index $count -Total $Users.count -Activity "Setting users photos." -Name [System.IO.Path]::GetFileNameWithoutExtension($User.Name)
+  $count++ ; Progress -Index $count -Total $Users.count -Activity "Setting users photos." -Name [System.IO.Path]::GetFileNameWithoutExtension($User.Name)
 
-    $Account = [System.IO.Path]::GetFileNameWithoutExtension($User.Name)
-    $Search = [System.DirectoryServices.DirectorySearcher]([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()).GetDirectoryEntry()
-    $Search.Filter = "(&(objectclass=user)(objectcategory=person)(samAccountName=$account))"
-    $Result = $Search.FindOne()
+  $Account = [System.IO.Path]::GetFileNameWithoutExtension($User.Name)
+  $Search = [System.DirectoryServices.DirectorySearcher]([System.DirectoryServices.ActiveDirectory.Domain]::GetCurrentDomain()).GetDirectoryEntry()
+  $Search.Filter = "(&(objectclass=user)(objectcategory=person)(samAccountName=$account))"
+  $Result = $Search.FindOne()
 
-    if ($null -ne $Result) {
-        If ($PSCmdlet.ShouldProcess("$Account", "Set-AdPhotos")) {
-            try {
-                Write-Verbose "Setting photo for user `"$($UserResult.displayname)`""
-                [byte[]]$Photo = Get-Content ($Path + "\" + $User) -Encoding Byte
-                $UserResult = $Result.GetDirectoryEntry()
-                $UserResult.put("thumbnailPhoto", $Photo)
-                $UserResult.setinfo()
-            }
-            catch [System.Management.Automation.MethodInvocationException] {
-                if (Test-Admin) { Throw "You do not have permission to make these changes." }
-                else { Throw "You do not have permission to make these changes. Try running as admin." }
-            }
-        }
+  if ($null -ne $Result) {
+    If ($PSCmdlet.ShouldProcess("$Account", "Set-AdPhotos")) {
+      try {
+        Write-Verbose "Setting photo for user `"$($UserResult.displayname)`""
+        [byte[]]$Photo = Get-Content ($Path + "\" + $User) -Encoding Byte
+        $UserResult = $Result.GetDirectoryEntry()
+        $UserResult.put("thumbnailPhoto", $Photo)
+        $UserResult.setinfo()
+      }
+      catch [System.Management.Automation.MethodInvocationException] {
+        if (Test-Admin) { Throw "You do not have permission to make these changes." }
+        else { Throw "You do not have permission to make these changes. Try running as admin." }
+      }
     }
-    else { Write-Warning "User `"$account`" does not exist. Skipping." }
+  }
+  else { Write-Warning "User `"$account`" does not exist. Skipping." }
 }

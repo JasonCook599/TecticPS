@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) TectTectic
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -34,11 +34,11 @@ Find files with the same name.
 #>
 [cmdletbinding()]
 param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$Path,
-    [hashtable]$Params = @{
-        Recurse = $true
-        File    = $true
-    }
+  [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$Path,
+  [hashtable]$Params = @{
+    Recurse = $true
+    File    = $true
+  }
 )
 
 $Files = @()

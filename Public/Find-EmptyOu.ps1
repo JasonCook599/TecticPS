@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -35,11 +35,11 @@ This script will find all empty organizational units.
 Get-ADOrganizationalUnit -filter * -Properties Description -PipelineVariable pv |
 Select-Object DistinguishedName, Name, Description,
 @{Name = "Children"; Expression = {
-        Get-ADObject -filter * -SearchBase $pv.distinguishedname |
-        Where-Object { $_.objectclass -ne "organizationalunit" } |
-        Measure-Object | Select-Object -ExpandProperty Count }
+    Get-ADObject -filter * -SearchBase $pv.distinguishedname |
+    Where-Object { $_.objectclass -ne "organizationalunit" } |
+    Measure-Object | Select-Object -ExpandProperty Count }
 } | Where-Object { $_.children -eq 0 } |
 ForEach-Object {
-    Set-ADOrganizationalUnit -Identity $_.distinguishedname -ProtectedFromAccidentalDeletion $False -PassThru -whatif |
-    Remove-ADOrganizationalUnit -Recursive -whatif
+  Set-ADOrganizationalUnit -Identity $_.distinguishedname -ProtectedFromAccidentalDeletion $False -PassThru -whatif |
+  Remove-ADOrganizationalUnit -Recursive -whatif
 }

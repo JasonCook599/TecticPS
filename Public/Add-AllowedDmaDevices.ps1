@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -48,19 +48,19 @@ A hashtable of all the address of allowed devices in the format of Manufactuer.M
 An list of all the devices allowed on this spesific device.
 #>
 param(
-    $ComputerInfo = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object Manufacturer, Model),
-    $Path = "HKLM:\SYSTEM\CurrentControlSet\Control\DmaSecurity\AllowedBuses",
-    $DeviceList = @{
-        Lenovo = @{
-            "20YG003FUS" = @{
-                "PCI Express Root Port A" = "PCI\VEN_1022&DEV_1634"
-                "PCI Express Root Port B" = "PCI\VEN_1022&DEV_1635"
-                "PCI standard ISA bridge" = "PCI\VEN_1022&DEV_790E"
-            }
-        }
-    },
-    $AllowedDevices = $DeviceList.$($ComputerInfo.Manufacturer).$($ComputerInfo.Model)
+  $ComputerInfo = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object Manufacturer, Model),
+  $Path = "HKLM:\SYSTEM\CurrentControlSet\Control\DmaSecurity\AllowedBuses",
+  $DeviceList = @{
+    Lenovo = @{
+      "20YG003FUS" = @{
+        "PCI Express Root Port A" = "PCI\VEN_1022&DEV_1634"
+        "PCI Express Root Port B" = "PCI\VEN_1022&DEV_1635"
+        "PCI standard ISA bridge" = "PCI\VEN_1022&DEV_790E"
+      }
+    }
+  },
+  $AllowedDevices = $DeviceList.$($ComputerInfo.Manufacturer).$($ComputerInfo.Model)
 )
 foreach ($Device in $AllowedDevices.GetEnumerator()) {
-    New-ItemProperty -Path $Path -Name $Device.Name -Value $Device.Value -PropertyType "String" -Force -WhatIf
+  New-ItemProperty -Path $Path -Name $Device.Name -Value $Device.Value -PropertyType "String" -Force -WhatIf
 }

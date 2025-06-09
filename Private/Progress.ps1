@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -34,12 +34,12 @@ Show progress in an easier to use format
 #>
 # SkipLoadDefaults: true
 param(
-    [int]$Index,
-    [int]$Total,
-    [string]$Name,
-    [string]$Activity,
-    [string]$Status = ("Processing {0} of {1}: {2}" -f $Index, $Total, $Name),
-    [int]$PercentComplete = ($Index / $Total * 100)
+  [int]$Index,
+  [int]$Total,
+  [string]$Name,
+  [string]$Activity,
+  [string]$Status = ("Processing {0} of {1}: {2}" -f $Index, $Total, $Name),
+  [int]$PercentComplete = ($Index / $Total * 100)
 )
 
 if ($PercentComplete -eq 100) { $Completed = $true } else { $Completed = $false }

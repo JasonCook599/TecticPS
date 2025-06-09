@@ -58,7 +58,11 @@
           "Mode": {
             "type": "string",
             "description": "What mode should we use for cropping?",
-            "enum": ["Crop", "Pad", "None"]
+            "enum": [
+              "Crop",
+              "Pad",
+              "None"
+            ]
           },
           "Gravity": {
             "type": "string",
@@ -88,13 +92,23 @@
             "type": "array",
             "items": {
               "type": "string",
-              "enum": ["Application", "Generic", "Web", "Preview", "Other"]
+              "enum": [
+                "Application",
+                "Generic",
+                "Web",
+                "Preview",
+                "Other"
+              ]
             }
           }
         },
-        "required": ["Name"]
+        "required": [
+          "Name"
+        ]
       },
-      "uniqueKeys": ["/Name"]
+      "uniqueKeys": [
+        "/Name"
+      ]
     }
   }
 }

@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) TectTectic
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -47,11 +47,11 @@ if (Get-ChildItem "HKLM:\Software\Microsoft\Windows\CurrentVersion\Component Bas
 if (Get-Item "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\WindowsUpdate\Auto Update\RebootRequired" -EA Ignore) { return "WindowsUpdate\Auto Update\RebootRequired" }
 if (Get-ItemProperty "HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager" -Name PendingFileRenameOperations -EA Ignore) { return "PendingFileRenameOperations" }
 try {
-    $util = [wmiclass]"\\.\root\ccm\clientsdk:CCM_ClientUtilities"
-    $status = $util.DetermineIfRebootPending()
-    if (($null -ne $status) -and $status.RebootPending) {
-        return "CCM_ClientUtilities"
-    }
+  $util = [wmiclass]"\\.\root\ccm\clientsdk:CCM_ClientUtilities"
+  $status = $util.DetermineIfRebootPending()
+  if (($null -ne $status) -and $status.RebootPending) {
+    return "CCM_ClientUtilities"
+  }
 }
 catch { }
 

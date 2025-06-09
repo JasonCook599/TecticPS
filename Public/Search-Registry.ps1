@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -79,72 +79,72 @@ https://gallery.technet.microsoft.com/scriptcenter/Search-Registry-Find-Keys-b4c
 # SkipLoadDefaults: True
 [CmdletBinding()]
 param(
-    [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][Alias("PsPath")][string[]] $Path,
-    [switch]$Recurse,
-    [Parameter(ParameterSetName = "SingleSearchString", Mandatory)][string] $SearchRegex,
-    [Parameter(ParameterSetName = "SingleSearchString")][switch] $KeyName,
-    [Parameter(ParameterSetName = "SingleSearchString")][switch] $ValueName,
-    [Parameter(ParameterSetName = "SingleSearchString")][switch] $ValueData,
-    [Parameter(ParameterSetName = "MultipleSearchStrings")][string] $KeyNameRegex,
-    [Parameter(ParameterSetName = "MultipleSearchStrings")][string] $ValueNameRegex,
-    [Parameter(ParameterSetName = "MultipleSearchStrings")][string] $ValueDataRegex
+  [Parameter(Mandatory, Position = 0, ValueFromPipelineByPropertyName)][Alias("PsPath")][string[]] $Path,
+  [switch]$Recurse,
+  [Parameter(ParameterSetName = "SingleSearchString", Mandatory)][string] $SearchRegex,
+  [Parameter(ParameterSetName = "SingleSearchString")][switch] $KeyName,
+  [Parameter(ParameterSetName = "SingleSearchString")][switch] $ValueName,
+  [Parameter(ParameterSetName = "SingleSearchString")][switch] $ValueData,
+  [Parameter(ParameterSetName = "MultipleSearchStrings")][string] $KeyNameRegex,
+  [Parameter(ParameterSetName = "MultipleSearchStrings")][string] $ValueNameRegex,
+  [Parameter(ParameterSetName = "MultipleSearchStrings")][string] $ValueDataRegex
 )
 
 begin {
-    switch ($PSCmdlet.ParameterSetName) {
-        SingleSearchString {
-            $NoSwitchesSpecified = -not ($PSBoundParameters.ContainsKey("KeyName") -or $PSBoundParameters.ContainsKey("ValueName") -or $PSBoundParameters.ContainsKey("ValueData"))
-            if ($KeyName -or $NoSwitchesSpecified) { $KeyNameRegex = $SearchRegex }
-            if ($ValueName -or $NoSwitchesSpecified) { $ValueNameRegex = $SearchRegex }
-            if ($ValueData -or $NoSwitchesSpecified) { $ValueDataRegex = $SearchRegex }
-        }
-        MultipleSearchStrings {
-            # No extra work needed
-        }
+  switch ($PSCmdlet.ParameterSetName) {
+    SingleSearchString {
+      $NoSwitchesSpecified = -not ($PSBoundParameters.ContainsKey("KeyName") -or $PSBoundParameters.ContainsKey("ValueName") -or $PSBoundParameters.ContainsKey("ValueData"))
+      if ($KeyName -or $NoSwitchesSpecified) { $KeyNameRegex = $SearchRegex }
+      if ($ValueName -or $NoSwitchesSpecified) { $ValueNameRegex = $SearchRegex }
+      if ($ValueData -or $NoSwitchesSpecified) { $ValueDataRegex = $SearchRegex }
     }
+    MultipleSearchStrings {
+      # No extra work needed
+    }
+  }
 }
 
 process {
-    foreach ($CurrentPath in $Path) {
-        Get-ChildItem $CurrentPath -Recurse:$Recurse |
-        ForEach-Object {
-            $Key = $_
+  foreach ($CurrentPath in $Path) {
+    Get-ChildItem $CurrentPath -Recurse:$Recurse |
+    ForEach-Object {
+      $Key = $_
 
-            if ($KeyNameRegex) {
-                Write-Verbose ("{0}: Checking KeyNamesRegex" -f $Key.Name)
+      if ($KeyNameRegex) {
+        Write-Verbose ("{0}: Checking KeyNamesRegex" -f $Key.Name)
 
-                if ($Key.PSChildName -match $KeyNameRegex) {
-                    Write-Verbose "  -> Match found!"
-                    return [PSCustomObject] @{
-                        Key    = $Key
-                        Reason = "KeyName"
-                    }
-                }
-            }
-
-            if ($ValueNameRegex) {
-                Write-Verbose ("{0}: Checking ValueNamesRegex" -f $Key.Name)
-
-                if ($Key.GetValueNames() -match $ValueNameRegex) {
-                    Write-Verbose "  -> Match found!"
-                    return [PSCustomObject] @{
-                        Key    = $Key
-                        Reason = "ValueName"
-                    }
-                }
-            }
-
-            if ($ValueDataRegex) {
-                Write-Verbose ("{0}: Checking ValueDataRegex" -f $Key.Name)
-
-                if (($Key.GetValueNames() | ForEach-Object { $Key.GetValue($_) }) -match $ValueDataRegex) {
-                    Write-Verbose "  -> Match!"
-                    return [PSCustomObject] @{
-                        Key    = $Key
-                        Reason = "ValueData"
-                    }
-                }
-            }
+        if ($Key.PSChildName -match $KeyNameRegex) {
+          Write-Verbose "  -> Match found!"
+          return [PSCustomObject] @{
+            Key    = $Key
+            Reason = "KeyName"
+          }
         }
+      }
+
+      if ($ValueNameRegex) {
+        Write-Verbose ("{0}: Checking ValueNamesRegex" -f $Key.Name)
+
+        if ($Key.GetValueNames() -match $ValueNameRegex) {
+          Write-Verbose "  -> Match found!"
+          return [PSCustomObject] @{
+            Key    = $Key
+            Reason = "ValueName"
+          }
+        }
+      }
+
+      if ($ValueDataRegex) {
+        Write-Verbose ("{0}: Checking ValueDataRegex" -f $Key.Name)
+
+        if (($Key.GetValueNames() | ForEach-Object { $Key.GetValue($_) }) -match $ValueDataRegex) {
+          Write-Verbose "  -> Match!"
+          return [PSCustomObject] @{
+            Key    = $Key
+            Reason = "ValueData"
+          }
+        }
+      }
     }
+  }
 }

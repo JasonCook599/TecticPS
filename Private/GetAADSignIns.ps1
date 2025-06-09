@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -43,14 +43,14 @@ http://darrenjrobinson.com/
 #>
 [cmdletbinding()]
 param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$Date
+  [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$Date
 )
 $global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
 
 try {
-    # Get AAD B2B Users
-    return (Invoke-RestMethod -Headers @{Authorization = "Bearer $($myToken.AccessToken)" } `
-            -Uri  "https://graph.microsoft.com/beta/users?filter=signInActivity/lastSignInDateTime le $($Date)" `
-            -Method Get).value
+  # Get AAD B2B Users
+  return (Invoke-RestMethod -Headers @{Authorization = "Bearer $($myToken.AccessToken)" } `
+      -Uri  "https://graph.microsoft.com/beta/users?filter=signInActivity/lastSignInDateTime le $($Date)" `
+      -Method Get).value
 }
 catch { Write-Error $_ }

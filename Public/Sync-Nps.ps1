@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) TectTectic
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -54,42 +54,42 @@ http://directoryadmin.blogspot.com/2018/04/syncing-nps-settings-between-two-serv
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [Parameter(Mandatory = $true)]$Source,
-    $Path = "\\$Source\C$\NPSConfig-$Source.xml"
+  [Parameter(Mandatory = $true)]$Source,
+  $Path = "\\$Source\C$\NPSConfig-$Source.xml"
 )
 
 $ErrorActionPreference = [System.Management.Automation.ActionPreference]::Stop
 
 Write-Debug "Write an error and exit the script if an exception is ever thrown"
 trap {
-    Write-EventLog -LogName "System" -eventID 1 -Source "NPS-Sync" -EntryType "Error" -Message "An Error occured during NPS Sync: $_. Script run from $($MyInvocation.MyCommand.Definition)"
-    $_
-    exit
+  Write-EventLog -LogName "System" -eventID 1 -Source "NPS-Sync" -EntryType "Error" -Message "An Error occured during NPS Sync: $_. Script run from $($MyInvocation.MyCommand.Definition)"
+  $_
+  exit
 }
 
 Write-Debug "Create an NPS Sync Event Source if it doesn't already exist"
 if (-not [System.Diagnostics.EventLog]::SourceExists("NPS-Sync")) { New-Eventlog -LogName "System" -Source "NPS-Sync" }
 
 If ($PSCmdlet.ShouldProcess("$Source", "Export NPS Config")) {
-    Write-Debug "Connect to NPS Master and export configuration"
-    $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -ScriptBlock { param ($Path) netsh nps export filename = $Path exportPSK = yes }
-    Write-Debug "Verify that the import XML file was created. If it is not there, it will throw an exception caught by the trap above that will exit the script."
-    Get-Item $Path -ErrorAction Stop | Out-Null
+  Write-Debug "Connect to NPS Master and export configuration"
+  $ExportResult = Invoke-Command -ComputerName $Source -ArgumentList $Path -ScriptBlock { param ($Path) netsh nps export filename = $Path exportPSK = yes }
+  Write-Debug "Verify that the import XML file was created. If it is not there, it will throw an exception caught by the trap above that will exit the script."
+  Get-Item $Path -ErrorAction Stop | Out-Null
 }
 
 If ($PSCmdlet.ShouldProcess("$Source", "Reset NPS Config")) {
-    Write-Debug "Clear existing configuration and import new NPS config"
-    netsh nps reset config | Out-Null
+  Write-Debug "Clear existing configuration and import new NPS config"
+  netsh nps reset config | Out-Null
 }
 
 If ($PSCmdlet.ShouldProcess("$Source", "Import NPS Config")) {
-    Get-Item -Path $Path -ErrorAction Stop
-    netsh nps import filename = $Path | Out-Null
-    Write-Debug "Delete Temporary File"
-    Remove-Item -path $Path
+  Get-Item -Path $Path -ErrorAction Stop
+  netsh nps import filename = $Path | Out-Null
+  Write-Debug "Delete Temporary File"
+  Remove-Item -path $Path
 
-    Write-Debug "Compose and Write Success Event"
-    Write-EventLog -LogName "System" -eventID 1 -Source "NPS-Sync" -EntryType "Information" -Message "Network Policy Server configuration successfully synchronized from $Source.
+  Write-Debug "Compose and Write Success Event"
+  Write-EventLog -LogName "System" -eventID 1 -Source "NPS-Sync" -EntryType "Information" -Message "Network Policy Server configuration successfully synchronized from $Source.
 
 Export Results: $ExportResult
 

@@ -10,26 +10,26 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 V1.00, 05/21/2015 - Initial version
 V1.10, 09/22/2016 - Fixed bug with call to sc.exe
 V1.20, 11/13/2017 - Fixed environment variables
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -128,10 +128,10 @@ Get-BitsTransfer | Remove-BitsTransfer
 
 Write-Host "10) Attempting to install the Windows Update Agent..."
 if ($arch -eq 64) {
-    wusa Windows8-RT-KB2937636-x64 /quiet
+  wusa Windows8-RT-KB2937636-x64 /quiet
 }
 else {
-    wusa Windows8-RT-KB2937636-x86 /quiet
+  wusa Windows8-RT-KB2937636-x86 /quiet
 }
 
 Write-Host "11) Starting Windows Update Services..."

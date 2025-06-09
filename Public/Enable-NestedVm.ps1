@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -51,8 +51,8 @@ https://github.com/MicrosoftDocs/Virtualization-Documentation/blob/main/LICENSE
 param([string]$vmName)
 
 if ([string]::IsNullOrEmpty($vmName)) {
-    Write-Host "No VM name passed"
-    Exit;
+  Write-Host "No VM name passed"
+  Exit;
 }
 
 # Constants
@@ -71,27 +71,27 @@ $adminRole = [System.Security.Principal.WindowsBuiltInRole]::Administrator;
 
 # Check to see if we are currently running as an administrator
 if ($myWindowsPrincipal.IsInRole($adminRole)) {
-    # We are running as an administrator, so change the title and background colour to indicate this
-    $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)";
+  # We are running as an administrator, so change the title and background colour to indicate this
+  $Host.UI.RawUI.WindowTitle = $myInvocation.MyCommand.Definition + "(Elevated)";
 
 }
 else {
-    # We are not running as an administrator, so relaunch as administrator
+  # We are not running as an administrator, so relaunch as administrator
 
-    # Create a new process object that starts PowerShell
-    $newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
+  # Create a new process object that starts PowerShell
+  $newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
 
-    # Specify the current script path and name as a parameter with added scope and support for scripts with spaces in it's path
-    $newProcess.Arguments = "& '" + $script:MyInvocation.MyCommand.Path + "'"
+  # Specify the current script path and name as a parameter with added scope and support for scripts with spaces in it's path
+  $newProcess.Arguments = "& '" + $script:MyInvocation.MyCommand.Path + "'"
 
-    # Indicate that the process should be elevated
-    $newProcess.Verb = "runas";
+  # Indicate that the process should be elevated
+  $newProcess.Verb = "runas";
 
-    # Start the new process
-    [System.Diagnostics.Process]::Start($newProcess) | Out-Null;
+  # Start the new process
+  [System.Diagnostics.Process]::Start($newProcess) | Out-Null;
 
-    # Exit from the current, unelevated, process
-    Exit;
+  # Exit from the current, unelevated, process
+  Exit;
 }
 
 #
@@ -118,34 +118,34 @@ $prompt = $false;
 
 # Output text for proposed actions
 if ($vmInfo.State -eq 'Saved') {
-    Write-Host "\tSaved state will be removed"
-    $prompt = $true
+  Write-Host "\tSaved state will be removed"
+  $prompt = $true
 }
 if ($vmInfo.State -ne 'Off' -or $vmInfo.State -eq 'Saved') {
-    Write-Host "Vm State:" $vmInfo.State
-    Write-Host "    $vmName will be turned off"
-    $prompt = $true
+  Write-Host "Vm State:" $vmInfo.State
+  Write-Host "    $vmName will be turned off"
+  $prompt = $true
 }
 if ($vmInfo.ExposeVirtualizationExtensions -eq $false) {
-    Write-Host "    Virtualization extensions will be enabled"
-    $prompt = $true
+  Write-Host "    Virtualization extensions will be enabled"
+  $prompt = $true
 }
 if ($vmInfo.DynamicMemoryEnabled -eq $true) {
-    Write-Host "    Dynamic memory will be disabled"
-    $prompt = $true
+  Write-Host "    Dynamic memory will be disabled"
+  $prompt = $true
 }
 if ($vmInfo.MacAddressSpoofing -eq 'Off') {
-    Write-Host "    Optionally enable mac address spoofing"
-    $prompt = $true
+  Write-Host "    Optionally enable mac address spoofing"
+  $prompt = $true
 }
 if ($vmInfo.MemorySize -lt $4GB) {
-    Write-Host "    Optionally set vm memory to 4GB"
-    $prompt = $true
+  Write-Host "    Optionally set vm memory to 4GB"
+  $prompt = $true
 }
 
 if (-not $prompt) {
-    Write-Host "    None, vm is already setup for nesting"
-    Exit;
+  Write-Host "    None, vm is already setup for nesting"
+  Exit;
 }
 
 Write-Host "Input Y to accept or N to cancel:" -NoNewline
@@ -153,57 +153,57 @@ Write-Host "Input Y to accept or N to cancel:" -NoNewline
 $char = Read-Host
 
 while (-not ($char.StartsWith('Y') -or $char.StartsWith('N'))) {
-    Write-Host "Invalid Input, Y or N"
-    $char = Read-Host
+  Write-Host "Invalid Input, Y or N"
+  $char = Read-Host
 }
 
 if ($char.StartsWith('Y')) {
-    if ($vmInfo.State -eq 'Saved') {
-        Remove-VMSavedState -VMName $vmName
+  if ($vmInfo.State -eq 'Saved') {
+    Remove-VMSavedState -VMName $vmName
+  }
+  if ($vmInfo.State -ne 'Off' -or $vmInfo.State -eq 'Saved') {
+    Stop-VM -VMName $vmName
+  }
+  if ($vmInfo.ExposeVirtualizationExtensions -eq $false) {
+    Set-VMProcessor -VMName $vmName -ExposeVirtualizationExtensions $true
+  }
+  if ($vmInfo.DynamicMemoryEnabled -eq $true) {
+    Set-VMMemory -VMName $vmName -DynamicMemoryEnabled $false
+  }
+
+  # Optionally turn on mac spoofing
+  if ($vmInfo.MacAddressSpoofing -eq 'Off') {
+    Write-Host "Mac Address Spoofing isn't enabled (nested guests won't have network)." -ForegroundColor Yellow
+    Write-Host "Would you like to enable MAC address spoofing? (Y/N)" -NoNewline
+    $Read = Read-Host
+
+    if ($Read -eq 'Y') {
+      Set-VMNetworkAdapter -VMName $vmName -MacAddressSpoofing on
     }
-    if ($vmInfo.State -ne 'Off' -or $vmInfo.State -eq 'Saved') {
-        Stop-VM -VMName $vmName
-    }
-    if ($vmInfo.ExposeVirtualizationExtensions -eq $false) {
-        Set-VMProcessor -VMName $vmName -ExposeVirtualizationExtensions $true
-    }
-    if ($vmInfo.DynamicMemoryEnabled -eq $true) {
-        Set-VMMemory -VMName $vmName -DynamicMemoryEnabled $false
+    else {
+      Write-Host "Not enabling Mac address spoofing."
     }
 
-    # Optionally turn on mac spoofing
-    if ($vmInfo.MacAddressSpoofing -eq 'Off') {
-        Write-Host "Mac Address Spoofing isn't enabled (nested guests won't have network)." -ForegroundColor Yellow
-        Write-Host "Would you like to enable MAC address spoofing? (Y/N)" -NoNewline
-        $Read = Read-Host
+  }
 
-        if ($Read -eq 'Y') {
-            Set-VMNetworkAdapter -VMName $vmName -MacAddressSpoofing on
-        }
-        else {
-            Write-Host "Not enabling Mac address spoofing."
-        }
+  if ($vmInfo.MemorySize -lt $4GB) {
+    Write-Host "VM memory is set less than 4GB, without 4GB or more, you may not be able to start VMs." -ForegroundColor Yellow
+    Write-Host "Would you like to set Vm memory to 4GB? (Y/N)" -NoNewline
+    $Read = Read-Host
 
+    if ($Read -eq 'Y') {
+      Set-VMMemory -VMName $vmName -StartupBytes $4GB
     }
-
-    if ($vmInfo.MemorySize -lt $4GB) {
-        Write-Host "VM memory is set less than 4GB, without 4GB or more, you may not be able to start VMs." -ForegroundColor Yellow
-        Write-Host "Would you like to set Vm memory to 4GB? (Y/N)" -NoNewline
-        $Read = Read-Host
-
-        if ($Read -eq 'Y') {
-            Set-VMMemory -VMName $vmName -StartupBytes $4GB
-        }
-        else {
-            Write-Host "Not setting Vm Memory to 4GB."
-        }
+    else {
+      Write-Host "Not setting Vm Memory to 4GB."
     }
-    Exit;
+  }
+  Exit;
 }
 
 if ($char.StartsWith('N')) {
-    Write-Host "Exiting..."
-    Exit;
+  Write-Host "Exiting..."
+  Exit;
 }
 
 Write-Host 'Invalid input'

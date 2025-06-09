@@ -10,37 +10,37 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
 Parse a GUID
 #>
 param (
-    [string]$String,
-    [ValidateSet("N", "D", "B", "P")][string]$Format = "B"
+  [string]$String,
+  [ValidateSet("N", "D", "B", "P")][string]$Format = "B"
 )
 $Guid = [System.Guid]::empty
 If ([System.Guid]::TryParse($String, [System.Management.Automation.PSReference]$Guid)) {
-    $Guid = [System.Guid]::Parse($String)
+  $Guid = [System.Guid]::Parse($String)
 }
 Else {
-    $Guid = $null
+  $Guid = $null
 }
 return $Guid.ToString($Format)

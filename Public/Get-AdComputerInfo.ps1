@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -46,19 +46,19 @@ Specifies the search base for the command.
 #>
 
 param(
-    [string]$Filter = "*",
-    $Properties = @("CN", "Enabled", "LastLogonDate", "Created", "Modified", "OperatingSystem", "OperatingSystemVersion", "OperatingSystemServicePack", "PasswordLastSet"),
-    $SortKey = $Properties[0],
-    [string]$SearchBase
+  [string]$Filter = "*",
+  $Properties = @("CN", "Enabled", "LastLogonDate", "Created", "Modified", "OperatingSystem", "OperatingSystemVersion", "OperatingSystemServicePack", "PasswordLastSet"),
+  $SortKey = $Properties[0],
+  [string]$SearchBase
 )
 
 Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
 
 if ($SearchBase) {
-    $Computers = Get-ADComputer -Filter $Filter -SearchBase $SearchBase -Properties $Properties
+  $Computers = Get-ADComputer -Filter $Filter -SearchBase $SearchBase -Properties $Properties
 }
 else {
-    $Computers = Get-ADComputer -Filter $Filter -Properties $Properties
+  $Computers = Get-ADComputer -Filter $Filter -Properties $Properties
 }
 
 return $Computers # | Sort-Object $SortKey | Select-Object $Properties

@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -58,11 +58,11 @@ Get-StaleAADGuestAccounts
 #>
 
 param (
-	[Parameter(Mandatory = $true, ValueFromPipeline = $true)]$TenantId , # Tenant ID
-	[Parameter(Mandatory = $true, ValueFromPipeline = $true)][PSCredential]$Credential, # Registered AAD App ID and Secret
-	$StaleDays = '90', # Number of days over which an Azure AD Account that hasn't signed in is considered stale'
-	$StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a spesific date to use as stale
-	[switch]$GetLastSignIn
+  [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$TenantId , # Tenant ID
+  [Parameter(Mandatory = $true, ValueFromPipeline = $true)][PSCredential]$Credential, # Registered AAD App ID and Secret
+  $StaleDays = '90', # Number of days over which an Azure AD Account that hasn't signed in is considered stale'
+  $StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a spesific date to use as stale
+  [switch]$GetLastSignIn
 )
 
 Requires -Modules MSAL.PS
@@ -86,14 +86,14 @@ $StaleAndPendingGuests += $StalePendingGuests
 Write-Host -ForegroundColor Green "$($StaleAndPendingGuests.count) Guest accounts are still 'pending' B2B Guest invitation acceptance or haven't signed in since '$($StaleDate)'."
 
 If ($GetLastSignIn) {
-	# Add lastSignInDateTime to the User PowerShell Object
-	foreach ($Guest in $StaleGuests) {
-		#Progress message
-		$count++ ; Progress -Index $count -Total $StaleGuests.count -Activity "Getting last sign in for stale guests." -Name $Guest.UserPrincipalName.ToString()
-		$signIns = $null
-		$signIns = GetAADUserSignInActivity -ID $Guest.id
-		$Guest | Add-Member -Type NoteProperty -Name "lastSignInDateTime" -Value $signIns.signInActivity.lastSignInDateTime
-	}
+  # Add lastSignInDateTime to the User PowerShell Object
+  foreach ($Guest in $StaleGuests) {
+    #Progress message
+    $count++ ; Progress -Index $count -Total $StaleGuests.count -Activity "Getting last sign in for stale guests." -Name $Guest.UserPrincipalName.ToString()
+    $signIns = $null
+    $signIns = GetAADUserSignInActivity -ID $Guest.id
+    $Guest | Add-Member -Type NoteProperty -Name "lastSignInDateTime" -Value $signIns.signInActivity.lastSignInDateTime
+  }
 }
 
 # Set default properties to return

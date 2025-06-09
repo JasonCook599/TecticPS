@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -46,10 +46,10 @@ The sort key to use when sorting the results. By default, this is the first prop
 #>
 
 param(
-    [string]$Filter,
-    $Properties = @("UserPrincipalName", "DisplayName", "GivenName", "Surname", "UserType", "AccountEnabled", "PhysicalDeliveryOfficeName", "TelephoneNumber", "Mobile", "Mail", "MailNickName"),
-    $WhereObject = { $_.DirSyncEnabled -ne $true },
-    $SortKey = $Properties[0]
+  [string]$Filter,
+  $Properties = @("UserPrincipalName", "DisplayName", "GivenName", "Surname", "UserType", "AccountEnabled", "PhysicalDeliveryOfficeName", "TelephoneNumber", "Mobile", "Mail", "MailNickName"),
+  $WhereObject = { $_.DirSyncEnabled -ne $true },
+  $SortKey = $Properties[0]
 )
 
 return Get-AzureADUser -Filter $Filter | Where-Object $WhereObject | Sort-Object $SortKey | Select-Object $Properties

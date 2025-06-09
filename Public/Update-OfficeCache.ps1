@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -35,14 +35,14 @@ Update the office cache for each XML file in the current folder.
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-    $Path = (Get-ChildItem -Filter "*.xml"),
-    $Setup = ".\setup.exe"
+  $Path = (Get-ChildItem -Filter "*.xml"),
+  $Setup = ".\setup.exe"
 )
 
 $Path | ForEach-Object {
-    If ($PSCmdlet.ShouldProcess("$($_.Name)", "Update-OfficeCache")) {
-        Push-Location -Path (Split-Path -Parent -Path $_.FullName)
-        Start-Process -FilePath $Setup -ArgumentList @("/download", $_.Name) -NoNewWindow -Wait
-        Pop-Location
-    }
+  If ($PSCmdlet.ShouldProcess("$($_.Name)", "Update-OfficeCache")) {
+    Push-Location -Path (Split-Path -Parent -Path $_.FullName)
+    Start-Process -FilePath $Setup -ArgumentList @("/download", $_.Name) -NoNewWindow -Wait
+    Pop-Location
+  }
 }

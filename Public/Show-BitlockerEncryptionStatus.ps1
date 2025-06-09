@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -36,7 +36,7 @@ Show BitLocker encryption status on a loop. Used to monitor encryption progress.
 The lenght of time to sleep between checks.
 #>
 param(
-    [ValidateRange(0, [Int32]::MaxValue)][Int32]$Sleep = 5
+  [ValidateRange(0, [Int32]::MaxValue)][Int32]$Sleep = 5
 )
 
 Test-Admin -Throw | Out-Null
@@ -44,9 +44,9 @@ Test-Admin -Throw | Out-Null
 Get-BitLockerVolume
 
 while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
-    $Result = Get-BitLockerVolume  | Where-Object { $_.VolumeStatus -ne "FullyEncrypted" -and $_.VolumeStatus -ne "FullyDecrypted" } | Format-Table
-    Clear-Host
+  $Result = Get-BitLockerVolume  | Where-Object { $_.VolumeStatus -ne "FullyEncrypted" -and $_.VolumeStatus -ne "FullyDecrypted" } | Format-Table
+  Clear-Host
     (Get-Date).DateTime
-    $Result
-    Start-Sleep -Seconds $Sleep
+  $Result
+  Start-Sleep -Seconds $Sleep
 }

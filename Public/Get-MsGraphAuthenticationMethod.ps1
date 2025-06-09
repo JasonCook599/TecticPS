@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) TectTectic
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -50,109 +50,109 @@ The UserId or UserPrincipalName to check.
 #>
 [CmdletBinding()]
 param(
-    [Parameter(
-        Mandatory = $true,
-        Position = 0
-    )]
-    [Alias('UserPrincipalName')]
-    [string[]]  $UserId,
+  [Parameter(
+    Mandatory = $true,
+    Position = 0
+  )]
+  [Alias('UserPrincipalName')]
+  [string[]]  $UserId,
 
-    [Parameter(
-        Mandatory = $false
-    )]
-    [ValidateSet('AuthenticatorApp', 'PhoneAuthentication', 'Fido2', 'WindowsHelloForBusiness', 'EmailAuthentication', 'TemporaryAccessPass', 'Passwordless', 'SoftwareOath')]
-    [string[]]   $MethodType
+  [Parameter(
+    Mandatory = $false
+  )]
+  [ValidateSet('AuthenticatorApp', 'PhoneAuthentication', 'Fido2', 'WindowsHelloForBusiness', 'EmailAuthentication', 'TemporaryAccessPass', 'Passwordless', 'SoftwareOath')]
+  [string[]]   $MethodType
 )
 
 BEGIN {
-    $ConnectionGraph = Get-MgContext
-    if (-not $ConnectionGraph) {
-        Write-Error "Please connect to Microsoft Graph" -ErrorAction Stop
-    }
+  $ConnectionGraph = Get-MgContext
+  if (-not $ConnectionGraph) {
+    Write-Error "Please connect to Microsoft Graph" -ErrorAction Stop
+  }
 
 }
 
 PROCESS {
-    foreach ($User in $UserId) {
-        try {
-            $DeviceList = Get-MgUserAuthenticationMethod -UserId $User -ErrorAction Stop
-            $DeviceOutput = foreach ($Device in $DeviceList) {
+  foreach ($User in $UserId) {
+    try {
+      $DeviceList = Get-MgUserAuthenticationMethod -UserId $User -ErrorAction Stop
+      $DeviceOutput = foreach ($Device in $DeviceList) {
 
-                #Converting long method to short-hand human readable method type.
-                switch ($Device.AdditionalProperties["@odata.type"]) {
-                    '#microsoft.graph.microsoftAuthenticatorAuthenticationMethod' {
-                        $MethodAuthType = 'AuthenticatorApp'
-                        $AdditionalProperties = $Device.AdditionalProperties["displayName"]
-                    }
+        #Converting long method to short-hand human readable method type.
+        switch ($Device.AdditionalProperties["@odata.type"]) {
+          '#microsoft.graph.microsoftAuthenticatorAuthenticationMethod' {
+            $MethodAuthType = 'AuthenticatorApp'
+            $AdditionalProperties = $Device.AdditionalProperties["displayName"]
+          }
 
-                    '#microsoft.graph.phoneAuthenticationMethod' {
-                        $MethodAuthType = 'PhoneAuthentication'
-                        $AdditionalProperties = $Device.AdditionalProperties["phoneType", "phoneNumber"] -join ' '
-                    }
+          '#microsoft.graph.phoneAuthenticationMethod' {
+            $MethodAuthType = 'PhoneAuthentication'
+            $AdditionalProperties = $Device.AdditionalProperties["phoneType", "phoneNumber"] -join ' '
+          }
 
-                    '#microsoft.graph.passwordAuthenticationMethod' {
-                        $MethodAuthType = 'PasswordAuthentication'
-                        $AdditionalProperties = $Device.AdditionalProperties["displayName"]
-                    }
+          '#microsoft.graph.passwordAuthenticationMethod' {
+            $MethodAuthType = 'PasswordAuthentication'
+            $AdditionalProperties = $Device.AdditionalProperties["displayName"]
+          }
 
-                    '#microsoft.graph.fido2AuthenticationMethod' {
-                        $MethodAuthType = 'Fido2'
-                        $AdditionalProperties = $Device.AdditionalProperties["model"]
-                    }
+          '#microsoft.graph.fido2AuthenticationMethod' {
+            $MethodAuthType = 'Fido2'
+            $AdditionalProperties = $Device.AdditionalProperties["model"]
+          }
 
-                    '#microsoft.graph.windowsHelloForBusinessAuthenticationMethod' {
-                        $MethodAuthType = 'WindowsHelloForBusiness'
-                        $AdditionalProperties = $Device.AdditionalProperties["displayName"]
-                    }
+          '#microsoft.graph.windowsHelloForBusinessAuthenticationMethod' {
+            $MethodAuthType = 'WindowsHelloForBusiness'
+            $AdditionalProperties = $Device.AdditionalProperties["displayName"]
+          }
 
-                    '#microsoft.graph.emailAuthenticationMethod' {
-                        $MethodAuthType = 'EmailAuthentication'
-                        $AdditionalProperties = $Device.AdditionalProperties["emailAddress"]
-                    }
+          '#microsoft.graph.emailAuthenticationMethod' {
+            $MethodAuthType = 'EmailAuthentication'
+            $AdditionalProperties = $Device.AdditionalProperties["emailAddress"]
+          }
 
-                    '#microsoft.graph.temporaryAccessPassAuthenticationMethod' {
-                        $MethodAuthType = 'TemporaryAccessPass'
-                        $AdditionalProperties = 'TapLifetime:' + $Device.AdditionalProperties["lifetimeInMinutes"] + 'm - Status:' + $Device.AdditionalProperties["methodUsabilityReason"]
-                    }
+          '#microsoft.graph.temporaryAccessPassAuthenticationMethod' {
+            $MethodAuthType = 'TemporaryAccessPass'
+            $AdditionalProperties = 'TapLifetime:' + $Device.AdditionalProperties["lifetimeInMinutes"] + 'm - Status:' + $Device.AdditionalProperties["methodUsabilityReason"]
+          }
 
-                    '#microsoft.graph.passwordlessMicrosoftAuthenticatorAuthenticationMethod' {
-                        $MethodAuthType = 'Passwordless'
-                        $AdditionalProperties = $Device.AdditionalProperties["displayName"]
-                    }
+          '#microsoft.graph.passwordlessMicrosoftAuthenticatorAuthenticationMethod' {
+            $MethodAuthType = 'Passwordless'
+            $AdditionalProperties = $Device.AdditionalProperties["displayName"]
+          }
 
-                    '#microsoft.graph.softwareOathAuthenticationMethod' {
-                        $MethodAuthType = 'SoftwareOath'
-                        $AdditionalProperties = $Device.AdditionalProperties["displayName"]
-                    }
-                }
-
-                [PSCustomObject]@{
-                    UserPrincipalName      = $User
-                    AuthenticationMethodId = $Device.Id
-                    MethodType             = $MethodAuthType
-                    AdditionalProperties   = $AdditionalProperties
-                }
-            }
-
-            if ($PSBoundParameters.ContainsKey('MethodType')) {
-                $DeviceOutput | Where-Object { $_.MethodType -in $MethodType }
-            }
-            else {
-                $DeviceOutput
-            }
-
+          '#microsoft.graph.softwareOathAuthenticationMethod' {
+            $MethodAuthType = 'SoftwareOath'
+            $AdditionalProperties = $Device.AdditionalProperties["displayName"]
+          }
         }
-        catch {
-            Write-Error $_.Exception.Message
 
+        [PSCustomObject]@{
+          UserPrincipalName      = $User
+          AuthenticationMethodId = $Device.Id
+          MethodType             = $MethodAuthType
+          AdditionalProperties   = $AdditionalProperties
         }
-        finally {
-            $DeviceList = $null
-            $MethodAuthType = $null
-            $AdditionalProperties = $null
+      }
 
-        }
+      if ($PSBoundParameters.ContainsKey('MethodType')) {
+        $DeviceOutput | Where-Object { $_.MethodType -in $MethodType }
+      }
+      else {
+        $DeviceOutput
+      }
+
     }
+    catch {
+      Write-Error $_.Exception.Message
+
+    }
+    finally {
+      $DeviceList = $null
+      $MethodAuthType = $null
+      $AdditionalProperties = $null
+
+    }
+  }
 }
 
 END {}

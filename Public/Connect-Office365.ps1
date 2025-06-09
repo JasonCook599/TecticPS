@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -103,19 +103,19 @@ Connects to StaffHub.
 Disconnects from supported services
 #>
 param(
-	[ValidatePattern("^[^.]+$")][string]$Tenant,
-	[ValidatePattern("^([^@]+)@(.+)")][string]$UPN = ([ADSI]"LDAP://<SID=$([System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value)>").UserPrincipalName,
-	[PSCredential]$Credential,
-	[switch]$BasicAuth,
-	[switch]$AzureAD,
-	[switch]$MsolService,
-	[switch]$SharepointOnline,
-	[switch]$SkypeForBusinessOnline,
-	[switch]$ExchangeOnline,
-	[switch]$SecurityComplianceCenter,
-	[switch]$Teams,
-	[switch]$StaffHub,
-	[switch]$Disconnect
+  [ValidatePattern("^[^.]+$")][string]$Tenant,
+  [ValidatePattern("^([^@]+)@(.+)")][string]$UPN = ([ADSI]"LDAP://<SID=$([System.Security.Principal.WindowsIdentity]::GetCurrent().User.Value)>").UserPrincipalName,
+  [PSCredential]$Credential,
+  [switch]$BasicAuth,
+  [switch]$AzureAD,
+  [switch]$MsolService,
+  [switch]$SharepointOnline,
+  [switch]$SkypeForBusinessOnline,
+  [switch]$ExchangeOnline,
+  [switch]$SecurityComplianceCenter,
+  [switch]$Teams,
+  [switch]$StaffHub,
+  [switch]$Disconnect
 )
 
 While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tennant. Do not include `".onmicrosoft.com`"" }
@@ -131,73 +131,73 @@ InstallModule -Name MicrosoftStaffHub
 If ($BasicAuth -and (-not $Credential)) { $Credential = Get-Credential -UserName $UPN }
 
 If ($Disconnect) {
-	Write-Verbose "$me Disconnecting from all services."
-	Remove-PSSession $sfboSession | Write-Verbose
-	Remove-PSSession $exchangeSession | Write-Verbose
-	Remove-PSSession $SccSession | Write-Verbose
-	Disconnect-SPOService | Write-Verbose
+  Write-Verbose "$me Disconnecting from all services."
+  Remove-PSSession $sfboSession | Write-Verbose
+  Remove-PSSession $exchangeSession | Write-Verbose
+  Remove-PSSession $SccSession | Write-Verbose
+  Disconnect-SPOService | Write-Verbose
 }
 Else {
-	If ($AzureAD) {
-		Write-Verbose "$me Connecting to AzureAD"
-		If (Get-Module -Name AzureAdPreview -ListAvailable) { Import-Module AzureAdPreview | Write-Verbose }
-		elseif (Get-Module -Name AzureAD -ListAvailable) { Import-Module AzureAD | Write-Verbose }
-		else { Write-Error "$me Azure AD Module not available." }
-		If ($BasicAuth) { Connect-AzureAD -Credential $Credential }
-		Else { Connect-AzureAD -AccountId $UPN | Write-Verbose }
-	}
-	If ($MsolService) {
-		Write-Verbose "$me Connecting to MsolService"
-		If ($BasicAuth) { Connect-MsolService -Credential $Credential | Write-Verbose }
-		Else { Connect-MsolService | Write-Verbose }
-	}
-	If ($SharepointOnline) {
-		Write-Verbose "$me Connecting to Sharepoint Online"
-		Requires Microsoft.Online.SharePoint.PowerShell
-		If ($BasicAuth) { Connect-SPOService -Url https://$Tenant-admin.sharepoint.com -Credential $Credential | Write-Verbose }
-		Else { Connect-SPOService -Url https://$Tenant-admin.sharepoint.com | Write-Verbose }
-	}
-	If ($SkypeForBusinessOnline) {
-		Write-Verbose "$me Connecting to Skype For Business Online"
-		Requires SkypeOnlineConnector
-		If ($BasicAuth) { $sfboSession = New-CsOnlineSession -Credential $Credential | Write-Verbose }
-		Else { $sfboSession = New-CsOnlineSession -UserName $UPN }
-		Import-PSSession $sfboSession | Write-Verbose
-	}
-	If ($ExchangeOnline) {
-		Write-Verbose "$me Connecting to Exchange Online"
-		If (Get-Command Connect-ExchangeOnline -ErrorAction SilentlyContinue) {
-			If ($BasicAuth) { Connect-ExchangeOnline -Credential $Credential | Write-Verbose }
-			Else { Connect-ExchangeOnline -UserPrincipalName $UPN | Write-Verbose }
-		}
-		Else {
-			If ($BasicAuth) {
-				$exchangeSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri "https://outlook.office365.com/powershell-liveid/" -Credential $Credential -Authentication "Basic" -AllowRedirection
-				Import-PSSession $exchangeSession -DisableNameChecking | Write-Verbose
-			}
-			Else { Connect-ExchangeOnline -Credential $Credential | Write-Verbose }
-		}
-	}
-	If ($SecurityComplianceCenter) {
-		If ($BasicAuth) {
-			$SccSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $Credential -Authentication "Basic" -AllowRedirection
-			Import-PSSession $SccSession -Prefix cc | Write-Verbose
-		}
-		Else {
-			Write-Verbose "$me Connecting to Security and Compliance Center"
-			Write-Warning "$me Cannot connect to Security  Compliance Center multi-factor authentication in this session. See for more information: https://docs.microsoft.com/powershell/exchange/office-365-scc/connect-to-scc-powershell/mfa-connect-to-scc-powershell?view=exchange-ps"
-			Connect-IPPSSession -UserPrincipalName $UPN
-		}
-	}
-	If ($Teams) {
-		Write-Verbose "$me Connecting to Teams"
-		Import-Module MicrosoftTeams | Write-Verbose
-		If ($BasicAuth) { Connect-MicrosoftTeams $Credential | Write-Verbose }
-		Else { Connect-MicrosoftTeams -AccountId $UPN | Write-Verbose }
-	}
-	If ($StaffHub -OR $Settings.Services.StaffHub) {
-		Write-Verbose "$me Connecting to StaffHub"
-		If ($BasicAuth) { Connect-MicrosoftTeams $Credential | Write-Verbose	}
-		Else { Connect-StaffHub | Write-Verbose }
-	}
+  If ($AzureAD) {
+    Write-Verbose "$me Connecting to AzureAD"
+    If (Get-Module -Name AzureAdPreview -ListAvailable) { Import-Module AzureAdPreview | Write-Verbose }
+    elseif (Get-Module -Name AzureAD -ListAvailable) { Import-Module AzureAD | Write-Verbose }
+    else { Write-Error "$me Azure AD Module not available." }
+    If ($BasicAuth) { Connect-AzureAD -Credential $Credential }
+    Else { Connect-AzureAD -AccountId $UPN | Write-Verbose }
+  }
+  If ($MsolService) {
+    Write-Verbose "$me Connecting to MsolService"
+    If ($BasicAuth) { Connect-MsolService -Credential $Credential | Write-Verbose }
+    Else { Connect-MsolService | Write-Verbose }
+  }
+  If ($SharepointOnline) {
+    Write-Verbose "$me Connecting to Sharepoint Online"
+    Requires Microsoft.Online.SharePoint.PowerShell
+    If ($BasicAuth) { Connect-SPOService -Url https://$Tenant-admin.sharepoint.com -Credential $Credential | Write-Verbose }
+    Else { Connect-SPOService -Url https://$Tenant-admin.sharepoint.com | Write-Verbose }
+  }
+  If ($SkypeForBusinessOnline) {
+    Write-Verbose "$me Connecting to Skype For Business Online"
+    Requires SkypeOnlineConnector
+    If ($BasicAuth) { $sfboSession = New-CsOnlineSession -Credential $Credential | Write-Verbose }
+    Else { $sfboSession = New-CsOnlineSession -UserName $UPN }
+    Import-PSSession $sfboSession | Write-Verbose
+  }
+  If ($ExchangeOnline) {
+    Write-Verbose "$me Connecting to Exchange Online"
+    If (Get-Command Connect-ExchangeOnline -ErrorAction SilentlyContinue) {
+      If ($BasicAuth) { Connect-ExchangeOnline -Credential $Credential | Write-Verbose }
+      Else { Connect-ExchangeOnline -UserPrincipalName $UPN | Write-Verbose }
+    }
+    Else {
+      If ($BasicAuth) {
+        $exchangeSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri "https://outlook.office365.com/powershell-liveid/" -Credential $Credential -Authentication "Basic" -AllowRedirection
+        Import-PSSession $exchangeSession -DisableNameChecking | Write-Verbose
+      }
+      Else { Connect-ExchangeOnline -Credential $Credential | Write-Verbose }
+    }
+  }
+  If ($SecurityComplianceCenter) {
+    If ($BasicAuth) {
+      $SccSession = New-PSSession -ConfigurationName Microsoft.Exchange -ConnectionUri https://ps.compliance.protection.outlook.com/powershell-liveid/ -Credential $Credential -Authentication "Basic" -AllowRedirection
+      Import-PSSession $SccSession -Prefix cc | Write-Verbose
+    }
+    Else {
+      Write-Verbose "$me Connecting to Security and Compliance Center"
+      Write-Warning "$me Cannot connect to Security  Compliance Center multi-factor authentication in this session. See for more information: https://docs.microsoft.com/powershell/exchange/office-365-scc/connect-to-scc-powershell/mfa-connect-to-scc-powershell?view=exchange-ps"
+      Connect-IPPSSession -UserPrincipalName $UPN
+    }
+  }
+  If ($Teams) {
+    Write-Verbose "$me Connecting to Teams"
+    Import-Module MicrosoftTeams | Write-Verbose
+    If ($BasicAuth) { Connect-MicrosoftTeams $Credential | Write-Verbose }
+    Else { Connect-MicrosoftTeams -AccountId $UPN | Write-Verbose }
+  }
+  If ($StaffHub -OR $Settings.Services.StaffHub) {
+    Write-Verbose "$me Connecting to StaffHub"
+    If ($BasicAuth) { Connect-MicrosoftTeams $Credential | Write-Verbose	}
+    Else { Connect-StaffHub | Write-Verbose }
+  }
 }

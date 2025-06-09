@@ -10,32 +10,32 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
 Used to test LoadDefaults and ensure defaults parameters are being loaded correctly.
 #>
 Param(
-    [string]$foo,
-    [string]$bar = "bar",
-    [string]$baz = "bazziest"
+  [string]$foo,
+  [string]$bar = "bar",
+  [string]$baz = "bazziest"
 )
 $MyInvocation
 

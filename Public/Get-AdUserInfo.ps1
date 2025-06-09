@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -46,19 +46,19 @@ Specifies the search base for the command.
 #>
 
 param(
-    [string]$Filter = "*",
-    $Properties = @("SamAccountName", "DisplayName", "GivenName", "Surname", "Description", "Enabled", "LastLogonDate", "whenCreated" , "PasswordLastSet", "PasswordNeverExpires", "EmailAddress", "Title", "Department", "Company", "Organization", "Manager", "Office", "MobilePhone", "HomeDirectory"),
-    $SortKey = $Properties[0],
-    [string]$SearchBase
+  [string]$Filter = "*",
+  $Properties = @("SamAccountName", "DisplayName", "GivenName", "Surname", "Description", "Enabled", "LastLogonDate", "whenCreated" , "PasswordLastSet", "PasswordNeverExpires", "EmailAddress", "Title", "Department", "Company", "Organization", "Manager", "Office", "MobilePhone", "HomeDirectory"),
+  $SortKey = $Properties[0],
+  [string]$SearchBase
 )
 
 Test-Admin -Warn -Message "You are not running as an admin. Results may be incomplete."
 
 if ($SearchBase) {
-    $Users = Get-ADUser -Filter $Filter -SearchBase $SearchBase -Properties $Properties
+  $Users = Get-ADUser -Filter $Filter -SearchBase $SearchBase -Properties $Properties
 }
 else {
-    $Users = Get-ADUser -Filter $Filter -Properties $Properties
+  $Users = Get-ADUser -Filter $Filter -Properties $Properties
 }
 
 return $Users # | Sort-Object $SortKey | Select-Object $Properties

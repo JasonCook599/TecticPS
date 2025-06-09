@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -40,8 +40,8 @@ Wait-ForKey -Key c
 Press c to continue, any other key to abort.: c
 #>
 param(
-    [string]$Key = "y",
-    [string]$Message = "Press $Key to continue, any other key to abort."
+  [string]$Key = "y",
+  [string]$Message = "Press $Key to continue, any other key to abort."
 )
 
 $Response = Read-Host $Message

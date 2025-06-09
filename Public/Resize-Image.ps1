@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -76,20 +76,20 @@ $graph.DrawImage($img, 0, 0, $new_width, $new_height)
 
 # Create window to display the new image
 if ($Display) {
-    Add-Type -AssemblyName System.Windows.Forms
-    $win = New-Object Windows.Forms.Form
-    $box = New-Object Windows.Forms.PictureBox
-    $box.Width = $new_width
-    $box.Height = $new_height
-    $box.Image = $img2
-    $win.Controls.Add($box)
-    $win.AutoSize = $true
-    $win.ShowDialog()
+  Add-Type -AssemblyName System.Windows.Forms
+  $win = New-Object Windows.Forms.Form
+  $box = New-Object Windows.Forms.PictureBox
+  $box.Width = $new_width
+  $box.Height = $new_height
+  $box.Image = $img2
+  $win.Controls.Add($box)
+  $win.AutoSize = $true
+  $win.ShowDialog()
 }
 
 # Save the image
 if ($OutputFile -ne "") {
-    $img2.Save($OutputFile);
+  $img2.Save($OutputFile);
 }
 
 Export-ModuleMember Resize-Image

@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -49,10 +49,10 @@ https://ccmexec.com/2015/08/replacing-default-wallpaper-in-windows-10-using-scri
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param (
-    [ValidateScript( { Test-Path $_ })][string]$SourcePath,
-    $Images = (Get-ChildItem $SourcePath -Filter *.jpg),
-    [string]$Name = "Defaults",
-    [switch]$LockScreen
+  [ValidateScript( { Test-Path $_ })][string]$SourcePath,
+  $Images = (Get-ChildItem $SourcePath -Filter *.jpg),
+  [string]$Name = "Defaults",
+  [switch]$LockScreen
 )
 
 Test-Admin -Throw -Message "You must be an administrator to modify the default wallpapers." | Out-Null
@@ -70,16 +70,16 @@ New-Item -ItemType Directory -Path $DestinationPath -ErrorAction Stop | Out-null
 
 $count = -1
 $Images | ForEach-Object {
-    $count++ ; Progress -Index $count -Total $Images.count -Activity "Copying wallpapers." -Name $_.Name
-    Copy-Item -Path $_.FullName -Destination (Join-Path -Path $DestinationPath -ChildPath ("img" + $count + ".jpg")) -Force
+  $count++ ; Progress -Index $count -Total $Images.count -Activity "Copying wallpapers." -Name $_.Name
+  Copy-Item -Path $_.FullName -Destination (Join-Path -Path $DestinationPath -ChildPath ("img" + $count + ".jpg")) -Force
 }
 
 Write-Verbose "Removing existing wallpapers."
 Get-ChildItem -Path $SystemPath, $ResolutionPath -Recurse | ForEach-Object {
-    Write-Verbose "Removing $($_.Name)"
-    takeown /f $_.FullName
-    icacls $($_.FullName) /Grant administrators:F
-    Remove-Item $_.FullName
+  Write-Verbose "Removing $($_.Name)"
+  takeown /f $_.FullName
+  icacls $($_.FullName) /Grant administrators:F
+  Remove-Item $_.FullName
 }
 if ($Images.Count -lt 2) { $Image = $Images[0] }
 else { $Image = $Images[(Get-Random -Minimum 0 -Maximum ($Images.Count - 1))] }
@@ -88,23 +88,23 @@ Write-Verbose "Setting default wallpaper to $($Image.Name)"
 Copy-Item -Path $Image.FullName -Destination $DefaultImagePath
 
 if ($LockScreen) {
-    try {
-        $RegistryPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\"
-        $RegistryParent = (Split-Path -Path $RegistryPath -Parent)
+  try {
+    $RegistryPath = "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\"
+    $RegistryParent = (Split-Path -Path $RegistryPath -Parent)
 
-        if (-not (Test-Path -Path $RegistryPath)) { New-Item -Path $RegistryParent -Name (Split-Path -Path $RegistryPath -Leaf) -ItemType RegistryKey }
+    if (-not (Test-Path -Path $RegistryPath)) { New-Item -Path $RegistryParent -Name (Split-Path -Path $RegistryPath -Leaf) -ItemType RegistryKey }
 
-        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImagePath)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImagePath -Value "file:///C:\Windows\Web\Wallpaper\Windows\img0.jpg" -PropertyType "String" }
-        else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImagePath -Value "C:\Windows\Web\Wallpaper\Windows\img0.jpg" -Type String }
+    if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImagePath)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImagePath -Value "file:///C:\Windows\Web\Wallpaper\Windows\img0.jpg" -PropertyType "String" }
+    else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImagePath -Value "C:\Windows\Web\Wallpaper\Windows\img0.jpg" -Type String }
 
-        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImageUrl)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImageUrl -Value "file:///C:\Windows\Web\Wallpaper\Windows\img0.jpg" -PropertyType "String" }
-        else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImageUrl -Value "C:\Windows\Web\Wallpaper\Windows\img0.jpg" -Type String }
+    if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImageUrl)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImageUrl -Value "file:///C:\Windows\Web\Wallpaper\Windows\img0.jpg" -PropertyType "String" }
+    else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImageUrl -Value "C:\Windows\Web\Wallpaper\Windows\img0.jpg" -Type String }
 
-        if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImageStatus)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImageStatus -Value 1 -PropertyType "DWord" }
-        else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImageStatus -Value 1 -Type DWord }
-    }
-    catch {
-        $_
-        Write-Warning "Failed to set lockscreen wallpaper."
-    }
+    if (-not (Test-RegistryValue -Path $RegistryPath -Value LockScreenImageStatus)) { New-ItemProperty -Path HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\PersonalizationCSP\ -Name LockScreenImageStatus -Value 1 -PropertyType "DWord" }
+    else { Set-ItemProperty -Path $RegistryPath -Name LockScreenImageStatus -Value 1 -Type DWord }
+  }
+  catch {
+    $_
+    Write-Warning "Failed to set lockscreen wallpaper."
+  }
 }

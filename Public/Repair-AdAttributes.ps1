@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -68,23 +68,23 @@ An array of properties to search against.
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [array]$Actions = @("LegacyExchange", "LegacyProxyAddresses", "ExtraProxyAddresses", "ClearMailNickname", "SetMailNickname", "ClearTelephoneNumber"),
-    [string]$SearchBase,
-    [string]$Server,
-    [string]$DefaultPhoneNumber,
-    [string]$OnMicrosoft,
-    [string]$Filter = "*",
-    $LegacyExchangeAttributes = @("msExchMailboxGuid", "msexchhomeservername", "legacyexchangedn", "mailNickname", "msexchmailboxsecuritydescriptor", "msexchpoliciesincluded", "msexchrecipientdisplaytype", "msexchrecipienttypedetails", "msexchumdtmfmap", "msexchuseraccountcontrol", "msexchversion", "targetAddress"),
-    $Properties = @("ProxyAddresses", "mail", "mailNickname", "ipPhone", "telephoneNumber")
+  [array]$Actions = @("LegacyExchange", "LegacyProxyAddresses", "ExtraProxyAddresses", "ClearMailNickname", "SetMailNickname", "ClearTelephoneNumber"),
+  [string]$SearchBase,
+  [string]$Server,
+  [string]$DefaultPhoneNumber,
+  [string]$OnMicrosoft,
+  [string]$Filter = "*",
+  $LegacyExchangeAttributes = @("msExchMailboxGuid", "msexchhomeservername", "legacyexchangedn", "mailNickname", "msexchmailboxsecuritydescriptor", "msexchpoliciesincluded", "msexchrecipientdisplaytype", "msexchrecipienttypedetails", "msexchumdtmfmap", "msexchuseraccountcontrol", "msexchversion", "targetAddress"),
+  $Properties = @("ProxyAddresses", "mail", "mailNickname", "ipPhone", "telephoneNumber")
 )
 
 $SetAdOptions = @{
-    Verbose = $VerbosePreference
+  Verbose = $VerbosePreference
 }
 if ($Server) { $SetAdOptions.Server = $Server }
 
 $GetAdOptions = @{
-    Verbose = $VerbosePreference
+  Verbose = $VerbosePreference
 }
 if ($SearchBase) { $GetAdOptions.SearchBase = $SearchBase }
 if ($Server) { $GetAdOptions.Server = $Server }
@@ -95,53 +95,53 @@ $Users = Get-ADUser @GetAdOptions
 $Groups = Get-ADGroup @GetAdOptions
 
 If ($Actions -contains "LegacyExchange" -and $PSCmdlet.ShouldProcess("Remove legacy exchange attributes")) {
-    $Users | Set-ADUser -Clear $LegacyExchangeAttributes @SetAdOptions
-    $Groups | Where-Object Name -notlike "Group_*" | Set-ADGroup -Clear $LegacyExchangeAttributes @SetAdOptions
+  $Users | Set-ADUser -Clear $LegacyExchangeAttributes @SetAdOptions
+  $Groups | Where-Object Name -notlike "Group_*" | Set-ADGroup -Clear $LegacyExchangeAttributes @SetAdOptions
 }
 
 If ($Actions -contains "LegacyProxyAddresses" -and $PSCmdlet.ShouldProcess("Remove legacy proxy addresses attributes")) {
-    $Users | ForEach-Object {
-        $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
-        ForEach ($proxyAddress in $Remove) {
-            Write-Verbose "Removing $ProxyAddress from $($_.Name)"
-            Set-ADUser -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } @SetAdOptions
-        }
+  $Users | ForEach-Object {
+    $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
+    ForEach ($proxyAddress in $Remove) {
+      Write-Verbose "Removing $ProxyAddress from $($_.Name)"
+      Set-ADUser -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } @SetAdOptions
     }
-    $Groups | Where-Object Name -notlike "Group_*" | ForEach-Object {
-        $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
-        ForEach ($proxyAddress in $Remove) {
-            Write-Verbose "Removing $ProxyAddress from $($_.Name)"
-            Set-ADGroup -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } @SetAdOptions
-        }
+  }
+  $Groups | Where-Object Name -notlike "Group_*" | ForEach-Object {
+    $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
+    ForEach ($proxyAddress in $Remove) {
+      Write-Verbose "Removing $ProxyAddress from $($_.Name)"
+      Set-ADGroup -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } @SetAdOptions
     }
+  }
 
 }
 
 If ($Actions -contains "ExtraProxyAddresses" -and $PSCmdlet.ShouldProcess("Clear ProxyAddresses if only one exists")) {
-    $Users | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADUser -Clear ProxyAddresses @SetAdOptions
-    $Groups | Where-Object Name -notlike "Group_*" | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADGroup -Clear ProxyAddresses @SetAdOptions
+  $Users | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADUser -Clear ProxyAddresses @SetAdOptions
+  $Groups | Where-Object Name -notlike "Group_*" | Where-Object { $_.ProxyAddresses.Count -eq 1 } | Set-ADGroup -Clear ProxyAddresses @SetAdOptions
 }
 
 If ($Actions -contains "ClearMailNickname" -and $PSCmdlet.ShouldProcess("Clear mailNickname if mail attribute empty")) {
-    $Users | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
-    $Groups | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
+  $Users | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
+  $Groups | Where-Object mail -eq $null | Where-Object mailNickname -ne $null | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Clear mailNickname @SetAdOptions }
 }
 
 If ($Actions -contains "SetMailNickname" -and $PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName")) {
-    return $Users
-    $Users | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
-    $Groups | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
+  return $Users
+  $Users | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
+  $Groups | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
 }
 
 If ($Actions -contains "ClearTelephoneNumber" -and $PSCmdlet.ShouldProcess("Clear telephoneNumber if mail empty")) {
-    $Users | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber @SetAdOptions
+  $Users | Where-Object mail -eq $null | Where-Object telephoneNumber -ne $null | Set-ADUser -Clear telephoneNumber @SetAdOptions
 }
 
 If ($Actions -contains "SetTelephoneNumber" -and $PSCmdlet.ShouldProcess("Set telephoneNumber to default line and extension")) {
-    while (!$DefaultPhoneNumber) { $DefaultPhoneNumber = Read-Host -Prompt "Enter the default phone number." }
-    $Users | Where-Object mail -ne $null | ForEach-Object {
-        if ($null -ne $_.ipphone) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
-        else { $telephoneNumber = $DefaultPhoneNumber }
-        Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = $telephoneNumber } @SetAdOptions
-    }
+  while (!$DefaultPhoneNumber) { $DefaultPhoneNumber = Read-Host -Prompt "Enter the default phone number." }
+  $Users | Where-Object mail -ne $null | ForEach-Object {
+    if ($null -ne $_.ipphone) { $telephoneNumber = $DefaultPhoneNumber + " x" + $_.ipPhone.Substring(0, [System.Math]::Min(3, $_.ipPhone.Length)) }
+    else { $telephoneNumber = $DefaultPhoneNumber }
+    Set-ADUser -Identity $_.SamAccountName -Replace @{telephoneNumber = $telephoneNumber } @SetAdOptions
+  }
 }

@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) TectTectic
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -34,11 +34,11 @@ This will update the LastWriteTime of the specifeid file to the current time.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [Parameter(ValueFromPipeline = $true, Mandatory = $true)][string]$Path,
-    [Parameter(ValueFromPipeline = $true)][System.DateTime]$Date = (Get-Date)
+  [Parameter(ValueFromPipeline = $true, Mandatory = $true)][string]$Path,
+  [Parameter(ValueFromPipeline = $true)][System.DateTime]$Date = (Get-Date)
 )
 
 If ($PSCmdlet.ShouldProcess($Path)) {
-    try { return (Get-ChildItem $Path -ErrorAction Stop).LastWriteTime = $Date }
-    catch { return (New-Item -Path $Path).CreationTime }
+  try { return (Get-ChildItem $Path -ErrorAction Stop).LastWriteTime = $Date }
+  catch { return (New-Item -Path $Path).CreationTime }
 }

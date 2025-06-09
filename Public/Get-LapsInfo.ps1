@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -42,32 +42,32 @@ Filters the search based on the spesified parameters.
 Will also output passwords.
 #>
 param(
-    [string]$Filter = "*",
-    [switch]$Details,
-    [string]$Show
+  [string]$Filter = "*",
+  [switch]$Details,
+  [string]$Show
 )
 
 $Results = @()
 Get-ADComputer -Filter $Filter -Properties ms-Mcs-AdmPwd | Sort-Object ms-Mcs-AdmPwd, Name | ForEach-Object {
-    if ($Show) { $Password = $_.'ms-Mcs-AdmPwd' } else { $Password = '********' }
-    if ($_.'ms-Mcs-AdmPwd') { $Status = $true } else { $Status = $false }
-    $Result = [PSCustomObject]@{
-        Name     = $_.Name
-        Status   = $Status
-        Password = $Password
-    }
-    $Results += $Result
+  if ($Show) { $Password = $_.'ms-Mcs-AdmPwd' } else { $Password = '********' }
+  if ($_.'ms-Mcs-AdmPwd') { $Status = $true } else { $Status = $false }
+  $Result = [PSCustomObject]@{
+    Name     = $_.Name
+    Status   = $Status
+    Password = $Password
+  }
+  $Results += $Result
 }
 if ($Details) { return $Results } else {
 
-    $EnabledCount = ($Results | Where-Object Status -eq $true).Count
-    $DisabledCount = ($Results | Where-Object Status -eq $false).Count
-    $TotalCount = $Results.count
+  $EnabledCount = ($Results | Where-Object Status -eq $true).Count
+  $DisabledCount = ($Results | Where-Object Status -eq $false).Count
+  $TotalCount = $Results.count
 
-    return [PSCustomObject]@{
-        Enabled         = $EnabledCount
-        Disabed         = $DisabledCount
-        Total           = $TotalCount
-        PercentComplete = $EnabledCount / $TotalCount * 100
-    }
+  return [PSCustomObject]@{
+    Enabled         = $EnabledCount
+    Disabed         = $DisabledCount
+    Total           = $TotalCount
+    PercentComplete = $EnabledCount / $TotalCount * 100
+  }
 }

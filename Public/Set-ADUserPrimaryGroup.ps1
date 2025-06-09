@@ -6,27 +6,27 @@
 
 .AUTHOR saw-friendship
 
-.COMPANYNAME 
+.COMPANYNAME
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
 .TAGS ActiveDirectory AD User Primary Group Member
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 
@@ -54,42 +54,42 @@ https://www.powershellgallery.com/packages/Set-ADUserPrimaryGroup/1.0.3/Content/
 #>
 
 Param (
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$User,
-    [Parameter(Mandatory = $true)]$Group
+  [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$User,
+  [Parameter(Mandatory = $true)]$Group
 )
 Begin {
-    if ($Group.SID) {
-        $ADGroup = $Group
-    }
-    else {
-        $ADGroup = $Group | Get-ADGroup
-    }
+  if ($Group.SID) {
+    $ADGroup = $Group
+  }
+  else {
+    $ADGroup = $Group | Get-ADGroup
+  }
 
-    $primaryGroupID = $ADGroup.SID -replace @('.+\-', '')
+  $primaryGroupID = $ADGroup.SID -replace @('.+\-', '')
 
 }
 
 Process {
-    $User | ForEach-Object {
-        if ($_.PropertyNames -contains 'primaryGroupID' -and $_.PropertyNames -contains 'MemberOf') {
-            $ADUser = $_
-        }
-        else {
-            $ADUser = $_ | Get-ADUser -Properties primaryGroupID, MemberOf
-        }
-
-        if ($ADUser.MemberOf -notcontains $ADGroup.DistinguishedName) {
-            try {
-                Add-ADGroupMember -Identity $ADGroup.DistinguishedName -Members $ADUser.SID -ErrorAction SilentlyContinue
-            }
-            catch {
-                # Write-Error $Error[0]
-                exit
-            }
-        }
-
-        $ADUser | Set-ADUser -Replace @{'primaryGroupID' = $primaryGroupID } -ErrorAction SilentlyContinue -PassThru | Get-ADUser -Properties primaryGroup, primaryGroupID, MemberOf
+  $User | ForEach-Object {
+    if ($_.PropertyNames -contains 'primaryGroupID' -and $_.PropertyNames -contains 'MemberOf') {
+      $ADUser = $_
     }
+    else {
+      $ADUser = $_ | Get-ADUser -Properties primaryGroupID, MemberOf
+    }
+
+    if ($ADUser.MemberOf -notcontains $ADGroup.DistinguishedName) {
+      try {
+        Add-ADGroupMember -Identity $ADGroup.DistinguishedName -Members $ADUser.SID -ErrorAction SilentlyContinue
+      }
+      catch {
+        # Write-Error $Error[0]
+        exit
+      }
+    }
+
+    $ADUser | Set-ADUser -Replace @{'primaryGroupID' = $primaryGroupID } -ErrorAction SilentlyContinue -PassThru | Get-ADUser -Properties primaryGroup, primaryGroupID, MemberOf
+  }
 }
 
 End {}

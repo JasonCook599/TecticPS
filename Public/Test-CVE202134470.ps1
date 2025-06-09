@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Microsoft Corporation
 
-.TAGS 
+.TAGS
 
 .LICENSEURI https://opensource.org/license/mit/
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -74,9 +74,9 @@ SOFTWARE
 #>
 [CmdletBinding()]
 param (
-    [Parameter()]
-    [switch]
-    $ApplyFix
+  [Parameter()]
+  [switch]
+  $ApplyFix
 )
 
 $ErrorActionPreference = "Stop"
@@ -88,51 +88,51 @@ $schemaDN = ([ADSI]"LDAP://$($schemaMaster)/RootDSE").schemaNamingContext
 $storageGroupSchemaEntryDN = "LDAP://$($schemaMaster)/CN=ms-Exch-Storage-Group,$schemaDN"
 
 if (-not ([System.DirectoryServices.DirectoryEntry]::Exists($storageGroupSchemaEntryDN))) {
-    Write-Host "Exchange was not installed in this forest. Therefore, CVE-2021-34470 vulnerability is not present."
-    return
+  Write-Host "Exchange was not installed in this forest. Therefore, CVE-2021-34470 vulnerability is not present."
+  return
 }
 
 $storageGroupSchemaEntry = [ADSI]($storageGroupSchemaEntryDN)
 if ($storageGroupSchemaEntry.Properties["possSuperiors"].Count -eq 0) {
-    Write-Host "CVE-2021-34470 vulnerability is not present."
-    return
+  Write-Host "CVE-2021-34470 vulnerability is not present."
+  return
 }
 
 $hasUnexpectedValues = $false
 
 foreach ($val in $storageGroupSchemaEntry.Properties["possSuperiors"]) {
-    if ($val -eq "computer") {
-        Write-Warning "CVE-2021-34470 vulnerability is present."
-    }
-    else {
-        $hasUnexpectedValues = $true
-        Write-Warning "CVE-2021-34470 vulnerability may be present due to an unexpected superior: $val"
-    }
+  if ($val -eq "computer") {
+    Write-Warning "CVE-2021-34470 vulnerability is present."
+  }
+  else {
+    $hasUnexpectedValues = $true
+    Write-Warning "CVE-2021-34470 vulnerability may be present due to an unexpected superior: $val"
+  }
 }
 
 if ($ApplyFix) {
-    if ($hasUnexpectedValues) {
-        $OutputFile = "$PSScriptRoot\Test-CVE-2021-34470.log"
-        "Attempting fix at $(Get-Date)." | Out-File $OutputFile -Append
-        "Value prior to fix:" | Out-File $OutputFile -Append
-        $storageGroupSchemaEntry.Properties["possSuperiors"] | Out-File $OutputFile -Append
-    }
+  if ($hasUnexpectedValues) {
+    $OutputFile = "$PSScriptRoot\Test-CVE-2021-34470.log"
+    "Attempting fix at $(Get-Date)." | Out-File $OutputFile -Append
+    "Value prior to fix:" | Out-File $OutputFile -Append
+    $storageGroupSchemaEntry.Properties["possSuperiors"] | Out-File $OutputFile -Append
+  }
 
-    try {
-        Write-Host "Attempting to apply fix..."
+  try {
+    Write-Host "Attempting to apply fix..."
 
-        $rootDSE = [ADSI]("LDAP://$($schemaMaster)/RootDSE")
-        [void]$rootDSE.Properties["schemaUpgradeInProgress"].Add(1)
-        $rootDSE.CommitChanges()
+    $rootDSE = [ADSI]("LDAP://$($schemaMaster)/RootDSE")
+    [void]$rootDSE.Properties["schemaUpgradeInProgress"].Add(1)
+    $rootDSE.CommitChanges()
 
-        $storageGroupSchemaEntry.Properties["possSuperiors"].Clear()
-        $storageGroupSchemaEntry.CommitChanges()
+    $storageGroupSchemaEntry.Properties["possSuperiors"].Clear()
+    $storageGroupSchemaEntry.CommitChanges()
 
-        Write-Host "Fix was applied successfully."
-    }
-    catch {
-        Write-Warning "Failed to apply fix. Please ensure you have Schema Admin rights. Error was: `n$_"
-    }
+    Write-Host "Fix was applied successfully."
+  }
+  catch {
+    Write-Warning "Failed to apply fix. Please ensure you have Schema Admin rights. Error was: `n$_"
+  }
 }
 
 # SIG # Begin signature block

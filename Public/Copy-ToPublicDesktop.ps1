@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) TectTectic
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -36,30 +36,30 @@ This script will copy the specified file to the public desktop.
 The path of the item to copy.
 #>
 param(
-    $Path,
-    [ValidateSet("AD", "NPS", "Hyper-V", "Print", "IIS", "CA")][array]$Group,
-    [string]$PublicDesktop = "$env:PUBLIC\Desktop"
+  $Path,
+  [ValidateSet("AD", "NPS", "Hyper-V", "Print", "IIS", "CA")][array]$Group,
+  [string]$PublicDesktop = "$env:PUBLIC\Desktop"
 )
 if ($Path) {
-    $Path | ForEach-Object { Copy-Item -Destination $PublicDesktop -Path $_ }
+  $Path | ForEach-Object { Copy-Item -Destination $PublicDesktop -Path $_ }
 }
 if ($Group -contains "AD") {
-    Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Active Directory Administrative Center.lnk"
-    Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk"
+  Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Active Directory Administrative Center.lnk"
+  Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Active Directory Users and Computers.lnk"
 }
 if ($Group -contains "NPS") {
-    Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Network Policy Server.lnk"
+  Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Network Policy Server.lnk"
 }
 if ($Group -contains "Hyper-V") {
-    Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Hyper-V Manager.lnk"
+  Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Hyper-V Manager.lnk"
 }
 if ($Group -contains "Print") {
-    Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Print Management.lnk"
+  Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Print Management.lnk"
 }
 if ($Group -contains "IIS") {
-    Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\IIS Manager.lnk"
+  Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\IIS Manager.lnk"
 }
 
 if ($Group -contains "CA") {
-    Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Certification Authority.lnk"
+  Copy-Item -Destination $PublicDesktop -Path "$env:ALLUSERSPROFILE\Microsoft\Windows\Start Menu\Programs\Administrative Tools\Certification Authority.lnk"
 }

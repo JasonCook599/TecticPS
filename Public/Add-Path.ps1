@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -46,27 +46,27 @@ The maximum supported lenght for the PATH.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [Parameter(Mandatory = $true)][ValidateScript({ Test-Path -Path $_ -PathType Container })][string]$Path,
-    [switch]$Machine,
-    [switch]$Force,
-    [ValidateRange(1, [int]::MaxValue)][int]$MaxLength = 1024
+  [Parameter(Mandatory = $true)][ValidateScript({ Test-Path -Path $_ -PathType Container })][string]$Path,
+  [switch]$Machine,
+  [switch]$Force,
+  [ValidateRange(1, [int]::MaxValue)][int]$MaxLength = 1024
 )
 
 if ($Machine) {
-    Write-Verbose "Adding `"$Path`" to system PATH"
-    Test-Admin -Throw
-    $Registry = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
+  Write-Verbose "Adding `"$Path`" to system PATH"
+  Test-Admin -Throw
+  $Registry = "Registry::HKLM\System\CurrentControlSet\Control\Session Manager\Environment"
 }
 else {
-    Write-Verbose "Adding `"$Path`" to user PATH"
-    $Registry = "Registry::HKCU\Environment\"
+  Write-Verbose "Adding `"$Path`" to user PATH"
+  $Registry = "Registry::HKCU\Environment\"
 }
 
 $NewPath = (Get-ItemProperty -Path $Registry -Name PATH).Path + ";" + $Path
 
 Write-Verbose "PATH length is $($NewPath.length)"
 if ($NewPath.length -gt $MaxLength -and (-not $Force)) {
-    throw "Path is longer than $MaxLength characters. Paths this long may not behave as expected. Run with -Force to override."
+  throw "Path is longer than $MaxLength characters. Paths this long may not behave as expected. Run with -Force to override."
 }
 
 Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose

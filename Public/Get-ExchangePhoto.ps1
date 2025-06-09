@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -58,11 +58,11 @@ https://blogs.technet.microsoft.com/rajbugga/2017/05/16/picture-sync-from-office
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [switch]$Return,
-    [array]$Users = (Get-Mailbox -ResultSize Unlimited),
-    [string]$Path = (Get-Location).ProviderPath,
-    [string]$CroppedPath = $Path + "\Cropped\",
-    [string]$ResultsFile
+  [switch]$Return,
+  [array]$Users = (Get-Mailbox -ResultSize Unlimited),
+  [string]$Path = (Get-Location).ProviderPath,
+  [string]$CroppedPath = $Path + "\Cropped\",
+  [string]$ResultsFile
 )
 
 $Results = @()
@@ -75,32 +75,32 @@ Get-ChildItem -Path $CroppedPath -Recurse -ErrorAction SilentlyContinue | Remove
 New-Item -Path $CroppedPath -ItemType Directory -Force -Confirm:$false | Out-Null
 
 foreach ($User in $Users) {
-    $count++ ; Progress -Index $count -Total $Users.count -Activity "Downloading users photos." -Name $User.UserPrincipalName.ToString()
+  $count++ ; Progress -Index $count -Total $Users.count -Activity "Downloading users photos." -Name $User.UserPrincipalName.ToString()
 
-    $Result = @{}
+  $Result = @{}
 
-    $PhotoPath = $Path + "\" + $User.Alias + ".jpg"
-    $CroppedPhotoPath = $CroppedPath + $User.Alias + ".jpg"
-    $Photo = Get-UserPhoto -Identity $User.UserPrincipalName -ErrorAction SilentlyContinue
+  $PhotoPath = $Path + "\" + $User.Alias + ".jpg"
+  $CroppedPhotoPath = $CroppedPath + $User.Alias + ".jpg"
+  $Photo = Get-UserPhoto -Identity $User.UserPrincipalName -ErrorAction SilentlyContinue
 
-    If ($null -ne $Photo.PictureData) {
-        If ($PSCmdlet.ShouldProcess("$User", "Get-ExchangePhoto")) {
-            [io.file]::WriteAllBytes($PhotoPath, $Photo.PictureData)
-            Resize-Image -InputFile $PhotoPath -Width 96 -Height 96 -OutputFile $CroppedPhotoPath
-            Write-Verbose "Profile photo downloaded for $($User.Alias)."
-        }
-        $Result.Add("PhotoStatus", $true)
+  If ($null -ne $Photo.PictureData) {
+    If ($PSCmdlet.ShouldProcess("$User", "Get-ExchangePhoto")) {
+      [io.file]::WriteAllBytes($PhotoPath, $Photo.PictureData)
+      Resize-Image -InputFile $PhotoPath -Width 96 -Height 96 -OutputFile $CroppedPhotoPath
+      Write-Verbose "Profile photo downloaded for $($User.Alias)."
     }
-    else {
-        Write-Warning "$User does not have a profile photo."
-        $Result.Add("PhotoStatus", $false)
-    }
+    $Result.Add("PhotoStatus", $true)
+  }
+  else {
+    Write-Warning "$User does not have a profile photo."
+    $Result.Add("PhotoStatus", $false)
+  }
 
-    $Result.Add("DisplayName", $user.DisplayName)
-    $Result.Add("UserPrincipalName", $user.UserPrincipalName)
-    $Result.Add("RecipientType", $user.RecipientType)
-    $Result.Add("Alias", $user.Alias)
-    $Results += New-Object PSObject -Property $Result
+  $Result.Add("DisplayName", $user.DisplayName)
+  $Result.Add("UserPrincipalName", $user.UserPrincipalName)
+  $Result.Add("RecipientType", $user.RecipientType)
+  $Result.Add("Alias", $user.Alias)
+  $Results += New-Object PSObject -Property $Result
 }
 
 If ($ResultsFile) { $Results | Export-CSV $ResultsFile -NoTypeInformation -Encoding UTF8 }

@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -40,26 +40,26 @@ Requires -Modules NTFSSecurity
 
 $VMs = Get-VM
 ForEach ($VM in $VMs) {
-    $disks = Get-VMHardDiskDrive -VMName $VM.Name
-    Write-Output "This VM $($VM.Name), contains $($disks.Count) disks, checking permissions..."
+  $disks = Get-VMHardDiskDrive -VMName $VM.Name
+  Write-Output "This VM $($VM.Name), contains $($disks.Count) disks, checking permissions..."
 
-    ForEach ($disk in $disks) {
-        $permissions = Get-NTFSAccess -Path $disk.Path
-        If ($permissions.Account -notcontains "NT Virtual Mach*") {
-            $disk.Path
-            Write-host "This VHD has improper permissions, fixing..." -NoNewline
-            try {
-                Add-NTFSAccess -Path $disk.Path -Account "NT VIRTUAL MACHINE\$($VM.VMId)" -AccessRights FullControl -ErrorAction STOP
-            }
-            catch {
-                Write-Host -ForegroundColor red "[ERROR]"
-                Write-Warning "Try rerunning as Administrator, or validate your user ID has FullControl on the above path"
-                break
-            }
+  ForEach ($disk in $disks) {
+    $permissions = Get-NTFSAccess -Path $disk.Path
+    If ($permissions.Account -notcontains "NT Virtual Mach*") {
+      $disk.Path
+      Write-host "This VHD has improper permissions, fixing..." -NoNewline
+      try {
+        Add-NTFSAccess -Path $disk.Path -Account "NT VIRTUAL MACHINE\$($VM.VMId)" -AccessRights FullControl -ErrorAction STOP
+      }
+      catch {
+        Write-Host -ForegroundColor red "[ERROR]"
+        Write-Warning "Try rerunning as Administrator, or validate your user ID has FullControl on the above path"
+        break
+      }
 
-            Write-Host -ForegroundColor Green "[OK]"
-
-        }
+      Write-Host -ForegroundColor Green "[OK]"
 
     }
+
+  }
 }

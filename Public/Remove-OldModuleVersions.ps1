@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -37,17 +37,17 @@ https://luke.geek.nz/powershell/remove-old-powershell-modules-versions-using-pow
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-    [array]$Modules = (Get-InstalledModule)
+  [array]$Modules = (Get-InstalledModule)
 )
 Requires -Version 2.0 -Modules PowerShellGet
 
 foreach ($Module in $Modules) {
-    $count++ ; Progress -Index $count -Total $Modules.count -Activity "Uninstalling old versions of $($Module.Name). [latest is $($Module.Version)]" -Name $Image.Name -ErrorAction SilentlyContinue
-    $Installed = Get-InstalledModule -Name $Module.Name -AllVersions
-    If ($Installed.count -gt 1) {
-        Write-Verbose -Message "Uninstalling $($Installed.Count-1) old versions of $($Module.Name) [latest is $($Module.Version)]" -Verbose
-        If ($PSCmdlet.ShouldProcess("$($Module.Name)", "Remove-OldModules")) {
-            $Installed | Where-Object { $_.Version -ne $module.Version } | Uninstall-Module -Verbose
-        }
+  $count++ ; Progress -Index $count -Total $Modules.count -Activity "Uninstalling old versions of $($Module.Name). [latest is $($Module.Version)]" -Name $Image.Name -ErrorAction SilentlyContinue
+  $Installed = Get-InstalledModule -Name $Module.Name -AllVersions
+  If ($Installed.count -gt 1) {
+    Write-Verbose -Message "Uninstalling $($Installed.Count-1) old versions of $($Module.Name) [latest is $($Module.Version)]" -Verbose
+    If ($PSCmdlet.ShouldProcess("$($Module.Name)", "Remove-OldModules")) {
+      $Installed | Where-Object { $_.Version -ne $module.Version } | Uninstall-Module -Verbose
     }
+  }
 }

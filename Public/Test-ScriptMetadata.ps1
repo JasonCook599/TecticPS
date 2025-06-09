@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -35,16 +35,16 @@ This is used to validate the existence of metadata on the individual scripts
 [System.Collections.ArrayList]$Results = @()
 $SourceScripts = Get-ChildItem -Path *.ps1 -ErrorAction SilentlyContinue -Recurse | Where-Object { ($_.Name -ne "psakefile.ps1") -and ($_.Name -ne "TecticPSDefaults.ps1") -and ($_.Name -ne "Profile.ps1") }
 $SourceScripts | ForEach-Object {
-    try { $Info = Test-ScriptFileInfo  $_.FullName } catch { $Info = $false ; Write-Verbose "$_.Name does not have a valid PSScriptInfo block" }
-    try { $Description = (Get-Help $_.FullName).Description } catch { $Description = $false ; Write-Verbose "$_.Name does not have a valid help block" }
-    if ($Info) { $Info = $true } else { $Info = $False }
-    if ($Description) { $Description = $true } else { $Description = $False }
+  try { $Info = Test-ScriptFileInfo  $_.FullName } catch { $Info = $false ; Write-Verbose "$_.Name does not have a valid PSScriptInfo block" }
+  try { $Description = (Get-Help $_.FullName).Description } catch { $Description = $false ; Write-Verbose "$_.Name does not have a valid help block" }
+  if ($Info) { $Info = $true } else { $Info = $False }
+  if ($Description) { $Description = $true } else { $Description = $False }
 
-    $Result = [PSCustomObject]@{
-        File        = $_.Name
-        Info        = $Info
-        Description = $Description
-    }
-    $Results += $Result
+  $Result = [PSCustomObject]@{
+    File        = $_.Name
+    Info        = $Info
+    Description = $Description
+  }
+  $Results += $Result
 }
 return $Results

@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) TectTectic
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -49,25 +49,25 @@ https://learn.microsoft.com/en-us/sysinternals/downloads/pendmoves#movefile-usag
 [OutputType('bool')]
 [CmdletBinding()]
 param(
-    [switch]$IgnoreDeletes
+  [switch]$IgnoreDeletes
 )
 $Operations = (Get-Item 'HKLM:\SYSTEM\CurrentControlSet\Control\Session Manager\').GetValue('PendingFileRenameOperations')
 if ($null -eq $Operations) {
-    return $false
+  return $false
 }
 else {
-    $OperationsCount = $Operations.Length / 2
-    $Renames = [System.Collections.Generic.Dictionary[string, string]]::new($OperationsCount)
-    for ($i = 0; $i -ne $OperationsCount; $i++) {
-        $OperationSource = $Operations[$i * 2]
-        $operationDestination = $Operations[$i * 2 + 1]
-        if ($IgnoreDeletes -and $operationDestination.Length -eq 0) {
-            Write-Verbose "Ignoring pending file delete '$OperationSource'"
-        }
-        else {
-            Write-Host "Found a true pending file rename (as opposed to delete). Source '$OperationSource'; Dest '$operationDestination'"
-            $Renames[$Operationsource] = $operationDestination
-        }
+  $OperationsCount = $Operations.Length / 2
+  $Renames = [System.Collections.Generic.Dictionary[string, string]]::new($OperationsCount)
+  for ($i = 0; $i -ne $OperationsCount; $i++) {
+    $OperationSource = $Operations[$i * 2]
+    $operationDestination = $Operations[$i * 2 + 1]
+    if ($IgnoreDeletes -and $operationDestination.Length -eq 0) {
+      Write-Verbose "Ignoring pending file delete '$OperationSource'"
     }
-    return $Renames
+    else {
+      Write-Host "Found a true pending file rename (as opposed to delete). Source '$OperationSource'; Dest '$operationDestination'"
+      $Renames[$Operationsource] = $operationDestination
+    }
+  }
+  return $Renames
 }

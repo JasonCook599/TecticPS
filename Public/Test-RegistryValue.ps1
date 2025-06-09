@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Jonathan Medd 2014
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -43,12 +43,12 @@ https://www.jonathanmedd.net/2014/02/testing-for-the-presence-of-a-registry-key-
 #>
 
 param (
-    [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Path,
-    [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Value
+  [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Path,
+  [parameter(Mandatory = $true)][ValidateNotNullOrEmpty()]$Value
 )
 
 try {
-    Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
-    return $true
+  Get-ItemProperty -Path $Path | Select-Object -ExpandProperty $Value -ErrorAction Stop | Out-Null
+  return $true
 }
 catch { return $false }

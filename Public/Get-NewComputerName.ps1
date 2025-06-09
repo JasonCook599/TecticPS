@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -48,12 +48,12 @@ The new name to use for the computer.
 [CmdletBinding(SupportsShouldProcess = $true)]
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
 param (
-    [string]$Prefix,
-    [string]$Serial = (Get-WmiObject win32_bios).Serialnumber,
-    [int]$MaxLength = 15
+  [string]$Prefix,
+  [string]$Serial = (Get-WmiObject win32_bios).Serialnumber,
+  [int]$MaxLength = 15
 )
 $Models = @{
-    Razer = "BY21\d{2}M(\d{8})"
+  Razer = "BY21\d{2}M(\d{8})"
 }
 
 $Models.Keys | ForEach-Object { if ($Serial -match $Models[$_]) { $Serial = $Matches[1] } }

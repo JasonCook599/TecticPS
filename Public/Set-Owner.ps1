@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -81,27 +81,27 @@ https://learn-powershell.net/2014/06/24/changing-ownership-of-file-or-folder-usi
 http://gallery.technet.microsoft.com/scriptcenter/Set-Owner-ff4db177
     #>
 [cmdletbinding(
-    SupportsShouldProcess = $True
+  SupportsShouldProcess = $True
 )]
 Param (
-    [parameter(ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
-    [Alias('FullName')]
-    [string[]]$Path,
-    [parameter()]
-    [string]$Account = 'Builtin\Administrators',
-    [parameter()]
-    [switch]$Recurse
+  [parameter(ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
+  [Alias('FullName')]
+  [string[]]$Path,
+  [parameter()]
+  [string]$Account = 'Builtin\Administrators',
+  [parameter()]
+  [switch]$Recurse
 )
 Begin {
-    #Prevent Confirmation on each Write-Debug command when using -Debug
-    If ($PSBoundParameters['Debug']) {
-        $DebugPreference = 'Continue'
-    }
-    Try {
-        [void][TokenAdjuster]
-    }
-    Catch {
-        $AdjustTokenPrivileges = @"
+  #Prevent Confirmation on each Write-Debug command when using -Debug
+  If ($PSBoundParameters['Debug']) {
+    $DebugPreference = 'Continue'
+  }
+  Try {
+    [void][TokenAdjuster]
+  }
+  Catch {
+    $AdjustTokenPrivileges = @"
             using System;
             using System.Runtime.InteropServices;
 
@@ -173,66 +173,66 @@ Begin {
               }
              }
 "@
-        Add-Type $AdjustTokenPrivileges
-    }
+    Add-Type $AdjustTokenPrivileges
+  }
 
-    #Activate necessary admin privileges to make changes without NTFS perms
-    [void][TokenAdjuster]::AddPrivilege("SeRestorePrivilege") #Necessary to set Owner Permissions
-    [void][TokenAdjuster]::AddPrivilege("SeBackupPrivilege") #Necessary to bypass Traverse Checking
-    [void][TokenAdjuster]::AddPrivilege("SeTakeOwnershipPrivilege") #Necessary to override FilePermissions
+  #Activate necessary admin privileges to make changes without NTFS perms
+  [void][TokenAdjuster]::AddPrivilege("SeRestorePrivilege") #Necessary to set Owner Permissions
+  [void][TokenAdjuster]::AddPrivilege("SeBackupPrivilege") #Necessary to bypass Traverse Checking
+  [void][TokenAdjuster]::AddPrivilege("SeTakeOwnershipPrivilege") #Necessary to override FilePermissions
 }
 Process {
-    ForEach ($Item in $Path) {
-        Write-Verbose "FullName: $Item"
-        #The ACL objects do not like being used more than once, so re-create them on the Process block
-        $DirOwner = New-Object System.Security.AccessControl.DirectorySecurity
-        $DirOwner.SetOwner([System.Security.Principal.NTAccount]$Account)
-        $FileOwner = New-Object System.Security.AccessControl.FileSecurity
-        $FileOwner.SetOwner([System.Security.Principal.NTAccount]$Account)
-        $DirAdminAcl = New-Object System.Security.AccessControl.DirectorySecurity
-        $FileAdminAcl = New-Object System.Security.AccessControl.DirectorySecurity
-        $AdminACL = New-Object System.Security.AccessControl.FileSystemAccessRule('Builtin\Administrators', 'FullControl', 'ContainerInherit,ObjectInherit', 'InheritOnly', 'Allow')
-        $FileAdminAcl.AddAccessRule($AdminACL)
-        $DirAdminAcl.AddAccessRule($AdminACL)
-        Try {
-            $Item = Get-Item -LiteralPath $Item -Force -ErrorAction Stop
-            If (-NOT $Item.PSIsContainer) {
-                If ($PSCmdlet.ShouldProcess($Item, 'Set File Owner')) {
-                    Try {
-                        $Item.SetAccessControl($FileOwner)
-                    }
-                    Catch {
-                        Write-Warning "Couldn't take ownership of $($Item.FullName)! Taking FullControl of $($Item.Directory.FullName)"
-                        $Item.Directory.SetAccessControl($FileAdminAcl)
-                        $Item.SetAccessControl($FileOwner)
-                    }
-                }
-            }
-            Else {
-                If ($PSCmdlet.ShouldProcess($Item, 'Set Directory Owner')) {
-                    Try {
-                        $Item.SetAccessControl($DirOwner)
-                    }
-                    Catch {
-                        Write-Warning "Couldn't take ownership of $($Item.FullName)! Taking FullControl of $($Item.Parent.FullName)"
-                        $Item.Parent.SetAccessControl($DirAdminAcl)
-                        $Item.SetAccessControl($DirOwner)
-                    }
-                }
-                If ($Recurse) {
-                    [void]$PSBoundParameters.Remove('Path')
-                    Get-ChildItem $Item -Force | Set-Owner @PSBoundParameters
-                }
-            }
+  ForEach ($Item in $Path) {
+    Write-Verbose "FullName: $Item"
+    #The ACL objects do not like being used more than once, so re-create them on the Process block
+    $DirOwner = New-Object System.Security.AccessControl.DirectorySecurity
+    $DirOwner.SetOwner([System.Security.Principal.NTAccount]$Account)
+    $FileOwner = New-Object System.Security.AccessControl.FileSecurity
+    $FileOwner.SetOwner([System.Security.Principal.NTAccount]$Account)
+    $DirAdminAcl = New-Object System.Security.AccessControl.DirectorySecurity
+    $FileAdminAcl = New-Object System.Security.AccessControl.DirectorySecurity
+    $AdminACL = New-Object System.Security.AccessControl.FileSystemAccessRule('Builtin\Administrators', 'FullControl', 'ContainerInherit,ObjectInherit', 'InheritOnly', 'Allow')
+    $FileAdminAcl.AddAccessRule($AdminACL)
+    $DirAdminAcl.AddAccessRule($AdminACL)
+    Try {
+      $Item = Get-Item -LiteralPath $Item -Force -ErrorAction Stop
+      If (-NOT $Item.PSIsContainer) {
+        If ($PSCmdlet.ShouldProcess($Item, 'Set File Owner')) {
+          Try {
+            $Item.SetAccessControl($FileOwner)
+          }
+          Catch {
+            Write-Warning "Couldn't take ownership of $($Item.FullName)! Taking FullControl of $($Item.Directory.FullName)"
+            $Item.Directory.SetAccessControl($FileAdminAcl)
+            $Item.SetAccessControl($FileOwner)
+          }
         }
-        Catch {
-            Write-Warning "$($Item): $($_.Exception.Message)"
+      }
+      Else {
+        If ($PSCmdlet.ShouldProcess($Item, 'Set Directory Owner')) {
+          Try {
+            $Item.SetAccessControl($DirOwner)
+          }
+          Catch {
+            Write-Warning "Couldn't take ownership of $($Item.FullName)! Taking FullControl of $($Item.Parent.FullName)"
+            $Item.Parent.SetAccessControl($DirAdminAcl)
+            $Item.SetAccessControl($DirOwner)
+          }
         }
+        If ($Recurse) {
+          [void]$PSBoundParameters.Remove('Path')
+          Get-ChildItem $Item -Force | Set-Owner @PSBoundParameters
+        }
+      }
     }
+    Catch {
+      Write-Warning "$($Item): $($_.Exception.Message)"
+    }
+  }
 }
 End {
-    #Remove priviledges that had been granted
-    [void][TokenAdjuster]::RemovePrivilege("SeRestorePrivilege")
-    [void][TokenAdjuster]::RemovePrivilege("SeBackupPrivilege")
-    [void][TokenAdjuster]::RemovePrivilege("SeTakeOwnershipPrivilege")
+  #Remove priviledges that had been granted
+  [void][TokenAdjuster]::RemovePrivilege("SeRestorePrivilege")
+  [void][TokenAdjuster]::RemovePrivilege("SeBackupPrivilege")
+  [void][TokenAdjuster]::RemovePrivilege("SeTakeOwnershipPrivilege")
 }

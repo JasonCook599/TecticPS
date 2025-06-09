@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -44,25 +44,25 @@ Remove-AuthenticodeSignature -File Script.ps1
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
-    [Alias('Path')]
-    [system.io.fileinfo[]]$FilePath
+  [Parameter(Mandatory = $False, Position = 0, ValueFromPipeline = $True, ValueFromPipelineByPropertyName = $True)]
+  [Alias('Path')]
+  [system.io.fileinfo[]]$FilePath
 )
 
 If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
-    try {
-        $Content = Get-Content $FilePath
-        $SignatureLineNumber = (Get-Content $FilePath | select-string "SIG # Begin signature block").LineNumber
-        if ($null -eq $SignatureLineNumber -or $SignatureLineNumber -eq 0) {
-            Write-Warning "No signature found. Nothing to do."
-        }
-        else {
-            $Content = Get-Content $FilePath
-            $Content[0..($SignatureLineNumber - 2)] | Set-Content $FilePath
-        }
+  try {
+    $Content = Get-Content $FilePath
+    $SignatureLineNumber = (Get-Content $FilePath | select-string "SIG # Begin signature block").LineNumber
+    if ($null -eq $SignatureLineNumber -or $SignatureLineNumber -eq 0) {
+      Write-Warning "No signature found. Nothing to do."
+    }
+    else {
+      $Content = Get-Content $FilePath
+      $Content[0..($SignatureLineNumber - 2)] | Set-Content $FilePath
+    }
 
-    }
-    catch {
-        Write-Error "Failed to remove signature. $($_.Exception.Message)"
-    }
+  }
+  catch {
+    Write-Error "Failed to remove signature. $($_.Exception.Message)"
+  }
 }

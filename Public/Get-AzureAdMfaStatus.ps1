@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -46,9 +46,9 @@ The sort key to use when sorting the results. By default, this is the first prop
 #>
 
 param(
-    [string]$Filter,
-    $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", "UserType", "BlockCredential", "IsLicensed", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
-    $SortKey = $Properties[0]
+  [string]$Filter,
+  $Properties = @("UserPrincipalName", "DisplayName", "FirstName", "LastName", "UserType", "BlockCredential", "IsLicensed", @{N = "MFA Status"; E = { if ( $null -ne $_.StrongAuthenticationRequirements.State) { $_.StrongAuthenticationRequirements.State } else { "Disabled" } } }),
+  $SortKey = $Properties[0]
 )
 
 return Get-MsolUser -All  | Sort-Object $SortKey | Select-Object $Properties

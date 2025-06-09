@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -48,26 +48,26 @@ The new name to use for the computer.
 [CmdletBinding(SupportsShouldProcess = $true)]
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
 param (
-    [string]$Prefix,
-    [string]$User,
-    [string]$Password,
-    $NewName = (Get-NewComputerName -Prefix $Prefix)
+  [string]$Prefix,
+  [string]$User,
+  [string]$Password,
+  $NewName = (Get-NewComputerName -Prefix $Prefix)
 )
 
 $Arguments = @{}
 if ($NewName) { $Arguments.NewName = $NewName }
 if ($User -and $Password) {
-    [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force)
-    [pscredential]$DomainCredential = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
-    $Arguments.DomainCredential = $DomainCredential
+  [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force)
+  [pscredential]$DomainCredential = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
+  $Arguments.DomainCredential = $DomainCredential
 }
 
 Write-Verbose "Renaming computer to `'$NewName`'"
 try { return Rename-Computer @Arguments -ErrorAction Stop }
 catch [System.InvalidOperationException] {
-    if ($_.FullyQualifiedErrorId -eq "NewNameIsOldName,Microsoft.PowerShell.Commands.RenameComputerCommand") {
-        Write-Verbose "Computer already has the name `'$NewName`'"
-        return $null
-    }
-    else { throw $_ }
+  if ($_.FullyQualifiedErrorId -eq "NewNameIsOldName,Microsoft.PowerShell.Commands.RenameComputerCommand") {
+    Write-Verbose "Computer already has the name `'$NewName`'"
+    return $null
+  }
+  else { throw $_ }
 }

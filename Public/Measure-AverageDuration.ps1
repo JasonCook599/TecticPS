@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -42,20 +42,20 @@ How many times the command will be repeated
 The name or description to use in the progress bar.
 #>
 param(
-    [string]$Command,
-    [ValidateRange(1, [int]::MaxValue)][int]$Times = 100,
-    [string]$Name = $Command
+  [string]$Command,
+  [ValidateRange(1, [int]::MaxValue)][int]$Times = 100,
+  [string]$Name = $Command
 
 )
 
 1..$Times | ForEach-Object {
-    Write-Progress -Id 1 -Activity $Name -PercentComplete $_
-    $Duration += (Measure-Command {
-            pwsh -noprofile -command $Command
-        }).TotalMilliseconds
+  Write-Progress -Id 1 -Activity $Name -PercentComplete $_
+  $Duration += (Measure-Command {
+      pwsh -noprofile -command $Command
+    }).TotalMilliseconds
 }
 Write-Progress -id 1 -Activity $Name -Completed
 return @{
-    Average = $Duration / 100
-    Total   = $Duration
+  Average = $Duration / 100
+  Total   = $Duration
 }

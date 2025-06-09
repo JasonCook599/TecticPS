@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -53,25 +53,25 @@ https://newdelhipowershellusergroup.blogspot.com/2012/04/ip-address-release-rene
 
 $Ethernet = Get-CimInstance -Class Win32_NetworkAdapterConfiguration | Where-Object { $_.IpEnabled -eq $true -and $_.DhcpEnabled -eq $true }
 foreach ($lan in $ethernet) {
-	$lanDescription = $lan.Description
-	Write-Output "Flushing IP addresses for $lanDescription"
-	Start-Sleep 2
-	$lan | Invoke-CimMethod -MethodName ReleaseDHCPLease | Out-Null
-	Write-Output "Renewing IP Addresses"
-	$lan | Invoke-CimMethod -MethodName RenewDHCPLease | Out-Null
-	#$lan | select Description, ServiceName, IPAddress,  IPSubnet, DefaultIPGateway, DNSServerSearchOrder, DNSDomain, DHCPLeaseExpires, DHCPServer, MACAddress
+  $lanDescription = $lan.Description
+  Write-Output "Flushing IP addresses for $lanDescription"
+  Start-Sleep 2
+  $lan | Invoke-CimMethod -MethodName ReleaseDHCPLease | Out-Null
+  Write-Output "Renewing IP Addresses"
+  $lan | Invoke-CimMethod -MethodName RenewDHCPLease | Out-Null
+  #$lan | select Description, ServiceName, IPAddress,  IPSubnet, DefaultIPGateway, DNSServerSearchOrder, DNSDomain, DHCPLeaseExpires, DHCPServer, MACAddress
 
-	#$expireTime = [datetime]::ParseExact($lan.DHCPLeaseExpires,'yyyyMMddHHmmss.000000-300',$null)
-	$expireTime = $lan.DHCPLeaseExpires
-	$expireTimeFormated = Get-Date -Date $expireTime -Format F
-	$expireTimeUntil = New-TimeSpan -Start (Get-Date) -End $expireTime
-	$days = [Math]::Floor($expireTimeUntil.TotalDays)
-	$hours = [Math]::Floor($expireTimeUntil.TotalHours) - $days * 24
-	$minutes = [Math]::Floor($expireTimeUntil.TotalMinutes) - $hours * 60
-	$expireTimeUntilFormated = $null
-	If ( $days -gt 1 ) { $expireTimeUntilFormated = $days + ' days ' } ElseIf ( $days -gt 0 ) { $expireTimeUntilFormated = $days + ' day ' }
-	If ( $hours -gt 1 ) { $expireTimeUntilFormated = -join ($expireTimeUntilFormated, $hours) + ' hours ' } ElseIf ( $hours -gt 0 ) { $expireTimeUntilFormated = -join ($expireTimeUntilFormated, $hours) + ' hour ' }
-	If ( $minutes -gt 1 ) { $expireTimeUntilFormated = -join ($expireTimeUntilFormated, $minutes) + ' minutes' } ElseIf ( $minutes -gt 0 ) { $expireTimeUntilFormated = -join ($expireTimeUntilFormated, $minutes) + ' minute' }
-	$Ip = $lan.IPAddress
-	Write-Output "Lease on $Ip expires in $expireTimeUntilFormated on $expireTimeFormated"
+  #$expireTime = [datetime]::ParseExact($lan.DHCPLeaseExpires,'yyyyMMddHHmmss.000000-300',$null)
+  $expireTime = $lan.DHCPLeaseExpires
+  $expireTimeFormated = Get-Date -Date $expireTime -Format F
+  $expireTimeUntil = New-TimeSpan -Start (Get-Date) -End $expireTime
+  $days = [Math]::Floor($expireTimeUntil.TotalDays)
+  $hours = [Math]::Floor($expireTimeUntil.TotalHours) - $days * 24
+  $minutes = [Math]::Floor($expireTimeUntil.TotalMinutes) - $hours * 60
+  $expireTimeUntilFormated = $null
+  If ( $days -gt 1 ) { $expireTimeUntilFormated = $days + ' days ' } ElseIf ( $days -gt 0 ) { $expireTimeUntilFormated = $days + ' day ' }
+  If ( $hours -gt 1 ) { $expireTimeUntilFormated = -join ($expireTimeUntilFormated, $hours) + ' hours ' } ElseIf ( $hours -gt 0 ) { $expireTimeUntilFormated = -join ($expireTimeUntilFormated, $hours) + ' hour ' }
+  If ( $minutes -gt 1 ) { $expireTimeUntilFormated = -join ($expireTimeUntilFormated, $minutes) + ' minutes' } ElseIf ( $minutes -gt 0 ) { $expireTimeUntilFormated = -join ($expireTimeUntilFormated, $minutes) + ' minute' }
+  $Ip = $lan.IPAddress
+  Write-Output "Lease on $Ip expires in $expireTimeUntilFormated on $expireTimeFormated"
 }

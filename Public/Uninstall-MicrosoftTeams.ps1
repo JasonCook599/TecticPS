@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -39,15 +39,15 @@ $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentL
 $choices.Add((New-Object Management.Automation.Host.ChoiceDescription -ArgumentList '&No'))
 $decision = $Host.UI.PromptForChoice("Uninstall-MicrosoftTeams", "Are you sure you want to proceed?", $choices, 1)
 if ($decision -eq 0) {
-    $TeamsPath = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Microsoft', 'Teams')
-    $TeamsUpdateExePath = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Microsoft', 'Teams', 'Update.exe')
-    try {
-        if (Test-Path -Path $TeamsUpdateExePath) { Start-Process -FilePath $TeamsUpdateExePath -ArgumentList "-uninstall -s" -PassThru -NoNewWindow -Wait }
-        if (Test-Path -Path $TeamsPath) { Remove-Item -Path $TeamsPath -Recurse }
-    }
-    catch {
-        Write-Error -ErrorRecord $_
-        exit /b 1
-    }
+  $TeamsPath = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Microsoft', 'Teams')
+  $TeamsUpdateExePath = [System.IO.Path]::Combine($env:LOCALAPPDATA, 'Microsoft', 'Teams', 'Update.exe')
+  try {
+    if (Test-Path -Path $TeamsUpdateExePath) { Start-Process -FilePath $TeamsUpdateExePath -ArgumentList "-uninstall -s" -PassThru -NoNewWindow -Wait }
+    if (Test-Path -Path $TeamsPath) { Remove-Item -Path $TeamsPath -Recurse }
+  }
+  catch {
+    Write-Error -ErrorRecord $_
+    exit /b 1
+  }
 }
 else { Break }

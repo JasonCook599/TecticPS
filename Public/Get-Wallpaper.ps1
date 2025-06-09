@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -39,8 +39,8 @@ The location the file will be downloaded to.
 The location from from which to download the wallpaper.
 #>
 param(
-    [string]$Path = "C:\Windows\Web\Wallpaper\Windows\CurrentBackground.jpg",
-    [Parameter(Mandatory = $true)][uri]$Uri
+  [string]$Path = "C:\Windows\Web\Wallpaper\Windows\CurrentBackground.jpg",
+  [Parameter(Mandatory = $true)][uri]$Uri
 )
 
 Test-Admin -Warn -Message "You do not have Administrator rights to run this script! This may not work correctly." | Out-Null

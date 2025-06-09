@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -50,10 +50,10 @@ The end of the XML file, after all the connections are created.
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    [Parameter(ValueFromPipeline = $true)][string]$Path,
-    [Parameter(ValueFromPipeline = $true)][hashtable]$Locations,
-    [Parameter(ValueFromPipeline = $true)][string]$AllGateways,
-    $Start = '
+  [Parameter(ValueFromPipeline = $true)][string]$Path,
+  [Parameter(ValueFromPipeline = $true)][hashtable]$Locations,
+  [Parameter(ValueFromPipeline = $true)][string]$AllGateways,
+  $Start = '
 <?xml version="1.0" encoding="UTF-8" ?>
 <forticlient_configuration>
     <forticlient_version>6.0.10.297</forticlient_version>
@@ -253,7 +253,7 @@ param (
                 <disallow_invalid_server_certificate>0</disallow_invalid_server_certificate>
             </options>
             <connections>',
-    $End = '
+  $End = '
             </connections>
         </sslvpn>
         <ipsecvpn>
@@ -280,11 +280,11 @@ param (
 )
 
 function BuildConfig {
-    Param(
-        [ValidateLength(1, 31)][string]$Name,
-        [ValidatePattern('(?m)^(?:\w|.)*:[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]')][string]$Gateway
-    )
-    return "
+  Param(
+    [ValidateLength(1, 31)][string]$Name,
+    [ValidatePattern('(?m)^(?:\w|.)*:[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]')][string]$Gateway
+  )
+  return "
     <connection>
         <name>$Name</name>
         <description />

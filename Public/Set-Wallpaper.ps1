@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -64,17 +64,17 @@ https://www.joseespitia.com/2017/09/15/set-wallpaper-powershell-function/
 #>
 
 param (
-    [ValidateScript({ Test-Path $_ })][string]$Image = ((Get-ChildItem -Path (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\Windows"))[0].FullName),
-    [ValidateSet('Fill', 'Fit', 'Stretch', 'Tile', 'Center', 'Span')][string]$Style = "Fit"
+  [ValidateScript({ Test-Path $_ })][string]$Image = ((Get-ChildItem -Path (Join-Path -Path $env:windir -ChildPath "Web\Wallpaper\Windows"))[0].FullName),
+  [ValidateSet('Fill', 'Fit', 'Stretch', 'Tile', 'Center', 'Span')][string]$Style = "Fit"
 )
 
 $WallpaperStyle = Switch ($Style) {
-    "Fill" { "10" }
-    "Fit" { "6" }
-    "Stretch" { "2" }
-    "Tile" { "0" }
-    "Center" { "0" }
-    "Span" { "22" }
+  "Fill" { "10" }
+  "Fit" { "6" }
+  "Stretch" { "2" }
+  "Tile" { "0" }
+  "Center" { "0" }
+  "Span" { "22" }
 }
 
 New-ItemProperty -Path "HKCU:\Control Panel\Desktop" -Name WallpaperStyle -PropertyType String -Value $WallpaperStyle -Force

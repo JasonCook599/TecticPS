@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) TectTectic
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -64,12 +64,12 @@ https://www.michev.info/Blog/Post/3908/updating-your-profile-photo-as-guest-via-
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    $Photos = (Get-ChildItem -Recurse -File),
-    [guid]$TenantId,
-    [guid]$ClientId,
-    [System.Security.Cryptography.X509Certificates.X509Certificate]$Certificate,
-    [hashtable]$Substitute,
-    [string]$Suffix
+  $Photos = (Get-ChildItem -Recurse -File),
+  [guid]$TenantId,
+  [guid]$ClientId,
+  [System.Security.Cryptography.X509Certificates.X509Certificate]$Certificate,
+  [hashtable]$Substitute,
+  [string]$Suffix
 )
 
 Requires Microsoft.Graph.Users
@@ -78,55 +78,55 @@ $MgContext = Get-MgContext
 $ConnectMgGraph = @{}
 if ($TenantId) { $ConnectMgGraph.TenantId = $TenantId }
 if ($ClientId -and $Certificate) {
-    $ConnectMgGraph.ClientId = $ClientId
-    $ConnectMgGraph.Certificate = $Certificate
+  $ConnectMgGraph.ClientId = $ClientId
+  $ConnectMgGraph.Certificate = $Certificate
 }
 elseif ($ClientId -or $Certificate) { throw "You must specify both or neither -ClientId and -Certificate" }
 else { $ConnectMgGraph.Scopes = "User.ReadWrite.All" }
 
 while (($TenantId -and $MgContext.TenantId -ne $TenantId) -or $MgContext.Scopes -notcontains "User.ReadWrite.All") {
-    Connect-MgGraph @ConnectMgGraph | Write-Verbose
-    $MgContext = Get-MgContext
+  Connect-MgGraph @ConnectMgGraph | Write-Verbose
+  $MgContext = Get-MgContext
 }
 
 $Photos | ForEach-Object {
-    $count++ ; Progress -Index $count -Total $Photos.count -Activity "Uploading profile photos." -Name $_.Name
+  $count++ ; Progress -Index $count -Total $Photos.count -Activity "Uploading profile photos." -Name $_.Name
 
-    Clear-Variable -ErrorAction SilentlyContinue -Name UploadError
-    Clear-Variable -ErrorAction SilentlyContinue -Name User
+  Clear-Variable -ErrorAction SilentlyContinue -Name UploadError
+  Clear-Variable -ErrorAction SilentlyContinue -Name User
 
-    Write-Debug "Adding `'$Suffix`' to `$UserId"
-    $UserId = ([System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix)
+  Write-Debug "Adding `'$Suffix`' to `$UserId"
+  $UserId = ([System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix)
 
-    If ($Substitute) {
-        $Substitute.GetEnumerator() | ForEach-Object {
-            Write-Debug "Replacing $($_.Name) with $($_.Value)"
-            $UserId = $UserId -replace $_.Name, $_.Value
-        }
+  If ($Substitute) {
+    $Substitute.GetEnumerator() | ForEach-Object {
+      Write-Debug "Replacing $($_.Name) with $($_.Value)"
+      $UserId = $UserId -replace $_.Name, $_.Value
     }
-    $User = Get-MgUser -UserId $UserId -ErrorAction SilentlyContinue
+  }
+  $User = Get-MgUser -UserId $UserId -ErrorAction SilentlyContinue
 
-    If ($PSCmdlet.ShouldProcess($User.DisplayName, "Set-MgUserPhotoContent")) {
-        if ($User.Id) {
-            Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName -ErrorVariable UploadError
-            return [PSCustomObject]@{
-                UserId       = $User.Id
-                DisplayName  = $User.DisplayName
-                EmailAddress = $User.Mail
-                Photo        = $_.FullName
-                PhotoDate    = $_.LastWriteTime
-                Error        = $UploadError[0]
-            }
-        }
-        else {
-            return [PSCustomObject]@{
-                UserId       = $UserId
-                DisplayName  = $null
-                EmailAddress = $null
-                Photo        = $_.FullName
-                PhotoDate    = $_.LastWriteTime
-                Error        = "User does not exist."
-            }
-        }
+  If ($PSCmdlet.ShouldProcess($User.DisplayName, "Set-MgUserPhotoContent")) {
+    if ($User.Id) {
+      Set-MgUserPhotoContent -UserId $User.Id -InFile $_.FullName -ErrorVariable UploadError
+      return [PSCustomObject]@{
+        UserId       = $User.Id
+        DisplayName  = $User.DisplayName
+        EmailAddress = $User.Mail
+        Photo        = $_.FullName
+        PhotoDate    = $_.LastWriteTime
+        Error        = $UploadError[0]
+      }
     }
+    else {
+      return [PSCustomObject]@{
+        UserId       = $UserId
+        DisplayName  = $null
+        EmailAddress = $null
+        Photo        = $_.FullName
+        PhotoDate    = $_.LastWriteTime
+        Error        = "User does not exist."
+      }
+    }
+  }
 }

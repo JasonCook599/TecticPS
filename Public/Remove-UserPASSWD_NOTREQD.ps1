@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -61,14 +61,14 @@ TODO Build better help
 ################################################################################################
 [Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSUseDeclaredVarsMoreThanAssignments", Scope = "Function", Target = "*")]
 param([string]$Path,
-    [string]$Server,
-    [switch]$Subtree,
-    [string]$LogFile,
-    [switch]$help)
+  [string]$Server,
+  [switch]$Subtree,
+  [string]$LogFile,
+  [switch]$help)
 
 function funHelp() {
-    Clear-Host
-    $helpText = @"
+  Clear-Host
+  $helpText = @"
 THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR
 FITNESS FOR A PARTICULAR PURPOSE.
@@ -141,12 +141,12 @@ SYNTAX:
  Displays the help topic for the script
 
 "@
-    write-host $helpText
-    exit
+  write-host $helpText
+  exit
 }
 function reqHelp() {
-    Clear-Host
-    $helpText = @"
+  Clear-Host
+  $helpText = @"
 THIS CODE-SAMPLE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EITHER EXPRESSED
 OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR
 FITNESS FOR A PARTICULAR PURPOSE.
@@ -178,13 +178,13 @@ SYSTEM REQUIREMENTS:
 - Modify User Object Permissions in Active Directory
 
 "@
-    write-host $helpText
-    exit
+  write-host $helpText
+  exit
 }
 # Check for AD powershell module
 if ($null -eq $(Get-Module | Where-Object { $_.name -eq "activedirectory" })) {
-    reqHelp
-    exit
+  reqHelp
+  exit
 }
 $script:ErrCtrlrActionPreference = "SilentlyContinue"
 #==========================================================================
@@ -195,59 +195,59 @@ $script:ErrCtrlrActionPreference = "SilentlyContinue"
 #==========================================================================
 Function GetUserAccCtrlStatus ($userDN) {
 
-    $objUser = get-aduser -server $Server $userDN -properties useraccountcontrol
+  $objUser = get-aduser -server $Server $userDN -properties useraccountcontrol
 
-    [string] $strStatus = ""
+  [string] $strStatus = ""
 
-    if ($objUser.useraccountcontrol -band 2)
-    { $strStatus = $strStatus + ",ADS_UF_ACCOUNT_DISABLE" }
-    if ($objUser.useraccountcontrol -band 8)
-    { $strStatus = $strStatus + ",ADS_UF_HOMEDIR_REQUIRED" }
-    if ($objUser.useraccountcontrol -band 16)
-    { $strStatus = $strStatus + ",ADS_UF_LOCKOUT" }
-    if ($objUser.useraccountcontrol -band 32)
-    { $strStatus = $strStatus + ",ADS_UF_PASSWD_NOTREQD" }
-    if ($objUser.useraccountcontrol -band 64)
-    { $strStatus = $strStatus + ",ADS_UF_PASSWD_CANT_CHANGE" }
-    if ($objUser.useraccountcontrol -band 128)
-    { $strStatus = $strStatus + ",ADS_UF_ENCRYPTED_TEXT_PASSWORD_ALLOWED" }
-    if ($objUser.useraccountcontrol -band 512)
-    { $strStatus = $strStatus + ",ADS_UF_NORMAL_ACCOUNT" }
-    if ($objUser.useraccountcontrol -band 2048)
-    { $strStatus = $strStatus + ",ADS_UF_INTERDOMAIN_TRUST_ACCOUNT" }
-    if ($objUser.useraccountcontrol -band 4096)
-    { $strStatus = $strStatus + ",ADS_UF_WORKSTATION_TRUST_ACCOUNT" }
-    if ($objUser.useraccountcontrol -band 8192)
-    { $strStatus = $strStatus + ",ADS_UF_SERVER_TRUST_ACCOUNT" }
-    if ($objUser.useraccountcontrol -band 65536)
-    { $strStatus = $strStatus + ",ADS_UF_DONT_EXPIRE_PASSWD" }
-    if ($objUser.useraccountcontrol -band 131072)
-    { $strStatus = $strStatus + ",ADS_UF_MNS_LOGON_ACCOUNT" }
-    if ($objUser.useraccountcontrol -band 262144)
-    { $strStatus = $strStatus + ",ADS_UF_SMARTCARD_REQUIRED" }
-    if ($objUser.useraccountcontrol -band 524288)
-    { $strStatus = $strStatus + ",ADS_UF_TRUSTED_FOR_DELEGATION" }
-    if ($objUser.useraccountcontrol -band 1048576)
-    { $strStatus = $strStatus + ",ADS_UF_NOT_DELEGATED" }
-    if ($objUser.useraccountcontrol -band 2097152)
-    { $strStatus = $strStatus + ",ADS_UF_USE_DES_KEY_ONLY" }
-    if ($objUser.useraccountcontrol -band 4194304)
-    { $strStatus = $strStatus + ",ADS_UF_DONT_REQUIRE_PREAUTH" }
-    if ($objUser.useraccountcontrol -band 8388608)
-    { $strStatus = $strStatus + ",ADS_UF_PASSWORD_EXPIRED" }
-    if ($objUser.useraccountcontrol -band 16777216)
-    { $strStatus = $strStatus + ",ADS_UF_TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION" }
-    if ($objUser.useraccountcontrol -band 33554432)
-    { $strStatus = $strStatus + ",ADS_UF_NO_AUTH_DATA_REQUIRED" }
-    if ($objUser.useraccountcontrol -band 67108864)
-    { $strStatus = $strStatus + ",ADS_UF_PARTIAL_SECRETS_ACCOUNT" }
+  if ($objUser.useraccountcontrol -band 2)
+  { $strStatus = $strStatus + ",ADS_UF_ACCOUNT_DISABLE" }
+  if ($objUser.useraccountcontrol -band 8)
+  { $strStatus = $strStatus + ",ADS_UF_HOMEDIR_REQUIRED" }
+  if ($objUser.useraccountcontrol -band 16)
+  { $strStatus = $strStatus + ",ADS_UF_LOCKOUT" }
+  if ($objUser.useraccountcontrol -band 32)
+  { $strStatus = $strStatus + ",ADS_UF_PASSWD_NOTREQD" }
+  if ($objUser.useraccountcontrol -band 64)
+  { $strStatus = $strStatus + ",ADS_UF_PASSWD_CANT_CHANGE" }
+  if ($objUser.useraccountcontrol -band 128)
+  { $strStatus = $strStatus + ",ADS_UF_ENCRYPTED_TEXT_PASSWORD_ALLOWED" }
+  if ($objUser.useraccountcontrol -band 512)
+  { $strStatus = $strStatus + ",ADS_UF_NORMAL_ACCOUNT" }
+  if ($objUser.useraccountcontrol -band 2048)
+  { $strStatus = $strStatus + ",ADS_UF_INTERDOMAIN_TRUST_ACCOUNT" }
+  if ($objUser.useraccountcontrol -band 4096)
+  { $strStatus = $strStatus + ",ADS_UF_WORKSTATION_TRUST_ACCOUNT" }
+  if ($objUser.useraccountcontrol -band 8192)
+  { $strStatus = $strStatus + ",ADS_UF_SERVER_TRUST_ACCOUNT" }
+  if ($objUser.useraccountcontrol -band 65536)
+  { $strStatus = $strStatus + ",ADS_UF_DONT_EXPIRE_PASSWD" }
+  if ($objUser.useraccountcontrol -band 131072)
+  { $strStatus = $strStatus + ",ADS_UF_MNS_LOGON_ACCOUNT" }
+  if ($objUser.useraccountcontrol -band 262144)
+  { $strStatus = $strStatus + ",ADS_UF_SMARTCARD_REQUIRED" }
+  if ($objUser.useraccountcontrol -band 524288)
+  { $strStatus = $strStatus + ",ADS_UF_TRUSTED_FOR_DELEGATION" }
+  if ($objUser.useraccountcontrol -band 1048576)
+  { $strStatus = $strStatus + ",ADS_UF_NOT_DELEGATED" }
+  if ($objUser.useraccountcontrol -band 2097152)
+  { $strStatus = $strStatus + ",ADS_UF_USE_DES_KEY_ONLY" }
+  if ($objUser.useraccountcontrol -band 4194304)
+  { $strStatus = $strStatus + ",ADS_UF_DONT_REQUIRE_PREAUTH" }
+  if ($objUser.useraccountcontrol -band 8388608)
+  { $strStatus = $strStatus + ",ADS_UF_PASSWORD_EXPIRED" }
+  if ($objUser.useraccountcontrol -band 16777216)
+  { $strStatus = $strStatus + ",ADS_UF_TRUSTED_TO_AUTHENTICATE_FOR_DELEGATION" }
+  if ($objUser.useraccountcontrol -band 33554432)
+  { $strStatus = $strStatus + ",ADS_UF_NO_AUTH_DATA_REQUIRED" }
+  if ($objUser.useraccountcontrol -band 67108864)
+  { $strStatus = $strStatus + ",ADS_UF_PARTIAL_SECRETS_ACCOUNT" }
 
-    [int] $index = $strStatus.IndexOf(",")
-    If ($index -eq 0) {
-        $strStatus = $strStatus.substring($strStatus.IndexOf(",") + 1, $strStatus.Length - 1 )
-    }
+  [int] $index = $strStatus.IndexOf(",")
+  If ($index -eq 0) {
+    $strStatus = $strStatus.substring($strStatus.IndexOf(",") + 1, $strStatus.Length - 1 )
+  }
 
-    return $strStatus
+  return $strStatus
 
 }#End function
 
@@ -258,100 +258,100 @@ Function GetUserAccCtrlStatus ($userDN) {
 # Description   : Check If distinguishedName exist
 #==========================================================================
 function CheckDNExist {
-    Param (
-        $sADobjectName
-    )
-    $sADobjectName = "LDAP://" + $sADobjectName
-    $ADobject = [ADSI] $sADobjectName
-    If ($null -eq $ADobject.distinguishedName)
-    { return $false }
-    else
-    { return $true }
+  Param (
+    $sADobjectName
+  )
+  $sADobjectName = "LDAP://" + $sADobjectName
+  $ADobject = [ADSI] $sADobjectName
+  If ($null -eq $ADobject.distinguishedName)
+  { return $false }
+  else
+  { return $true }
 
 }#End function
 
 if ($help -or !($Path) -or !($Server)) { funHelp }
 if (!($LogFile -eq "")) {
-    if (Test-Path $LogFile) {
-        Remove-Item $LogFile
-    }
+  if (Test-Path $LogFile) {
+    Remove-Item $LogFile
+  }
 }
 If (CheckDNExist $Path) {
-    $index = 0
-    if ($Subtree) {
-        $users = get-aduser -server $Server -LDAPfilter "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2048)(userAccountControl:1.2.840.113556.1.4.803:=32))" -searchbase $Path -properties useraccountcontrol -SearchScope Subtree
+  $index = 0
+  if ($Subtree) {
+    $users = get-aduser -server $Server -LDAPfilter "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2048)(userAccountControl:1.2.840.113556.1.4.803:=32))" -searchbase $Path -properties useraccountcontrol -SearchScope Subtree
+
+  }
+  else {
+    $users = get-aduser -server $Server -LDAPfilter "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2048)(userAccountControl:1.2.840.113556.1.4.803:=32))" -searchbase $Path -properties useraccountcontrol -SearchScope OneLevel
+  }
+  if ($users -is [array]) {
+    while ($index -le $users.psbase.length - 1) {
+      $global:ErrCtrl = $false
+      $global:strUserDN = $users[$index]
+      $objUser = [ADSI]"LDAP://$global:strUserDN"
+      $global:strUserName = $objUser.cn
+
+      & { #Try
+        set-aduser -server $Server $users[$index] -PasswordNotRequired $false
+      }
+
+      Trap [SystemException] {
+        $global:ErrCtrl = $true
+        Write-host $users[$index].name";Failed;"$_ -Foreground red
+        if (!($LogFile -eq "")) {
+          [string] $strMsg = ($global:strUserName + ";Failed;" + $_.tostring().replace("`n", ""))
+          Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
+        }
+        ; Continue
+      }
+
+      if ($ErrCtrl -eq $false) {
+        Write-host $users[$index].name";Success;Status:"(GetUserAccCtrlStatus($users[$index])) -Foreground green
+        if (!($LogFile -eq "")) {
+          [string] $strUserNames = $global:strUserName
+          [string] $strUrsStatus = GetUserAccCtrlStatus($global:strUserDN)
+          [string] $strMsg = ("$strUserNames" + ";Success;Status:" + "$strUrsStatus")
+          Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
+        }
+      }
+      $index++
+    }
+  }
+  elseif ($null -ne $users) {
+    $global:ErrCtrl = $false
+    $global:strUserDN = $users
+    $objUser = [ADSI]"LDAP://$global:strUserDN"
+    $global:strUserName = $objUser.cn
+
+    & { #Try
+      $global:ErrCtrl = $false
+      set-aduser -server $Server $users -PasswordNotRequired $false
 
     }
-    else {
-        $users = get-aduser -server $Server -LDAPfilter "(&(objectCategory=person)(objectClass=user)(!userAccountControl:1.2.840.113556.1.4.803:=2048)(userAccountControl:1.2.840.113556.1.4.803:=32))" -searchbase $Path -properties useraccountcontrol -SearchScope OneLevel
+
+    Trap [SystemException] {
+      $global:ErrCtrl = $true
+      Write-host $users.name";Failed;"$_ -Foreground red
+      if (!($LogFile -eq "")) {
+        [string] $strMsg = ($global:strUserName + ";Failed;" + $_.tostring().replace("`n", ""))
+        Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
+      }
+      ; Continue
     }
-    if ($users -is [array]) {
-        while ($index -le $users.psbase.length - 1) {
-            $global:ErrCtrl = $false
-            $global:strUserDN = $users[$index]
-            $objUser = [ADSI]"LDAP://$global:strUserDN"
-            $global:strUserName = $objUser.cn
 
-            & { #Try
-                set-aduser -server $Server $users[$index] -PasswordNotRequired $false
-            }
+    if ($ErrCtrl -eq $false) {
 
-            Trap [SystemException] {
-                $global:ErrCtrl = $true
-                Write-host $users[$index].name";Failed;"$_ -Foreground red
-                if (!($LogFile -eq "")) {
-                    [string] $strMsg = ($global:strUserName + ";Failed;" + $_.tostring().replace("`n", ""))
-                    Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-                }
-                ; Continue
-            }
-
-            if ($ErrCtrl -eq $false) {
-                Write-host $users[$index].name";Success;Status:"(GetUserAccCtrlStatus($users[$index])) -Foreground green
-                if (!($LogFile -eq "")) {
-                    [string] $strUserNames = $global:strUserName
-                    [string] $strUrsStatus = GetUserAccCtrlStatus($global:strUserDN)
-                    [string] $strMsg = ("$strUserNames" + ";Success;Status:" + "$strUrsStatus")
-                    Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-                }
-            }
-            $index++
-        }
+      Write-host $users.name";Success;Status:"(GetUserAccCtrlStatus($users)) -Foreground green
+      if (!($LogFile -eq "")) {
+        [string] $strUserNames = $global:strUserName
+        [string] $strUrsStatus = GetUserAccCtrlStatus($global:strUserDN)
+        [string] $strMsg = ("$strUserNames" + ";Success;Status:" + "$strUrsStatus")
+        Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
+      }
     }
-    elseif ($null -ne $users) {
-        $global:ErrCtrl = $false
-        $global:strUserDN = $users
-        $objUser = [ADSI]"LDAP://$global:strUserDN"
-        $global:strUserName = $objUser.cn
-
-        & { #Try
-            $global:ErrCtrl = $false
-            set-aduser -server $Server $users -PasswordNotRequired $false
-
-        }
-
-        Trap [SystemException] {
-            $global:ErrCtrl = $true
-            Write-host $users.name";Failed;"$_ -Foreground red
-            if (!($LogFile -eq "")) {
-                [string] $strMsg = ($global:strUserName + ";Failed;" + $_.tostring().replace("`n", ""))
-                Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-            }
-            ; Continue
-        }
-
-        if ($ErrCtrl -eq $false) {
-
-            Write-host $users.name";Success;Status:"(GetUserAccCtrlStatus($users)) -Foreground green
-            if (!($LogFile -eq "")) {
-                [string] $strUserNames = $global:strUserName
-                [string] $strUrsStatus = GetUserAccCtrlStatus($global:strUserDN)
-                [string] $strMsg = ("$strUserNames" + ";Success;Status:" + "$strUrsStatus")
-                Out-File -Append -FilePath $LogFile -inputobject $strMsg -force
-            }
-        }
-    }
+  }
 }
 else {
-    Write-host "Failed! OU does not exist or can not be connected" -Foreground red
+  Write-host "Failed! OU does not exist or can not be connected" -Foreground red
 }

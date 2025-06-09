@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -82,16 +82,16 @@ https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.core/abo
 https://github.com/MicrosoftDocs/PowerShell-Docs/blob/staging/reference/7.2/Microsoft.PowerShell.Core/About/about_Requires.md
 #>
 param(
-    [Parameter(ValueFromPipeline = $true)][array]$Modules,
-    [string]$Version,
-    [ValidateSet("Core", "Desktop")][string]$PSEditionName,
-    [switch]$RunAsAdministrator,
-    [switch]$Warn,
-    [switch]$Force,
-    [string]$FailedInstallMessage = "Failed to install required module.",
-    [string]$SkippedInstallMessage = "Installation of the required mdoule was skiped",
-    [string]$PsVersionMessage = "Powershell $Version is required. You have $($PSVersionTable.PSVersion)",
-    [string]$PSEditionMessage = "You are running the $($PSVersionTable.PSEdition) edition. $PsEditionName is required."
+  [Parameter(ValueFromPipeline = $true)][array]$Modules,
+  [string]$Version,
+  [ValidateSet("Core", "Desktop")][string]$PSEditionName,
+  [switch]$RunAsAdministrator,
+  [switch]$Warn,
+  [switch]$Force,
+  [string]$FailedInstallMessage = "Failed to install required module.",
+  [string]$SkippedInstallMessage = "Installation of the required mdoule was skiped",
+  [string]$PsVersionMessage = "Powershell $Version is required. You have $($PSVersionTable.PSVersion)",
+  [string]$PSEditionMessage = "You are running the $($PSVersionTable.PSEdition) edition. $PsEditionName is required."
 )
 <#
 #Requires -PSSnapin <PSSnapin-Name> [-Version <N>[.<n>]]
@@ -101,50 +101,50 @@ param(
 # Covert to a valid version number. Not using [version] type to allow passing a single digit as the version.
 try { [version]$Version = $Version }
 catch {
-    try { $Version = [version]::New($Version, 0) }
-    catch { throw "$Version is not a valid version" }
+  try { $Version = [version]::New($Version, 0) }
+  catch { throw "$Version is not a valid version" }
 }
 
 # Allow warning instead of thowing for optional requirements.
 function Fail {
-    param(
-        [Parameter(ValueFromPipeline = $true)][string]$Message
-    )
-    if ($Warn) { Write-Warning $Message } else { throw $Message }
+  param(
+    [Parameter(ValueFromPipeline = $true)][string]$Message
+  )
+  if ($Warn) { Write-Warning $Message } else { throw $Message }
 }
 
 if ($Modules) {
-    foreach ($Module in $Modules) {
-        if (Get-Module -Name $Module) { Write-Verbose "Module $Module is already loaded." }
-        elseIf (Get-Module -ListAvailable -Name $Module) { Import-Module $Module }
-        else {
-            if (-Not $Force) { $choice = Read-Host -Prompt "Module '$Module' is not available but is required. Install? (Y)" }
-            else { Write-Output "'$Module' is not installed. Installing now." }
+  foreach ($Module in $Modules) {
+    if (Get-Module -Name $Module) { Write-Verbose "Module $Module is already loaded." }
+    elseIf (Get-Module -ListAvailable -Name $Module) { Import-Module $Module }
+    else {
+      if (-Not $Force) { $choice = Read-Host -Prompt "Module '$Module' is not available but is required. Install? (Y)" }
+      else { Write-Output "'$Module' is not installed. Installing now." }
 
-            if ($choice -eq "Y" -or $Force) {
-                try { Install-Module $Module }
-                catch {
-                    try { Install-Module $Module -Scope CurrentUser }
-                    catch { Fail $FailedInstallMessage }
-                }
-                Import-Module $Module
-            }
-            else { Fail $SkippedInstallMessage }
+      if ($choice -eq "Y" -or $Force) {
+        try { Install-Module $Module }
+        catch {
+          try { Install-Module $Module -Scope CurrentUser }
+          catch { Fail $FailedInstallMessage }
         }
+        Import-Module $Module
+      }
+      else { Fail $SkippedInstallMessage }
     }
+  }
 
 }
 
 if ($Version -gt $PSVersionTable.PSVersion) { Fail $PsVersionMessage }
 if ($PSEditionName -and $PSEditionName -ne $PSVersionTable.PSEdition) { Fail $PSEditionMessage }
 if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
-    if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
+  if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
 }
 
 if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
-    if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
+  if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
 }
 
 if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32NT") {
-    if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
+  if ($Warn) { Test-Admin -Warn } else { Test-Admin -Throw }
 }

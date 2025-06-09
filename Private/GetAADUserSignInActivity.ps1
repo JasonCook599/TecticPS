@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -43,16 +43,16 @@ http://darrenjrobinson.com/
 #>
 [cmdletbinding()]
 param(
-    [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
-    [string]$ID
+  [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
+  [string]$ID
 )
 
 $global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
 
 try {
-    # Get AAD SignIn Activity.
-    return Invoke-RestMethod -Headers @{Authorization = "Bearer $($myToken.AccessToken)" } `
-        -Uri  "https://graph.microsoft.com/beta/users/$($ID)?`$select=id,displayName,signInActivity" `
-        -Method Get
+  # Get AAD SignIn Activity.
+  return Invoke-RestMethod -Headers @{Authorization = "Bearer $($myToken.AccessToken)" } `
+    -Uri  "https://graph.microsoft.com/beta/users/$($ID)?`$select=id,displayName,signInActivity" `
+    -Method Get
 }
 catch { Write-Error $_ }

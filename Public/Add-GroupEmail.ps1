@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -48,9 +48,9 @@ If set, this will set the email adress you specified as the primary address for 
 Add-GroupEmail -Identity staff -EmailAddress staff@example.com
 #>
 param (
-    [string]$Identity,
-    [mailaddress]$EmailAddress,
-    [switch]$SetPrimary
+  [string]$Identity,
+  [mailaddress]$EmailAddress,
+  [switch]$SetPrimary
 )
 
 Set-UnifiedGroup -Identity $-Identity -EmailAddresses: @{Add = $EmailAddress }

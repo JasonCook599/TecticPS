@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) TectTectic
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -46,8 +46,8 @@ Set-ExchangePhoto -Path C:\Photos\ -Suffix "_fabrikam.com#EXT#@contoso.com"
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param(
-    [string]$Path = (Get-Location),
-    [string]$Suffix
+  [string]$Path = (Get-Location),
+  [string]$Suffix
 )
 
 Requires ExchangeOnlineManagement
@@ -55,8 +55,8 @@ Requires ExchangeOnlineManagement
 if (!(Get-ExchangeOnlineConnection)) { Connect-ExchangeOnline }
 
 Get-ChildItem $Path | ForEach-Object {
-    $User = [System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix
-    If ($PSCmdlet.ShouldProcess($User, "Set-UserPhoto")) {
-        return Set-UserPhoto -Identity $User -PictureData ([System.IO.File]::ReadAllBytes($_.FullName)) -Confirm:$false
-    }
+  $User = [System.IO.Path]::GetFileNameWithoutExtension($_) + $Suffix
+  If ($PSCmdlet.ShouldProcess($User, "Set-UserPhoto")) {
+    return Set-UserPhoto -Identity $User -PictureData ([System.IO.File]::ReadAllBytes($_.FullName)) -Confirm:$false
+  }
 }

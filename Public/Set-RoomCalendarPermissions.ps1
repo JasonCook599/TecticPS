@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -40,12 +40,12 @@ The access right to set. By default, the access right is set to LimitedDetails.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
-    $User = "Default",
-    $AccessRights = "LimitedDetails"
+  $User = "Default",
+  $AccessRights = "LimitedDetails"
 )
 
 Get-Mailbox -RecipientTypeDetails RoomMailbox | ForEach-Object {
-    If ($PSCmdlet.ShouldProcess("$_", "Set-RoomCalendarPermissions")) {
-        Set-MailboxFolderPermission -Identity $($_.Identity + ":\Calendar") -User $User -AccessRights $AccessRights
-    }
+  If ($PSCmdlet.ShouldProcess("$_", "Set-RoomCalendarPermissions")) {
+    Set-MailboxFolderPermission -Identity $($_.Identity + ":\Calendar") -User $User -AccessRights $AccessRights
+  }
 }

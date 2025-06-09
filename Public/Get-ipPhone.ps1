@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -43,8 +43,8 @@ https://docs.microsoft.com/en-us/windows/win32/adschema/a-admincount
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-    [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path,
-    $Filter = "ipphone -like `"*`""
+  [ValidateScript( { Test-Path ((Get-Item $_).parent) })][string]$Path,
+  $Filter = "ipphone -like `"*`""
 )
 
 $Results = Get-ADUser -Properties name, ipPhone, Company, Title, Department, DistinguishedName -Filter $Filter | Where-Object msExchHideFromAddressLists -ne $true | Select-Object name, ipPhone, Company, Title, Department | Sort-Object -Property Company, name

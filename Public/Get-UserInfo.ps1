@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -42,34 +42,34 @@ Filters the search based on the spesified parameters.
 Will also output passwords.
 #>
 param(
-    [string]$Filter = "*",
-    [switch]$Details,
-    [string]$Show
+  [string]$Filter = "*",
+  [switch]$Details,
+  [string]$Show
 )
 
 function ParseDate {
-    param ($Date)
-    if ($null -ne $Date -and $Date -ne 0) { return [datetime]::FromFileTime($Date) }
+  param ($Date)
+  if ($null -ne $Date -and $Date -ne 0) { return [datetime]::FromFileTime($Date) }
 }
 
 $Results = @()
 Get-ADUser -Filter * -Properties name, givenName, sn, mail, title, department, company, lastLogonTimestamp, pwdLastSet, whenCreated, whenChanged | `
-    Select-Object name, givenName, sn, mail, title, department, company, lastLogonTimestamp, pwdLastSet, whenCreated, whenChanged | `
-    Sort-Object lastLogonTimestamp, name | ForEach-Object {
+  Select-Object name, givenName, sn, mail, title, department, company, lastLogonTimestamp, pwdLastSet, whenCreated, whenChanged | `
+  Sort-Object lastLogonTimestamp, name | ForEach-Object {
 
-    $Result = [PSCustomObject]@{
-        Name            = $_.name
-        FirstName       = $_.givenName
-        LastName        = $_.sn
-        Email           = $_.mail
-        Title           = $_.title
-        Department      = $_.department
-        Company         = $_.company
-        LastLogon       = ParseDate $_.lastLogonTimestamp
-        PasswordLastSet = ParseDate $_.pwdLastSet
-        Created         = $_.whenCreated
-        Changed         = $_.whenChanged
-    }
-    $Results += $Result
+  $Result = [PSCustomObject]@{
+    Name            = $_.name
+    FirstName       = $_.givenName
+    LastName        = $_.sn
+    Email           = $_.mail
+    Title           = $_.title
+    Department      = $_.department
+    Company         = $_.company
+    LastLogon       = ParseDate $_.lastLogonTimestamp
+    PasswordLastSet = ParseDate $_.pwdLastSet
+    Created         = $_.whenCreated
+    Changed         = $_.whenChanged
+  }
+  $Results += $Result
 }
 return $Results

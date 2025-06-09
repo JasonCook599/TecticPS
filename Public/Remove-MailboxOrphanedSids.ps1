@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .SYNOPSIS
@@ -67,54 +67,54 @@ https://technet.microsoft.com/en-us/library/hh360993.aspx
 [CmdletBinding()]
 Param
 (
-	[parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)][string[]]$Alias,
-	[string]$PathFolder = $env:USERPROFILE + '\EXCH_RemoveSIDs\'
+  [parameter(Mandatory = $true, ValueFromPipeline = $true, ValueFromPipelineByPropertyName = $true)][string[]]$Alias,
+  [string]$PathFolder = $env:USERPROFILE + '\EXCH_RemoveSIDs\'
 )
 Begin {
-	$date = (Get-Date).Day.ToString() + "-" + (Get-Date).Month.ToString() + "-" + (Get-Date).Year.ToString()
-	$filename = "RemoveSIDs_" + $date
-	Write-Verbose $PathFolder
-	if (!(Test-Path -Path $PathFolder -PathType Container)) {
-		New-Item -Path $PathFolder  -ItemType directory
-		Write-Host -ForegroundColor Green "create a new folder"
-	}
-	$filepath = $PathFolder + $filename + '.log'
-	$stream = [System.IO.StreamWriter] $filepath
-	$usrs_access = ""
-	$usr_access = ""
+  $date = (Get-Date).Day.ToString() + "-" + (Get-Date).Month.ToString() + "-" + (Get-Date).Year.ToString()
+  $filename = "RemoveSIDs_" + $date
+  Write-Verbose $PathFolder
+  if (!(Test-Path -Path $PathFolder -PathType Container)) {
+    New-Item -Path $PathFolder  -ItemType directory
+    Write-Host -ForegroundColor Green "create a new folder"
+  }
+  $filepath = $PathFolder + $filename + '.log'
+  $stream = [System.IO.StreamWriter] $filepath
+  $usrs_access = ""
+  $usr_access = ""
 }
 Process {
-	foreach ($Aliasmbx in $Alias) {
-		$writelog = $false
-		$SID_AccessRights = $null
-		$SID_SendAs = $null
-		$usrs_access = Get-MailboxPermission $Aliasmbx | Where-Object { ($_.isinherited -eq $false) -and -not ($_.User -like "NT AUTHORITY\SELF") } | Select-Object User, AccessRights
-		foreach ($usr_access in $usrs_access) {
-			if ($usr_access.User -like 'S-1-5-21*') {
-				$writelog = $true
-				Remove-MailboxPermission $Aliasmbx -User $usr_access.User -AccessRights $usr_access.AccessRights -Confirm:$false
-				Write-Verbose "SID to delete:  $($usr_access.User) with the following permissions: $($usr_access.AccessRights) on $Aliasmbx mailbox"
-				$SID_AccessRights += "SID to delete:  $($usr_access.User) with the following permissions: $($usr_access.AccessRights) `r`n"
-			}
-		}
-		# $usrs_SendAs = Get-Mailbox $Aliasmbx | Get-ADPermission | Where-Object {($_.ExtendedRights -like "*-As*") -and -not ($_.User -like "NT AUTHORITY\SELF")}
-		foreach ($usr_SendAs in $usrs_SendAs) {
-			if ($usr_SendAs.User -like 'S-1-5-21*') {
-				$writelog = $true
-				Remove-AdPermission $Aliasmbx -User $usr_SendAs.User -ExtendedRights $usr_SendAs.ExtendedRights -Confirm:$false
-				Write-Verbose "SID to delete:  $($usr_SendAs.User) with the permission $($usr_SendAs.ExtendedRights) on $Aliasmbx mailbox"
-				$SID_SendAs += "SID to delete:  $($usr_SendAs.User) with the permission $($usr_SendAs.ExtendedRights) `r`n"
-			}
-		}
-		if ($writelog) {
-			$stream.WriteLine("============================================================================")
-			$stream.WriteLine("Buzon: $Aliasmbx")
-			if ($null -ne $SID_AccessRights) { $stream.WriteLine($SID_AccessRights) }
-			if ($null -ne $SID_SendAs) { $stream.WriteLine($SID_SendAs) }
-			$stream.WriteLine("============================================================================")
-		}
-	}
+  foreach ($Aliasmbx in $Alias) {
+    $writelog = $false
+    $SID_AccessRights = $null
+    $SID_SendAs = $null
+    $usrs_access = Get-MailboxPermission $Aliasmbx | Where-Object { ($_.isinherited -eq $false) -and -not ($_.User -like "NT AUTHORITY\SELF") } | Select-Object User, AccessRights
+    foreach ($usr_access in $usrs_access) {
+      if ($usr_access.User -like 'S-1-5-21*') {
+        $writelog = $true
+        Remove-MailboxPermission $Aliasmbx -User $usr_access.User -AccessRights $usr_access.AccessRights -Confirm:$false
+        Write-Verbose "SID to delete:  $($usr_access.User) with the following permissions: $($usr_access.AccessRights) on $Aliasmbx mailbox"
+        $SID_AccessRights += "SID to delete:  $($usr_access.User) with the following permissions: $($usr_access.AccessRights) `r`n"
+      }
+    }
+    # $usrs_SendAs = Get-Mailbox $Aliasmbx | Get-ADPermission | Where-Object {($_.ExtendedRights -like "*-As*") -and -not ($_.User -like "NT AUTHORITY\SELF")}
+    foreach ($usr_SendAs in $usrs_SendAs) {
+      if ($usr_SendAs.User -like 'S-1-5-21*') {
+        $writelog = $true
+        Remove-AdPermission $Aliasmbx -User $usr_SendAs.User -ExtendedRights $usr_SendAs.ExtendedRights -Confirm:$false
+        Write-Verbose "SID to delete:  $($usr_SendAs.User) with the permission $($usr_SendAs.ExtendedRights) on $Aliasmbx mailbox"
+        $SID_SendAs += "SID to delete:  $($usr_SendAs.User) with the permission $($usr_SendAs.ExtendedRights) `r`n"
+      }
+    }
+    if ($writelog) {
+      $stream.WriteLine("============================================================================")
+      $stream.WriteLine("Buzon: $Aliasmbx")
+      if ($null -ne $SID_AccessRights) { $stream.WriteLine($SID_AccessRights) }
+      if ($null -ne $SID_SendAs) { $stream.WriteLine($SID_SendAs) }
+      $stream.WriteLine("============================================================================")
+    }
+  }
 }#End Process
 End {
-	$stream.close()
+  $stream.close()
 }

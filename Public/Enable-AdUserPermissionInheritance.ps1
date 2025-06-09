@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -46,28 +46,28 @@ https://itomation.ca/enable-ad-object-inheritance-using-powershell/
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 Param (
-    $Users,
-    $Protected = $false,
-    $Preserve = $true
+  $Users,
+  $Protected = $false,
+  $Preserve = $true
 )
 
 Test-Admin -Warn -Message "You likely need to must be an administrator to change permissions." | Out-Null
 
 $Users | ForEach-Object {
-    $DistinguishedName = [ADSI]("LDAP://" + $_)
-    $Acl = $DistinguishedName.psbase.objectSecurity
+  $DistinguishedName = [ADSI]("LDAP://" + $_)
+  $Acl = $DistinguishedName.psbase.objectSecurity
 
-    if ($Acl.get_AreAccessRulesProtected()) {
-        If ($PSCmdlet.ShouldProcess($_.SamAccountName, "Enable-AdUserPermissionInheritance.ps1")) {
-            $Acl.SetAccessRuleProtection($Protected, $Preserve)
-            $DistinguishedName.psbase.commitchanges()
-            [PSCustomObject]$Results = @{
-                SamAccountName    = $_.SamAccountName
-                DistinguishedName = $_.DistinguishedName
-                Inheritence       = $Acl.get_AreAccessRulesProtected()
-                Changed           = $true
-            }
-            return [PSCustomObject]$Results
-        }
+  if ($Acl.get_AreAccessRulesProtected()) {
+    If ($PSCmdlet.ShouldProcess($_.SamAccountName, "Enable-AdUserPermissionInheritance.ps1")) {
+      $Acl.SetAccessRuleProtection($Protected, $Preserve)
+      $DistinguishedName.psbase.commitchanges()
+      [PSCustomObject]$Results = @{
+        SamAccountName    = $_.SamAccountName
+        DistinguishedName = $_.DistinguishedName
+        Inheritence       = $Acl.get_AreAccessRulesProtected()
+        Changed           = $true
+      }
+      return [PSCustomObject]$Results
     }
+  }
 }

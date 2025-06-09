@@ -10,23 +10,23 @@
 
 .COPYRIGHT Copyright (c) Tectic 2024
 
-.TAGS 
+.TAGS
 
-.LICENSEURI 
+.LICENSEURI
 
-.PROJECTURI 
+.PROJECTURI
 
-.ICONURI 
+.ICONURI
 
-.EXTERNALMODULEDEPENDENCIES 
+.EXTERNALMODULEDEPENDENCIES
 
-.REQUIREDSCRIPTS 
+.REQUIREDSCRIPTS
 
-.EXTERNALSCRIPTDEPENDENCIES 
+.EXTERNALSCRIPTDEPENDENCIES
 
 .RELEASENOTES
 
-#> 
+#>
 
 <#
 .DESCRIPTION
@@ -88,73 +88,73 @@ https://imagemagick.org/script/command-line-processing.php#geometry
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-	[string]$Filter,
-	[ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
-	[ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
-	[string]$OutName,
-	[string][ValidatePattern("((((\d+%){1,2})|((\d+)?x\d+(\^|!|<|>|\^)*?)|(\d+x?(\d+)?(\^|!|<|>|\^)*?)|(\d+@)|(\d+:\d+))$|^$)")]$Dimensions,
-	[string]$Suffix,
-	[string]$Prefix,
-	[switch]$Trim,
-	[ValidateSet("NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast")][string]$Gravity = "Center",
-	[ValidateSet("Crop", "Pad", "None", $null)][string]$Mode = "Crop",
-	[string]$ColorSpace,
-	[string][ValidatePattern("(^\..+$|^$)")]$OutExtension,
-	[string]$FileSize,
-	[switch]$Force,
-	[ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$Magick = ((Get-Command magick).Source)
+  [string]$Filter,
+  [ValidateScript( { ( (Test-Path $_) -and (-not $([bool]([System.Uri]$_).IsUnc)) ) } )][array]$Path = (Get-ChildItem -File -Filter $Filter),
+  [ValidateScript( { Test-Path $_ })][string]$OutPath = (Get-Location),
+  [string]$OutName,
+  [string][ValidatePattern("((((\d+%){1,2})|((\d+)?x\d+(\^|!|<|>|\^)*?)|(\d+x?(\d+)?(\^|!|<|>|\^)*?)|(\d+@)|(\d+:\d+))$|^$)")]$Dimensions,
+  [string]$Suffix,
+  [string]$Prefix,
+  [switch]$Trim,
+  [ValidateSet("NorthWest", "North", "NorthEast", "West", "Center", "East", "SouthWest", "South", "SouthEast")][string]$Gravity = "Center",
+  [ValidateSet("Crop", "Pad", "None", $null)][string]$Mode = "Crop",
+  [string]$ColorSpace,
+  [string][ValidatePattern("(^\..+$|^$)")]$OutExtension,
+  [string]$FileSize,
+  [switch]$Force,
+  [ValidateScript( { Test-Path -Path $_ -PathType Leaf })][string]$Magick = ((Get-Command magick).Source)
 )
 
 If (!(Get-Command magick -ErrorAction SilentlyContinue)) {
-	Write-Error "magick.exe is not available in your PATH."
-	Break
+  Write-Error "magick.exe is not available in your PATH."
+  Break
 }
 
 [System.Collections.ArrayList]$Results = @()
 
 ForEach ($Image in $Path) {
-	Clear-Variable -Name OutName
-	$Image = Get-ChildItem $Image
-	if ([bool]([System.Uri]$Image.FullName).IsUnc) { throw "Path is not local." }
-	$count++ ; Progress -Index $count -Total $Path.count -Activity "Resizing images." -Name $Image.Name
+  Clear-Variable -Name OutName
+  $Image = Get-ChildItem $Image
+  if ([bool]([System.Uri]$Image.FullName).IsUnc) { throw "Path is not local." }
+  $count++ ; Progress -Index $count -Total $Path.count -Activity "Resizing images." -Name $Image.Name
 
-	$Arguments = $null
-	If (!$OutExtension) { $ImageOutExtension = [System.IO.Path]::GetExtension($Image.Name) } #If OutExtension not set, use current
-	Else { $ImageOutExtension = $OutExtension } #Otherwise use spesified extension
-	If (-not $OutName) { $OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension }
-	$Out = Join-Path $OutPath $OutName #Out full path
-	If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Image")) {
-		If (Test-Path $Out) {
-			If ($Force) {}
-			ElseIf (!($PSCmdlet.ShouldContinue("$Out already exists. Overwrite?", ""))) { Break }
-		}
-		$Arguments += '"' + $Image.FullName + '" '
-		If ($Dimensions) {
-			If ($Trim) { $Arguments += '-trim ' }
-			$Arguments += '-resize "' + $Dimensions + '" '
-			$Arguments += '-gravity "' + $Gravity + '" '
-			If ($Mode -eq "Crop") { $Arguments += '-crop "' + $Dimensions + '+0+0" ' }
-			ElseIf ($Mode -eq "Pad") { $Arguments += '-background none -extent "' + $Dimensions + '+0+0" ' }
-		}
+  $Arguments = $null
+  If (!$OutExtension) { $ImageOutExtension = [System.IO.Path]::GetExtension($Image.Name) } #If OutExtension not set, use current
+  Else { $ImageOutExtension = $OutExtension } #Otherwise use spesified extension
+  If (-not $OutName) { $OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension }
+  $Out = Join-Path $OutPath $OutName #Out full path
+  If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Image")) {
+    If (Test-Path $Out) {
+      If ($Force) {}
+      ElseIf (!($PSCmdlet.ShouldContinue("$Out already exists. Overwrite?", ""))) { Break }
+    }
+    $Arguments += '"' + $Image.FullName + '" '
+    If ($Dimensions) {
+      If ($Trim) { $Arguments += '-trim ' }
+      $Arguments += '-resize "' + $Dimensions + '" '
+      $Arguments += '-gravity "' + $Gravity + '" '
+      If ($Mode -eq "Crop") { $Arguments += '-crop "' + $Dimensions + '+0+0" ' }
+      ElseIf ($Mode -eq "Pad") { $Arguments += '-background none -extent "' + $Dimensions + '+0+0" ' }
+    }
 
-		If ($FileSize -And ($ImageOutExtension -ne ".jpg") -And ($ImageOutExtension -ne ".jpeg")) {
-			Write-Warning "FileSize paramater is only valid for JPEG images. $OutName will ignore this parameter."
-		}
-		ElseIf ($FileSize) { $Arguments += '-define jpeg:extent=' + $FileSize + ' ' }
-		$Arguments += '+repage '
-		If ($ColorSpace) { $Arguments += '-colorspace ' + $ColorSpace + ' ' }
-		$Arguments += '"' + $Out + '"'
+    If ($FileSize -And ($ImageOutExtension -ne ".jpg") -And ($ImageOutExtension -ne ".jpeg")) {
+      Write-Warning "FileSize paramater is only valid for JPEG images. $OutName will ignore this parameter."
+    }
+    ElseIf ($FileSize) { $Arguments += '-define jpeg:extent=' + $FileSize + ' ' }
+    $Arguments += '+repage '
+    If ($ColorSpace) { $Arguments += '-colorspace ' + $ColorSpace + ' ' }
+    $Arguments += '"' + $Out + '"'
 
-		Write-Verbose $Arguments
-		Start-Process -FilePath $Magick -ArgumentList $Arguments -NoNewWindow -Wait
-		$Result = [PSCustomObject]@{
-			Arguments     = $Arguments
-			Name          = $OutName
-			FullName      = $Out
-			InputName     = Split-Path -Path $Image.FullName -Leaf
-			InputFullName	= $Image.FullName
-		}
-		$Results += $Result
-	}
+    Write-Verbose $Arguments
+    Start-Process -FilePath $Magick -ArgumentList $Arguments -NoNewWindow -Wait
+    $Result = [PSCustomObject]@{
+      Arguments     = $Arguments
+      Name          = $OutName
+      FullName      = $Out
+      InputName     = Split-Path -Path $Image.FullName -Leaf
+      InputFullName	= $Image.FullName
+    }
+    $Results += $Result
+  }
 }
 Return $Results
