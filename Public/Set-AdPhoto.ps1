@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.4
+.VERSION 1.1.5
 
 .GUID 5dcbac67-cebe-4cb8-bf95-8ad720c25e72
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -39,7 +43,7 @@ This will set Active Directory thumbnailPhoto from matching files in the specifi
 The directory where photos will be pulled from.
 
 .PARAMETER Users
-Array of users to run the command against. If unspesified, it will run against all files in the specified directory.
+Array of users to run the command against. If unspecified, it will run against all files in the specified directory.
 
 .EXAMPLE
 Set-AdPhoto

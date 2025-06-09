@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 3af068df-1f2d-4e6b-b1a7-e18e09311471
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,17 +26,21 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
 The script will get information about users from Azure Active Directory.
 
 .PARAMETER Filter
-Filters the AAD query based on the spesified parameters.
+Filters the AAD query based on the specified parameters.
 
 .PARAMETER WhereObject
-Filters the returned results based on the spesified parameters.
+Filters the returned results based on the specified parameters.
 
 .PARAMETER Properties
 The properties to return from the search.

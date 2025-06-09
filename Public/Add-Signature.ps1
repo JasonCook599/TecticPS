@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.7
+.VERSION 1.1.8
 
 .GUID 9be6c147-e71b-44c4-b265-1b685692e411
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,20 +26,24 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
-This script will sign Powershell scripts with the availble code signing certificate.
+This script will sign Powershell scripts with the available code signing certificate.
 
 .PARAMETER Path
 This is the file or folder containing files to sign. If unspecified, it will run in the current folder.
 
 .PARAMETER Filter
-Use this to limit the search to spesific files. If unspesified, "*.ps1" will be used.
+Use this to limit the search to specific files. If unspecified, "*.ps1" will be used.
 
 .PARAMETER Certificate
-The certificate to use when signing. If unspesified, the first code signing certificate in the personal store will be used.
+The certificate to use when signing. If unspecified, the first code signing certificate in the personal store will be used.
 
 .PARAMETER Name
 Used as the signing name when signing an executable file. If unspecified, will the current user's company.

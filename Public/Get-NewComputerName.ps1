@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.9
 
 .GUID f0c0a88c-be5c-46ee-ab03-86272a36b5d7
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -39,7 +43,7 @@ The prefix to use for the computer name.
 The serial nubmer to use for the computer name.
 
 .PARAMETER PrefixLenght
-The lenght of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
+The length of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
 
 .PARAMETER NewName
 The new name to use for the computer.

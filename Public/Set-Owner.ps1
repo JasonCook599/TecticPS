@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.3
+.VERSION 1.1.4
 
 .GUID fb1d15b5-4681-4f99-90d6-1fd44ed4219b
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -80,7 +84,7 @@ https://learn-powershell.net/2014/06/24/changing-ownership-of-file-or-folder-usi
 .LINK
 http://gallery.technet.microsoft.com/scriptcenter/Set-Owner-ff4db177
     #>
-[cmdletbinding(
+[CmdletBinding(
   SupportsShouldProcess = $True
 )]
 Param (

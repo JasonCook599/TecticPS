@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 421f45c1-3a42-4c17-83a8-bb109f412a19
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,17 +26,21 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
 This script with gather information about  Secure Boot from the specified marchines.
 
 .DESCRIPTION
-This script with gather information about TPM and Secure Boot from the spesified specified. It can request information from just the local computer or from a list of remote computers. It can also export the results as a CSV file.
+This script with gather information about TPM and Secure Boot from the specified specified. It can request information from just the local computer or from a list of remote computers. It can also export the results as a CSV file.
 
 .PARAMETER ComputerList
-This can be used to select a text file with a list of computers to run this command against. Each device must appear on a new line. If unspesified, it will run againt the local machine.
+This can be used to select a text file with a list of computers to run this command against. Each device must appear on a new line. If unspecified, it will run againt the local machine.
 
 .PARAMETER ReportFile
 This can be used to export the results to a CSV file.

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -28,7 +28,9 @@
 
 .PRIVATEDATA
 
-#>
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -44,7 +46,7 @@ The network ID that contains the switches you wish to update.
 The CSV file containing records you wish to update. Must contain the following columns 'Switch Name', 'Switch Port', and 'Switch Label'.
 
 .PARAMETER Headers
-An array of headers to send in each API request. Automatically generated using the APIKey paramater.
+An array of headers to send in each API request. Automatically generated using the APIKey parameter.
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]

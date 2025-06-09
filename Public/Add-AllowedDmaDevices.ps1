@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID a684ddd1-559b-48e2-bbdf-a85a3d50d3f6
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,14 +26,18 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
-This script will Allow spesific devices to the list of Allowed Buses.
+This script will Allow specific devices to the list of Allowed Buses.
 
 .DESCRIPTION
-This script will Allow spesific devices to the list of Allowed Buses. The primary use if for automatic BitLocker encryption.
+This script will Allow specific devices to the list of Allowed Buses. The primary use if for automatic BitLocker encryption.
 
 .PARAMETER ComputerInfo
 The Manufacturer and Model of the current device.
@@ -42,10 +46,10 @@ The Manufacturer and Model of the current device.
 The registry path for AllowedBuses
 
 .PARAMETER DeviceList
-A hashtable of all the address of allowed devices in the format of Manufactuer.Model.Name.
+A hashtable of all the address of allowed devices in the format of Manufacturer.Model.Name.
 
 .PARAMETER AllowedDevices
-An list of all the devices allowed on this spesific device.
+An list of all the devices allowed on this specific device.
 #>
 param(
   $ComputerInfo = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object Manufacturer, Model),

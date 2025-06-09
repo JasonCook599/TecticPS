@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.12
+.VERSION 1.0.13
 
 .GUID 5e6104a0-232a-4fb1-8858-62e1d8220721
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,13 +26,17 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
 Find files with the same name.
 #>
-[cmdletbinding()]
+[CmdletBinding()]
 param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$Path,
   [hashtable]$Params = @{

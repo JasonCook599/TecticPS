@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.10
+.VERSION 1.0.11
 
 .GUID 0e319076-a254-46aa-948c-203373b9e47d
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -39,7 +43,7 @@ The prefix to use for the computer name.
 The serial nubmer to use for the computer name.
 
 .PARAMETER PrefixLenght
-The lenght of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
+The length of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
 
 .PARAMETER NewName
 The new name to use for the computer.
@@ -58,7 +62,7 @@ $Arguments = @{}
 if ($NewName) { $Arguments.NewName = $NewName }
 if ($User -and $Password) {
   [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force)
-  [pscredential]$DomainCredential = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
+  [PSCredential]$DomainCredential = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
   $Arguments.DomainCredential = $DomainCredential
 }
 

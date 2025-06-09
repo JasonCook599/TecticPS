@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID bcbc3792-1f34-4100-867c-6fcf09230520
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -39,10 +43,10 @@ The path to add.
 This will modify the machine path instead of the user's path.
 
 .PARAMETER Force
-This will override check of the maximum lenght.
+This will override check of the maximum length.
 
-.PARAMETER MaxLenght
-The maximum supported lenght for the PATH.
+.PARAMETER MaxLength
+The maximum supported length for the PATH.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (

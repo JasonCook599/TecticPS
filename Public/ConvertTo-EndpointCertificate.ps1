@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.0.4
+.VERSION 2.0.5
 
 .GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,20 +26,24 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
     .SYNOPSIS
     This script will convert a PFX certificate for use with various services.
 
     .DESCRIPTION
-    This script will convert a PFX certificate for use with various services. If will also provide instructions for any system that has spesific requirements for setup. This script requires & .\openssl.exe  to be available on the computer.
+    This script will convert a PFX certificate for use with various services. If will also provide instructions for any system that has specific requirements for setup. This script requires & .\openssl.exe  to be available on the computer.
 
     .PARAMETER Path
     This is the certificate file which will be converted. This option is required.
 
     .PARAMETER Prefix
-    This string appears before the filename for each converted certificate. If unspesified, will use the name if the file being resized.
+    This string appears before the filename for each converted certificate. If unspecified, will use the name if the file being resized.
   #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(

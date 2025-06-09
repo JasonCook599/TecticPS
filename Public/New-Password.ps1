@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,13 +26,17 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
 This will return a random password which meets Active Directory's complexity requirements.
-.PARAMETER Lenght
-The lenght of the password to return. The default is 8 characters.
+.PARAMETER length
+The length of the password to return. The default is 8 characters.
 
 .PARAMETER Symbols
 The number of symbols to include in the password. The default is 2 symbols.
@@ -45,14 +49,14 @@ https://docs.microsoft.com/en-us/dotnet/api/system.web.security.membership.gener
 
 #>
 param (
-  [int]$Lenght = 8,
+  [int]$length = 8,
   [int]$Symbols = 2
 )
 
 Add-Type -AssemblyName System.Web
 
 do {
-  $Password = [System.Web.Security.Membership]::GeneratePassword($Lenght, $Symbols)
+  $Password = [System.Web.Security.Membership]::GeneratePassword($length, $Symbols)
   If (     ($Password -cmatch "[A-Z\p{Lu}\s]") `
       -and ($Password -cmatch "[a-z\p{Ll}\s]") `
       -and ($Password -match "[\d]") `

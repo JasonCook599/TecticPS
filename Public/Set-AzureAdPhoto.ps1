@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.23
+.VERSION 1.1.24
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -39,7 +43,7 @@ This will upload all profile photos to Office 365. It will match the filename to
 An array of photos to process. Photo names should match the user principal name, excluding the file extension.
 
 .PARAMETER TenantId
-The Azure AD tenant id. If not specified, it will try and use the current user's tennant.
+The Azure AD tenant id. If not specified, it will try and use the current user's tenant.
 
 .PARAMETER ClientId
 When authenticating as an application, the ClientId of that application.

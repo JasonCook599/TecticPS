@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.6
+.VERSION 1.2.7
 
 .GUID 17fff57c-cce9-4977-a26d-aeded706a85f
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -36,7 +40,7 @@ This script will test the VoIP.ms servers to find one with the lowest latency.
 This script will test the VoIP.ms servers to find one with the lowest latency. If you spesify your credentials, it will use the API to get the most current list of servers. Otherwise, it will fallback to the static list you see below.
 
 .PARAMETER ServerList
-The fallback server list used when API credentials are not spesified. You can also pass in a custom list of servers.
+The fallback server list used when API credentials are not specified. You can also pass in a custom list of servers.
 
 .LINK
 https://wiki.voip.ms/article/Choosing_Server

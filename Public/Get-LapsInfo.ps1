@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 2a3f5ec5-e6c3-4a0b-a8ca-67f98b359144
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -36,7 +40,7 @@ Shows the percentage of machines which have LAPS configured.
 If set, will show which computers have a password set.
 
 .PARAMETER Filter
-Filters the search based on the spesified parameters.
+Filters the search based on the specified parameters.
 
 .PARAMETER ShowPasswords
 Will also output passwords.

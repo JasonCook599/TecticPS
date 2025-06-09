@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.10
 
 .GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,17 +26,21 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
 The script will get information about MFA setup from Azure Active Directory.
 
 .PARAMETER Filter
-Filters the AAD query based on the spesified parameters.
+Filters the AAD query based on the specified parameters.
 
 .PARAMETER WhereObject
-Filters the returned results based on the spesified parameters.
+Filters the returned results based on the specified parameters.
 
 .PARAMETER Properties
 The properties to return from the search.

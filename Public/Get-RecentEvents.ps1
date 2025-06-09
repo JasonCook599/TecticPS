@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 05dad3a6-57cf-4747-b3bd-57bc12b7628e
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -36,13 +40,13 @@ This script will search the event log for events a specified number of minutes b
 This script will search the event log for events a specified number of minutes before or after a given time.
 
 .PARAMETER Before
-To search before -Time. Either -Before or -After must be spesified. -Before will take precedence if both are set.
+To search before -Time. Either -Before or -After must be specified. -Before will take precedence if both are set.
 
 .PARAMETER After
-To search after -Time. Either -Before or -After must be spesified. -Before will take precedence if both are set.
+To search after -Time. Either -Before or -After must be specified. -Before will take precedence if both are set.
 
 .PARAMETER Time
-The number of minutes from now to begin the search. This paramater is required.
+The number of minutes from now to begin the search. This parameter is required.
 
 .EXAMPLE
 .\Get-RecentEvents.ps1 -After -Time -1

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.12
+.VERSION 1.0.13
 
 .GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -48,19 +52,19 @@ The text to appear after the resized file.
 The text to appear before the resized file.
 
 .PARAMETER OutName
-The name of the resized file. If specified, it will override the Prefix and Suffix parameters. If unspecified, it will be $Prefix$CurentFileName$Suffix.$OutExtension.
+The name of the resized file. If specified, it will override the Prefix and Suffix parameters. If unspecified, it will be $Prefix$CurrentFileName$Suffix.$OutExtension.
 
 .PARAMETER OutExtension
 The file extension to use for the converted image. If unspecified, the existing extension will will be used.
 
 .PARAMETER FileSize
-The file size of the final file. This paramater only functions when outputting to the JPEG format.
+The file size of the final file. This parameter only functions when outputting to the JPEG format.
 
 .PARAMETER Filter
-Use this to limit the search to spesific files.
+Use this to limit the search to specific files.
 
 .PARAMETER Force
-Use this paramater to bypass the check when overwriting an existing file.
+Use this parameter to bypass the check when overwriting an existing file.
 
 .PARAMETER Return
 The parameter will return the Name, FullName, InputName, InputFullName for each file.
@@ -120,7 +124,7 @@ ForEach ($Image in $Path) {
 
   $Arguments = $null
   If (!$OutExtension) { $ImageOutExtension = [System.IO.Path]::GetExtension($Image.Name) } #If OutExtension not set, use current
-  Else { $ImageOutExtension = $OutExtension } #Otherwise use spesified extension
+  Else { $ImageOutExtension = $OutExtension } #Otherwise use specified extension
   If (-not $OutName) { $OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension }
   $Out = Join-Path $OutPath $OutName #Out full path
   If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Image")) {
@@ -138,7 +142,7 @@ ForEach ($Image in $Path) {
     }
 
     If ($FileSize -And ($ImageOutExtension -ne ".jpg") -And ($ImageOutExtension -ne ".jpeg")) {
-      Write-Warning "FileSize paramater is only valid for JPEG images. $OutName will ignore this parameter."
+      Write-Warning "FileSize parameter is only valid for JPEG images. $OutName will ignore this parameter."
     }
     ElseIf ($FileSize) { $Arguments += '-define jpeg:extent=' + $FileSize + ' ' }
     $Arguments += '+repage '

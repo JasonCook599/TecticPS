@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.3.4
+.VERSION 1.3.5
 
 .GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic & Microsoft Services
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,23 +26,27 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
-This script enable the spesified license options in Microsoft 365.
+This script enable the specified license options in Microsoft 365.
 
 .PARAMETER Return
-Whether to return what options have been set. If unspesified, this is False.
+Whether to return what options have been set. If unspecified, this is False.
 
 .PARAMETER AccountSkuId
 Account SKU ID to run against.
 
 .PARAMETER KeepEnabled
-Whether to keep enabled services if nothing is spesified.
+Whether to keep enabled services if nothing is specified.
 
 .PARAMETER Users
-Array of users to run the command against. If unspesified, will run against all licensed users.
+Array of users to run the command against. If unspecified, will run against all licensed users.
 
 .PARAMETER NoForms
 An array of users which will have Forms disabled.

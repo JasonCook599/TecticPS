@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.5
+.VERSION 1.1.6
 
 .GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -61,7 +65,7 @@ param (
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$TenantId , # Tenant ID
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)][PSCredential]$Credential, # Registered AAD App ID and Secret
   $StaleDays = '90', # Number of days over which an Azure AD Account that hasn't signed in is considered stale'
-  $StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a spesific date to use as stale
+  $StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a specific date to use as stale
   [switch]$GetLastSignIn
 )
 

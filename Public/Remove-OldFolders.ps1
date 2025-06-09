@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID cb98c8e9-cb35-4db2-9fe8-33afb9eb2272
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,14 +26,18 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
-This script will trim the spesified folder to the number of items specified.
+This script will trim the specified folder to the number of items specified.
 
 .DESCRIPTION
-This script will trim the spesified folder to the number of items specified.
+This script will trim the specified folder to the number of items specified.
 
 .PARAMETER Path
 This can be used to select a folder in which to run these commands on. If unspecified, it will run in the current folder.

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID d2231470-2326-4498-80d2-0456b0018d0a
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,11 +26,15 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
-Get AAD B2B Accounts where the inviation hasn't been accepted.
+Get AAD B2B Accounts where the invitation hasn't been accepted.
 
 .EXAMPLE
 GetAADPendingGuests
@@ -38,7 +42,7 @@ GetAADPendingGuests
 .LINK
 http://darrenjrobinson.com/
 #>
-[cmdletbinding()]
+[CmdletBinding()]
 param()
 
 $global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token

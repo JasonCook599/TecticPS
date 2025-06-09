@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 847616c6-fd6a-4685-b96f-ff8446a849e0
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -36,7 +40,7 @@ This script will add the computer to the domain.
 The domain to join.
 
 .PARAMETER User
-The domain user with crednetials to join the domain.
+The domain user with credentials to join the domain.
 
 .PARAMETER Password
 The password for the domain user.
@@ -57,7 +61,7 @@ param(
   [string]$Password,
   [string]$OU,
   [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force),
-  [pscredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
+  [PSCredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
 )
 
 if ($OU) { Add-Computer -DomainName $Domain -Credential $Credentials -Force -OU $OU }

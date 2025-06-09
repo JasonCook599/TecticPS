@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 868aac51-6c72-482e-8b54-42a3c5f87596
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -39,7 +43,7 @@ List the UPN for each user. Can be combined with -Filter.
 Filters for a specific UPN. Must be used in conjunction with -ListUpn. This overrides -Filter.
 
 .PARAMETER Filter
-Filters the search based on the spesified parameters.
+Filters the search based on the specified parameters.
 
 .PARAMETER updateUpnSuffix
 Updates the Upn. Must be used with -OldUpn and -NewUpn. Can be combined with -SearchBase
@@ -48,7 +52,7 @@ Updates the Upn. Must be used with -OldUpn and -NewUpn. Can be combined with -Se
 Specifes the UPN to be changed from.
 
 .PARAMETER newUpnSuffix
-Spesified the UPN to change to.
+specified the UPN to change to.
 
 .PARAMETER SearchBase
 Specifies the search base for the command.

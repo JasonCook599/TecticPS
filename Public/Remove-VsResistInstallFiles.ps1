@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.5
+.VERSION 1.1.6
 
 .GUID 0775cf89-1a99-44ec-ac4e-7c80c95d87a2
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -39,7 +43,7 @@ This script will remove the extra files from a VCRedist from VC++ 2008 install, 
 https://support.microsoft.com/en-ca/help/950683/vcredist-from-vc-2008-installs-temporary-files-in-root-directory
 
 .PARAMETER Drive
-The drive from which to remove the files. If unspesified, the System Drive is used.
+The drive from which to remove the files. If unspecified, the System Drive is used.
 
 .EXAMPLE
 Clean-VCRedist

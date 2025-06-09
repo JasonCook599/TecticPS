@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 772c6454-68cf-42aa-89b9-dd6dc5939e1b
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -42,7 +46,7 @@ The identity of the group you wish to change.
 The email address you whish to add.
 
 .PARAMETER SetPrimary
-If set, this will set the email adress you specified as the primary address for the group.
+If set, this will set the email address you specified as the primary address for the group.
 
 .EXAMPLE
 Add-GroupEmail -Identity staff -EmailAddress staff@example.com

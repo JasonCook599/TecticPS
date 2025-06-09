@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 70496d42-6d10-460f-9e42-132a6b70e09d
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -46,7 +50,7 @@ http://www.sameie.com/2017/10/05/create-hashed-password-file-for-powershell-use/
 #>
 param(
   [string]$Path = ".\Password.txt",
-  [pscredential]$credential = (Get-Credential)
+  [PSCredential]$credential = (Get-Credential)
 )
 
 $Credential.Password | ConvertFrom-SecureString | Set-Content $Path

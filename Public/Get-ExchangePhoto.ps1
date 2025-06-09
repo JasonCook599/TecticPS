@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 10b98a61-ebf3-499f-847f-4aa18b41a9dd
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -36,10 +40,10 @@ This will download all profile photos from Office 365.
 This will download all profile photos from Office 365. This can be used along with Set-AdPhotos to syn photos with Active Directory
 
 .PARAMETER Return
-Whether to return what options have been set. If unspesified, this is False.
+Whether to return what options have been set. If unspecified, this is False.
 
 .PARAMETER Users
-Array of users to run the command against. If unspesified, will run against all Exchange mailboxes.
+Array of users to run the command against. If unspecified, will run against all Exchange mailboxes.
 
 .PARAMETER PhotoDirectory
 The directory where downloaded photos will be saved to.

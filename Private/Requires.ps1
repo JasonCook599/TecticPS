@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.0.6
+.VERSION 2.0.7
 
 .GUID f8ca5dd1-fef2-4024-adc9-124a3007870a
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,18 +26,22 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
 Used to specify required modules and prompt to install if missing.
 
 .DESCRIPTION
-Used to specify required modules and prompt to install if missing. The primary purpose for the creation of this is to allow the loading of a module even if the requirements of spesific scripts or functions are not met.
+Used to specify required modules and prompt to install if missing. The primary purpose for the creation of this is to allow the loading of a module even if the requirements of specific scripts or functions are not met.
 
-This mimicks the #Requires format however has a limited feature set. Notable differences or limitations are listed below. Contributions are welcome to address these limitations.
-    - It is only possible to check if a module has been installed. You cannot check for spesific versions.
-    - The PSEdition paramater has been renamed to PSEditonName as the former is reserved.
+This mimics the #Requires format however has a limited feature set. Notable differences or limitations are listed below. Contributions are welcome to address these limitations.
+    - It is only possible to check if a module has been installed. You cannot check for specific versions.
+    - The PSEdition parameter has been renamed to PSEditonName as the former is reserved.
     - This does not support the following parameters: Assembly, PSSnapin, ShellId
 
 .PARAMETER Modules
@@ -89,7 +93,7 @@ param(
   [switch]$Warn,
   [switch]$Force,
   [string]$FailedInstallMessage = "Failed to install required module.",
-  [string]$SkippedInstallMessage = "Installation of the required mdoule was skiped",
+  [string]$SkippedInstallMessage = "Installation of the required module was skipped",
   [string]$PsVersionMessage = "Powershell $Version is required. You have $($PSVersionTable.PSVersion)",
   [string]$PSEditionMessage = "You are running the $($PSVersionTable.PSEdition) edition. $PsEditionName is required."
 )

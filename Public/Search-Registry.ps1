@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 029cd8de-13e9-4169-ae20-72c021290013
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -93,10 +97,10 @@ param(
 begin {
   switch ($PSCmdlet.ParameterSetName) {
     SingleSearchString {
-      $NoSwitchesSpecified = -not ($PSBoundParameters.ContainsKey("KeyName") -or $PSBoundParameters.ContainsKey("ValueName") -or $PSBoundParameters.ContainsKey("ValueData"))
-      if ($KeyName -or $NoSwitchesSpecified) { $KeyNameRegex = $SearchRegex }
-      if ($ValueName -or $NoSwitchesSpecified) { $ValueNameRegex = $SearchRegex }
-      if ($ValueData -or $NoSwitchesSpecified) { $ValueDataRegex = $SearchRegex }
+      $NoSwitchesspecified = -not ($PSBoundParameters.ContainsKey("KeyName") -or $PSBoundParameters.ContainsKey("ValueName") -or $PSBoundParameters.ContainsKey("ValueData"))
+      if ($KeyName -or $NoSwitchesspecified) { $KeyNameRegex = $SearchRegex }
+      if ($ValueName -or $NoSwitchesspecified) { $ValueNameRegex = $SearchRegex }
+      if ($ValueData -or $NoSwitchesspecified) { $ValueDataRegex = $SearchRegex }
     }
     MultipleSearchStrings {
       # No extra work needed

@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID fe011093-6980-4847-aa9c-f7a7b47a3a5b
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,14 +26,18 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
-Authenticate to Azure AD and receieve Access and Refresh Tokens.
+Authenticate to Azure AD and receive Access and Refresh Tokens.
 
 .DESCRIPTION
-Authenticate to Azure AD and receieve Access and Refresh Tokens.
+Authenticate to Azure AD and receive Access and Refresh Tokens.
 
 .PARAMETER tenantID
 (required) Azure AD TenantID.
@@ -48,7 +52,7 @@ AuthN -credential $Credential -tenantID '74ea519d-9792-4aa9-86d9-abcdefgaaa'
 http://darrenjrobinson.com/
 
 #>
-[cmdletbinding()]
+[CmdletBinding()]
 param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$tenantID,
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)][System.Management.Automation.PSCredential]$credential

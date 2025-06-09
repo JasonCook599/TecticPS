@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.4
+.VERSION 1.1.5
 
 .GUID 674855a4-1cd1-43b7-8e41-fea3bc501f61
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -36,7 +40,7 @@ This commands checks the Bitlocker status and returns it in a human readable for
 This commands checks the Bitlocker status and returns it in a human readable format.
 
 .PARAMETER Drive
-The drive to check for protection on. If unspesified, the System Drive will be used.
+The drive to check for protection on. If unspecified, the System Drive will be used.
 #>
 param (
   [ValidateScript( { Test-Path $_ })][string]$Drive = $env:SystemDrive

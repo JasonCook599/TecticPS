@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.18
+.VERSION 1.2.19
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
@@ -39,14 +43,14 @@ This script will install the neccesary applications and services on a given mach
 An array of actions to run.
     Rename: Rename the computer. Use -HostNamePrefix to set a prefix.
     LabelDrive: Label the drive, by default, the $env:SystemDrive will be labelled "Windows". Use -DriveToLabel to change the drive and -DriveLabel to change the label.
-    ProvisioningPackage: Install a provisioning package. Use -ProvisioningPackage to select the appropriate pacakge.
+    ProvisioningPackage: Install a provisioning package. Use -ProvisioningPackage to select the appropriate package.
     JoinDomain: Join the current computer to a domain. Specify the domain with -Domain
     BitLocker: Enable BitLocker. You can overridde the defaults using -BitLockerProtector and -BitlockerEncryptionMethod.
     Office: Install Microsoft Office. You can override the version using -Office.
     RSAT: Install Remote Server Administration Tools.
     NetFX3: Install .Net 3.0
     Ninte: Run Ninite.
-    Winget: Install the spesified packages and update existing applications using Winget. Use -Winget to select the appropriate package.
+    Winget: Install the specified packages and update existing applications using Winget. Use -Winget to select the appropriate package.
     RemoveDesktopShortcuts: Remove all desktop shortcuts from the Public desktop.
     Reboot: Reboot the machine.
 
@@ -54,13 +58,13 @@ An array of actions to run.
 The prefix to use for the hostname.
 
 .PARAMETER BitLockerProtector
-Enable BitLocker using the spesified protector. If unspecified, TPM will be used. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker
+Enable BitLocker using the specified protector. If unspecified, TPM will be used. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker
 
 .PARAMETER BitLockerEncryptionMethod
 Used to specify the encryption method for BitLocker. If unspecified, XtsAes256 will be used.
 
 .PARAMETER BitLockerUSB
-If the USB protector is spesified, use this to specify the USB drive to use.
+If the USB protector is specified, use this to specify the USB drive to use.
 
 .PARAMETER DriveLabel
 This specifies what the drive will be labeled as. If unspecified, "Windows" will be used.
@@ -158,7 +162,7 @@ if ($Action -contains "BitLocker") {
         Enable-BitLocker -MountPoint $env:SystemDrive -EncryptionMethod $BitLockerEncryptionMethod -StartupKeyProtector -StartupKeyPath $BitLockerUSB
       }
       Else {
-        Write-Warning "No valid protector spesified. BitLocker will NOT be enabled."
+        Write-Warning "No valid protector specified. BitLocker will NOT be enabled."
       }
     }
   }

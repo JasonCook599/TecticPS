@@ -1,7 +1,7 @@
 function AuthN {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID fe011093-6980-4847-aa9c-f7a7b47a3a5b
 
@@ -9,7 +9,7 @@ function AuthN {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -19,7 +19,7 @@ function AuthN {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -27,14 +27,17 @@ function AuthN {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
-Authenticate to Azure AD and receieve Access and Refresh Tokens.
+Authenticate to Azure AD and receive Access and Refresh Tokens.
 
 .DESCRIPTION
-Authenticate to Azure AD and receieve Access and Refresh Tokens.
+Authenticate to Azure AD and receive Access and Refresh Tokens.
 
 .PARAMETER tenantID
 (required) Azure AD TenantID.
@@ -49,7 +52,7 @@ AuthN -credential $Credential -tenantID '74ea519d-9792-4aa9-86d9-abcdefgaaa'
 http://darrenjrobinson.com/
 
 #>
-[cmdletbinding()]
+[CmdletBinding()]
 param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$tenantID,
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)][System.Management.Automation.PSCredential]$credential
@@ -112,7 +115,7 @@ return $Session
 function GetAADPendingGuests {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID d2231470-2326-4498-80d2-0456b0018d0a
 
@@ -120,7 +123,7 @@ function GetAADPendingGuests {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -130,7 +133,7 @@ function GetAADPendingGuests {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -138,11 +141,14 @@ function GetAADPendingGuests {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
-Get AAD B2B Accounts where the inviation hasn't been accepted.
+Get AAD B2B Accounts where the invitation hasn't been accepted.
 
 .EXAMPLE
 GetAADPendingGuests
@@ -150,7 +156,7 @@ GetAADPendingGuests
 .LINK
 http://darrenjrobinson.com/
 #>
-[cmdletbinding()]
+[CmdletBinding()]
 param()
 
 $global:myToken = AuthN -credential $Credential -tenantID $TenantId # Refresh Access Token
@@ -166,7 +172,7 @@ catch { Write-Error $_ }
 function GetAADSignIns {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID e5758f99-a57e-4bcf-af21-30e5fd176e51
 
@@ -174,7 +180,7 @@ function GetAADSignIns {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -184,7 +190,7 @@ function GetAADSignIns {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -192,7 +198,10 @@ function GetAADSignIns {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -207,7 +216,7 @@ GetAADSignIns -Date "2021-01-01"
 .LINK
 http://darrenjrobinson.com/
 #>
-[cmdletbinding()]
+[CmdletBinding()]
 param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$Date
 )
@@ -226,7 +235,7 @@ catch { Write-Error $_ }
 function GetAADUserSignInActivity {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID b444ff47-447f-4196-90eb-08723fa0fbaf
 
@@ -234,7 +243,7 @@ function GetAADUserSignInActivity {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -244,7 +253,7 @@ function GetAADUserSignInActivity {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -252,7 +261,10 @@ function GetAADUserSignInActivity {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -267,7 +279,7 @@ GetAADUserSignInActivity -ID "feeb81f9-af70-2d5a-aa8c-f035ddaabcde"
 .LINK
 http://darrenjrobinson.com/
 #>
-[cmdletbinding()]
+[CmdletBinding()]
 param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)]
   [string]$ID
@@ -288,7 +300,7 @@ catch { Write-Error $_ }
 function InstallModule {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 10ba8c03-4333-4f67-b11b-b25fef85943b
 
@@ -296,7 +308,7 @@ function InstallModule {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -306,7 +318,7 @@ function InstallModule {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -314,11 +326,14 @@ function InstallModule {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
-Install module if not pressent.
+Install module if not present.
 #>
 param($Name, $AltName)
 Write-Verbose "$me Installing $Name Module if missing"
@@ -492,7 +507,7 @@ if ($Total -gt 1) { Write-Progress -Activity $Activity -Status $Status -PercentC
 function Requires {
 <#PSScriptInfo
 
-.VERSION 2.0.6
+.VERSION 2.0.7
 
 .GUID f8ca5dd1-fef2-4024-adc9-124a3007870a
 
@@ -500,7 +515,7 @@ function Requires {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -510,7 +525,7 @@ function Requires {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -518,18 +533,21 @@ function Requires {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
 Used to specify required modules and prompt to install if missing.
 
 .DESCRIPTION
-Used to specify required modules and prompt to install if missing. The primary purpose for the creation of this is to allow the loading of a module even if the requirements of spesific scripts or functions are not met.
+Used to specify required modules and prompt to install if missing. The primary purpose for the creation of this is to allow the loading of a module even if the requirements of specific scripts or functions are not met.
 
-This mimicks the #Requires format however has a limited feature set. Notable differences or limitations are listed below. Contributions are welcome to address these limitations.
-    - It is only possible to check if a module has been installed. You cannot check for spesific versions.
-    - The PSEdition paramater has been renamed to PSEditonName as the former is reserved.
+This mimics the #Requires format however has a limited feature set. Notable differences or limitations are listed below. Contributions are welcome to address these limitations.
+    - It is only possible to check if a module has been installed. You cannot check for specific versions.
+    - The PSEdition parameter has been renamed to PSEditonName as the former is reserved.
     - This does not support the following parameters: Assembly, PSSnapin, ShellId
 
 .PARAMETER Modules
@@ -581,7 +599,7 @@ param(
   [switch]$Warn,
   [switch]$Force,
   [string]$FailedInstallMessage = "Failed to install required module.",
-  [string]$SkippedInstallMessage = "Installation of the required mdoule was skiped",
+  [string]$SkippedInstallMessage = "Installation of the required module was skipped",
   [string]$PsVersionMessage = "Powershell $Version is required. You have $($PSVersionTable.PSVersion)",
   [string]$PSEditionMessage = "You are running the $($PSVersionTable.PSEdition) edition. $PsEditionName is required."
 )
@@ -642,7 +660,7 @@ if ($RunAsAdministrator -and [System.Environment]::OSVersion.Platform -eq "Win32
 function SelectPackage {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 0caaa663-ed3d-498c-a77e-d00e85146cd1
 
@@ -650,7 +668,7 @@ function SelectPackage {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -660,7 +678,7 @@ function SelectPackage {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -668,11 +686,14 @@ function SelectPackage {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
-Select the winget pacakge to install. Used by the Initilize-Workstation command.
+Select the winget package to install. Used by the Initilize-Workstation command.
 
 .PARAMETER Packages
 A hashtable of packages to select from.
@@ -712,7 +733,7 @@ else {
 function Add-AllowedDmaDevices {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID a684ddd1-559b-48e2-bbdf-a85a3d50d3f6
 
@@ -720,7 +741,7 @@ function Add-AllowedDmaDevices {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -730,7 +751,7 @@ function Add-AllowedDmaDevices {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -738,14 +759,17 @@ function Add-AllowedDmaDevices {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
-This script will Allow spesific devices to the list of Allowed Buses.
+This script will Allow specific devices to the list of Allowed Buses.
 
 .DESCRIPTION
-This script will Allow spesific devices to the list of Allowed Buses. The primary use if for automatic BitLocker encryption.
+This script will Allow specific devices to the list of Allowed Buses. The primary use if for automatic BitLocker encryption.
 
 .PARAMETER ComputerInfo
 The Manufacturer and Model of the current device.
@@ -754,10 +778,10 @@ The Manufacturer and Model of the current device.
 The registry path for AllowedBuses
 
 .PARAMETER DeviceList
-A hashtable of all the address of allowed devices in the format of Manufactuer.Model.Name.
+A hashtable of all the address of allowed devices in the format of Manufacturer.Model.Name.
 
 .PARAMETER AllowedDevices
-An list of all the devices allowed on this spesific device.
+An list of all the devices allowed on this specific device.
 #>
 param(
   $ComputerInfo = (Get-CimInstance -ClassName Win32_ComputerSystem | Select-Object Manufacturer, Model),
@@ -782,7 +806,7 @@ foreach ($Device in $AllowedDevices.GetEnumerator()) {
 function Add-BluredPillarBars {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 6ee394c8-c592-49d5-b16c-601955ef4d2f
 
@@ -790,7 +814,7 @@ function Add-BluredPillarBars {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -800,7 +824,7 @@ function Add-BluredPillarBars {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -808,32 +832,35 @@ function Add-BluredPillarBars {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
 This script will using ImageMagick to add blurred pillar bars to a set of images.
 
 .DESCRIPTION
-This script will scale to fill, then blur the spesified image. Then, on a new layer, it will scale to fit the image.
+This script will scale to fill, then blur the specified image. Then, on a new layer, it will scale to fit the image.
 
 .PARAMETER Path
 This is the image file or a folder of images to be modified.
 
 .PARAMETER Format
-The file format to convert images to. If unspesified, the existing format will be used.
+The file format to convert images to. If unspecified, the existing format will be used.
 
 .PARAMETER Aspect
-The aspect ration to convert to, in x:y format. If unspesified, 16:9 will be used.
+The aspect ration to convert to, in x:y format. If unspecified, 16:9 will be used.
 
 .PARAMETER Prefix
-The text that appears before the filename for each converted image. If unspesified, the aspect ration in x_y format will be used.
+The text that appears before the filename for each converted image. If unspecified, the aspect ration in x_y format will be used.
 
 .PARAMETER Suffix
-The text that appears after the filename for each converted image. If unspesifed, no text will be used.
+The text that appears after the filename for each converted image. If unspecifed, no text will be used.
 
 .PARAMETER MaxHeight
-This is the max height of the converted image. If unspesified, the current height will be used.
+This is the max height of the converted image. If unspecified, the current height will be used.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
@@ -864,7 +891,7 @@ Get-ChildItem -File -Path $Path | ForEach-Object {
 function Add-ComputerToDomain {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 847616c6-fd6a-4685-b96f-ff8446a849e0
 
@@ -872,7 +899,7 @@ function Add-ComputerToDomain {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -882,7 +909,7 @@ function Add-ComputerToDomain {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -890,7 +917,10 @@ function Add-ComputerToDomain {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -900,7 +930,7 @@ This script will add the computer to the domain.
 The domain to join.
 
 .PARAMETER User
-The domain user with crednetials to join the domain.
+The domain user with credentials to join the domain.
 
 .PARAMETER Password
 The password for the domain user.
@@ -921,7 +951,7 @@ param(
   [string]$Password,
   [string]$OU,
   [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force),
-  [pscredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
+  [PSCredential]$Credentials = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
@@ -932,7 +962,7 @@ else { Add-Computer -DomainName $Domain -Credential $Credentials -Force }
 function Add-GroupEmail {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 772c6454-68cf-42aa-89b9-dd6dc5939e1b
 
@@ -940,7 +970,7 @@ function Add-GroupEmail {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -950,7 +980,7 @@ function Add-GroupEmail {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -958,7 +988,10 @@ function Add-GroupEmail {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -974,7 +1007,7 @@ The identity of the group you wish to change.
 The email address you whish to add.
 
 .PARAMETER SetPrimary
-If set, this will set the email adress you specified as the primary address for the group.
+If set, this will set the email address you specified as the primary address for the group.
 
 .EXAMPLE
 Add-GroupEmail -Identity staff -EmailAddress staff@example.com
@@ -991,7 +1024,7 @@ If ($SetPrimary) { Set-UnifiedGroup -Identity $-Identity -PrimarySmtpAddress  $E
 function Add-Path {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID bcbc3792-1f34-4100-867c-6fcf09230520
 
@@ -999,7 +1032,7 @@ function Add-Path {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -1009,7 +1042,7 @@ function Add-Path {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -1017,7 +1050,10 @@ function Add-Path {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -1030,10 +1066,10 @@ The path to add.
 This will modify the machine path instead of the user's path.
 
 .PARAMETER Force
-This will override check of the maximum lenght.
+This will override check of the maximum length.
 
-.PARAMETER MaxLenght
-The maximum supported lenght for the PATH.
+.PARAMETER MaxLength
+The maximum supported length for the PATH.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param (
@@ -1065,7 +1101,7 @@ Set-ItemProperty -Path $Registry -Name PATH -Value $NewPath -Verbose
 function Add-Signature {
 <#PSScriptInfo
 
-.VERSION 1.1.7
+.VERSION 1.1.8
 
 .GUID 9be6c147-e71b-44c4-b265-1b685692e411
 
@@ -1073,7 +1109,7 @@ function Add-Signature {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -1083,7 +1119,7 @@ function Add-Signature {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -1091,20 +1127,23 @@ function Add-Signature {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
-This script will sign Powershell scripts with the availble code signing certificate.
+This script will sign Powershell scripts with the available code signing certificate.
 
 .PARAMETER Path
 This is the file or folder containing files to sign. If unspecified, it will run in the current folder.
 
 .PARAMETER Filter
-Use this to limit the search to spesific files. If unspesified, "*.ps1" will be used.
+Use this to limit the search to specific files. If unspecified, "*.ps1" will be used.
 
 .PARAMETER Certificate
-The certificate to use when signing. If unspesified, the first code signing certificate in the personal store will be used.
+The certificate to use when signing. If unspecified, the first code signing certificate in the personal store will be used.
 
 .PARAMETER Name
 Used as the signing name when signing an executable file. If unspecified, will the current user's company.
@@ -1349,7 +1388,7 @@ Invoke-Command -ComputerName $ComputerName -ScriptBlock {
 function Connect-Office365 {
 <#PSScriptInfo
 
-.VERSION 2.1.5
+.VERSION 2.1.6
 
 .GUID ab066274-cee5-401d-99ff-1eeced8ca9af
 
@@ -1357,7 +1396,7 @@ function Connect-Office365 {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -1367,7 +1406,7 @@ function Connect-Office365 {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -1375,20 +1414,23 @@ function Connect-Office365 {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
 This script will connect to various Office 365 services.
 
 .DESCRIPTION
-To connect to Azure Active Directory, you must first install "Microsoft Online Services Sign-in Assistant". This script will install the "MSOnline" module if required. Instructions are availible here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=41950).
+To connect to Azure Active Directory, you must first install "Microsoft Online Services Sign-in Assistant". This script will install the "MSOnline" module if required. Instructions are available here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=41950).
 
-To connect to Sharepoint Online, you must first install "SharePoint Online Management Shell". Instructions are availible here (https://docs.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online?view=sharepoint-ps) and download here (https://www.microsoft.com/en-ca/download/details.aspx?id=35588).
+To connect to Sharepoint Online, you must first install "SharePoint Online Management Shell". Instructions are available here (https://docs.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online?view=sharepoint-ps) and download here (https://www.microsoft.com/en-ca/download/details.aspx?id=35588).
 
-To connect to Skype for Business Online, you must first install "Skype for Business Online, Windows PowerShell Module". Instructions are availible here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/manage-skype-for-business-online-with-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=39366).
+To connect to Skype for Business Online, you must first install "Skype for Business Online, Windows PowerShell Module". Instructions are available here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/manage-skype-for-business-online-with-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=39366).
 
-To connect to Exchange Online, you must first install "Microsoft.NET Framework 4.5" or later and then either the "Windows Management Framework 3.0" or the "Windows Management Framework 4.0". Instructions without MFA are availible here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps). Instructions with MFA are availible here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps)
+To connect to Exchange Online, you must first install "Microsoft.NET Framework 4.5" or later and then either the "Windows Management Framework 3.0" or the "Windows Management Framework 4.0". Instructions without MFA are available here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps). Instructions with MFA are available here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps)
 
 .LINK
 https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell
@@ -1469,7 +1511,7 @@ param(
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
-While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tennant. Do not include `".onmicrosoft.com`"" }
+While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tenant. Do not include `".onmicrosoft.com`"" }
 While (-NOT $UPN) { $UPN = Read-Host -Prompt "Enter your User Principal Name (UPN)" }
 
 InstallModule -Name AzureAD #-AltName AzureADPreview
@@ -1483,7 +1525,7 @@ If ($BasicAuth -and (-not $Credential)) { $Credential = Get-Credential -UserName
 
 If ($Disconnect) {
   Write-Verbose "$me Disconnecting from all services."
-  Remove-PSSession $sfboSession | Write-Verbose
+  Remove-PSSession $SkypeSession | Write-Verbose
   Remove-PSSession $exchangeSession | Write-Verbose
   Remove-PSSession $SccSession | Write-Verbose
   Disconnect-SPOService | Write-Verbose
@@ -1511,9 +1553,9 @@ Else {
   If ($SkypeForBusinessOnline) {
     Write-Verbose "$me Connecting to Skype For Business Online"
     Requires SkypeOnlineConnector
-    If ($BasicAuth) { $sfboSession = New-CsOnlineSession -Credential $Credential | Write-Verbose }
-    Else { $sfboSession = New-CsOnlineSession -UserName $UPN }
-    Import-PSSession $sfboSession | Write-Verbose
+    If ($BasicAuth) { $SkypeSession = New-CsOnlineSession -Credential $Credential | Write-Verbose }
+    Else { $SkypeSession = New-CsOnlineSession -UserName $UPN }
+    Import-PSSession $SkypeSession | Write-Verbose
   }
   If ($ExchangeOnline) {
     Write-Verbose "$me Connecting to Exchange Online"
@@ -1556,7 +1598,7 @@ Else {
 function Convert-Image {
 <#PSScriptInfo
 
-.VERSION 1.0.12
+.VERSION 1.0.13
 
 .GUID 717cb6fa-eb4d-4440-95e3-f00940faa21e
 
@@ -1564,7 +1606,7 @@ function Convert-Image {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -1574,7 +1616,7 @@ function Convert-Image {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -1582,7 +1624,10 @@ function Convert-Image {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -1604,19 +1649,19 @@ The text to appear after the resized file.
 The text to appear before the resized file.
 
 .PARAMETER OutName
-The name of the resized file. If specified, it will override the Prefix and Suffix parameters. If unspecified, it will be $Prefix$CurentFileName$Suffix.$OutExtension.
+The name of the resized file. If specified, it will override the Prefix and Suffix parameters. If unspecified, it will be $Prefix$CurrentFileName$Suffix.$OutExtension.
 
 .PARAMETER OutExtension
 The file extension to use for the converted image. If unspecified, the existing extension will will be used.
 
 .PARAMETER FileSize
-The file size of the final file. This paramater only functions when outputting to the JPEG format.
+The file size of the final file. This parameter only functions when outputting to the JPEG format.
 
 .PARAMETER Filter
-Use this to limit the search to spesific files.
+Use this to limit the search to specific files.
 
 .PARAMETER Force
-Use this paramater to bypass the check when overwriting an existing file.
+Use this parameter to bypass the check when overwriting an existing file.
 
 .PARAMETER Return
 The parameter will return the Name, FullName, InputName, InputFullName for each file.
@@ -1678,7 +1723,7 @@ ForEach ($Image in $Path) {
 
   $Arguments = $null
   If (!$OutExtension) { $ImageOutExtension = [System.IO.Path]::GetExtension($Image.Name) } #If OutExtension not set, use current
-  Else { $ImageOutExtension = $OutExtension } #Otherwise use spesified extension
+  Else { $ImageOutExtension = $OutExtension } #Otherwise use specified extension
   If (-not $OutName) { $OutName = $Prefix + [io.path]::GetFileNameWithoutExtension($Image.Name) + $Suffix + $ImageOutExtension }
   $Out = Join-Path $OutPath $OutName #Out full path
   If ($PSCmdlet.ShouldProcess("$OutName", "Convert-Image")) {
@@ -1696,7 +1741,7 @@ ForEach ($Image in $Path) {
     }
 
     If ($FileSize -And ($ImageOutExtension -ne ".jpg") -And ($ImageOutExtension -ne ".jpeg")) {
-      Write-Warning "FileSize paramater is only valid for JPEG images. $OutName will ignore this parameter."
+      Write-Warning "FileSize parameter is only valid for JPEG images. $OutName will ignore this parameter."
     }
     ElseIf ($FileSize) { $Arguments += '-define jpeg:extent=' + $FileSize + ' ' }
     $Arguments += '+repage '
@@ -1808,7 +1853,7 @@ return $Output
 function ConvertTo-EndpointCertificate {
 <#PSScriptInfo
 
-.VERSION 2.0.4
+.VERSION 2.0.5
 
 .GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21
 
@@ -1816,7 +1861,7 @@ function ConvertTo-EndpointCertificate {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -1826,7 +1871,7 @@ function ConvertTo-EndpointCertificate {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -1834,20 +1879,23 @@ function ConvertTo-EndpointCertificate {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
     .SYNOPSIS
     This script will convert a PFX certificate for use with various services.
 
     .DESCRIPTION
-    This script will convert a PFX certificate for use with various services. If will also provide instructions for any system that has spesific requirements for setup. This script requires & .\openssl.exe  to be available on the computer.
+    This script will convert a PFX certificate for use with various services. If will also provide instructions for any system that has specific requirements for setup. This script requires & .\openssl.exe  to be available on the computer.
 
     .PARAMETER Path
     This is the certificate file which will be converted. This option is required.
 
     .PARAMETER Prefix
-    This string appears before the filename for each converted certificate. If unspesified, will use the name if the file being resized.
+    This string appears before the filename for each converted certificate. If unspecified, will use the name if the file being resized.
   #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
@@ -1983,7 +2031,7 @@ kill -SIGINT `$(cat /var/run/lighttpd.pid)
 function ConvertTo-OutputImages {
 <#PSScriptInfo
 
-.VERSION 1.1.9
+.VERSION 1.1.10
 
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
@@ -1991,7 +2039,7 @@ function ConvertTo-OutputImages {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -2001,7 +2049,7 @@ function ConvertTo-OutputImages {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -2009,11 +2057,14 @@ function ConvertTo-OutputImages {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
-This script will resize the spesified logos, wordmarks and banner images to the spesifications of various third party services. It will pull data from a json file.
+This script will resize the specified logos, wordmarks and banner images to the spesifications of various third party services. It will pull data from a json file.
 
 .PARAMETER Path
 This is the file or folder containing images to resize. If unspecified, it will run in the current folder.
@@ -2309,7 +2360,7 @@ $Users | ForEach-Object {
 function Enable-LicenseOptions {
 <#PSScriptInfo
 
-.VERSION 1.3.4
+.VERSION 1.3.5
 
 .GUID 61ab8232-0c28-495f-9e44-3c511c2634ea
 
@@ -2317,7 +2368,7 @@ function Enable-LicenseOptions {
 
 .COMPANYNAME Tectic & Microsoft Services
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -2327,7 +2378,7 @@ function Enable-LicenseOptions {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -2335,23 +2386,26 @@ function Enable-LicenseOptions {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
-This script enable the spesified license options in Microsoft 365.
+This script enable the specified license options in Microsoft 365.
 
 .PARAMETER Return
-Whether to return what options have been set. If unspesified, this is False.
+Whether to return what options have been set. If unspecified, this is False.
 
 .PARAMETER AccountSkuId
 Account SKU ID to run against.
 
 .PARAMETER KeepEnabled
-Whether to keep enabled services if nothing is spesified.
+Whether to keep enabled services if nothing is specified.
 
 .PARAMETER Users
-Array of users to run the command against. If unspesified, will run against all licensed users.
+Array of users to run the command against. If unspecified, will run against all licensed users.
 
 .PARAMETER NoForms
 An array of users which will have Forms disabled.
@@ -3165,7 +3219,7 @@ ForEach-Object {
 function Get-AdComputerInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID fc558d38-77a0-4b50-bd45-9f81aaf54984
 
@@ -3173,7 +3227,7 @@ function Get-AdComputerInfo {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -3183,7 +3237,7 @@ function Get-AdComputerInfo {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -3191,14 +3245,17 @@ function Get-AdComputerInfo {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
 The script will get information about computers from Active Directory.
 
 .PARAMETER Filter
-Filters the search based on the spesified parameters.
+Filters the search based on the specified parameters.
 
 .PARAMETER Properties
 The properties to return from the search.
@@ -3233,7 +3290,7 @@ return $Computers # | Sort-Object $SortKey | Select-Object $Properties
 function Get-ADInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 868aac51-6c72-482e-8b54-42a3c5f87596
 
@@ -3241,7 +3298,7 @@ function Get-ADInfo {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -3251,7 +3308,7 @@ function Get-ADInfo {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -3259,7 +3316,10 @@ function Get-ADInfo {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -3272,7 +3332,7 @@ List the UPN for each user. Can be combined with -Filter.
 Filters for a specific UPN. Must be used in conjunction with -ListUpn. This overrides -Filter.
 
 .PARAMETER Filter
-Filters the search based on the spesified parameters.
+Filters the search based on the specified parameters.
 
 .PARAMETER updateUpnSuffix
 Updates the Upn. Must be used with -OldUpn and -NewUpn. Can be combined with -SearchBase
@@ -3281,7 +3341,7 @@ Updates the Upn. Must be used with -OldUpn and -NewUpn. Can be combined with -Se
 Specifes the UPN to be changed from.
 
 .PARAMETER newUpnSuffix
-Spesified the UPN to change to.
+specified the UPN to change to.
 
 .PARAMETER SearchBase
 Specifies the search base for the command.
@@ -3385,7 +3445,7 @@ Get-ADUser -Filter { AdminCount -ne "0" } -Properties AdminCount | Select-Object
 function Get-AdUserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 2102c95e-5402-43a2-ba4f-356a89fff4ca
 
@@ -3393,7 +3453,7 @@ function Get-AdUserInfo {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -3403,7 +3463,7 @@ function Get-AdUserInfo {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -3411,14 +3471,17 @@ function Get-AdUserInfo {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
 The script will get information about users from Active Directory.
 
 .PARAMETER Filter
-Filters the search based on the spesified parameters.
+Filters the search based on the specified parameters.
 
 .PARAMETER Properties
 The properties to return from the search.
@@ -3588,7 +3651,7 @@ else { Write-Output "No direct license assignments found" }
 function Get-AzureAdMfaStatus {
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.10
 
 .GUID 036c4b38-9023-4f7b-9254-e8d7683f56e2
 
@@ -3596,7 +3659,7 @@ function Get-AzureAdMfaStatus {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -3606,7 +3669,7 @@ function Get-AzureAdMfaStatus {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -3614,17 +3677,20 @@ function Get-AzureAdMfaStatus {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
 The script will get information about MFA setup from Azure Active Directory.
 
 .PARAMETER Filter
-Filters the AAD query based on the spesified parameters.
+Filters the AAD query based on the specified parameters.
 
 .PARAMETER WhereObject
-Filters the returned results based on the spesified parameters.
+Filters the returned results based on the specified parameters.
 
 .PARAMETER Properties
 The properties to return from the search.
@@ -3646,7 +3712,7 @@ return Get-MsolUser -All  | Sort-Object $SortKey | Select-Object $Properties
 function Get-AzureAdUserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 3af068df-1f2d-4e6b-b1a7-e18e09311471
 
@@ -3654,7 +3720,7 @@ function Get-AzureAdUserInfo {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -3664,7 +3730,7 @@ function Get-AzureAdUserInfo {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -3672,17 +3738,20 @@ function Get-AzureAdUserInfo {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
 The script will get information about users from Azure Active Directory.
 
 .PARAMETER Filter
-Filters the AAD query based on the spesified parameters.
+Filters the AAD query based on the specified parameters.
 
 .PARAMETER WhereObject
-Filters the returned results based on the spesified parameters.
+Filters the returned results based on the specified parameters.
 
 .PARAMETER Properties
 The properties to return from the search.
@@ -3742,7 +3811,7 @@ return (Get-WmiObject -query 'select * from SoftwareLicensingService').OA3xOrigi
 function Get-BitlockerStatus {
 <#PSScriptInfo
 
-.VERSION 1.1.4
+.VERSION 1.1.5
 
 .GUID 674855a4-1cd1-43b7-8e41-fea3bc501f61
 
@@ -3750,7 +3819,7 @@ function Get-BitlockerStatus {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -3760,7 +3829,7 @@ function Get-BitlockerStatus {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -3768,7 +3837,10 @@ function Get-BitlockerStatus {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -3778,7 +3850,7 @@ This commands checks the Bitlocker status and returns it in a human readable for
 This commands checks the Bitlocker status and returns it in a human readable format.
 
 .PARAMETER Drive
-The drive to check for protection on. If unspesified, the System Drive will be used.
+The drive to check for protection on. If unspecified, the System Drive will be used.
 #>
 param (
   [ValidateScript( { Test-Path $_ })][string]$Drive = $env:SystemDrive
@@ -3800,7 +3872,7 @@ $protectans
 function Get-DuplicateFileNames {
 <#PSScriptInfo
 
-.VERSION 1.0.12
+.VERSION 1.0.13
 
 .GUID 5e6104a0-232a-4fb1-8858-62e1d8220721
 
@@ -3818,7 +3890,7 @@ function Get-DuplicateFileNames {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -3826,13 +3898,16 @@ function Get-DuplicateFileNames {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
 Find files with the same name.
 #>
-[cmdletbinding()]
+[CmdletBinding()]
 param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$Path,
   [hashtable]$Params = @{
@@ -3898,7 +3973,7 @@ if ($Session) { return $Session } else { return $null }
 function Get-ExchangePhoto {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 10b98a61-ebf3-499f-847f-4aa18b41a9dd
 
@@ -3906,7 +3981,7 @@ function Get-ExchangePhoto {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -3916,7 +3991,7 @@ function Get-ExchangePhoto {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -3924,7 +3999,10 @@ function Get-ExchangePhoto {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -3934,10 +4012,10 @@ This will download all profile photos from Office 365.
 This will download all profile photos from Office 365. This can be used along with Set-AdPhotos to syn photos with Active Directory
 
 .PARAMETER Return
-Whether to return what options have been set. If unspesified, this is False.
+Whether to return what options have been set. If unspecified, this is False.
 
 .PARAMETER Users
-Array of users to run the command against. If unspesified, will run against all Exchange mailboxes.
+Array of users to run the command against. If unspecified, will run against all Exchange mailboxes.
 
 .PARAMETER PhotoDirectory
 The directory where downloaded photos will be saved to.
@@ -4224,7 +4302,7 @@ Function Get-BiosType {
 function Get-GroupMembershipReport {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID b2ff192c-1106-4c52-ab8c-b7cab4524cc9
 
@@ -4232,7 +4310,7 @@ function Get-GroupMembershipReport {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -4242,7 +4320,7 @@ function Get-GroupMembershipReport {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -4250,14 +4328,17 @@ function Get-GroupMembershipReport {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
 Gets group membership information for the specified groups.
 
 .PARAMETER Filter
-Filters the search based on the spesified parameters.
+Filters the search based on the specified parameters.
 
 .PARAMETER SearchBase
 The LDAP search base.
@@ -4567,7 +4648,7 @@ return $Return
 function Get-LapsInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 2a3f5ec5-e6c3-4a0b-a8ca-67f98b359144
 
@@ -4575,7 +4656,7 @@ function Get-LapsInfo {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -4585,7 +4666,7 @@ function Get-LapsInfo {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -4593,7 +4674,10 @@ function Get-LapsInfo {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -4603,7 +4687,7 @@ Shows the percentage of machines which have LAPS configured.
 If set, will show which computers have a password set.
 
 .PARAMETER Filter
-Filters the search based on the spesified parameters.
+Filters the search based on the specified parameters.
 
 .PARAMETER ShowPasswords
 Will also output passwords.
@@ -5034,7 +5118,7 @@ return $Results
 function Get-MsGraphAuthenticationMethod {
 <#PSScriptInfo
 
-.VERSION 1.2.4
+.VERSION 1.2.5
 
 .GUID c42317a3-3385-41d1-821d-8622b798259a
 
@@ -5052,7 +5136,7 @@ function Get-MsGraphAuthenticationMethod {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -5060,7 +5144,10 @@ function Get-MsGraphAuthenticationMethod {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -5097,8 +5184,6 @@ param(
   [ValidateSet('AuthenticatorApp', 'PhoneAuthentication', 'Fido2', 'WindowsHelloForBusiness', 'EmailAuthentication', 'TemporaryAccessPass', 'Passwordless', 'SoftwareOath')]
   [string[]]   $MethodType
 )
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 BEGIN {
   $ConnectionGraph = Get-MgContext
@@ -5196,7 +5281,7 @@ END {}
 function Get-NewComputerName {
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.9
 
 .GUID f0c0a88c-be5c-46ee-ab03-86272a36b5d7
 
@@ -5204,7 +5289,7 @@ function Get-NewComputerName {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -5214,7 +5299,7 @@ function Get-NewComputerName {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -5222,7 +5307,10 @@ function Get-NewComputerName {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -5235,7 +5323,7 @@ The prefix to use for the computer name.
 The serial nubmer to use for the computer name.
 
 .PARAMETER PrefixLenght
-The lenght of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
+The length of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
 
 .PARAMETER NewName
 The new name to use for the computer.
@@ -5406,7 +5494,7 @@ catch {
 function Get-RecentEvents {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 05dad3a6-57cf-4747-b3bd-57bc12b7628e
 
@@ -5414,7 +5502,7 @@ function Get-RecentEvents {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -5424,7 +5512,7 @@ function Get-RecentEvents {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -5432,7 +5520,10 @@ function Get-RecentEvents {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -5442,13 +5533,13 @@ This script will search the event log for events a specified number of minutes b
 This script will search the event log for events a specified number of minutes before or after a given time.
 
 .PARAMETER Before
-To search before -Time. Either -Before or -After must be spesified. -Before will take precedence if both are set.
+To search before -Time. Either -Before or -After must be specified. -Before will take precedence if both are set.
 
 .PARAMETER After
-To search after -Time. Either -Before or -After must be spesified. -Before will take precedence if both are set.
+To search after -Time. Either -Before or -After must be specified. -Before will take precedence if both are set.
 
 .PARAMETER Time
-The number of minutes from now to begin the search. This paramater is required.
+The number of minutes from now to begin the search. This parameter is required.
 
 .EXAMPLE
 .\Get-RecentEvents.ps1 -After -Time -1
@@ -5474,7 +5565,7 @@ Else { Write-Error "You must specify either -Before or -After" }
 function Get-SecureBoot {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 421f45c1-3a42-4c17-83a8-bb109f412a19
 
@@ -5482,7 +5573,7 @@ function Get-SecureBoot {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -5492,7 +5583,7 @@ function Get-SecureBoot {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -5500,17 +5591,20 @@ function Get-SecureBoot {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
 This script with gather information about  Secure Boot from the specified marchines.
 
 .DESCRIPTION
-This script with gather information about TPM and Secure Boot from the spesified specified. It can request information from just the local computer or from a list of remote computers. It can also export the results as a CSV file.
+This script with gather information about TPM and Secure Boot from the specified specified. It can request information from just the local computer or from a list of remote computers. It can also export the results as a CSV file.
 
 .PARAMETER ComputerList
-This can be used to select a text file with a list of computers to run this command against. Each device must appear on a new line. If unspesified, it will run againt the local machine.
+This can be used to select a text file with a list of computers to run this command against. Each device must appear on a new line. If unspecified, it will run againt the local machine.
 
 .PARAMETER ReportFile
 This can be used to export the results to a CSV file.
@@ -5619,7 +5713,7 @@ foreach ($result in $results) {
 function Get-StaleAADGuestAccounts {
 <#PSScriptInfo
 
-.VERSION 1.1.5
+.VERSION 1.1.6
 
 .GUID 66f102b7-1405-45dc-8df3-0d1b8459f4de
 
@@ -5627,7 +5721,7 @@ function Get-StaleAADGuestAccounts {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -5637,7 +5731,7 @@ function Get-StaleAADGuestAccounts {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -5645,7 +5739,10 @@ function Get-StaleAADGuestAccounts {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -5680,7 +5777,7 @@ param (
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)]$TenantId , # Tenant ID
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)][PSCredential]$Credential, # Registered AAD App ID and Secret
   $StaleDays = '90', # Number of days over which an Azure AD Account that hasn't signed in is considered stale'
-  $StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a spesific date to use as stale
+  $StaleDate = (get-date).AddDays( - "$($StaleDays)").ToString('yyyy-MM-dd'), #Or spesify a specific date to use as stale
   [switch]$GetLastSignIn
 )
 
@@ -5774,7 +5871,7 @@ return $Results
 function Get-TpmInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 14062539-2775-4450-bb0b-a3406d1db091
 
@@ -5782,7 +5879,7 @@ function Get-TpmInfo {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -5792,7 +5889,7 @@ function Get-TpmInfo {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -5800,17 +5897,20 @@ function Get-TpmInfo {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
-This script with gather information about TPM and Secure Boot from the spesified marchines.
+This script with gather information about TPM and Secure Boot from the specified marchines.
 
 .DESCRIPTION
-This script with gather information about TPM and Secure Boot from the spesified marchines. It can request information from just the local computer or from a list of remote computers. It can also export the results as a CSV file.
+This script with gather information about TPM and Secure Boot from the specified marchines. It can request information from just the local computer or from a list of remote computers. It can also export the results as a CSV file.
 
 .PARAMETER ComputerList
-This can be used to select a text file with a list of computers to run this command against. Each device must appear on a new line. If unspesified, it will run againt the local machine.
+This can be used to select a text file with a list of computers to run this command against. Each device must appear on a new line. If unspecified, it will run againt the local machine.
 
 .PARAMETER ReportFile
 This can be used to export the results to a CSV file.
@@ -5941,7 +6041,7 @@ If ($ReportFile) { $Report | Export-Csv $ReportFile }
 function Get-UserInfo {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID c64f1f09-036c-471d-898c-c9b3da6f53a8
 
@@ -5949,7 +6049,7 @@ function Get-UserInfo {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -5959,7 +6059,7 @@ function Get-UserInfo {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -5967,7 +6067,10 @@ function Get-UserInfo {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -5977,7 +6080,7 @@ Shows the percentage of machines which have LAPS configured.
 If set, will show which computers have a password set.
 
 .PARAMETER Filter
-Filters the search based on the spesified parameters.
+Filters the search based on the specified parameters.
 
 .PARAMETER ShowPasswords
 Will also output passwords.
@@ -6389,7 +6492,7 @@ Start-Process -FilePath C:\Windows\SysWOW64\OneDriveSetup.exe -NoNewWindow
 function Initialize-Workstation {
 <#PSScriptInfo
 
-.VERSION 1.2.18
+.VERSION 1.2.19
 
 .GUID 8ab0507b-8af2-4916-8de2-9457194fb454
 
@@ -6397,7 +6500,7 @@ function Initialize-Workstation {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -6407,7 +6510,7 @@ function Initialize-Workstation {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -6415,7 +6518,10 @@ function Initialize-Workstation {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -6428,14 +6534,14 @@ This script will install the neccesary applications and services on a given mach
 An array of actions to run.
     Rename: Rename the computer. Use -HostNamePrefix to set a prefix.
     LabelDrive: Label the drive, by default, the $env:SystemDrive will be labelled "Windows". Use -DriveToLabel to change the drive and -DriveLabel to change the label.
-    ProvisioningPackage: Install a provisioning package. Use -ProvisioningPackage to select the appropriate pacakge.
+    ProvisioningPackage: Install a provisioning package. Use -ProvisioningPackage to select the appropriate package.
     JoinDomain: Join the current computer to a domain. Specify the domain with -Domain
     BitLocker: Enable BitLocker. You can overridde the defaults using -BitLockerProtector and -BitlockerEncryptionMethod.
     Office: Install Microsoft Office. You can override the version using -Office.
     RSAT: Install Remote Server Administration Tools.
     NetFX3: Install .Net 3.0
     Ninte: Run Ninite.
-    Winget: Install the spesified packages and update existing applications using Winget. Use -Winget to select the appropriate package.
+    Winget: Install the specified packages and update existing applications using Winget. Use -Winget to select the appropriate package.
     RemoveDesktopShortcuts: Remove all desktop shortcuts from the Public desktop.
     Reboot: Reboot the machine.
 
@@ -6443,13 +6549,13 @@ An array of actions to run.
 The prefix to use for the hostname.
 
 .PARAMETER BitLockerProtector
-Enable BitLocker using the spesified protector. If unspecified, TPM will be used. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker
+Enable BitLocker using the specified protector. If unspecified, TPM will be used. Valid options are TPM, Pin, Password, and USB. You can also pass Disable to disable BitLocker
 
 .PARAMETER BitLockerEncryptionMethod
 Used to specify the encryption method for BitLocker. If unspecified, XtsAes256 will be used.
 
 .PARAMETER BitLockerUSB
-If the USB protector is spesified, use this to specify the USB drive to use.
+If the USB protector is specified, use this to specify the USB drive to use.
 
 .PARAMETER DriveLabel
 This specifies what the drive will be labeled as. If unspecified, "Windows" will be used.
@@ -6548,7 +6654,7 @@ if ($Action -contains "BitLocker") {
         Enable-BitLocker -MountPoint $env:SystemDrive -EncryptionMethod $BitLockerEncryptionMethod -StartupKeyProtector -StartupKeyPath $BitLockerUSB
       }
       Else {
-        Write-Warning "No valid protector spesified. BitLocker will NOT be enabled."
+        Write-Warning "No valid protector specified. BitLocker will NOT be enabled."
       }
     }
   }
@@ -7829,7 +7935,7 @@ return $ConfigScript
 function New-Password {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 1591ca01-1cf9-4683-9d24-fbd1f746f44c
 
@@ -7837,7 +7943,7 @@ function New-Password {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -7847,7 +7953,7 @@ function New-Password {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -7855,13 +7961,16 @@ function New-Password {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
 This will return a random password which meets Active Directory's complexity requirements.
-.PARAMETER Lenght
-The lenght of the password to return. The default is 8 characters.
+.PARAMETER length
+The length of the password to return. The default is 8 characters.
 
 .PARAMETER Symbols
 The number of symbols to include in the password. The default is 2 symbols.
@@ -7874,14 +7983,14 @@ https://docs.microsoft.com/en-us/dotnet/api/system.web.security.membership.gener
 
 #>
 param (
-  [int]$Lenght = 8,
+  [int]$length = 8,
   [int]$Symbols = 2
 )
 
 Add-Type -AssemblyName System.Web
 
 do {
-  $Password = [System.Web.Security.Membership]::GeneratePassword($Lenght, $Symbols)
+  $Password = [System.Web.Security.Membership]::GeneratePassword($length, $Symbols)
   If (     ($Password -cmatch "[A-Z\p{Lu}\s]") `
       -and ($Password -cmatch "[a-z\p{Ll}\s]") `
       -and ($Password -match "[\d]") `
@@ -7894,7 +8003,7 @@ return $Password
 function New-RandomCharacters {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID 9f443ca7-e536-40ee-a774-7d94c5d3c569
 
@@ -7902,7 +8011,7 @@ function New-RandomCharacters {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -7912,7 +8021,7 @@ function New-RandomCharacters {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -7920,13 +8029,16 @@ function New-RandomCharacters {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
 This will return random characters.
 
-.PARAMETER Lenght
+.PARAMETER length
 The number of characters to return.
 
 .PARAMETER Characters
@@ -8301,7 +8413,7 @@ Remove-Item "$Env:appdata\Microsoft\Windows\Themes\CachedFiles\*.*" -ErrorAction
 function Remove-GroupEmail {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 214ed066-0271-4c0b-8210-8554f8de4f4a
 
@@ -8309,7 +8421,7 @@ function Remove-GroupEmail {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -8319,7 +8431,7 @@ function Remove-GroupEmail {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -8327,7 +8439,10 @@ function Remove-GroupEmail {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -8343,7 +8458,7 @@ The identity of the group you wish to change.
 The email address you whish to Remove.
 
 .PARAMETER SetPrimary
-If set, this will set the email adress you specified as the primary address for the group.
+If set, this will set the email address you specified as the primary address for the group.
 
 .EXAMPLE
 Remove-GroupEmail -Identity staff -EmailAddress staff@example.com
@@ -8481,7 +8596,7 @@ End {
 function Remove-OldFolders {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID cb98c8e9-cb35-4db2-9fe8-33afb9eb2272
 
@@ -8489,7 +8604,7 @@ function Remove-OldFolders {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -8499,7 +8614,7 @@ function Remove-OldFolders {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -8507,14 +8622,17 @@ function Remove-OldFolders {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
-This script will trim the spesified folder to the number of items specified.
+This script will trim the specified folder to the number of items specified.
 
 .DESCRIPTION
-This script will trim the spesified folder to the number of items specified.
+This script will trim the specified folder to the number of items specified.
 
 .PARAMETER Path
 This can be used to select a folder in which to run these commands on. If unspecified, it will run in the current folder.
@@ -8920,7 +9038,7 @@ else {
 function Remove-VsResistInstallFiles {
 <#PSScriptInfo
 
-.VERSION 1.1.5
+.VERSION 1.1.6
 
 .GUID 0775cf89-1a99-44ec-ac4e-7c80c95d87a2
 
@@ -8928,7 +9046,7 @@ function Remove-VsResistInstallFiles {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -8938,7 +9056,7 @@ function Remove-VsResistInstallFiles {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -8946,7 +9064,10 @@ function Remove-VsResistInstallFiles {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -8959,7 +9080,7 @@ This script will remove the extra files from a VCRedist from VC++ 2008 install, 
 https://support.microsoft.com/en-ca/help/950683/vcredist-from-vc-2008-installs-temporary-files-in-root-directory
 
 .PARAMETER Drive
-The drive from which to remove the files. If unspesified, the System Drive is used.
+The drive from which to remove the files. If unspecified, the System Drive is used.
 
 .EXAMPLE
 Clean-VCRedist
@@ -9619,7 +9740,7 @@ Export-ModuleMember Resize-Image
 function Save-Password {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 70496d42-6d10-460f-9e42-132a6b70e09d
 
@@ -9627,7 +9748,7 @@ function Save-Password {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -9637,7 +9758,7 @@ function Save-Password {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -9645,7 +9766,10 @@ function Save-Password {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -9665,7 +9789,7 @@ http://www.sameie.com/2017/10/05/create-hashed-password-file-for-powershell-use/
 #>
 param(
   [string]$Path = ".\Password.txt",
-  [pscredential]$credential = (Get-Credential)
+  [PSCredential]$credential = (Get-Credential)
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
@@ -9675,7 +9799,7 @@ $Credential.Password | ConvertFrom-SecureString | Set-Content $Path
 function Search-Registry {
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.6
 
 .GUID 029cd8de-13e9-4169-ae20-72c021290013
 
@@ -9683,7 +9807,7 @@ function Search-Registry {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -9693,7 +9817,7 @@ function Search-Registry {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -9701,7 +9825,10 @@ function Search-Registry {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -9767,10 +9894,10 @@ param(
 begin {
   switch ($PSCmdlet.ParameterSetName) {
     SingleSearchString {
-      $NoSwitchesSpecified = -not ($PSBoundParameters.ContainsKey("KeyName") -or $PSBoundParameters.ContainsKey("ValueName") -or $PSBoundParameters.ContainsKey("ValueData"))
-      if ($KeyName -or $NoSwitchesSpecified) { $KeyNameRegex = $SearchRegex }
-      if ($ValueName -or $NoSwitchesSpecified) { $ValueNameRegex = $SearchRegex }
-      if ($ValueData -or $NoSwitchesSpecified) { $ValueDataRegex = $SearchRegex }
+      $NoSwitchesspecified = -not ($PSBoundParameters.ContainsKey("KeyName") -or $PSBoundParameters.ContainsKey("ValueName") -or $PSBoundParameters.ContainsKey("ValueData"))
+      if ($KeyName -or $NoSwitchesspecified) { $KeyNameRegex = $SearchRegex }
+      if ($ValueName -or $NoSwitchesspecified) { $ValueNameRegex = $SearchRegex }
+      if ($ValueData -or $NoSwitchesspecified) { $ValueDataRegex = $SearchRegex }
     }
     MultipleSearchStrings {
       # No extra work needed
@@ -9826,7 +9953,7 @@ process {
 function Set-AdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.4
+.VERSION 1.1.5
 
 .GUID 5dcbac67-cebe-4cb8-bf95-8ad720c25e72
 
@@ -9834,7 +9961,7 @@ function Set-AdPhoto {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -9844,7 +9971,7 @@ function Set-AdPhoto {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -9852,7 +9979,10 @@ function Set-AdPhoto {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -9865,7 +9995,7 @@ This will set Active Directory thumbnailPhoto from matching files in the specifi
 The directory where photos will be pulled from.
 
 .PARAMETER Users
-Array of users to run the command against. If unspesified, it will run against all files in the specified directory.
+Array of users to run the command against. If unspecified, it will run against all files in the specified directory.
 
 .EXAMPLE
 Set-AdPhoto
@@ -10008,7 +10138,7 @@ End {}
 function Set-AzureAdPhoto {
 <#PSScriptInfo
 
-.VERSION 1.1.23
+.VERSION 1.1.24
 
 .GUID 688addc9-7585-4953-b9ab-c99d55df2729
 
@@ -10026,7 +10156,7 @@ function Set-AzureAdPhoto {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -10034,7 +10164,10 @@ function Set-AzureAdPhoto {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -10047,7 +10180,7 @@ This will upload all profile photos to Office 365. It will match the filename to
 An array of photos to process. Photo names should match the user principal name, excluding the file extension.
 
 .PARAMETER TenantId
-The Azure AD tenant id. If not specified, it will try and use the current user's tennant.
+The Azure AD tenant id. If not specified, it will try and use the current user's tenant.
 
 .PARAMETER ClientId
 When authenticating as an application, the ClientId of that application.
@@ -10144,7 +10277,7 @@ $Photos | ForEach-Object {
 function Set-ComputerName {
 <#PSScriptInfo
 
-.VERSION 1.0.10
+.VERSION 1.0.11
 
 .GUID 0e319076-a254-46aa-948c-203373b9e47d
 
@@ -10152,7 +10285,7 @@ function Set-ComputerName {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -10162,7 +10295,7 @@ function Set-ComputerName {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -10170,7 +10303,10 @@ function Set-ComputerName {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -10183,7 +10319,7 @@ The prefix to use for the computer name.
 The serial nubmer to use for the computer name.
 
 .PARAMETER PrefixLenght
-The lenght of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
+The length of the prefix. This is used to truncate the prefix so the total length is less than 15 characters.
 
 .PARAMETER NewName
 The new name to use for the computer.
@@ -10202,7 +10338,7 @@ $Arguments = @{}
 if ($NewName) { $Arguments.NewName = $NewName }
 if ($User -and $Password) {
   [SecureString]$SecurePassword = ($Password | ConvertTo-SecureString -AsPlainText -Force)
-  [pscredential]$DomainCredential = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
+  [PSCredential]$DomainCredential = (New-Object System.Management.Automation.PSCredential -ArgumentList $User, $SecurePassword)
   $Arguments.DomainCredential = $DomainCredential
 }
 
@@ -10397,7 +10533,7 @@ Get-ChildItem $Path | ForEach-Object {
 function Set-Owner {
 <#PSScriptInfo
 
-.VERSION 1.1.3
+.VERSION 1.1.4
 
 .GUID fb1d15b5-4681-4f99-90d6-1fd44ed4219b
 
@@ -10405,7 +10541,7 @@ function Set-Owner {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -10415,7 +10551,7 @@ function Set-Owner {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -10423,7 +10559,10 @@ function Set-Owner {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -10477,7 +10616,7 @@ https://learn-powershell.net/2014/06/24/changing-ownership-of-file-or-folder-usi
 .LINK
 http://gallery.technet.microsoft.com/scriptcenter/Set-Owner-ff4db177
     #>
-[cmdletbinding(
+[CmdletBinding(
   SupportsShouldProcess = $True
 )]
 Param (
@@ -10868,7 +11007,7 @@ If ((Test-Null $ADuser_photo) -eq $false) {
 function Show-BitlockerEncryptionStatus {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 85c8702c-7117-4050-8629-51fc36de0cd8
 
@@ -10876,7 +11015,7 @@ function Show-BitlockerEncryptionStatus {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -10886,7 +11025,7 @@ function Show-BitlockerEncryptionStatus {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -10894,14 +11033,17 @@ function Show-BitlockerEncryptionStatus {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
 Show BitLocker encryption status on a loop. Used to monitor encryption progress.
 
 .PARAMETER Sleep
-The lenght of time to sleep between checks.
+The length of time to sleep between checks.
 #>
 param(
   [ValidateRange(0, [Int32]::MaxValue)][Int32]$Sleep = 5
@@ -11058,7 +11200,7 @@ $SearchLocations | ForEach-Object {
 function Start-WindowsActivation {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 625c264b-e5ec-4c6a-8478-39ec90518250
 
@@ -11066,7 +11208,7 @@ function Start-WindowsActivation {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -11076,7 +11218,7 @@ function Start-WindowsActivation {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -11084,11 +11226,14 @@ function Start-WindowsActivation {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
-Activate windows using the spesified key, or fall back to the key in the BIOS.
+Activate windows using the specified key, or fall back to the key in the BIOS.
 #>
 
 param (
@@ -11127,7 +11272,7 @@ Write-Error "Windows could not be activated."
 function Stop-ForKey {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 9b9dfb07-a7ea-4afd-94ab-74a5bf2ee340
 
@@ -11135,7 +11280,7 @@ function Stop-ForKey {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -11145,7 +11290,7 @@ function Stop-ForKey {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -11153,11 +11298,14 @@ function Stop-ForKey {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
-This will break if the spesified key it press. Otherwise, it will continue.
+This will break if the specified key it press. Otherwise, it will continue.
 
 .DESCRIPTION
 This script will run the PaperCut client. It will first check the network location and fall back to the local cache is that fails.
@@ -12069,7 +12217,7 @@ write-output "test: $test"
 function Test-VoipMs {
 <#PSScriptInfo
 
-.VERSION 1.2.6
+.VERSION 1.2.7
 
 .GUID 17fff57c-cce9-4977-a26d-aeded706a85f
 
@@ -12077,7 +12225,7 @@ function Test-VoipMs {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -12087,7 +12235,7 @@ function Test-VoipMs {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -12095,7 +12243,10 @@ function Test-VoipMs {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .SYNOPSIS
@@ -12105,7 +12256,7 @@ This script will test the VoIP.ms servers to find one with the lowest latency.
 This script will test the VoIP.ms servers to find one with the lowest latency. If you spesify your credentials, it will use the API to get the most current list of servers. Otherwise, it will fallback to the static list you see below.
 
 .PARAMETER ServerList
-The fallback server list used when API credentials are not spesified. You can also pass in a custom list of servers.
+The fallback server list used when API credentials are not specified. You can also pass in a custom list of servers.
 
 .LINK
 https://wiki.voip.ms/article/Choosing_Server
@@ -12285,7 +12436,7 @@ Update-AzureADSSOForest -OnPremCredentials (Get-Credential -Message "Enter Domai
 function Update-MerakiSwitchPortNames {
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 1962b9ec-b51d-4ac4-9e92-12ddcf152a0a
 
@@ -12293,7 +12444,7 @@ function Update-MerakiSwitchPortNames {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -12303,7 +12454,7 @@ function Update-MerakiSwitchPortNames {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -12313,7 +12464,8 @@ function Update-MerakiSwitchPortNames {
 
 .PRIVATEDATA
 
-#>
+#> 
+
 
 <#
 .DESCRIPTION
@@ -12329,7 +12481,7 @@ The network ID that contains the switches you wish to update.
 The CSV file containing records you wish to update. Must contain the following columns 'Switch Name', 'Switch Port', and 'Switch Label'.
 
 .PARAMETER Headers
-An array of headers to send in each API request. Automatically generated using the APIKey paramater.
+An array of headers to send in each API request. Automatically generated using the APIKey parameter.
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
@@ -12738,7 +12890,7 @@ Return $Results
 function Wait-ForKey {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 3642a129-3370-44a1-94ad-85fb88de7a6b
 
@@ -12746,7 +12898,7 @@ function Wait-ForKey {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -12756,7 +12908,7 @@ function Wait-ForKey {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -12764,11 +12916,14 @@ function Wait-ForKey {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
-This will continue if the spesified key it press. Otherwise, it will break.
+This will continue if the specified key it press. Otherwise, it will break.
 
 .PARAMETER Key
 The key that this will listen for.

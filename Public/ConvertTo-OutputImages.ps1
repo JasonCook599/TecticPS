@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.9
+.VERSION 1.1.10
 
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,11 +26,15 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
-This script will resize the spesified logos, wordmarks and banner images to the spesifications of various third party services. It will pull data from a json file.
+This script will resize the specified logos, wordmarks and banner images to the spesifications of various third party services. It will pull data from a json file.
 
 .PARAMETER Path
 This is the file or folder containing images to resize. If unspecified, it will run in the current folder.

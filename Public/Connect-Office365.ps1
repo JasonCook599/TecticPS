@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.1.5
+.VERSION 2.1.6
 
 .GUID ab066274-cee5-401d-99ff-1eeced8ca9af
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,20 +26,24 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .SYNOPSIS
 This script will connect to various Office 365 services.
 
 .DESCRIPTION
-To connect to Azure Active Directory, you must first install "Microsoft Online Services Sign-in Assistant". This script will install the "MSOnline" module if required. Instructions are availible here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=41950).
+To connect to Azure Active Directory, you must first install "Microsoft Online Services Sign-in Assistant". This script will install the "MSOnline" module if required. Instructions are available here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=41950).
 
-To connect to Sharepoint Online, you must first install "SharePoint Online Management Shell". Instructions are availible here (https://docs.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online?view=sharepoint-ps) and download here (https://www.microsoft.com/en-ca/download/details.aspx?id=35588).
+To connect to Sharepoint Online, you must first install "SharePoint Online Management Shell". Instructions are available here (https://docs.microsoft.com/en-us/powershell/sharepoint/sharepoint-online/connect-sharepoint-online?view=sharepoint-ps) and download here (https://www.microsoft.com/en-ca/download/details.aspx?id=35588).
 
-To connect to Skype for Business Online, you must first install "Skype for Business Online, Windows PowerShell Module". Instructions are availible here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/manage-skype-for-business-online-with-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=39366).
+To connect to Skype for Business Online, you must first install "Skype for Business Online, Windows PowerShell Module". Instructions are available here (https://docs.microsoft.com/en-us/office365/enterprise/powershell/manage-skype-for-business-online-with-office-365-powershell) and download here (https://www.microsoft.com/en-us/download/details.aspx?id=39366).
 
-To connect to Exchange Online, you must first install "Microsoft.NET Framework 4.5" or later and then either the "Windows Management Framework 3.0" or the "Windows Management Framework 4.0". Instructions without MFA are availible here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps). Instructions with MFA are availible here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps)
+To connect to Exchange Online, you must first install "Microsoft.NET Framework 4.5" or later and then either the "Windows Management Framework 3.0" or the "Windows Management Framework 4.0". Instructions without MFA are available here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/connect-to-exchange-online-powershell?view=exchange-ps). Instructions with MFA are available here (https://docs.microsoft.com/en-us/powershell/exchange/exchange-online/connect-to-exchange-online-powershell/mfa-connect-to-exchange-online-powershell?view=exchange-ps)
 
 .LINK
 https://docs.microsoft.com/en-us/office365/enterprise/powershell/connect-to-office-365-powershell
@@ -118,7 +122,7 @@ param(
   [switch]$Disconnect
 )
 
-While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tennant. Do not include `".onmicrosoft.com`"" }
+While (-NOT $Tenant) { $Tenant = Read-Host -Prompt "Enter your Office 365 tenant. Do not include `".onmicrosoft.com`"" }
 While (-NOT $UPN) { $UPN = Read-Host -Prompt "Enter your User Principal Name (UPN)" }
 
 InstallModule -Name AzureAD #-AltName AzureADPreview
@@ -132,7 +136,7 @@ If ($BasicAuth -and (-not $Credential)) { $Credential = Get-Credential -UserName
 
 If ($Disconnect) {
   Write-Verbose "$me Disconnecting from all services."
-  Remove-PSSession $sfboSession | Write-Verbose
+  Remove-PSSession $SkypeSession | Write-Verbose
   Remove-PSSession $exchangeSession | Write-Verbose
   Remove-PSSession $SccSession | Write-Verbose
   Disconnect-SPOService | Write-Verbose
@@ -160,9 +164,9 @@ Else {
   If ($SkypeForBusinessOnline) {
     Write-Verbose "$me Connecting to Skype For Business Online"
     Requires SkypeOnlineConnector
-    If ($BasicAuth) { $sfboSession = New-CsOnlineSession -Credential $Credential | Write-Verbose }
-    Else { $sfboSession = New-CsOnlineSession -UserName $UPN }
-    Import-PSSession $sfboSession | Write-Verbose
+    If ($BasicAuth) { $SkypeSession = New-CsOnlineSession -Credential $Credential | Write-Verbose }
+    Else { $SkypeSession = New-CsOnlineSession -UserName $UPN }
+    Import-PSSession $SkypeSession | Write-Verbose
   }
   If ($ExchangeOnline) {
     Write-Verbose "$me Connecting to Exchange Online"

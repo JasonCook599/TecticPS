@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.2.4
+.VERSION 1.2.5
 
 .GUID c42317a3-3385-41d1-821d-8622b798259a
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -48,6 +52,7 @@ The UserId or UserPrincipalName to check.
     https://thesysadminchannel.com/get-mfa-methods-using-msgraph-api-and-powershell-sdk/ -
 
 #>
+# SkipLoadDefaults: true
 [CmdletBinding()]
 param(
   [Parameter(

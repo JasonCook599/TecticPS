@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID e5758f99-a57e-4bcf-af21-30e5fd176e51
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2025
 
 .TAGS
 
@@ -18,7 +18,7 @@
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -26,7 +26,11 @@
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
+
 
 <#
 .DESCRIPTION
@@ -41,7 +45,7 @@ GetAADSignIns -Date "2021-01-01"
 .LINK
 http://darrenjrobinson.com/
 #>
-[cmdletbinding()]
+[CmdletBinding()]
 param(
   [Parameter(Mandatory = $true, ValueFromPipeline = $true)][string]$Date
 )
