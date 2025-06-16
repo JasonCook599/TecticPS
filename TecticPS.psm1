@@ -2310,6 +2310,60 @@ https://github.com/MicrosoftDocs/microsoft-365-docs/blob/public/microsoft-365/co
 #>
 Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase | ForEach-Object { Update-MSCommerceProductPolicy -PolicyId AllowSelfServicePurchase -ProductId $_.ProductID -Enabled $false }
 }
+function Disable-VantagepointEmployee {
+<#PSScriptInfo
+
+.VERSION 1.0.4
+
+.GUID c2b45e52-9f16-4a88-be7c-cc9d73214369
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+
+<#
+.DESCRIPTION
+Disables each provided Vantagepoint employee.
+#>
+
+[CmdletBinding(SupportsShouldProcess = $true)]
+param (
+  [parameter(Mandatory = $true)][Alias("User")]$Username,
+  $BaseUri = $global:Vantagepoint.BaseUri,
+  $Headers = $global:Vantagepoint.Headers
+)
+if ($Username.count -gt 0) {
+  $Username | ForEach-Object {
+    If ($PSCmdlet.ShouldProcess($_, "Disabling Vantagepoint User")) {
+      $Body = @{status = "I" }
+      return Invoke-RestMethod "$BaseUri/security/user/$User" -Method PUT -Headers $Headers -Body ($Body | ConvertTo-Json)
+    }
+  }
+}
+}
 function Enable-AdUserPermissionInheritance {
 <#PSScriptInfo
 
@@ -6205,6 +6259,269 @@ Get-ADUser -Filter * -Properties name, givenName, sn, mail, title, department, c
   $Results += $Result
 }
 return $Results
+}
+function Get-VantagepointCodetable {
+<#PSScriptInfo
+
+.VERSION 1.0.4
+
+.GUID a28fc8d6-42ea-43db-9e72-0be30545ddbd
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+
+<#
+.DESCRIPTION
+Get the specified Vantagepoint codet able.
+#>
+
+param (
+  [string]$CodeTable,
+  $BaseUri = $global:Vantagepoint.BaseUri,
+  $Headers = $global:Vantagepoint.Headers
+)
+if ($All) { return (Invoke-RestMethod "$BaseUri/codeTable/" -Method Get -Headers $Headers) }
+else { return (Invoke-RestMethod "$BaseUri/codeTable/$CodeTable" -Method Get -Headers $Headers) }
+}
+function Get-VantagepointEmployee {
+<#PSScriptInfo
+
+.VERSION 1.0.4
+
+.GUID c6725cf5-57f9-491a-a2b9-941b34039ad2
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+
+<#
+.DESCRIPTION
+Get Vantagepoint employee(s).
+#>
+
+param(
+  [string]$Employee,
+  [string]$Company,
+  [string]$EmployeeKey,
+  $BaseUri = $global:Vantagepoint.BaseUri,
+  $Headers = $global:Vantagepoint.Headers
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+if (-not $EmployeeKey -and $Employee -and $Company) { $EmployeeKey = $Employee + "|" + $Company }
+elseif (-not $EmployeeKey -and $Employee) { $EmployeeKey = $Employee }
+
+Write-Verbose "$BaseUri/employee/$EmployeeKey"
+return Invoke-RestMethod "$BaseUri/employee/$EmployeeKey" -Method GET -Headers $Headers
+}
+function Get-VantagepointInactiveEmployeeUsers {
+<#PSScriptInfo
+
+.VERSION 1.0.4
+
+.GUID ba61cd23-49f3-46f7-ae52-de4cf16b031f
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+
+<#
+.DESCRIPTION
+Get Vantagepoint users if the User is active and Employee is inactive.
+#>
+
+param (
+  $Users = (Get-VantagepointUsers)
+)
+return $Users | Where-Object Status -ne "I" | Where-Object EmployeeStatus -ne "A" | Where-Object EmployeeStatus -ne ""
+}
+function Get-VantagepointToken {
+<#PSScriptInfo
+
+.VERSION 1.0.4
+
+.GUID 6c901b8f-8592-44ec-9e59-a84b7e7633e1
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+
+<#
+.DESCRIPTION
+Get an auth token for Vantagepoint.
+#>
+
+param (
+  [Parameter(Mandatory = $true)][PSCredential]$APICredential,
+  [Parameter(Mandatory = $true)][PSCredential]$UserCredential,
+  [Parameter(Mandatory = $true)][string]$Database,
+  [Parameter(Mandatory = $true)][string]$BaseUri,
+  $Headers = @{
+    "Content-Type" = "application/x-www-form-urlencoded"
+  }
+)
+
+$Body = @{
+  Username      = $UserCredential.UserName
+  Password      = ([System.Net.NetworkCredential]::new("", $UserCredential.Password).Password)
+  grant_type    = "password"
+  Integrated    = "N"
+  database      = $Database
+  Client_Id     = $APICredential.UserName
+  client_secret = ([System.Net.NetworkCredential]::new("", $APICredential.Password).Password)
+  culture       = "en-US"
+}
+
+$Request = (Invoke-RestMethod "$BaseUri/token" -Method 'POST' -Headers $Headers -Body $Body)
+$global:Vantagepoint = @{
+  BaseUri = $BaseUri
+  Headers = @{
+    "Content-Type"  = "application/json"
+    "Authorization" = "$($Request.token_type) $($Request.access_token)"
+  }
+  Token   = $Request.access_token
+}
+return $global:Vantagepoint
+}
+function Get-VantagepointUsers {
+<#PSScriptInfo
+
+.VERSION 1.0.4
+
+.GUID 067a1554-d6dd-40d2-b3b7-b313f1a990b3
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+
+<#
+.DESCRIPTION
+Get Vantagepoint users.
+#>
+
+param(
+  $BaseUri = $global:Vantagepoint.BaseUri,
+  $Headers = $global:Vantagepoint.Headers
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+return Invoke-RestMethod "$BaseUri/user" -Method GET -Headers $Headers
 }
 function Get-Wallpaper {
 <#PSScriptInfo
@@ -11029,6 +11346,186 @@ Get-Mailbox -RecipientTypeDetails RoomMailbox | ForEach-Object {
   If ($PSCmdlet.ShouldProcess("$_", "Set-RoomCalendarPermissions")) {
     Set-MailboxFolderPermission -Identity $($_.Identity + ":\Calendar") -User $User -AccessRights $AccessRights
   }
+}
+}
+function Set-VantagepointEmployee {
+<#PSScriptInfo
+
+.VERSION 1.0.4
+
+.GUID 4ff2c812-f868-4856-b9ac-38b2da89c582
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+
+<#
+.DESCRIPTION
+Update a Vantagepoint employee.
+#>
+
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+  $Body,
+  [string]$Employee,
+  [string]$Company,
+  [string]$EmployeeKey,
+  $BaseUri = $global:Vantagepoint.BaseUri,
+  $Headers = $global:Vantagepoint.Headers
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+if (-not $EmployeeKey -and $Employee -and $Company) { $EmployeeKey = $Employee + "|" + $Company }
+elseif (-not $EmployeeKey -and $Employee) { $EmployeeKey = $Employee }
+
+If ($PSCmdlet.ShouldProcess($EmployeeKey, "Updating Vantagepoint")) {
+  return Invoke-RestMethod "$BaseUri/employee/$EmployeeKey" -Method PUT -Headers $Headers -Body ($Body | ConvertTo-Json)
+}
+else { return $Body }
+}
+function Set-VantagepointPhoto {
+<#PSScriptInfo
+
+.VERSION 1.0.4
+
+.GUID 5670f368-b618-4475-8d45-8aebdee0456b
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+
+<#
+.DESCRIPTION
+Set the photo for a Vantagepoint employee.
+#>
+
+return hello
+
+function Set-VantagepointEmployeeImage {
+  param(
+    [string]$Path = "C:\Users\JCook\Dennis Group\IT Department - General\Images\Types\IT-Square.jpg",
+    [string]$Employee,
+    [string]$Company,
+    [string]$EmployeeKey,
+    $BaseUri = $global:Vantagepoint.BaseUri,
+    $Headers = @{
+      "Content-Type"  = "application/json"
+      "Authorization" = "Bearer $global:VantagepointToken"
+    }
+  )
+
+  $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
+  $headers.Add("Content-Type", "multipart/form-data")
+  $headers.Add("Authorization", "Bearer  $VantagepointToken")
+
+  $multipartContent = [System.Net.Http.MultipartFormDataContent]::new()
+  $multipartFile = $Path
+  $FileStream = [System.IO.FileStream]::new($multipartFile, [System.IO.FileMode]::Open)
+  $fileHeader = [System.Net.Http.Headers.ContentDispositionHeaderValue]::new("form-data")
+  $fileHeader.Name = "files[]"
+  $fileHeader.FileName = "file"
+  $fileContent = [System.Net.Http.StreamContent]::new($FileStream)
+  $fileContent.Headers.ContentDisposition = $fileHeader
+  $multipartContent.Add($fileContent)
+
+  $body = $multipartContent
+
+  $response = Invoke-RestMethod 'https://dennisgroup.deltekfirst.com/dennisgroup/api/employee/01458/photo' -Method 'POST' -Headers $headers -Body $body
+  $response | ConvertTo-Json
+}
+
+function Get-VantagePointEmployeeImage {
+  $response = Invoke-RestMethod "$BaseUri/employee/01458" -Method "GET" -Headers $headers
+  $response | ConvertTo-Json
+}
+
+function Set-VantagepointEmployeeImageV2 {
+  param(
+    [string]$Path = "C:\Users\JCook\Dennis Group\IT Department - General\Images\Types\IT-Square.jpg",
+    [string]$Employee,
+    [string]$Company,
+    [string]$EmployeeKey,
+    $Headers = @{
+      "Content-Type"  = "application/json"
+      "Authorization" = "Bearer $global:VantagepointToken"
+    }
+  )
+  $Headers."Content-Type" = "multipart/form-data"
+
+  $File = Get-Item -Path $Path
+  $FileContentType = switch ($File.Extension) {
+    '.jpe' { 'image/jpeg' }
+    '.jpeg' { 'image/jpeg' }
+    '.jpg' { 'image/jpeg' }
+    '.js' { 'application/javascript' }
+    '.json' { 'application/json' }
+    Default { 'application/octet-stream' }
+  }
+
+		$FormTemplate = @'
+--{0}
+Content-Disposition: form-data; name="files[]"; filename="{1}"
+Content-Type: {2}
+
+{3}
+--{0}--
+'@
+
+  $Encoding = [System.Text.Encoding]::GetEncoding("iso-8859-1")
+  $Boundary = [guid]::NewGuid().Guid
+  $Bytes = [System.IO.File]::ReadAllBytes($File.FullName)
+  $Data = $Encoding.GetString($Bytes)
+  $Body = $FormTemplate -f $Boundary, "blob", $FileContentType, $Data
+  $FormContentType = "multipart/form-data; boundary=$boundary"
+
+  $response = Invoke-RestMethod -Uri "$BaseUri/employee/01458/Photo" -Method "POST" -Headers $Headers -ContentType $FormContentType -Body $Body -SkipHttpErrorCheck
+  $response | ConvertTo-Json
 }
 }
 function Set-Wallpaper {
