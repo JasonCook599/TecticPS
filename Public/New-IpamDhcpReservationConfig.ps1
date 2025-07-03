@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 94788e2a-23d9-4aaf-89e0-668c62bc27e6
 
@@ -34,6 +34,8 @@
 
 
 
+
+
 <#
 .DESCRIPTION
 Build a DHCP reservation script for the given service. Currently, only FortiGate is supported.
@@ -46,17 +48,18 @@ The service to choose.
 #>
 param(
   [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName,
+  $ServiceInstance,
   [ValidateSet("FortiGate", IgnoreCase = $true)]$ManagedByService = "FortiGate"
 )
 
 $ConfigScript = ""
-$Reservations = Get-IpamReservations -ManagedByService $ManagedByService -ComputerName $ComputerName
-foreach ($Firewall in $Reservations.name | Get-Unique ) {
+$Reservations = Get-IpamReservations -ManagedByService $ManagedByService -ComputerName $ComputerName -ServiceInstance $ServiceInstance
+foreach ($Firewall in $Reservations.name | Sort-Object | Get-Unique ) {
   $FirewallIps = $Reservations | Where-Object name -eq $Firewall
   $ConfigScript += "
 {% if DVMDB.name == '$Firewall' %}
 config system dhcp server"
-  foreach ($Vlan in $FirewallIps.vlan | Get-Unique) {
+  foreach ($Vlan in $FirewallIps.vlan | Sort-Object | Get-Unique) {
     $ConfigScript += "
   edit $VLAN
     config reserved-address
