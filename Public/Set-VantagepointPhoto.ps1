@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 5670f368-b618-4475-8d45-8aebdee0456b
 
@@ -32,6 +32,8 @@
 
 
 
+
+
 <#
 .DESCRIPTION
 Set the photo for a Vantagepoint employee.
@@ -55,7 +57,7 @@ function Set-VantagepointEmployeeImage {
 
   $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
   $headers.Add("Content-Type", "multipart/form-data")
-  $headers.Add("Authorization", "Bearer  $VantagepointToken")
+  $headers.Add("Authorization", "Bearer  $($Vantagepoint.Token)")
 
   $multipartContent = [System.Net.Http.MultipartFormDataContent]::new()
   $multipartFile = $Path
@@ -73,12 +75,6 @@ function Set-VantagepointEmployeeImage {
   $response | ConvertTo-Json
 }
 
-
-function Get-VantagePointEmployeeImage {
-  $response = Invoke-RestMethod "$BaseUri/employee/01458" -Method "GET" -Headers $headers
-  $response | ConvertTo-Json
-}
-
 function Set-VantagepointEmployeeImageV2 {
   param(
     [string]$Path = "C:\Users\JCook\Dennis Group\IT Department - General\Images\Types\IT-Square.jpg",
@@ -87,7 +83,7 @@ function Set-VantagepointEmployeeImageV2 {
     [string]$EmployeeKey,
     $Headers = @{
       "Content-Type"  = "application/json"
-      "Authorization" = "Bearer $global:VantagepointToken"
+      "Authorization" = "Bearer $($Vantagepoint.Token)"
     }
   )
   $Headers."Content-Type" = "multipart/form-data"
