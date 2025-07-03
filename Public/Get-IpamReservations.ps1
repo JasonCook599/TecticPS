@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID e16d5930-dc98-4b09-9ef0-f94b8e117483
 
@@ -32,10 +32,6 @@
 
 
 
-
-
-
-
 <#
 .DESCRIPTION
 Get all reservations for a given managed service.
@@ -59,7 +55,8 @@ $Subnets = Get-IpamSubnet -Session (CimSession $ComputerName) -AddressFamily $Ad
 $Return = @()
 Foreach ($Address in $Addresses) {
   $IPRange = $Address.IPRange -Split "-"
-  $Range = ($Ranges | Where-Object StartIPAddress -eq $IPRange[0] | Where-Object EndIPAddress -eq $IPRange[1])[0]
+  try { $Range = ($Ranges | Where-Object StartIPAddress -eq $IPRange[0] | Where-Object EndIPAddress -eq $IPRange[1])[0] }
+  catch { Write-Warning "$($Address.IPAddress.IPAddressToString) does not belong to a range." }
   $Subnet = ($Subnets | Where-Object NetworkID -eq $Range.NetworkID)[0]
   $Return += [pscustomobject]@{
     name        = $Range.ServiceInstance
