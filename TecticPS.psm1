@@ -4477,7 +4477,7 @@ return $Results
 function Get-IpamReservations {
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.4
 
 .GUID e16d5930-dc98-4b09-9ef0-f94b8e117483
 
@@ -4508,7 +4508,6 @@ function Get-IpamReservations {
 #> 
 
 
-
 <#
 .DESCRIPTION
 Get all reservations for a given managed service.
@@ -4534,7 +4533,8 @@ $Subnets = Get-IpamSubnet -Session (CimSession $ComputerName) -AddressFamily $Ad
 $Return = @()
 Foreach ($Address in $Addresses) {
   $IPRange = $Address.IPRange -Split "-"
-  $Range = ($Ranges | Where-Object StartIPAddress -eq $IPRange[0] | Where-Object EndIPAddress -eq $IPRange[1])[0]
+  try { $Range = ($Ranges | Where-Object StartIPAddress -eq $IPRange[0] | Where-Object EndIPAddress -eq $IPRange[1])[0] }
+  catch { Write-Warning "$($Address.IPAddress.IPAddressToString) does not belong to a range." }
   $Subnet = ($Subnets | Where-Object NetworkID -eq $Range.NetworkID)[0]
   $Return += [pscustomobject]@{
     name        = $Range.ServiceInstance
@@ -5407,7 +5407,7 @@ END {}
 function Get-NewComputerName {
 <#PSScriptInfo
 
-.VERSION 1.0.11
+.VERSION 1.0.12
 
 .GUID f0c0a88c-be5c-46ee-ab03-86272a36b5d7
 
@@ -5438,7 +5438,6 @@ function Get-NewComputerName {
 #> 
 
 
-
 <#
 .DESCRIPTION
 This script will rename the computer based on the prefix and serial number.
@@ -5460,13 +5459,24 @@ The new name to use for the computer.
 [System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("PSAvoidUsingPlainTextForPassword", "Password")]
 param(
   [string]$Prefix,
-  [string]$Serial = (Get-WmiObject win32_bios).Serialnumber,
+  [string]$Serial,
   [int]$MaxLength = 15
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
+if (!$MaxLength) { [int]$MaxLength = 15 }
+if (!$Serial) {
+  try { $Serial = (Get-WmiObject win32_bios).Serialnumber }
+  catch { $Serial = Read-Host -Prompt 'Enter serial number' }
+}
+
+if (!$Prefix) { $Prefix = Read-Host -Prompt 'Enter prefix name' }
+
 $Models = @{
-  Razer = "BY21\d{2}M(\d{8})"
+  Razer       = "BY21\d{2}M(\d{8})"
+  Framework16 = "FRAGACCPAJ(\d{7}(?:\d|\w))"
+  Framework13 = "FRAND(?:E|P)CPA(\d{8}(?:\d|\w))"
 }
 
 $Models.Keys | ForEach-Object { if ($Serial -match $Models[$_]) { $Serial = $Matches[1] } }
@@ -6360,6 +6370,56 @@ elseif (-not $EmployeeKey -and $Employee) { $EmployeeKey = $Employee }
 
 Write-Verbose "$BaseUri/employee/$EmployeeKey"
 return Invoke-RestMethod "$BaseUri/employee/$EmployeeKey" -Method GET -Headers $Headers
+}
+function Get-VantagepointEmployeeImage {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID b5d41174-c403-4a6b-8750-901549c7e7ad
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+
+
+
+<#
+.DESCRIPTION
+Get the photo for a Vantagepoint employee.
+#>
+
+param(
+  [string]$Employee,
+  $BaseUri = $global:Vantagepoint.BaseUri,
+  $Headers = $global:Vantagepoint.Headers
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+return Invoke-RestMethod "$BaseUri/employee/$Employee" -Method "GET" -Headers $Headers
 }
 function Get-VantagepointInactiveEmployeeUsers {
 <#PSScriptInfo
@@ -11409,7 +11469,7 @@ else { return $Body }
 function Set-VantagepointPhoto {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 5670f368-b618-4475-8d45-8aebdee0456b
 
@@ -11440,6 +11500,8 @@ function Set-VantagepointPhoto {
 #> 
 
 
+
+
 <#
 .DESCRIPTION
 Set the photo for a Vantagepoint employee.
@@ -11462,7 +11524,7 @@ function Set-VantagepointEmployeeImage {
 
   $headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
   $headers.Add("Content-Type", "multipart/form-data")
-  $headers.Add("Authorization", "Bearer  $VantagepointToken")
+  $headers.Add("Authorization", "Bearer  $($Vantagepoint.Token)")
 
   $multipartContent = [System.Net.Http.MultipartFormDataContent]::new()
   $multipartFile = $Path
@@ -11480,11 +11542,6 @@ function Set-VantagepointEmployeeImage {
   $response | ConvertTo-Json
 }
 
-function Get-VantagePointEmployeeImage {
-  $response = Invoke-RestMethod "$BaseUri/employee/01458" -Method "GET" -Headers $headers
-  $response | ConvertTo-Json
-}
-
 function Set-VantagepointEmployeeImageV2 {
   param(
     [string]$Path = "C:\Users\JCook\Dennis Group\IT Department - General\Images\Types\IT-Square.jpg",
@@ -11493,7 +11550,7 @@ function Set-VantagepointEmployeeImageV2 {
     [string]$EmployeeKey,
     $Headers = @{
       "Content-Type"  = "application/json"
-      "Authorization" = "Bearer $global:VantagepointToken"
+      "Authorization" = "Bearer $($Vantagepoint.Token)"
     }
   )
   $Headers."Content-Type" = "multipart/form-data"
