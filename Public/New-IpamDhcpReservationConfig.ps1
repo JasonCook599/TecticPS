@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 94788e2a-23d9-4aaf-89e0-668c62bc27e6
 
@@ -32,10 +32,6 @@
 
 
 
-
-
-
-
 <#
 .DESCRIPTION
 Build a DHCP reservation script for the given service. Currently, only FortiGate is supported.
@@ -49,6 +45,7 @@ The service to choose.
 param(
   [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName,
   $ServiceInstance,
+  [ValidateSet("MAC", "IP", "MAC+IP", IgnoreCase = $true)][string]$Hash = "MAC",
   [ValidateSet("FortiGate", IgnoreCase = $true)]$ManagedByService = "FortiGate"
 )
 
@@ -67,9 +64,17 @@ config system dhcp server"
     end
     config reserved-address"
     foreach ($Ip in $FirewallIps | Where-Object Vlan -eq $Vlan) {
+      $MD5 = [System.Security.Cryptography.MD5]::Create()
+      $MD5 = switch ($Hash) {
+        "MAC" { $MD5.ComputeHash($Ip.macBytes) }
+        "IP" { $MD5.ComputeHash($Ip.ipBytes) }
+        "MAC+IP" { $MD5.ComputeHash($Ip.macBytes + $Ip.ipBytes) }
+        Default { 0 }
+      }
+      $ID = [System.BitConverter]::ToUInt32($MD5[12..15], 0)
       $ConfigScript += "
-      edit 0
-        set ip $($Ip.Ip)
+      edit $ID
+        set ip $($Ip.ip)
         set mac $($Ip.mac)
         set description '$($Ip.description)'
       next"

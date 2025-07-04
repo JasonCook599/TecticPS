@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID e16d5930-dc98-4b09-9ef0-f94b8e117483
 
@@ -69,12 +69,23 @@ Foreach ($Address in $Addresses) {
   elseif ($Address.Description ) { $Description = $Address.Description }
   else { $Description = $null }
 
+  if ( $null -eq $Address.IpAddress.Address ) {
+    $Bytes = ((Get-IpamAddress -CimSession (CimSession $ComputerName) -AddressFamily IPv6 | Sort-Object @{e = { $_.IpAddress.Address } })[0].IpAddress).GetAddressBytes()[12..15]
+    if ([System.BitConverter]::IsLittleEndian) { [Array]::Reverse($Bytes) }
+    $ipInt = [System.BitConverter]::ToUInt32($Bytes, 0)
+  }
+  else { $ipInt = $Address.IPAddress.Address }
+
   $Subnet = ($Subnets | Where-Object NetworkID -eq $Range.NetworkID)[0]
   $Return += [PSCustomObject]@{
     name        = $Range.ServiceInstance
     vlan        = [int]($Subnet.VlanID)[0]
     ip          = $Address.IPAddress.IPAddressToString
+    ipInt       = $ipInt
+    ipBytes     = $Address.IPAddress.GetAddressBytes()
     mac         = $Address.MacAddress -replace "-", ":"
+    macInt      = [UInt32]("0x$(($Address.MacAddress -replace '-','').Substring(4,8))")
+    macBytes    = [byte[]] -split ($Address.MacAddress -replace '-', '' -replace '..', '0x$& ')
     description = $Description
   }
 }
