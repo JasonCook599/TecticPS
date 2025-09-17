@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID e16d5930-dc98-4b09-9ef0-f94b8e117483
 
@@ -32,6 +32,8 @@
 
 
 
+
+
 <#
 .DESCRIPTION
 Get all reservations for a given managed service.
@@ -59,6 +61,10 @@ if ($ServiceInstance) { $Ranges = $Ranges | Where-Object ServiceInstance -in $Se
 $Subnets = Get-IpamSubnet -Session (CimSession $ComputerName) -AddressFamily $AddressFamily
 $Return = @()
 Foreach ($Address in $Addresses) {
+  if ($null -eq $Address.MacAddress) {
+    Write-Warning "$($Address.IPAddress.IPAddressToString) does not have a MAC address set."
+    continue
+  }
   $IPRange = $Address.IPRange -Split "-"
   $Range = $null
   try { $Range = ($Ranges | Where-Object StartIPAddress -eq $IPRange[0] | Where-Object EndIPAddress -eq $IPRange[1])[0] }
