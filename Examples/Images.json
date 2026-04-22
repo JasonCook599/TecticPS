@@ -4,6 +4,7 @@
     {
       "Name": "AAD_Branding_Banner",
       "Dimensions": "280x60>",
+      "Mode": "Pad",
       "FileSize": "10KB",
       "Trim": false,
       "SupportedFormats": [
@@ -18,7 +19,7 @@
       ]
     },
     {
-      "Name": "Microsoft365_Theme",
+      "Name": "Microsoft365_Theme_Logo",
       "Dimensions": "200x48>",
       "FileSize": "10KB",
       "Trim": true,
@@ -37,7 +38,7 @@
       ]
     },
     {
-      "Name": "MicrosoftTeams_AppStore",
+      "Name": "MicrosoftTeams_AppStore_Logo",
       "Dimensions": "240x60>",
       "FileSize": "5MB",
       "Trim": true,
@@ -74,7 +75,7 @@
       ]
     },
     {
-      "Name": "Microsoft365_MessageEnctryption",
+      "Name": "Microsoft365_MessageEncryption",
       "Dimensions": "170x70>",
       "FileSize": "40KB",
       "Trim": true,
@@ -226,10 +227,89 @@
       ]
     },
     {
+      "Name": "Signature",
+      "Dimensions": "650x150>",
+      "Trim": true,
+      "SupportedFormats": [
+        ".png"
+      ],
+      "Destination": [
+        "Application"
+      ]
+    },
+    {
+      "Name": "Kaseya_Graphus",
+      "Dimensions": "400x200>",
+      "Mode": "Pad",
+      "Trim": false,
+      "SupportedFormats": [
+        ".png",
+        ".jpg"
+      ],
+      "Reference": [
+        "https://cloud.graph.us/partnerOrgsDefaultFeatures"
+      ],
+      "Destination": [
+        "Application"
+      ]
+    },
+    {
+      "Name": "Kaseya_Datto_RMM_Header",
+      "Dimensions": "134x24>",
+      "Mode": "Pad",
+      "Trim": false,
+      "SupportedFormats": [
+        ".png",
+        ".jpg",
+        ".gif"
+      ],
+      "Reference": [
+        "https://rmm.datto.com/help/de/Content/3NEWUI/Setup/Branding.htm"
+      ],
+      "Destination": [
+        "Application"
+      ]
+    },
+    {
+      "Name": "Kaseya_Datto_RMM_Report",
+      "Dimensions": "758x130>",
+      "Mode": "Pad",
+      "Trim": false,
+      "SupportedFormats": [
+        ".png",
+        ".jpg",
+        ".gif"
+      ],
+      "Reference": [
+        "https://rmm.datto.com/help/de/Content/3NEWUI/Setup/Branding.htm"
+      ],
+      "Destination": [
+        "Application"
+      ]
+    },
+    {
+      "Name": "Kaseya_Datto_RMM_Agent_Reboot",
+      "Dimensions": "260x35>",
+      "Mode": "Pad",
+      "Trim": false,
+      "SupportedFormats": [
+        ".png"
+      ],
+      "Reference": [
+        "https://rmm.datto.com/help/de/Content/3NEWUI/Setup/Branding.htm"
+      ],
+      "Destination": [
+        "Application"
+      ]
+    },
+    {
       "Name": "BMS_HeaderAndReport",
       "Dimensions": "x40>",
       "Trim": true,
       "Mode": "Pad",
+      "SupportedFormats": [
+        ".png"
+      ],
       "Destination": [
         "Application"
       ]
@@ -239,6 +319,9 @@
       "Dimensions": "x70>",
       "Trim": true,
       "Mode": "Pad",
+      "SupportedFormats": [
+        ".png"
+      ],
       "Destination": [
         "Application"
       ]
@@ -248,40 +331,68 @@
       "Dimensions": "200x52>",
       "Trim": false,
       "Mode": "Pad",
+      "SupportedFormats": [
+        ".png"
+      ],
       "Destination": [
         "Application"
       ]
     },
     {
-      "Name": "Trim",
+      "Name": "PinnacleOpen",
+      "Dimensions": "250x75>",
+      "Trim": false,
+      "Mode": "Pad",
+      "SupportedFormats": [
+        ".png",
+        ".jpg"
+      ],
+      "Reference": [
+        "https://portal.pinnacleseries.com/administration/#/admin/branding"
+      ],
+      "Destination": [
+        "Application"
+      ]
+    },
+    {
+      "Name": "Trim_Logo",
       "Trim": true,
+      "SupportedFormats": [
+        ".png"
+      ],
       "Destination": [
         "Generic",
         "Web"
       ]
     },
     {
-      "Name": "64",
+      "Name": "64_Logo",
       "Dimensions": "x64>",
       "Trim": true,
       "Mode": "Pad",
+      "SupportedFormats": [
+        ".png"
+      ],
       "Destination": [
         "Generic",
         "Web"
       ]
     },
     {
-      "Name": "128",
+      "Name": "128_Logo",
       "Dimensions": "x128>",
       "Trim": true,
       "Mode": "Pad",
+      "SupportedFormats": [
+        ".png"
+      ],
       "Destination": [
         "Generic",
         "Web"
       ]
     },
     {
-      "Name": "256",
+      "Name": "256_Logo",
       "Dimensions": "x256>",
       "Trim": true,
       "Mode": "Pad",
@@ -291,29 +402,38 @@
       ]
     },
     {
-      "Name": "512",
+      "Name": "512_Logo",
       "Dimensions": "x512>",
       "Trim": true,
       "Mode": "Pad",
+      "SupportedFormats": [
+        ".png"
+      ],
       "Destination": [
         "Generic",
         "Web"
       ]
     },
     {
-      "Name": "1024",
+      "Name": "1024_Logo",
       "Dimensions": "x1024>",
       "Trim": true,
       "Mode": "Pad",
+      "SupportedFormats": [
+        ".png"
+      ],
       "Destination": [
         "Generic"
       ]
     },
     {
-      "Name": "2048",
+      "Name": "2048_Logo",
       "Dimensions": "x2048>",
       "Trim": true,
       "Mode": "Pad",
+      "SupportedFormats": [
+        ".png"
+      ],
       "Destination": [
         "Generic",
         "Web"
@@ -334,7 +454,7 @@
       ]
     },
     {
-      "Name": "Microsoft365_Theme",
+      "Name": "Microsoft365_Theme_Banner",
       "OutExtension": ".jpg",
       "Dimensions": "1366x50>^",
       "FileSize": "15KB",
@@ -346,7 +466,7 @@
       ]
     },
     {
-      "Name": "MicrosoftTeams_AppStore",
+      "Name": "MicrosoftTeams_AppStore_Banner",
       "OutExtension": ".jpg",
       "Dimensions": "1212x100>^",
       "FileSize": "5MB",
@@ -387,6 +507,22 @@
       "Reference": [
         "https://help.ubnt.com/hc/en-us/articles/115000166827-UniFi-Guest-Network-Guest-Portal-and-Hotspot-System",
         "https://hostcheetah.com/t/ubnt-com-unifi-guest-network-guest-portal-and-hotspot-system/341"
+      ],
+      "Destination": [
+        "Application"
+      ]
+    },
+    {
+      "Name": "PinnacleBackground",
+      "Dimensions": "1367x441>",
+      "Trim": true,
+      "Mode": "Crop",
+      "SupportedFormats": [
+        ".png",
+        ".jpg"
+      ],
+      "Reference": [
+        "https://portal.pinnacleseries.com/administration/#/admin/branding"
       ],
       "Destination": [
         "Application"
@@ -700,7 +836,7 @@
       ]
     },
     {
-      "Name": "MicrosoftTeams_AppStore",
+      "Name": "MicrosoftTeams_AppStore_Square",
       "Dimensions": "32x32>",
       "FileSize": "5MB",
       "Trim": false,
@@ -857,7 +993,51 @@
       ]
     },
     {
-      "Name": "16",
+      "Name": "PinnacleCollapsed",
+      "Dimensions": "75x75>",
+      "Trim": false,
+      "Mode": "Pad",
+      "SupportedFormats": [
+        ".png",
+        ".jpg"
+      ],
+      "Reference": [
+        "https://portal.pinnacleseries.com/administration/#/admin/branding"
+      ],
+      "Destination": [
+        "Application"
+      ]
+    },
+    {
+      "Name": "UptimeRobot",
+      "Dimensions": "96x96>",
+      "FileSize": "150KB",
+      "Trim": false,
+      "Mode": "Pad",
+      "Reference": [
+        "https://uptimerobot.com/statuspage.php"
+      ],
+      "Destination": [
+        "Application"
+      ]
+    },
+    {
+      "Name": "Datto_RMM_Agent_Logo",
+      "Dimensions": "176x176>",
+      "Trim": false,
+      "Mode": "Pad",
+      "SupportedFormats": [
+        ".png"
+      ],
+      "Reference": [
+        "https://rmm.datto.com/help/de/Content/3NEWUI/Setup/Branding.htm"
+      ],
+      "Destination": [
+        "Application"
+      ]
+    },
+    {
+      "Name": "16_Icon",
       "Dimensions": "16x16>",
       "Trim": false,
       "Mode": "Pad",
@@ -867,7 +1047,7 @@
       ]
     },
     {
-      "Name": "32",
+      "Name": "32_Icon",
       "Dimensions": "32x32>",
       "Trim": false,
       "Mode": "Pad",
@@ -877,7 +1057,7 @@
       ]
     },
     {
-      "Name": "64",
+      "Name": "64_Icon",
       "Dimensions": "64x64>",
       "Trim": false,
       "Mode": "Pad",
@@ -887,7 +1067,7 @@
       ]
     },
     {
-      "Name": "128",
+      "Name": "128_Icon",
       "Dimensions": "128x128>",
       "Trim": false,
       "Mode": "Pad",
@@ -897,7 +1077,7 @@
       ]
     },
     {
-      "Name": "256",
+      "Name": "256_Icon",
       "Dimensions": "256x256>",
       "Trim": false,
       "Mode": "Pad",
@@ -907,7 +1087,7 @@
       ]
     },
     {
-      "Name": "512",
+      "Name": "512_Icon",
       "Dimensions": "512x512>",
       "Trim": false,
       "Mode": "Pad",
@@ -917,7 +1097,7 @@
       ]
     },
     {
-      "Name": "1024",
+      "Name": "1024_Icon",
       "Dimensions": "1024x1024>",
       "Trim": false,
       "Mode": "Pad",
@@ -926,7 +1106,7 @@
       ]
     },
     {
-      "Name": "2048",
+      "Name": "2048_Icon",
       "Dimensions": "2048x2048>",
       "Trim": false,
       "Mode": "Pad",
@@ -936,7 +1116,7 @@
       ]
     },
     {
-      "Name": "Trim",
+      "Name": "Trim_Icon",
       "Trim": true,
       "Destination": [
         "Generic",
