@@ -2054,7 +2054,7 @@ kill -SIGINT `$(cat /var/run/lighttpd.pid)
 function ConvertTo-OutputImages {
 <#PSScriptInfo
 
-.VERSION 1.1.10
+.VERSION 1.1.11
 
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
@@ -2062,7 +2062,7 @@ function ConvertTo-OutputImages {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
 .TAGS
 
@@ -2084,6 +2084,8 @@ function ConvertTo-OutputImages {
 
 #> 
 
+
+
 
 <#
 .DESCRIPTION
@@ -2125,8 +2127,9 @@ ForEach ($Image in $Path) {
     If ($Destination) { $Formats = $Formats | Where-Object Destination -Contains $Destination }
     $Formats | ForEach-Object {
       $count2++; Progress -Index $count2 -Total ([math]::Max(1, $Formats.count)) -Activity "Resizing $count1 of $($Path.count): $($Image.Name)" -Name $_.Name
+      if ($_.SupportedFormats) { $OutExtension = $_.SupportedFormats[0] } else { $OutExtension = $null }
       If ($PSCmdlet.ShouldProcess("$($Image.FullName) > $($_.Name)", "Convert-Image")) {
-        Convert-Image -Force:$Force -Path $Image.FullName -OutPath $OutPath -Dimensions $_.Dimensions  -Suffix ("_" + $_.Name) -Trim:$_.Trim -OutExtension $_.OutExtension -FileSize $_.FileSize -Mode $_.Mode
+        Convert-Image -Force:$Force -Path $Image.FullName -OutPath $OutPath -Dimensions $_.Dimensions  -Suffix ("_" + $_.Name) -Trim:$_.Trim -OutExtension $OutExtension -FileSize $_.FileSize -Mode $_.Mode
       }
     }
   }
@@ -8716,6 +8719,159 @@ while ($true) {
   Start-Sleep -Seconds 4
   Clear-Host
 }
+}
+function Read-IfUnset {
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID 0c0021de-c7ae-4fca-81f8-f61bc444decb
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+
+
+<#
+.SYNOPSIS
+This script will get a selection from the user.
+
+.DESCRIPTION
+This script will get a selection from the user.
+
+#>
+
+param (
+  [Parameter(ValueFromPipeline = $true)]$Parameter,
+  [Parameter(ValueFromPipeline = $true)][string]$Prompt,
+  [Parameter(ValueFromPipeline = $true)]$Default,
+  $List,
+  [switch]$Hide
+)
+
+if (Get-Variable $Parameter -ErrorAction SilentlyContinue ) {
+  $Attributes.$Parameter = (Get-Variable $Parameter).Value
+}
+else {
+  if ([string]::IsNullOrWhiteSpace($Default)) {
+    Write-Debug "Default value not specified. Using existing value."
+    $Default = $($User.$Parameter -join (","))
+  }
+  elseif ($Default) {
+    Write-Debug "Default value specified. Listing as first option."
+    $Prompt += " [" + $Default.ToString() + "]"
+  }
+
+  if ($List) {
+    Write-Debug "Getting list input from user."
+    $Attributes.$Parameter = Read-SelectionFromUser -Options $List -Prompt $Prompt -Default $Default
+  }
+  elseif (-not $Hide) {
+    Write-Debug "Getting text input from user."
+    $Response = (Read-Host -Prompt $Prompt)
+  }
+
+  if ([string]::IsNullOrWhiteSpace($Response) -and $Default) {
+    Write-Debug "Empty response. Using default option."
+    $Response = $Default
+  }
+  if (-not [string]::IsNullOrWhiteSpace($Response)) {
+    Write-Debug "Setting '$Parameter' to '$Response'"
+    $Attributes.$Parameter = $Response
+  }
+}
+}
+function Read-SelectionFromUser {
+<#PSScriptInfo
+
+.VERSION 1.0.0
+
+.GUID ca65435a-13a7-41be-8091-4316686da31c
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2025
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+
+
+<#
+.SYNOPSIS
+This script will get a selection from the user.
+
+.DESCRIPTION
+This script will get a selection from the user.
+
+#>
+
+param (
+  [Parameter(Mandatory = $true)][string[]]$Options,
+  [Parameter(Mandatory = $true)][string]$Prompt,
+  $Default
+)
+
+[int]$Response = 0;
+[bool]$ValidResponse = $false
+
+while (!($ValidResponse)) {
+  [int]$OptionNo = 0
+
+  Write-Host $Prompt -ForegroundColor DarkYellow
+  If ($Default) { $DefaultPrompt = $Default } else { $DefaultPrompt = "None" }
+  Write-Host "[0]: $DefaultPrompt"
+  foreach ($Option in $Options) {
+    $OptionNo += 1
+    Write-Host ("[$OptionNo]: {0}" -f $Option)
+  }
+
+  if ([Int]::TryParse((Read-Host), [ref]$Response)) {
+    if ($Response -eq 0) { return '' }
+    elseif ($Response -le $OptionNo) { $ValidResponse = $true }
+  }
+}
+return $Options.Get($Response - 1)
 }
 function Remove-AuthenticodeSignature {
 <#PSScriptInfo

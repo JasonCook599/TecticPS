@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.1.10
+.VERSION 1.1.11
 
 .GUID 5c162a3a-dc4b-43d5-af07-7991ae41d03b
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
 .TAGS
 
@@ -29,6 +29,8 @@
 .PRIVATEDATA
 
 #> 
+
+
 
 
 
@@ -70,8 +72,9 @@ ForEach ($Image in $Path) {
     If ($Destination) { $Formats = $Formats | Where-Object Destination -Contains $Destination }
     $Formats | ForEach-Object {
       $count2++; Progress -Index $count2 -Total ([math]::Max(1, $Formats.count)) -Activity "Resizing $count1 of $($Path.count): $($Image.Name)" -Name $_.Name
+      if ($_.SupportedFormats) { $OutExtension = $_.SupportedFormats[0] } else { $OutExtension = $null }
       If ($PSCmdlet.ShouldProcess("$($Image.FullName) > $($_.Name)", "Convert-Image")) {
-        Convert-Image -Force:$Force -Path $Image.FullName -OutPath $OutPath -Dimensions $_.Dimensions  -Suffix ("_" + $_.Name) -Trim:$_.Trim -OutExtension $_.OutExtension -FileSize $_.FileSize -Mode $_.Mode
+        Convert-Image -Force:$Force -Path $Image.FullName -OutPath $OutPath -Dimensions $_.Dimensions  -Suffix ("_" + $_.Name) -Trim:$_.Trim -OutExtension $OutExtension -FileSize $_.FileSize -Mode $_.Mode
       }
     }
   }
