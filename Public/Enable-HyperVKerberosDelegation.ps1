@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.1
+.VERSION 1.0.2
 
 .GUID 6caa3796-8c23-44fe-9441-cecfff79f023
 
@@ -50,6 +50,12 @@ Do not update the Hyper-V migration configuration.
 
 .PARAMETER SkipKerberosPurge
 Do not purge existing kerberos tickets.
+
+.LINK
+https://learn.microsoft.com/en-us/windows-server/virtualization/hyper-v/deploy/set-up-hosts-for-live-migration-without-failover-clustering
+
+.LINK
+https://charbelnemnom.com/configuring-constrained-delegation-with-kerberos-in-windows-server-2016-hyper-v-with-powershell-hyperv-ws2016/
 #>
 
 [CmdletBinding(SupportsShouldProcess = $true)]
