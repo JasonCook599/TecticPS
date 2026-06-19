@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.22
+.VERSION 1.0.23
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
 .TAGS
 
@@ -29,6 +29,8 @@
 .PRIVATEDATA
 
 #> 
+
+
 
 
 
@@ -134,7 +136,6 @@ If ($Actions -contains "ClearMailNickname" -and $PSCmdlet.ShouldProcess("Clear m
 }
 
 If ($Actions -contains "SetMailNickname" -and $PSCmdlet.ShouldProcess("Set mailNickname to SamAccountName")) {
-  return $Users
   $Users | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | ForEach-Object { Set-ADUser -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
   $Groups | Where-Object mail -ne $null | Where-Object { $_.mailNickname -ne $_.SamAccountName } | Where-Object Name -notlike "Group_*" | ForEach-Object { Set-ADGroup -Identity $_.SamAccountName -Replace @{mailNickname = $_.SamAccountName } @SetAdOptions }
 }
