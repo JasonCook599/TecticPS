@@ -2138,7 +2138,7 @@ ForEach ($Image in $Path) {
 function Copy-ToPublicDesktop {
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID f54d5874-3851-47a7-87f5-7841980e0c7a
 
@@ -2146,7 +2146,7 @@ function Copy-ToPublicDesktop {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) TectTectic
+.COPYRIGHT Copyright (c) Tectic 2026
 
 .TAGS
 
@@ -2156,7 +2156,7 @@ function Copy-ToPublicDesktop {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -2164,7 +2164,10 @@ function Copy-ToPublicDesktop {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -2273,6 +2276,71 @@ $Interfaces | ForEach-Object {
   Set-ItemProperty -Path $Path -Name NetbiosOptions -Value 2
 }
 }
+function Disable-Psv2 {
+<#PSScriptInfo
+
+.VERSION 1.0.1
+
+.GUID 97d3868c-8043-416b-9708-d6123da1fa21
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2026
+
+.TAGS
+
+.LICENSEURI
+
+.PROJECTURI
+
+.ICONURI
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS
+
+.EXTERNALSCRIPTDEPENDENCIES
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#> 
+
+
+<#
+.DESCRIPTION
+This will disable PowerShell v2. It is available to be run on startup.
+
+.PARAMETER Path
+The path of the item to copy.
+
+.LINK
+https://github.com/robwillisinfo/Disable-PSv2/blob/master/Disable-PSv2.ps1
+#>
+param ([string]$LogPath)
+if ($LogPath) { Start-Transcript -Path $LogPath }
+Write-Host "Checking to see if PowerShell v2 is currently enabled..."
+$PSv2PreCheck = dism.exe /Online /Get-Featureinfo /FeatureName:"MicrosoftWindowsPowerShellv2" | findstr "State"
+If ( -not ($PSv2PreCheck -like "State : Disabled") ) {
+  Write-Host "PowerShell v2 appears to be enabled, disabling via dism..."
+  dism.exe /Online /Disable-Feature /FeatureName:"MicrosoftWindowsPowerShellv2" /NoRestart
+  $PSv2PostCheck = dism.exe /Online /Get-Featureinfo /FeatureName:"MicrosoftWindowsPowerShellv2" | findstr "State"
+  If ( $PSv2PostCheck -like "State : Enabled" ) {
+    Write-Host "PowerShell v2 still seems to be enabled, check the log for errors: $DefaultLogLocation"
+  }
+  Else {
+    Write-Host "PowerShell v2 disabled successfully."
+  }
+}
+Else {
+  Write-Host "PowerShell v2 is already disabled, no changes will be made."
+}
+
+if ($LogPath) { Stop-Transcript }
+}
 function Disable-SelfServicePurchase {
 <#PSScriptInfo
 
@@ -2316,7 +2384,7 @@ Get-MSCommerceProductPolicies -PolicyId AllowSelfServicePurchase | ForEach-Objec
 function Disable-VantagepointEmployee {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID c2b45e52-9f16-4a88-be7c-cc9d73214369
 
@@ -2324,7 +2392,7 @@ function Disable-VantagepointEmployee {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
 .TAGS
 
@@ -2347,6 +2415,8 @@ function Disable-VantagepointEmployee {
 #> 
 
 
+
+
 <#
 .DESCRIPTION
 Disables each provided Vantagepoint employee.
@@ -2362,7 +2432,7 @@ if ($Username.count -gt 0) {
   $Username | ForEach-Object {
     If ($PSCmdlet.ShouldProcess($_, "Disabling Vantagepoint User")) {
       $Body = @{status = "I" }
-      return Invoke-RestMethod "$BaseUri/security/user/$User" -Method PUT -Headers $Headers -Body ($Body | ConvertTo-Json)
+      return Invoke-RestMethod "$BaseUri/security/user/$Username" -Method PUT -Headers $Headers -Body ($Body | ConvertTo-Json)
     }
   }
 }
