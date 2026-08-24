@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.23
+.VERSION 1.0.24
 
 .GUID d2351cd7-428e-4c43-ab8e-d10239bb9d23
 
@@ -29,6 +29,8 @@
 .PRIVATEDATA
 
 #> 
+
+
 
 
 
@@ -112,14 +114,14 @@ If ($Actions -contains "LegacyProxyAddresses" -and $PSCmdlet.ShouldProcess("Remo
     $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
     ForEach ($proxyAddress in $Remove) {
       Write-Verbose "Removing $ProxyAddress from $($_.Name)"
-      Set-ADUser -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } @SetAdOptions
+      Set-ADUser -Identity $_.SamAccountName -Remove @{'ProxyAddresses' = $ProxyAddress } @SetAdOptions
     }
   }
   $Groups | Where-Object Name -notlike "Group_*" | ForEach-Object {
     $Remove = $_.proxyaddresses | Where-Object { $_ -like "X500*" -or $_ -like "X400*" -or $_ -like $OnMicrosoft }
     ForEach ($proxyAddress in $Remove) {
       Write-Verbose "Removing $ProxyAddress from $($_.Name)"
-      Set-ADGroup -Identity $_.Name -Remove @{'ProxyAddresses' = $ProxyAddress } @SetAdOptions
+      Set-ADGroup -Identity $_.SamAccountName -Remove @{'ProxyAddresses' = $ProxyAddress } @SetAdOptions
     }
   }
 
