@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.5
+.VERSION 1.0.7
 
 .GUID 94788e2a-23d9-4aaf-89e0-668c62bc27e6
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
 .TAGS
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 Build a DHCP reservation script for the given service. Currently, only FortiGate is supported.
@@ -43,14 +47,14 @@ The computer hosting the IPAM service.
 The service to choose.
 #>
 param(
-  [string][Parameter(Position = 0, Mandatory = $true)]$ComputerName,
+  [string][Parameter(Position = 0, Mandatory = $false)]$ComputerName,
   $ServiceInstance,
   [ValidateSet("MAC", "IP", "MAC+IP", IgnoreCase = $true)][string]$Hash = "MAC",
-  [ValidateSet("FortiGate", IgnoreCase = $true)]$ManagedByService = "FortiGate"
+  [ValidateSet("FortiGate", IgnoreCase = $true)]$ManagedByService = "FortiGate",
+  $Reservations = (Get-IpamReservations -ManagedByService $ManagedByService -ComputerName $ComputerName -ServiceInstance $ServiceInstance)
 )
 
 $ConfigScript = ""
-$Reservations = Get-IpamReservations -ManagedByService $ManagedByService -ComputerName $ComputerName -ServiceInstance $ServiceInstance
 foreach ($Firewall in $Reservations.name | Sort-Object | Get-Unique ) {
   $FirewallIps = $Reservations | Where-Object name -eq $Firewall
   $ConfigScript += "
