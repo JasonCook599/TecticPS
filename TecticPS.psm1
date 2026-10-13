@@ -5618,7 +5618,7 @@ END {}
 function Get-NetboxReservations {
 <#PSScriptInfo
 
-.VERSION 1.0.2
+.VERSION 1.0.3
 
 .GUID 0fef518a-4c3a-40e1-ad0c-95c442574793
 
@@ -5648,8 +5648,6 @@ function Get-NetboxReservations {
 
 #> 
 
-
-
 
 <#
 .DESCRIPTION
@@ -5758,18 +5756,17 @@ $DhcpMacAddresses = (Invoke-RestMethod "$baseUrl/api/dcim/interfaces/" -Body @{
   } -Method 'GET' -Headers $headers).results | Where-Object mac_address -ne $null
 
 foreach ($Prefix in $DhcpPrefixes ) {
-  Write-Verbose "Getting addresses in $($Prefix.prefix) configured for DHCP."
+  Write-Verbose "[$($Prefix.prefix)] Getting addresses configured for DHCP."
   $PrefixDhcpAddresses = $DhcpAddresses | Where-Object { Test-IpAddressInSubnet -IpAddresses $_.ip -Subnets $Prefix.prefix }
 
   foreach ($Address in $PrefixDhcpAddresses) {
-    Write-Verbose "Check for an interface assigned to $($Address.address)"
+    Write-Verbose "[$($Address.ip)] Checking for assigned interface."
     if ($null -eq $Address.interfaceId) {
-      Write-Warning "No interface assigned for $($Address.address)"
+      Write-Warning "[$($Address.ip)] No interface assigned."
       continue
     }
     else {
-      Write-Verbose "Get MAC address assigned to $($Address.address)"
-      $Address
+      Write-Verbose "[$($Address.ip)] Getting assigned MAC address."
       $Mac = ($DhcpMacAddresses | Where-Object url -eq $Address.assigned_object_url).mac_address
       try { 
         if ($Mac -notmatch '^([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})$') { $Mac = $null ; throw "Invalid MAC Address" }
@@ -5777,12 +5774,12 @@ foreach ($Prefix in $DhcpPrefixes ) {
       catch { Write-Warning "Failed to get mac address for $($Address.address)" }
       
     
-      Write-Verbose "Returning reservation object."
+      Write-Verbose "[$($Address.ip)] Returning reservation object."
       return [PSCustomObject]@{
         name        = $Prefix.dhcpserver
         vlan        = $Prefix.vid
         ip          = $Address.ip
-        ipBytes     = $IP.GetAddressBytes()
+        ipBytes     = $Address.ip.GetAddressBytes()
         mac         = $Mac
         macBytes    = [byte[]] -split ($Mac -replace ':', '' -replace '..', '0x$& ')
         description = $Address.dns_name
