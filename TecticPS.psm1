@@ -10344,7 +10344,7 @@ If ($Actions -contains "SetTelephoneNumber" -and $PSCmdlet.ShouldProcess("Set te
 function Repair-VmPermissions {
 <#PSScriptInfo
 
-.VERSION 1.0.4
+.VERSION 1.0.5
 
 .GUID 8bd63288-3b9f-44dc-bc34-c25aea4b5452
 
@@ -10352,7 +10352,7 @@ function Repair-VmPermissions {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2026
 
 .TAGS
 
@@ -10362,7 +10362,7 @@ function Repair-VmPermissions {
 
 .ICONURI
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
 .REQUIREDSCRIPTS
 
@@ -10370,7 +10370,10 @@ function Repair-VmPermissions {
 
 .RELEASENOTES
 
-#>
+.PRIVATEDATA
+
+#> 
+
 
 <#
 .DESCRIPTION
@@ -10379,10 +10382,10 @@ This will repair VM permission to allow the VM to start.
 .LINK
 https://foxdeploy.com/2016/04/05/fix-hyper-v-account-does-not-have-permission-error/
 #>
+param ($VMs = (Get-VM))
 
 Requires -Modules NTFSSecurity
 
-$VMs = Get-VM
 ForEach ($VM in $VMs) {
   $disks = Get-VMHardDiskDrive -VMName $VM.Name
   Write-Output "This VM $($VM.Name), contains $($disks.Count) disks, checking permissions..."
