@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID e16d5930-dc98-4b09-9ef0-f94b8e117483
 
@@ -8,7 +8,7 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
 .TAGS
 
@@ -34,12 +34,17 @@
 
 
 
+
+
 <#
 .DESCRIPTION
 Get all reservations for a given managed service.
 
 .PARAMETER ComputerName
 The computer hosting the IPAM service.
+
+.PARAMETER SkipExpired
+When specified, it will skip all expired IP addresses.
 
 .PARAMETER ManagedByService
 The service to choose.
@@ -49,10 +54,12 @@ param(
   [string]$ManagedByService,
   [string]$AssignmentType = "Reserved",
   $ServiceInstance,
+  [switch]$SkipExpired,
   [ValidateSet("IPv4", "IPv6")][string]$AddressFamily = "IPv4"
 )
 
 $Addresses = Get-IpamAddress -CimSession (CimSession $ComputerName) -AddressFamily $AddressFamily | Where-Object AssignmentType -like Reserved | Sort-Object @{e = { $_.IpAddress.Address } }
+if ($SkipExpired) { $Addresses = $Addresses | Where-Object ExpiryStatus -ne Expired }
 if ($ServiceInstance) { $Addresses = $Addresses | Where-Object ServiceInstance -in $ServiceInstance }
 
 $Ranges = Get-IpamRange -Session (CimSession $ComputerName) -AddressFamily $AddressFamily | Where-Object ManagedByService -eq $ManagedByService
