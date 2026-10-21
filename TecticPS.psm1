@@ -1876,7 +1876,7 @@ return $Output
 function ConvertTo-EndpointCertificate {
 <#PSScriptInfo
 
-.VERSION 2.0.5
+.VERSION 2.0.6
 
 .GUID c3469cd9-dc7e-4a56-88f2-d896c9baeb21
 
@@ -1884,7 +1884,7 @@ function ConvertTo-EndpointCertificate {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
 .TAGS
 
@@ -1907,12 +1907,14 @@ function ConvertTo-EndpointCertificate {
 #> 
 
 
+
+
 <#
     .SYNOPSIS
     This script will convert a PFX certificate for use with various services.
 
     .DESCRIPTION
-    This script will convert a PFX certificate for use with various services. If will also provide instructions for any system that has specific requirements for setup. This script requires & .\openssl.exe  to be available on the computer.
+    This script will convert a PFX certificate for use with various services. If will also provide instructions for any system that has specific requirements for setup. This script requires & .\openssl  to be available on the computer.
 
     .PARAMETER Path
     This is the certificate file which will be converted. This option is required.
@@ -1940,15 +1942,15 @@ ForEach ($Certificate in $Certificates) {
     $Prefix = $Prefix + [System.IO.Path]::GetFileNameWithoutExtension($Certificate.FullName) + "_"
     $Path = $Certificate.FullName
 
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -out "$Prefix`PEM.txt" -nodes
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -out "$Prefix`PEM_Key.txt" -nodes
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert.txt" -nodes
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert_NoNodes.txt"
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert.cer" -nodes
-    openssl.exe pkcs12 -passin "pass:$Password" -export -in "$Prefix`PEM_Cert.txt" -inkey "$Prefix`PEM_Key.txt" -certfile "$Prefix`PEM_Cert.txt" -out "$Prefix`Unifi.p12" -name unifi -password pass:aircontrolenterprise
+    openssl pkcs12 -passin "pass:$Password" -in "$Path" -out "$Prefix`PEM.txt" -nodes
+    openssl pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -out "$Prefix`PEM_Key.txt" -nodes
+    openssl pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert.txt" -nodes
+    openssl pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert_NoNodes.txt"
+    openssl pkcs12 -passin "pass:$Password" -in "$Path" -nokeys -out "$Prefix`PEM_Cert.cer" -nodes
+    openssl pkcs12 -passin "pass:$Password" -export -in "$Prefix`PEM_Cert.txt" -inkey "$Prefix`PEM_Key.txt" -certfile "$Prefix`PEM_Cert.txt" -out "$Prefix`Unifi.p12" -name unifi -password pass:aircontrolenterprise
 
-    openssl.exe pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -nodes | openssl.exe  rsa -out "$Prefix`RSA_Key.txt"
-    openssl.exe rsa  -passin "pass:$Password" -in "$Prefix`PEM.txt" -pubout -out "$Prefix`RSA_Pub.txt"
+    openssl pkcs12 -passin "pass:$Password" -in "$Path" -nocerts -nodes | openssl  rsa -out "$Prefix`RSA_Key.txt"
+    openssl rsa  -passin "pass:$Password" -in "$Prefix`PEM.txt" -pubout -out "$Prefix`RSA_Pub.txt"
 
     if ($Services -contains "Windows") {
       Write-Output "Windows: Run the following commands.
@@ -4659,7 +4661,7 @@ return $Results
 function Get-IpamReservations {
 <#PSScriptInfo
 
-.VERSION 1.0.8
+.VERSION 1.0.10
 
 .GUID e16d5930-dc98-4b09-9ef0-f94b8e117483
 
@@ -4667,7 +4669,7 @@ function Get-IpamReservations {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
 .TAGS
 
@@ -4691,13 +4693,15 @@ function Get-IpamReservations {
 
 
 
-
 <#
 .DESCRIPTION
 Get all reservations for a given managed service.
 
 .PARAMETER ComputerName
 The computer hosting the IPAM service.
+
+.PARAMETER SkipExpired
+When specified, it will skip all expired IP addresses.
 
 .PARAMETER ManagedByService
 The service to choose.
@@ -4707,12 +4711,14 @@ param(
   [string]$ManagedByService,
   [string]$AssignmentType = "Reserved",
   $ServiceInstance,
+  [switch]$SkipExpired,
   [ValidateSet("IPv4", "IPv6")][string]$AddressFamily = "IPv4"
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 $Addresses = Get-IpamAddress -CimSession (CimSession $ComputerName) -AddressFamily $AddressFamily | Where-Object AssignmentType -like Reserved | Sort-Object @{e = { $_.IpAddress.Address } }
+if ($SkipExpired) { $Addresses = $Addresses | Where-Object ExpiryStatus -ne Expired }
 if ($ServiceInstance) { $Addresses = $Addresses | Where-Object ServiceInstance -in $ServiceInstance }
 
 $Ranges = Get-IpamRange -Session (CimSession $ComputerName) -AddressFamily $AddressFamily | Where-Object ManagedByService -eq $ManagedByService
