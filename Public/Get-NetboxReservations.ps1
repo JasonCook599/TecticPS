@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.5
 
 .GUID 0fef518a-4c3a-40e1-ad0c-95c442574793
 
@@ -32,6 +32,10 @@
 
 
 
+
+
+
+
 <#
 .DESCRIPTION
 Get all DHCP reservations in Netbox.
@@ -47,10 +51,6 @@ param (
   $baseUrl,
   $token
 )
-$headers = New-Object "System.Collections.Generic.Dictionary[[String],[String]]"
-$headers.Add("Accept", "application/json")
-$headers.Add("Authorization", "Token $Token")
-
 
 function Test-IpAddressInSubnet {
   <#
@@ -120,26 +120,70 @@ function Test-IpAddressInSubnet {
   }
 }
 
+function Get-NetboxResult {
+  param ( $Endpoint, 
+    $Headers = @{
+      "Accept"        = "application/json"
+      "Authorization" = "Token $Token"
+    },
+    $Body,
+    $Method = "Get",
+    $Uri = "$baseUrl/api/$Endpoint/",
+    [int]$limit = 1000
+  )
+
+  
+  if ($null -eq $Body.limit) {
+    if ($null -eq $Body) { 
+      Write-Verbose "[$Endpoint] Empty body. Setting result limit."
+      $Body = @{limit = $limit } 
+    } 
+    else { 
+      Write-Verbose "[$Endpoint] Empty limit in body. Setting result limit."
+      $Body.limit = $limit 
+    }
+  }
+  
+  Write-Verbose "[$Endpoint] Getting all results."
+  do {
+    $Response = Invoke-RestMethod -Uri $Uri -Headers $Headers -Method $Method -Body $Body
+    if ($Response.results) {
+      $Results += $Response.results
+    }
+    $Uri = $Response.next
+  } while ($null -ne $Uri)
+  return $Results
+}
+
 Write-Verbose "Getting prefixes configured for DHCP."
-$DhcpPrefixes = (Invoke-RestMethod "$baseUrl/api/ipam/prefixes/" -Body @{
-    cf_dhcpserver__empty = $false
-    fields               = "id,prefix,vlan,custom_fields"
-  } -Method 'GET' -Headers $headers ).results | Select-Object id, prefix, @{Name = "vid"; Expression = { $_.vlan.vid } }, @{Name = "dhcpserver"; Expression = { $_.custom_fields.dhcpserver.name } }
+$DhcpPrefixes = Get-NetboxResult -Endpoint "ipam/prefixes" -Body @{
+  cf_dhcpserver__empty = $false
+  fields               = "id,prefix,vlan,custom_fields"
+} | Select-Object id, prefix, @{Name = "vid"; Expression = { $_.vlan.vid } }, @{Name = "dhcpserver"; Expression = { $_.custom_fields.dhcpserver.name } }
  
 Write-Verbose "Getting addresses configured for DHCP."
-$DhcpAddresses = (Invoke-RestMethod "$baseUrl/api/ipam/ip-addresses/" -Body @{
-    status = "dhcp"
-    fields = "address,assigned_object,dns_name,assigned_object"
-  } -Method 'GET' -Headers $headers).results | Select-Object address, dns_name, @{Name = "interfaceId"; Expression = { $_.assigned_object.id } }, @{Name = "ip"; Expression = { [ipaddress]($_.address -split "/")[0] } }, @{Name = "assigned_object_url"; Expression = { $_.assigned_object.url } }
+$DhcpAddresses = Get-NetboxResult -Endpoint "ipam/ip-addresses" -Body @{
+  status = "dhcp"
+  fields = "address,assigned_object,dns_name,assigned_object"
+} | Select-Object address, dns_name, @{Name = "interfaceId"; Expression = { $_.assigned_object.id } }, @{Name = "ip"; Expression = { [ipaddress]($_.address -split "/")[0] } }, @{Name = "assigned_object_url"; Expression = { $_.assigned_object.url } }
 
-Write-Verbose "Get interfaces configured for DHCP."
-$DhcpMacAddresses = (Invoke-RestMethod "$baseUrl/api/dcim/interfaces/" -Body @{
-    parent = $Prefix.prefix
-    status = "dhcp"
-    fields = "id,url,mac_address,url"
-  } -Method 'GET' -Headers $headers).results | Where-Object mac_address -ne $null
+Write-Verbose "Get device interfaces."
+$DhcpMacAddressesDevices = Get-NetboxResult -Endpoint "dcim/interfaces" -Body @{
+  mac_address__n = ""
+  fields         = "id,url,mac_address,url"
+} | Where-Object mac_address -ne $null
+
+Write-Verbose "Get VM interfaces."
+$DhcpMacAddressesVMs = Get-NetboxResult -Endpoint "virtualization/interfaces" -Body @{
+  mac_address__n = ""
+  fields         = "id,url,mac_address,url"
+} | Where-Object mac_address -ne $null
+
+$DhcpMacAddresses = $DhcpMacAddressesDevices + $DhcpMacAddressesVMs
 
 
+
+$Results = @()
 foreach ($Prefix in $DhcpPrefixes ) {
   Write-Verbose "[$($Prefix.prefix)] Getting addresses configured for DHCP."
   $PrefixDhcpAddresses = $DhcpAddresses | Where-Object { Test-IpAddressInSubnet -IpAddresses $_.ip -Subnets $Prefix.prefix }
@@ -153,14 +197,12 @@ foreach ($Prefix in $DhcpPrefixes ) {
     else {
       Write-Verbose "[$($Address.ip)] Getting assigned MAC address."
       $Mac = ($DhcpMacAddresses | Where-Object url -eq $Address.assigned_object_url).mac_address
-      try { 
-        if ($Mac -notmatch '^([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})$') { $Mac = $null ; throw "Invalid MAC Address" }
-      }
-      catch { Write-Warning "Failed to get mac address for $($Address.address)" }
+      try { if ($Mac -notmatch '^([0-9A-Fa-f]{2}[:-]?){5}([0-9A-Fa-f]{2})$') { $Mac = $null ; throw "Invalid MAC Address" } }
+      catch { Write-Warning "[$($Address.ip)] Failed to get MAC address." ; continue }
       
     
       Write-Verbose "[$($Address.ip)] Returning reservation object."
-      return [PSCustomObject]@{
+      $Results += [PSCustomObject]@{
         name        = $Prefix.dhcpserver
         vlan        = $Prefix.vid
         ip          = $Address.ip
@@ -172,3 +214,4 @@ foreach ($Prefix in $DhcpPrefixes ) {
     }
   }
 }
+return $Results
