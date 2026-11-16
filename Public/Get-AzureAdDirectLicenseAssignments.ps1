@@ -30,10 +30,6 @@
 
 #> 
 
-#Requires -Module MSOnline
-
-
-
 <#
 .DESCRIPTION
 Script to cleanup direct Azure AD license assignments. This script will only remove a direct assignment if there is an associated group assignment. Before running the script make sure that you have the MSOnline PowerShell module installed. Connect to MSOnline with: Connect-MsolService
@@ -57,6 +53,8 @@ param(
   $Users = (Get-MsolUser -All -ErrorAction Stop),
   $Skus = ("ATP_ENTERPRISE", "ATP_ENTERPRISE", "ENTERPRISEPACK")
 )
+
+Requires -Module MSOnline
 
 $Results = @()
 

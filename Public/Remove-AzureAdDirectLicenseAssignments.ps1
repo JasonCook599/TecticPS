@@ -28,11 +28,7 @@
 
 .PRIVATEDATA
 
-#> 
-
-#Requires -Module MSOnline
-
-
+#>
 
 <#
 .DESCRIPTION
@@ -58,6 +54,7 @@ param(
   $Skus = (Get-MgSubscribedSku)
 )
 
+Requires -Module MSOnline
 $Results = @()
 
 $Users | ForEach-Object {
