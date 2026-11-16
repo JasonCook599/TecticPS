@@ -30,7 +30,6 @@ function AuthN {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -96,8 +95,6 @@ function CimSession {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -148,7 +145,6 @@ function GetAADPendingGuests {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -205,7 +201,6 @@ function GetAADSignIns {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -268,7 +263,6 @@ function GetAADUserSignInActivity {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -333,7 +327,6 @@ function InstallModule {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -547,7 +540,6 @@ function Requires {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -700,7 +692,6 @@ function SelectPackage {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -773,7 +764,6 @@ function Add-AllowedDmaDevices {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -846,8 +836,6 @@ function Add-BluredPillarBars {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .SYNOPSIS
@@ -934,7 +922,6 @@ function Add-ComputerToDomain {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -1005,8 +992,6 @@ function Add-GroupEmail {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .SYNOPSIS
@@ -1070,8 +1055,6 @@ function Add-Path {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -1150,8 +1133,6 @@ function Add-Signature {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -1440,7 +1421,6 @@ function Connect-Office365 {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -1650,7 +1630,6 @@ function Convert-Image {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -2169,7 +2148,6 @@ function Copy-ToPublicDesktop {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -2310,7 +2288,6 @@ function Disable-Psv2 {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -2471,7 +2448,6 @@ function Enable-AdUserPermissionInheritance {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -2551,7 +2527,6 @@ function Enable-HyperVKerberosDelegation {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -2660,8 +2635,6 @@ function Enable-LicenseOptions {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -3529,7 +3502,6 @@ function Get-AdComputerInfo {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -3600,7 +3572,6 @@ function Get-ADInfo {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -3755,7 +3726,6 @@ function Get-AdUserInfo {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -3963,7 +3933,6 @@ function Get-AzureAdMfaStatus {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -4024,7 +3993,6 @@ function Get-AzureAdUserInfo {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -4123,8 +4091,6 @@ function Get-BitlockerStatus {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .SYNOPSIS
@@ -4187,7 +4153,6 @@ function Get-DuplicateFileNames {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -4288,7 +4253,6 @@ function Get-ExchangePhoto {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -4400,7 +4364,6 @@ function Get-FirmwareType {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -4686,8 +4649,6 @@ function Get-IpamReservations {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -5016,7 +4977,6 @@ function Get-LapsInfo {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -5486,7 +5446,6 @@ function Get-MsGraphAuthenticationMethod {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -6093,7 +6052,6 @@ function Get-RecentEvents {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -6164,7 +6122,6 @@ function Get-SecureBoot {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -6312,8 +6269,6 @@ function Get-StaleAADGuestAccounts {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .SYNOPSIS
@@ -6473,7 +6428,6 @@ function Get-TpmInfo {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -6643,8 +6597,6 @@ function Get-UserInfo {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -6726,7 +6678,6 @@ function Get-VantagepointCodetable {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -6773,7 +6724,6 @@ function Get-VantagepointEmployee {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -6877,7 +6827,6 @@ function Get-VantagepointInactiveEmployeeUsers {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -6921,7 +6870,6 @@ function Get-VantagepointToken {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -6992,7 +6940,6 @@ function Get-VantagepointUsers {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -7229,8 +7176,6 @@ function Import-Ipam {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -7425,7 +7370,6 @@ function Initialize-Workstation {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -8820,8 +8764,6 @@ function New-IpamDhcpReservationConfig {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -8914,8 +8856,6 @@ function New-Password {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -8985,8 +8925,6 @@ function New-RandomCharacters {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -9146,7 +9084,6 @@ function Read-IfUnset {
 
 #>
 
-
 <#
 .SYNOPSIS
 This script will get a selection from the user.
@@ -9228,7 +9165,6 @@ function Read-SelectionFromUser {
 .PRIVATEDATA
 
 #>
-
 
 <#
 .SYNOPSIS
@@ -9557,8 +9493,6 @@ function Remove-GroupEmail {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .SYNOPSIS
@@ -9743,8 +9677,6 @@ function Remove-OldFolders {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .SYNOPSIS
@@ -9866,7 +9798,6 @@ function Remove-UserPASSWD_NOTREQD {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -10191,8 +10122,6 @@ function Remove-VsResistInstallFiles {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .SYNOPSIS
@@ -10408,7 +10337,6 @@ function Repair-VmPermissions {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -10908,7 +10836,6 @@ function Save-Password {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -10967,7 +10894,6 @@ function Search-Registry {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -11121,7 +11047,6 @@ function Set-AdPhoto {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -11209,7 +11134,6 @@ function Set-ADUserPrimaryGroup {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 
@@ -11311,7 +11235,6 @@ function Set-AzureAdPhoto {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -11450,8 +11373,6 @@ function Set-ComputerName {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -11531,7 +11452,6 @@ function Set-DefaultWallpapers {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -12021,7 +11941,6 @@ function Set-VantagepointEmployee {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -12383,7 +12302,6 @@ function Show-BitlockerEncryptionStatus {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -12590,8 +12508,6 @@ function Start-WindowsActivation {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -12665,8 +12581,6 @@ function Stop-ForKey {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .SYNOPSIS
@@ -13753,7 +13667,6 @@ function Test-VoipMs {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .SYNOPSIS
@@ -13972,8 +13885,6 @@ function Update-MerakiSwitchPortNames {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -14450,7 +14361,6 @@ function Wait-ForKey {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
