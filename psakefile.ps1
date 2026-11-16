@@ -14,17 +14,21 @@ Task UpdatePSScriptInfo {
     $count++ ; Progress -Index $count -Total $SourceScripts.count -Activity "Checking scripts for changes" -Name $_.Name
     $GitStatus = git status $_.FullName -s --ignored
     if ($null -ne $GitStatus) {
+      $PSScriptFileInfo = $null
+      $PSScriptFileInfo = Get-PSScriptFileInfo -Path $_.FullName
+
       Write-Verbose "$($_.Name) was changed."
       Write-Debug "$($_.Name): Incrementing build number."
-      [version]$Version = (Test-ScriptFileInfo -Path $_.FullName).Version
+      
+      [version]$Version = $PSScriptFileInfo.ScriptMetadataComment.Version.ToString()
       [version]$Version = "{0}.{1}.{2}" -f $Version.Major, $Version.Minor, ($Version.Build + 1)
 
       Write-Debug "$($_.Name): Updating copyright year to current year"
-      $Copyright = (Test-ScriptFileInfo  $_.FullName).Copyright -replace "^Copyright \(c\) Tectic(.*)$", "Copyright (c) Tectic $((Get-Date).Year)" -replace "^Copyright \(c\) Tectic(.*)$", "Copyright (c) Tectic $((Get-Date).Year)"
+      $Copyright = (Get-PSScriptFileInfo  $_.FullName).ScriptMetadataComment.Copyright -replace "^Copyright \(c\) Tectic(.*)$", "Copyright (c) Tectic $((Get-Date).Year)" -replace "^Copyright \(c\) Tectic(.*)$", "Copyright (c) Tectic $((Get-Date).Year)"
       $CopyrightString = $Copyright -join "`n"
 
       Write-Debug "$($_.Name): Updating script info"
-      Update-ScriptFileInfo -Path $_.FullName -Version $Version -Copyright $CopyrightString
+      Update-PSScriptFileInfo -Path $_.FullName -Version $Version -Copyright $CopyrightString
 
       Write-Debug "$($_.Name): Removing superfluous blank lines"
       $ScriptContent = Remove-BlankLines -String (Get-Content $_ -Raw)
@@ -48,10 +52,10 @@ Task TestScriptFileInfo {
     $count++ ; Progress -Index $count -Total $SourceScripts.count -Activity "Checking scripts for errors" -Name $_.Name
     $Result = New-Object PSObject
     $Result | Add-Member -NotePropertyName Name -NotePropertyValue ([System.IO.Path]::GetFileNameWithoutExtension($_.Name))
-    try { $Result = Test-ScriptFileInfo -Path $_.FullName }
+    try { $Result = Test-PSScriptFileInfo -Path $_.FullName }
     catch { $Result | Add-member -NotePropertyName Error -NotePropertyValue $_.Exception.Message }
     finally {
-      if ($null -eq (Test-ScriptFileInfo  $_.FullName).Copyright) {
+      if ($null -eq (Get-PSScriptFileInfo  $_.FullName).ScriptMetadataComment.Copyright) {
         $Result | Add-Member -NotePropertyName Error -NotePropertyValue "Missing copyright statement"
       }
       $ScriptFileInfo += $Result
