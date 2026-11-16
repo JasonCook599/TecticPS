@@ -112,8 +112,8 @@ Task ExportToPsm1 {
 
 Task UpdateManifest {
   # RegEx matches files like Verb-Noun.ps1 only, not psakefile.ps1 or *-*.Tests.ps1
-  $FunctionNames = (Get-ChildItem -Recurse | Where-Object { $_.Name -match "^[^\.]+-[^\.]+\.ps1$" }).BaseName
-  $FunctionNames += (Get-ChildItem -Path Private -Recurse | Where-Object { $_.Name -match "^^[^\.]+\.ps1$" }).BaseName
+  $FunctionNames = (Get-ChildItem -Path src\Public\*.ps1 -Recurse | Where-Object { $_.Name -match "^[^\.]+-[^\.]+\.ps1$" }).BaseName
+  $FunctionNames += (Get-ChildItem -Path src\Private\*.ps1 -Recurse | Where-Object { $_.Name -match "^^[^\.]+\.ps1$" }).BaseName
   $FunctionNames += $SourceModules | ForEach-Object {
     $ast = [System.Management.Automation.Language.Parser]::ParseFile($file.FullName, [ref] $null, [ref] $null)
     if ($ast.EndBlock.Statements.Name) {
