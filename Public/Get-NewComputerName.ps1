@@ -30,14 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
-
-
 <#
 .DESCRIPTION
 This script will rename the computer based on the prefix and serial number.
