@@ -2,11 +2,11 @@ Task default -depends ImportModule, TestScriptFileInfo, UpdatePSScriptInfo, Test
 Task quick -depends ExportToPsm1, UpdateManifest
 
 $ModuleName = "TecticPS"
-$ModuleFile = $ModuleName + ".psm1"
-$ModuleManifest = $ModuleName + ".psd1"
+$ModuleFile = "dist\$ModuleName.psm1"
+$ModuleManifest = "dist\$ModuleName.psd1"
 try { [System.Security.Cryptography.X509Certificates.X509Certificate]$Certificate = ((Get-ChildItem cert:currentuser\my\ -CodeSigningCert | Sort-Object NotBefore -Descending)[0]) } catch { $Certificate = $null }
 $SourceModules = Get-ChildItem -Path *.psm1 -ErrorAction SilentlyContinue -Recurse | Where-Object Name -ne $ModuleFile
-$SourceScripts = Get-ChildItem -Path *.ps1 -ErrorAction SilentlyContinue -Recurse | Where-Object { ($_.Name -ne "psakefile.ps1") -and ($_.Name -ne "TecticPSDefaults.ps1") -and ($_.Name -ne "Profile.ps1") }
+$SourceScripts = Get-ChildItem -Path .\src\*.ps1 -ErrorAction SilentlyContinue -Recurse | Where-Object { ($_.Name -ne "psakefile.ps1") -and ($_.Name -ne "TecticPSDefaults.ps1") -and ($_.Name -ne "Profile.ps1") }
 
 Task UpdatePSScriptInfo {
   $count = 0
