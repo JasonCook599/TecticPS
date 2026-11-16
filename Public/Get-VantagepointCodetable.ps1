@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 Get the specified Vantagepoint codet able.

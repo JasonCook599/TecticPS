@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .SYNOPSIS
 This script removes the files leftover from a VCRedist from VC++ 2008 install.

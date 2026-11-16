@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 Get Vantagepoint employee(s).

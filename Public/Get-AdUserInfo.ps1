@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 The script will get information about users from Active Directory.

@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 Enable permission interitance for the specified users.

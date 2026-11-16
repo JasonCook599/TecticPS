@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .DESCRIPTION
 Get all reservations for a given managed service.

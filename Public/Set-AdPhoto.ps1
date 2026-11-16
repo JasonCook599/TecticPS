@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 This will set Active Directory thumbnailPhoto from matching files in the specified directory.

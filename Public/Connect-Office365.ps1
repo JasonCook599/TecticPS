@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 This script will connect to various Office 365 services.

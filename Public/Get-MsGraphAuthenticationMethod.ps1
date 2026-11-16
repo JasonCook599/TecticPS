@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 List MFA Authentication Methods for users using Graph API. A session using Connect-Graph must be open as a requirement.

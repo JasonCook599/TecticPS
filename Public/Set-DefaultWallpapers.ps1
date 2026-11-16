@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 Change the default Windows wallpaper for new users and copies wallpapers to system folder.

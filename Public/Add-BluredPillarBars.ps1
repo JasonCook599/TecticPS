@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .SYNOPSIS
 This script will using ImageMagick to add blurred pillar bars to a set of images.

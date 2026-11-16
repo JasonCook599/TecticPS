@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 Searches registry key names, value names, and value data (limited).

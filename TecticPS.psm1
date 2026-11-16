@@ -3844,7 +3844,7 @@ return [ADSI]"LDAP://<SID=$Sid>"
 function Get-AzureAdDirectLicenseAssignments {
 <#PSScriptInfo
 
-.VERSION 2.0.5
+.VERSION 2.0.6
 
 .GUID f05dd4da-b51c-41e0-9bc2-92888c536c8e
 
@@ -3852,46 +3852,40 @@ function Get-AzureAdDirectLicenseAssignments {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
 .PRIVATEDATA
 
-#> 
-
-
-
+#>
 <#
+
 .DESCRIPTION
 Script to cleanup direct Azure AD license assignments. This script will only remove a direct assignment if there is an associated group assignment. Before running the script make sure that you have the MSOnline PowerShell module installed. Connect to MSOnline with: Connect-MsolService
 
 .PARAMETER WhatIf
 Predict changes
-
 .PARAMETER SaveReport
 Whether to save the report to the script location.
-
 .LINK
 https://github.com/nicolonsky/Techblog/tree/master/CleanupAzureADLicensing
-
 .LINK
 https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-groups-migrate-users
-
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
@@ -3901,6 +3895,8 @@ param(
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
+Requires -Module MSOnline
 
 $Results = @()
 
@@ -5735,7 +5731,7 @@ return $Results
 function Get-NetboxResult {
 <#PSScriptInfo
 
-.VERSION 1.0.10
+.VERSION 1.0.16
 
 .GUID 0fef518a-4c3a-40e1-ad0c-95c442574793
 
@@ -5745,70 +5741,72 @@ function Get-NetboxResult {
 
 .COPYRIGHT Copyright (c) Tectic 2026
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
 .PRIVATEDATA
 
-#> 
-
-
-
-
+#>
 <#
+
 .DESCRIPTION
 Get all DHCP reservations in Netbox.
 
 .PARAMETER baseUrl
 The base URL for the netbox API
-
 .PARAMETER token
 The API token used for authentication.
-
 .PARAMETER Endpoint
 The REST API endpoint you want to hit.
-
 .PARAMETER Body
 Body request parameters.
-
 .PARAMETER Method
 HTTP method. Defaults to GET.
-
 .PARAMETER Headers
 HTTP headers for the request.
-
 .PARAMETER Uri
 The full URI to hit. By default generated from baseUrl and Endpoint
 #>
+[CmdletBinding(SupportsShouldProcess = $true)]
 param (
   $baseUrl,
   $token,
   $Endpoint, 
   $Body,
   $Method = "Get",
-  $Headers = @{
-    "Accept"        = "application/json"
-    "Authorization" = "Token $Token"
-  },
-  $Uri = "$baseUrl/api/$Endpoint/",
+  $Accept = "application/json",
+  $Headers,
+  $Uri,
   [int]$limit = 1000
 )
 
+if ($null -eq $Headers) {
+  $Headers = @{
+    "Accept"        = $Accept
+    "Authorization" = "Token $token"
+  }
+}
+
+if ($Method -in @("Post", "Put", "Patch") -and -not $Headers.ContainsKey("Content-Type")) {
+  $Headers.Add("Content-Type", "application/json")
+}
+
+if ($null -eq $Uri) { $Uri = "$baseUrl/api/$Endpoint/" }
   
-if ($null -eq $Body.limit) {
+if ($Method -eq "Get" -and $null -eq $Body.limit) {
   if ($null -eq $Body) { 
     Write-Verbose "[$Endpoint] Empty body. Setting result limit."
     $Body = @{limit = $limit } 
@@ -5822,11 +5820,11 @@ if ($null -eq $Body.limit) {
 Write-Verbose "[$Endpoint] Getting all results."
 do {
   $Response = Invoke-RestMethod -Uri $Uri -Headers $Headers -Method $Method -Body $Body
-  
-  $Results += $Response.results
+  if ($Response.results) { $Results += $Response.results }
+  else { $Results += $Response }
+
   try { [System.Uri]$Uri = $Response.next }
   catch { return $Response }
-
 } while ($null -ne $Uri)
 return $Results
 }
@@ -9343,7 +9341,7 @@ If ($PSCmdlet.ShouldProcess($FilePath, "Remove-AuthenticodeSignature")) {
 function Remove-AzureAdDirectLicenseAssignments {
 <#PSScriptInfo
 
-.VERSION 2.0.5
+.VERSION 2.0.6
 
 .GUID 0677b108-26b5-409b-a169-b0eb45399dcf
 
@@ -9351,46 +9349,40 @@ function Remove-AzureAdDirectLicenseAssignments {
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
 .PRIVATEDATA
 
-#> 
-
-
-
+#>
 <#
+
 .DESCRIPTION
 Script to cleanup direct Azure AD license assignments. This script will only remove a direct assignment if there is an associated group assignment. Before running the script make sure that you have the MSOnline PowerShell module installed. Connect to MSOnline with: Connect-MsolService
 
 .PARAMETER WhatIf
 Predict changes
-
 .PARAMETER SaveReport
 Whether to save the report to the script location.
-
 .LINK
 https://github.com/nicolonsky/Techblog/tree/master/CleanupAzureADLicensing
-
 .LINK
 https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-groups-migrate-users
-
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
@@ -9401,6 +9393,7 @@ param(
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
+Requires -Module MSOnline
 $Results = @()
 
 $Users | ForEach-Object {
@@ -13012,7 +13005,7 @@ else {
 function Test-CVE202134470 {
 <#PSScriptInfo
 
-.VERSION 22.11.15
+.VERSION 22.11.16
 
 .GUID 83ac6137-696a-496a-a746-0372e8a20797
 
@@ -13022,65 +13015,55 @@ function Test-CVE202134470 {
 
 .COPYRIGHT Copyright (c) Microsoft Corporation
 
-.TAGS
+.TAGS 
 
 .LICENSEURI https://opensource.org/license/mit/
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
 .PRIVATEDATA
 
-#> 
-
-
-
-
+#>
 <#
-.SYNOPSIS
-    Test for and addresses CVE-2021-34470.
 
 .DESCRIPTION
     Environments running supported versions of Exchange Server should address
     CVE-2021-34470 by applying the CU and/or SU for the respective versions of
     Exchange, as described in
     https://techcommunity.microsoft.com/t5/exchange-team-blog/released-july-2021-exchange-server-security-updates/ba-p/2523421.
-
     Environments where the latest version of Exchange Server is any version before
     Exchange 2013, or environments where all Exchange servers have been removed, can
     use this script to address the vulnerability.
 
+.SYNOPSIS
+    Test for and addresses CVE-2021-34470.
 .EXAMPLE
     PS> .\Test-CVE-2021-34470.ps1
     Reports whether the vulnerability is present.
 .EXAMPLE
     PS> .\Test-CVE-2021-34470.ps1 -ApplyFix
     Fixes the vulnerability if found. Note that this syntax requires Schema Admin.
-
 <#
 MIT License
-
 Copyright (c) Microsoft Corporation.
-
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
 in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is
 furnished to do so, subject to the following conditions:
-
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
-
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
 IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE

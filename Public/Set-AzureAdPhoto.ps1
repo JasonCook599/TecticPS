@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 This will upload all profile photos to Office 365.

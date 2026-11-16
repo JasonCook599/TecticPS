@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 This will disable PowerShell v2. It is available to be run on startup.

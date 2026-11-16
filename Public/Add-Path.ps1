@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .DESCRIPTION
 This will add a location to enviroment PATH.

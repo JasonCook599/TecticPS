@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 This script will search the event log for events a specified number of minutes before or after a given time.

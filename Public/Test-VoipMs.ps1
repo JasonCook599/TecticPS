@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 This script will test the VoIP.ms servers to find one with the lowest latency.

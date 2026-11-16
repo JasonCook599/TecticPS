@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 This script with gather information about TPM and Secure Boot from the specified marchines.

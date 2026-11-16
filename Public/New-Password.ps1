@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .DESCRIPTION
 This will return a random password which meets Active Directory's complexity requirements.

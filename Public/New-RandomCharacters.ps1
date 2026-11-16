@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .DESCRIPTION
 This will return random characters.

@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 Enable Hyper-V kerberos-based migration, and configure delegation as appropriate.

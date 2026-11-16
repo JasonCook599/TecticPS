@@ -30,8 +30,6 @@
 
 #>
 
-
-
 <#
 .SYNOPSIS
 This script will get a selection from the user.

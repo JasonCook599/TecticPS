@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 This script with gather information about  Secure Boot from the specified marchines.

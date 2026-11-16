@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .DESCRIPTION
 Activate windows using the specified key, or fall back to the key in the BIOS.

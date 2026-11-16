@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 Search for user accounts with "ADS_UF_PASSWD_NOTREQD" enabled and remove the flag

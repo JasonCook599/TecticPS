@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .SYNOPSIS
 FIND State/Dormant B2B Accounts and Stale/Dormant B2B Guest Invitations

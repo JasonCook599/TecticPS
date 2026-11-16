@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .SYNOPSIS
 This script will trim the specified folder to the number of items specified.

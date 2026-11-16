@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 Get AAD B2B Accounts where the invitation hasn't been accepted.

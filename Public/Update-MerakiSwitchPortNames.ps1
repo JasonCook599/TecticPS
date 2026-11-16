@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .DESCRIPTION
 Update the switch port names in Meraki based on the CSV file you specify.

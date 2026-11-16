@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 2.0.5
+.VERSION 2.0.6
 
 .GUID 0677b108-26b5-409b-a169-b0eb45399dcf
 
@@ -8,44 +8,42 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2025
+.COPYRIGHT Copyright (c) Tectic 2026
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
 .EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
+
 .PRIVATEDATA
 
-#>
 
+#>
 <#
+
 .DESCRIPTION
 Script to cleanup direct Azure AD license assignments. This script will only remove a direct assignment if there is an associated group assignment. Before running the script make sure that you have the MSOnline PowerShell module installed. Connect to MSOnline with: Connect-MsolService
 
 .PARAMETER WhatIf
 Predict changes
-
 .PARAMETER SaveReport
 Whether to save the report to the script location.
-
 .LINK
 https://github.com/nicolonsky/Techblog/tree/master/CleanupAzureADLicensing
-
 .LINK
 https://learn.microsoft.com/en-us/azure/active-directory/enterprise-users/licensing-groups-migrate-users
-
 #>
 
 [CmdletBinding(SupportsShouldProcess)]
@@ -94,3 +92,4 @@ $Users | ForEach-Object {
 
 if ($Results) { Write-Warning "Found $($Results.Count) direct assigned license(s)." }
 else { Write-Output "No direct license assignments found" }
+

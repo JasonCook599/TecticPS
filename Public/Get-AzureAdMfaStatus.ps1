@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 The script will get information about MFA setup from Azure Active Directory.

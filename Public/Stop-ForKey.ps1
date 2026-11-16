@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .SYNOPSIS
 This will break if the specified key it press. Otherwise, it will continue.

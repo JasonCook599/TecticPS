@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .DESCRIPTION
 Build a DHCP reservation script for the given service. Currently, only FortiGate is supported.

@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 This script shows three methods to determine the underlying system firmware (BIOS) type - either UEFI or Legacy BIOS.

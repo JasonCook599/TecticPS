@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 Authenticate to Azure AD and receive Access and Refresh Tokens.

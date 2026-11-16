@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .SYNOPSIS
 This script will Allow specific devices to the list of Allowed Buses.

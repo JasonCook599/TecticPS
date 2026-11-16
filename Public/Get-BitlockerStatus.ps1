@@ -30,12 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
 <#
 .SYNOPSIS
 This commands checks the Bitlocker status and returns it in a human readable format.

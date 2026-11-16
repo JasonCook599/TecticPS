@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 Show BitLocker encryption status on a loop. Used to monitor encryption progress.

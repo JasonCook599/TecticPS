@@ -30,8 +30,6 @@
 
 #> 
 
-
-
 <#
 .DESCRIPTION
 Get Vantagepoint users if the User is active and Employee is inactive.
