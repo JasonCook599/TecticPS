@@ -26,7 +26,7 @@ Describe 'Public Scripts' {
 
 Describe 'Module' {
   It 'Should import without errors' {
-    $ModuleManifest = Test-ModuleManifest (Join-Path -Path $PSScriptRoot -ChildPath "../dist/TecticPS.psd1")
+    $ModuleManifest = Test-ModuleManifest (Join-Path -Path $PSScriptRoot -ChildPath "../dist/TecticPS/TecticPS.psd1")
     { Import-Module -Name $ModuleManifest.Path -ErrorAction Stop } | Should -Not -Throw 
     Get-Module -Name $ModuleManifest.Name | Should -Not -BeNullOrEmpty
   }
@@ -42,7 +42,7 @@ Describe 'Module' {
     [int]$Files = (Get-ChildItem $Paths -Recurse -File).Count
     (Get-Module TecticPS).ExportedCommands.Count | Should -BeExactly $Files
   }
-  $Files = Get-ChildItem (Join-Path -Path $PSScriptRoot -ChildPath "../dist/")
+  $Files = Get-ChildItem (Join-Path -Path $PSScriptRoot -ChildPath "../dist/TecticPS")
   Context 'Test <_.Name>' -ForEach $Files {
     It 'is valid PowerShell' {
       $FileContent = Get-Content -Path $_ -ErrorAction Stop

@@ -2,8 +2,8 @@ Task default -depends ImportModule, TestDuplicateGuids, UpdatePSScriptInfo, Expo
 Task quick -depends ExportToPsm1, UpdateManifest
 
 $ModuleName = "TecticPS"
-$ModuleFile = "dist\$ModuleName.psm1"
-$ModuleManifest = "dist\$ModuleName.psd1"
+$ModuleFile = "dist\$ModuleName\$ModuleName.psm1"
+$ModuleManifest = "dist\$ModuleName\$ModuleName.psd1"
 $SourceModules = Get-ChildItem -Path .\src\*.psm1 -ErrorAction SilentlyContinue -Recurse
 $SourceScripts = Get-ChildItem -Path .\src\*.ps1 -ErrorAction SilentlyContinue -Recurse 
 
