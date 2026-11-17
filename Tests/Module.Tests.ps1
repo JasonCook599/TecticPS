@@ -1,8 +1,6 @@
 Describe 'Public Scripts' {
   $Files = Get-ChildItem (Join-Path -Path $PSScriptRoot -ChildPath "../src/Public/") -Recurse -File
-  $Script:PSScriptFileInfo = @()
   Context 'Test <_.Name>' -ForEach $Files {
-    $Script:PSScriptFileInfo += (Get-PSScriptFileInfo -Path $_)
     It 'uses a noun-verb pair' {
       $_.Name.ToString() -match '^(\w*)-(\w*)\.ps1$' | Should -Be $true
     }
@@ -32,8 +30,17 @@ Describe 'Module' {
     { Import-Module -Name $ModuleManifest.Path -ErrorAction Stop } | Should -Not -Throw 
     Get-Module -Name $ModuleManifest.Name | Should -Not -BeNullOrEmpty
   }
-  It 'Should have more than 150 commands' {
+  It 'Should have more than 180 commands' {
     (Get-Module TecticPS).ExportedCommands.Count | Should -BeGreaterThan 150
+  }
+  It 'Should have as many commands as files' {
+    [string[]]$Paths = @(
+      (Join-Path -Path $PSScriptRoot -ChildPath "../src/Public/"),
+      (Join-Path -Path $PSScriptRoot -ChildPath "../src/Private/")
+    )
+
+    [int]$Files = (Get-ChildItem $Paths -Recurse -File).Count
+    (Get-Module TecticPS).ExportedCommands.Count | Should -BeExactly $Files
   }
   $Files = Get-ChildItem (Join-Path -Path $PSScriptRoot -ChildPath "../dist/")
   Context 'Test <_.Name>' -ForEach $Files {
