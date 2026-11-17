@@ -22,7 +22,11 @@ jobs:
 
       - name: Create Zip
         working-directory: ./dist
-        run: zip -r ../TecticPS.${{ github.ref_name }}.zip
+        run: |
+          pwd
+          ls
+          echo ../TecticPS.${{ github.ref_name }}.zip
+          zip -r ../TecticPS.${{ github.ref_name }}.zip
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
