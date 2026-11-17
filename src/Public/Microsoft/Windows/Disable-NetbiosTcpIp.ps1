@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .SYNOPSIS
 This script will disable Netbios TCP/IP on all interfaces.

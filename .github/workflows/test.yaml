@@ -1,5 +1,4 @@
 name: Code Testing
-run-name: Testing ${{ github.ref_name }} by ${{github.actor}}
 
 on:
   pull_request:

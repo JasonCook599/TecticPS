@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .DESCRIPTION
 This is used to test which DMA devices are blocking automatic BitLocker encryption.

@@ -30,18 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
-
-
-
-
-
-
 <#
 .DESCRIPTION
   Determine if an IP address exists in the specified subnet.

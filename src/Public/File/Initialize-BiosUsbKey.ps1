@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .DESCRIPTION
 This script will create a bootable BIOS key and apply an appropriate label.

@@ -50,7 +50,7 @@ param(
 )
 
 if ($Actions -contains "Subnet" -or $Actions -contains "Range") {
-    (Import-Csv -Path $Path) | Foreach-object {
+  (Import-Csv -Path $Path) | Foreach-object {
 
     if ($Actions -contains "Subnet") {
       Write-Output "$($_.Name): Creating Subnet"
@@ -65,7 +65,7 @@ if ($Actions -contains "Subnet" -or $Actions -contains "Range") {
 }
 
 if ($Actions -contains "Addresses") {
-    (Import-Csv $Path) | ForEach-Object {
+  (Import-Csv $Path) | ForEach-Object {
     Write-Output "$($_.IpAddress): Adding IP $($_.DeviceName)"
     Add-IpamAddress  -CimSession (CimSession $ComputerName) -IpAddress $_.IpAddress -MacAddress $_.MacAddress -DeviceType $_.DeviceType -IpAddressState $_.AddressState -AssignmentType $_.AssignmentType -Description $_.Description -DeviceName $_.DeviceName -ForwardLookupZone $_.ForwardLookupZone -ForwardLookupPrimaryServer $_.ForwardLookupPrimaryServer -ReverseLookupZone $_.ReverseLookupZone -ReverseLookupPrimaryServer $_.ReverseLookupPrimaryServer -ManagedByService $_.ManagedByService -ServiceInstance $_.ServiceInstance -CustomConfiguration $_.CustomConfiguration
   }

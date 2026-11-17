@@ -26,9 +26,7 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
-
 
 #>
 <#
@@ -53,9 +51,4 @@ git fetch origin
 git checkout $Branch
 git reset --hard origin/$Branch
 Pop-Location
-
-
-
-
-
 

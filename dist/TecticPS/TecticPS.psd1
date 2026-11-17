@@ -12,7 +12,7 @@
 RootModule = 'TecticPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.233'
+ModuleVersion = '2.0.0'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -27,7 +27,7 @@ Author = 'Tectic'
 CompanyName = 'Tectic'
 
 # Copyright statement for this module
-Copyright = '(c) 2022 Tectic. All rights reserved.'
+Copyright = '(c) 2026 Tectic. All rights reserved.'
 
 # Description of the functionality provided by this module
 Description = 'This is a collection of scripts used for day to day management of IT resources.'

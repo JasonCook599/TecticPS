@@ -26,9 +26,7 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
-
 
 #>
 <#
@@ -37,7 +35,6 @@
 Gets the result of the API call.
 
 #>
-
 
 param (
   [Parameter(ValueFromPipeline = $true)][string]$Endpoint,
@@ -67,6 +64,4 @@ Write-Verbose "Requesting $($params.Uri) $($params.Body)"
 $Result = Invoke-RestMethod @Params
 if ($Result.errcode -ne 0) { throw $Result }
 return $Result.Data
-
-
 

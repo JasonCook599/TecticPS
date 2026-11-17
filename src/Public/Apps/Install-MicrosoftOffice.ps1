@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .SYNOPSIS
 This script will install the specified version of Microsoft Office on the local machine.

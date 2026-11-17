@@ -26,9 +26,7 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
-
 
 #>
 <#
@@ -73,22 +71,4 @@ If ($PSCmdlet.ShouldProcess("$Version")) {
 }
 
 if ($Path) { Pop-Location }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 

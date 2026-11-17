@@ -7,16 +7,11 @@
       "Mode": "Pad",
       "FileSize": "10KB",
       "Trim": false,
-      "SupportedFormats": [
-        ".png",
-        ".jpg"
-      ],
+      "SupportedFormats": [".png", ".jpg"],
       "Reference": [
         "https://docs.microsoft.com/en-ca/azure/active-directory/fundamentals/customize-branding#:~:text=Banner%20logo.%20Select,logo%20look%20small."
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Microsoft365_Theme_Logo",
@@ -24,18 +19,11 @@
       "FileSize": "10KB",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png",
-        ".jpg",
-        ".gif",
-        ".svg"
-      ],
+      "SupportedFormats": [".png", ".jpg", ".gif", ".svg"],
       "Reference": [
         "https://docs.microsoft.com/en-us/office365/admin/setup/customize-your-organization-theme?view=o365-worldwide"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "MicrosoftTeams_AppStore_Logo",
@@ -43,17 +31,11 @@
       "FileSize": "5MB",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png",
-        ".jpg",
-        ".svg"
-      ],
+      "SupportedFormats": [".png", ".jpg", ".svg"],
       "Reference": [
         "https://docs.microsoft.com/en-us/microsoftteams/customize-your-app-store"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "MicrosoftTeams_Invitation",
@@ -61,18 +43,11 @@
       "FileSize": "5MB",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png",
-        ".jpg",
-        ".svg"
-      ],
+      "SupportedFormats": [".png", ".jpg", ".svg"],
       "Reference": [
         "https://docs.microsoft.com/en-us/microsoftteams/customize-your-app-store"
       ],
-      "Destination": [
-        "Application",
-        "Web"
-      ]
+      "Destination": ["Application", "Web"]
     },
     {
       "Name": "Microsoft365_MessageEncryption",
@@ -80,36 +55,24 @@
       "FileSize": "40KB",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png",
-        ".jpg",
-        ".bmp",
-        ".tiff"
-      ],
+      "SupportedFormats": [".png", ".jpg", ".bmp", ".tiff"],
       "Reference": [
         "https://docs.microsoft.com/en-ca/microsoft-365/compliance/add-your-organization-brand-to-encrypted-messages?view=o365-worldwide#:~:text=in%20this%20article.-,Logo,graphic%20file%20itself.%20For%20best%20results%2C%20use%20the%20optimal%20size.,-Text%20next%20to"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Unifi",
       "Dimensions": "x400>",
       "FileSize": "750KB",
       "OutExtension": ".png",
-      "SupportedFormats": [
-        ".png",
-        ".jpg"
-      ],
+      "SupportedFormats": [".png", ".jpg"],
       "Trim": true,
       "Reference": [
         "https://help.ubnt.com/hc/en-us/articles/115000166827-UniFi-Guest-Network-Guest-Portal-and-Hotspot-System",
         "https://hostcheetah.com/t/ubnt-com-unifi-guest-network-guest-portal-and-hotspot-system/341"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "F1_InFellowship_Header",
@@ -119,9 +82,7 @@
       "Reference": [
         "https://help.fellowshipone.com/fellowshipone.htm#inFellowship/Header%20Logo.htm"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Nucleus_Wide",
@@ -132,21 +93,15 @@
       "Reference": [
         "http://help.nucleus.church/en/articles/1410291-your-logo#wide-logo"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "UptimeRobot",
       "Dimensions": "400x200>",
       "FileSize": "150KB",
       "Trim": true,
-      "Reference": [
-        "https://uptimerobot.com/statuspage.php"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "Reference": ["https://uptimerobot.com/statuspage.php"],
+      "Destination": ["Application"]
     },
     {
       "Name": "Nucleus_Tall",
@@ -157,52 +112,35 @@
       "Reference": [
         "http://help.nucleus.church/en/articles/1410291-your-logo#tall-logo"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Dropbox",
       "Dimensions": "x256>",
       "FileSize": "5MB",
-      "SupportedFormats": [
-        ".jpeg",
-        ".png"
-      ],
+      "SupportedFormats": [".jpeg", ".png"],
       "Trim": true,
       "Reference": [
         "https://help.dropbox.com/teams-admins/team-member/custom-branding",
         "https://www.dropbox.com/team/admin/settings/account"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "GoogleWorkspace",
       "Dimensions": "320x132>",
       "FileSize": "30KB",
-      "SupportedFormats": [
-        ".png",
-        ".gif"
-      ],
+      "SupportedFormats": [".png", ".gif"],
       "Trim": true,
       "Mode": "Pad",
-      "Reference": [
-        "https://support.google.com/a/answer/96474?hl=en"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "Reference": ["https://support.google.com/a/answer/96474?hl=en"],
+      "Destination": ["Application"]
     },
     {
       "Name": "RDS_logo",
       "OutExtension": ".png",
       "Dimensions": "x60>",
-      "Destination": [
-        "Application",
-        "Web"
-      ]
+      "Destination": ["Application", "Web"]
     },
     {
       "Name": "ChurchOnline",
@@ -211,9 +149,7 @@
       "Reference": [
         "https://support.online.church/l/en/article/4bq369shzv-appearance"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "PlanningCentre_Logo",
@@ -222,222 +158,144 @@
       "Reference": [
         "https://support.online.church/l/en/article/4bq369shzv-appearance"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Signature",
       "Dimensions": "650x150>",
       "Trim": true,
-      "SupportedFormats": [
-        ".png"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "SupportedFormats": [".png"],
+      "Destination": ["Application"]
     },
     {
       "Name": "Kaseya_Graphus",
       "Dimensions": "400x200>",
       "Mode": "Pad",
       "Trim": false,
-      "SupportedFormats": [
-        ".png",
-        ".jpg"
-      ],
-      "Reference": [
-        "https://cloud.graph.us/partnerOrgsDefaultFeatures"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "SupportedFormats": [".png", ".jpg"],
+      "Reference": ["https://cloud.graph.us/partnerOrgsDefaultFeatures"],
+      "Destination": ["Application"]
     },
     {
       "Name": "Kaseya_Datto_RMM_Header",
       "Dimensions": "134x24>",
       "Mode": "Pad",
       "Trim": false,
-      "SupportedFormats": [
-        ".png",
-        ".jpg",
-        ".gif"
-      ],
+      "SupportedFormats": [".png", ".jpg", ".gif"],
       "Reference": [
         "https://rmm.datto.com/help/de/Content/3NEWUI/Setup/Branding.htm"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Kaseya_Datto_RMM_Report",
       "Dimensions": "758x130>",
       "Mode": "Pad",
       "Trim": false,
-      "SupportedFormats": [
-        ".png",
-        ".jpg",
-        ".gif"
-      ],
+      "SupportedFormats": [".png", ".jpg", ".gif"],
       "Reference": [
         "https://rmm.datto.com/help/de/Content/3NEWUI/Setup/Branding.htm"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Kaseya_Datto_RMM_Agent_Reboot",
       "Dimensions": "260x35>",
       "Mode": "Pad",
       "Trim": false,
-      "SupportedFormats": [
-        ".png"
-      ],
+      "SupportedFormats": [".png"],
       "Reference": [
         "https://rmm.datto.com/help/de/Content/3NEWUI/Setup/Branding.htm"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "BMS_HeaderAndReport",
       "Dimensions": "x40>",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "SupportedFormats": [".png"],
+      "Destination": ["Application"]
     },
     {
       "Name": "BMS_LogIn",
       "Dimensions": "x70>",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "SupportedFormats": [".png"],
+      "Destination": ["Application"]
     },
     {
       "Name": "IT_Glue_Header",
       "Dimensions": "200x52>",
       "Trim": false,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "SupportedFormats": [".png"],
+      "Destination": ["Application"]
     },
     {
       "Name": "PinnacleOpen",
       "Dimensions": "250x75>",
       "Trim": false,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png",
-        ".jpg"
-      ],
+      "SupportedFormats": [".png", ".jpg"],
       "Reference": [
         "https://portal.pinnacleseries.com/administration/#/admin/branding"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Trim_Logo",
       "Trim": true,
-      "SupportedFormats": [
-        ".png"
-      ],
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "SupportedFormats": [".png"],
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "64_Logo",
       "Dimensions": "x64>",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png"
-      ],
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "SupportedFormats": [".png"],
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "128_Logo",
       "Dimensions": "x128>",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png"
-      ],
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "SupportedFormats": [".png"],
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "256_Logo",
       "Dimensions": "x256>",
       "Trim": true,
       "Mode": "Pad",
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "512_Logo",
       "Dimensions": "x512>",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png"
-      ],
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "SupportedFormats": [".png"],
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "1024_Logo",
       "Dimensions": "x1024>",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png"
-      ],
-      "Destination": [
-        "Generic"
-      ]
+      "SupportedFormats": [".png"],
+      "Destination": ["Generic"]
     },
     {
       "Name": "2048_Logo",
       "Dimensions": "x2048>",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png"
-      ],
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "SupportedFormats": [".png"],
+      "Destination": ["Generic", "Web"]
     }
   ],
   "Banner": [
@@ -449,9 +307,7 @@
       "Reference": [
         "https://docs.microsoft.com/en-ca/azure/active-directory/fundamentals/customize-branding#customize-your-azure-ad-sign-in-page"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Microsoft365_Theme_Banner",
@@ -461,26 +317,18 @@
       "Reference": [
         "https://docs.microsoft.com/en-us/office365/admin/setup/customize-your-organization-theme?view=o365-worldwide"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "MicrosoftTeams_AppStore_Banner",
       "OutExtension": ".jpg",
       "Dimensions": "1212x100>^",
       "FileSize": "5MB",
-      "SupportedFormats": [
-        ".png",
-        ".jpg",
-        ".svg"
-      ],
+      "SupportedFormats": [".png", ".jpg", ".svg"],
       "Reference": [
         "https://docs.microsoft.com/en-us/microsoftteams/customize-your-app-store#customize-the-background-color"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "InTuneCompanyPortal_Brand",
@@ -488,17 +336,11 @@
       "FileSize": "1.3MB",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png",
-        ".jpg",
-        ".jpeg"
-      ],
+      "SupportedFormats": [".png", ".jpg", ".jpeg"],
       "Reference": [
         "https://docs.microsoft.com/en-us/mem/intune/apps/company-portal-app#branding"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Unifi_BG",
@@ -508,25 +350,18 @@
         "https://help.ubnt.com/hc/en-us/articles/115000166827-UniFi-Guest-Network-Guest-Portal-and-Hotspot-System",
         "https://hostcheetah.com/t/ubnt-com-unifi-guest-network-guest-portal-and-hotspot-system/341"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "PinnacleBackground",
       "Dimensions": "1367x441>",
       "Trim": true,
       "Mode": "Crop",
-      "SupportedFormats": [
-        ".png",
-        ".jpg"
-      ],
+      "SupportedFormats": [".png", ".jpg"],
       "Reference": [
         "https://portal.pinnacleseries.com/administration/#/admin/branding"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Windows",
@@ -536,10 +371,7 @@
       "Reference": [
         "https://docs.microsoft.com/en-us/windows/configuration/windows-spotlight#resolution-for-custom-lock-screen-image"
       ],
-      "Destination": [
-        "Application",
-        "Web"
-      ]
+      "Destination": ["Application", "Web"]
     },
     {
       "Name": "Windows_Safe",
@@ -549,88 +381,58 @@
       "Reference": [
         "https://docs.microsoft.com/en-us/windows/configuration/windows-spotlight#resolution-for-custom-lock-screen-image"
       ],
-      "Destination": [
-        "Application",
-        "Preview"
-      ]
+      "Destination": ["Application", "Preview"]
     },
     {
       "Name": "F1_Check-in",
       "Dimensions": "800x600>^",
       "FileSize": "500KB",
       "OutExtension": ".jpg",
-      "SupportedFormats": [
-        ".jpg"
-      ],
+      "SupportedFormats": [".jpg"],
       "Reference": [
         "https://help.fellowshipone.com/Content/Activity%20Management/Check-in/Check-in%20Themes.htm"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "YouTube_Banner",
       "Dimensions": "2048x1152>^",
       "FileSize": "6MB",
-      "Reference": [
-        "https://support.google.com/youtube/answer/2972003?hl=en"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "Reference": ["https://support.google.com/youtube/answer/2972003?hl=en"],
+      "Destination": ["Application"]
     },
     {
       "Name": "YouTube_Banner_TV",
       "Dimensions": "2560x1440>^",
       "FileSize": "6MB",
-      "Destination": [
-        "Application",
-        "Preview"
-      ]
+      "Destination": ["Application", "Preview"]
     },
     {
       "Name": "YouTube_Banner_DesktopAndMobile_Min",
       "Dimensions": "1546x423>^",
       "FileSize": "6MB",
-      "Destination": [
-        "Application",
-        "Preview"
-      ]
+      "Destination": ["Application", "Preview"]
     },
     {
       "Name": "YouTube_Banner_Tablet",
       "Dimensions": "1855x423>^",
       "FileSize": "6MB",
-      "Destination": [
-        "Application",
-        "Preview"
-      ]
+      "Destination": ["Application", "Preview"]
     },
     {
       "Name": "YouTube_Banner_Desktop_Max",
       "Dimensions": "2560x423>^",
       "FileSize": "6MB",
-      "Reference": [
-        "https://support.google.com/youtube/answer/2972003?hl=en"
-      ],
-      "Destination": [
-        "Application",
-        "Preview"
-      ]
+      "Reference": ["https://support.google.com/youtube/answer/2972003?hl=en"],
+      "Destination": ["Application", "Preview"]
     },
     {
       "Name": "YouTube_Banner_Safe",
       "Dimensions": "1235x338>^",
       "FileSize": "6MB",
       "Mode": "Crop",
-      "Reference": [
-        "https://support.google.com/youtube/answer/2972003?hl=en"
-      ],
-      "Destination": [
-        "Application",
-        "Preview"
-      ]
+      "Reference": ["https://support.google.com/youtube/answer/2972003?hl=en"],
+      "Destination": ["Application", "Preview"]
     },
     {
       "Name": "YouTube_Thumbnail",
@@ -639,18 +441,14 @@
       "Reference": [
         "https://support.google.com/youtube/answer/72431?hl=en#zippy=%2Cimage-size-resolution"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "RDS_bg",
       "OutExtension": ".jpg",
       "Dimensions": "1920x1080>^",
       "FileSize": "750KB",
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "F1_InFellowship_BG",
@@ -659,9 +457,7 @@
       "Reference": [
         "https://help.fellowshipone.com/fellowshipone.htm#inFellowship/Custom%20Content.htm%3FTocPath%3DInFellowship%7CBranding%7C_____3"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "F1_InFellowship_Promo",
@@ -670,9 +466,7 @@
       "Reference": [
         "https://help.fellowshipone.com/fellowshipone.htm#inFellowship/Custom%20Content.htm%3FTocPath%3DInFellowship%7CBranding%7C_____3"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Nucleus_Hero",
@@ -681,31 +475,21 @@
       "Reference": [
         "http://help.nucleus.church/en/articles/1686769-homepage-hero-background-image"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Sangoma_S500",
       "Dimensions": "480x320>^",
       "FileSize": "256KB",
-      "Reference": [
-        "https://wiki.freepbx.org/display/PHON/Background+Image"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "Reference": ["https://wiki.freepbx.org/display/PHON/Background+Image"],
+      "Destination": ["Application"]
     },
     {
       "Name": "Sangoma_S700",
       "Dimensions": "480x272>^",
       "FileSize": "256KB",
-      "Reference": [
-        "https://wiki.freepbx.org/display/PHON/Background+Image"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "Reference": ["https://wiki.freepbx.org/display/PHON/Background+Image"],
+      "Destination": ["Application"]
     },
     {
       "Name": "Brushfire_Header_Desktop",
@@ -713,9 +497,7 @@
       "Reference": [
         "https://get.brushfire.help/hc/en-us/articles/205038074-How-can-I-customize-the-branding-for-my-events-"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Brushfire_Header_MobileAndEmail",
@@ -723,9 +505,7 @@
       "Reference": [
         "https://get.brushfire.help/hc/en-us/articles/205038074-How-can-I-customize-the-branding-for-my-events-"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Brushfire_Email_Header_HiRes",
@@ -733,9 +513,7 @@
       "Reference": [
         "https://get.brushfire.help/hc/en-us/articles/205038074-How-can-I-customize-the-branding-for-my-events-"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Brushfire_E-ticket_Ad",
@@ -743,9 +521,7 @@
       "Reference": [
         "https://get.brushfire.help/hc/en-us/articles/205038074-How-can-I-customize-the-branding-for-my-events-"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Brushfire_Social",
@@ -753,9 +529,7 @@
       "Reference": [
         "https://get.brushfire.help/hc/en-us/articles/205038074-How-can-I-customize-the-branding-for-my-events-"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Brushfire_Background",
@@ -763,20 +537,13 @@
       "Reference": [
         "https://get.brushfire.help/hc/en-us/articles/205038074-How-can-I-customize-the-branding-for-my-events-"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "BMS_LogIn",
       "OutExtension": ".jpg",
       "FileSize": "500KB",
-      "SupportedFormats": [
-        ".jpg",
-        ".jpeg",
-        ".png",
-        ".gif"
-      ]
+      "SupportedFormats": [".jpg", ".jpeg", ".png", ".gif"]
     },
     {
       "Name": "KeurigCommercial",
@@ -788,19 +555,13 @@
       "Name": "720p",
       "Dimensions": "1280x720>^",
       "FileSize": "750KB",
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "1080p",
       "Dimensions": "1920x1080>^",
       "FileSize": "750KB",
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     }
   ],
   "Brandmark": [
@@ -813,9 +574,7 @@
       "Reference": [
         "https://docs.microsoft.com/en-ca/azure/active-directory/fundamentals/customize-branding"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "IntuneCompanyPortal_Logo",
@@ -823,17 +582,11 @@
       "FileSize": "750KB",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png",
-        ".jpg",
-        ".jpeg"
-      ],
+      "SupportedFormats": [".png", ".jpg", ".jpeg"],
       "Reference": [
         "https://docs.microsoft.com/en-us/mem/intune/apps/company-portal-app#branding"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "MicrosoftTeams_AppStore_Square",
@@ -841,52 +594,36 @@
       "FileSize": "5MB",
       "Trim": false,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png",
-        ".jpg",
-        ".svg"
-      ],
+      "SupportedFormats": [".png", ".jpg", ".svg"],
       "Reference": [
         "https://docs.microsoft.com/en-us/microsoftteams/customize-your-app-store#customize-your-small-logo"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Unifi_Logo",
       "Dimensions": "x400>",
       "FileSize": "750KB",
       "OutExtension": ".png",
-      "SupportedFormats": [
-        ".png",
-        ".jpg"
-      ],
+      "SupportedFormats": [".png", ".jpg"],
       "Trim": true,
       "Reference": [
         "https://help.ubnt.com/hc/en-us/articles/115000166827-UniFi-Guest-Network-Guest-Portal-and-Hotspot-System",
         "https://hostcheetah.com/t/ubnt-com-unifi-guest-network-guest-portal-and-hotspot-system/341"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Dropbox",
       "Dimensions": "x256>",
       "FileSize": "5MB",
-      "SupportedFormats": [
-        ".jpeg",
-        ".png"
-      ],
+      "SupportedFormats": [".jpeg", ".png"],
       "Trim": true,
       "Reference": [
         "https://help.dropbox.com/teams-admins/team-member/custom-branding",
         "https://www.dropbox.com/team/admin/settings/account"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "ChurchOnline",
@@ -896,9 +633,7 @@
       "Reference": [
         "https://support.online.church/l/en/article/wh9nhvy39u-setting-up-a-favicon"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "PlanningCentre_Logo",
@@ -908,9 +643,7 @@
         "https://support.online.church/l/en/article/wh9nhvy39u-setting-up-a-favicon",
         "https://support.online.church/l/en/article/4bq369shzv-appearance"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "YouTube_Profile",
@@ -918,18 +651,11 @@
       "FileSize": "2MB",
       "Trim": true,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".JPG",
-        ".GIF",
-        ".BMP",
-        ".PNG"
-      ],
+      "SupportedFormats": [".JPG", ".GIF", ".BMP", ".PNG"],
       "Reference": [
         "https://support.google.com/youtube/answer/2972003?hl=en#zippy=%2Cchange-your-profile-picture"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "YouTube_Watermark",
@@ -940,21 +666,15 @@
       "Reference": [
         "https://support.google.com/youtube/answer/2972003?hl=en#zippy=%2Cadd-your-video-watermark"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "Nucleus_Square",
       "Dimensions": "100x100",
       "Trim": true,
       "Mode": "Pad",
-      "Reference": [
-        "http://help.nucleus.church/en/articles/1410291-your-logo"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "Reference": ["http://help.nucleus.church/en/articles/1410291-your-logo"],
+      "Destination": ["Application"]
     },
     {
       "Name": "Nucleus_Favicon",
@@ -964,9 +684,7 @@
       "Reference": [
         "http://help.nucleus.church/en/articles/1410675-your-favicon"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "UptimeRobot",
@@ -974,12 +692,8 @@
       "FileSize": "150KB",
       "Trim": false,
       "Mode": "Pad",
-      "Reference": [
-        "https://uptimerobot.com/statuspage.php"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "Reference": ["https://uptimerobot.com/statuspage.php"],
+      "Destination": ["Application"]
     },
     {
       "Name": "RDS_favicon",
@@ -987,26 +701,18 @@
       "Dimensions": "75x75>",
       "Trim": true,
       "Mode": "Pad",
-      "Destination": [
-        "Application",
-        "Web"
-      ]
+      "Destination": ["Application", "Web"]
     },
     {
       "Name": "PinnacleCollapsed",
       "Dimensions": "75x75>",
       "Trim": false,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png",
-        ".jpg"
-      ],
+      "SupportedFormats": [".png", ".jpg"],
       "Reference": [
         "https://portal.pinnacleseries.com/administration/#/admin/branding"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "UptimeRobot",
@@ -1014,114 +720,80 @@
       "FileSize": "150KB",
       "Trim": false,
       "Mode": "Pad",
-      "Reference": [
-        "https://uptimerobot.com/statuspage.php"
-      ],
-      "Destination": [
-        "Application"
-      ]
+      "Reference": ["https://uptimerobot.com/statuspage.php"],
+      "Destination": ["Application"]
     },
     {
       "Name": "Datto_RMM_Agent_Logo",
       "Dimensions": "176x176>",
       "Trim": false,
       "Mode": "Pad",
-      "SupportedFormats": [
-        ".png"
-      ],
+      "SupportedFormats": [".png"],
       "Reference": [
         "https://rmm.datto.com/help/de/Content/3NEWUI/Setup/Branding.htm"
       ],
-      "Destination": [
-        "Application"
-      ]
+      "Destination": ["Application"]
     },
     {
       "Name": "16_Icon",
       "Dimensions": "16x16>",
       "Trim": false,
       "Mode": "Pad",
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "32_Icon",
       "Dimensions": "32x32>",
       "Trim": false,
       "Mode": "Pad",
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "64_Icon",
       "Dimensions": "64x64>",
       "Trim": false,
       "Mode": "Pad",
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "128_Icon",
       "Dimensions": "128x128>",
       "Trim": false,
       "Mode": "Pad",
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "256_Icon",
       "Dimensions": "256x256>",
       "Trim": false,
       "Mode": "Pad",
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "512_Icon",
       "Dimensions": "512x512>",
       "Trim": false,
       "Mode": "Pad",
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "1024_Icon",
       "Dimensions": "1024x1024>",
       "Trim": false,
       "Mode": "Pad",
-      "Destination": [
-        "Generic"
-      ]
+      "Destination": ["Generic"]
     },
     {
       "Name": "2048_Icon",
       "Dimensions": "2048x2048>",
       "Trim": false,
       "Mode": "Pad",
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     },
     {
       "Name": "Trim_Icon",
       "Trim": true,
-      "Destination": [
-        "Generic",
-        "Web"
-      ]
+      "Destination": ["Generic", "Web"]
     }
   ]
 }

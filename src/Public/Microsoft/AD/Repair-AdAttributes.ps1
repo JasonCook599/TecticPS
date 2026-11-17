@@ -30,14 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
-
-
 <#
 .DESCRIPTION
 Repair attributes for user in Active Directory.

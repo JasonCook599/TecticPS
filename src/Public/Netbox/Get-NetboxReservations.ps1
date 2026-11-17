@@ -30,18 +30,6 @@
 
 #> 
 
-
-
-
-
-
-
-
-
-
-
-
-
 <#
 .DESCRIPTION
 Get all DHCP reservations in Netbox.
@@ -83,8 +71,6 @@ $DhcpMacAddressesVMs = Get-NetboxResult -baseUrl $baseUrl -token $Token -Endpoin
 } | Where-Object mac_address -ne $null
 
 $DhcpMacAddresses = $DhcpMacAddressesDevices + $DhcpMacAddressesVMs
-
-
 
 $Results = @()
 foreach ($Prefix in $DhcpPrefixes ) {

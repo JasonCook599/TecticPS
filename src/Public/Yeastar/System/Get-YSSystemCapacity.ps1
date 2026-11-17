@@ -26,9 +26,7 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
-
 
 #>
 <#
@@ -41,6 +39,4 @@ https://help.yeastar.com/en/p-series-software-edition/developer-guide/query-pbx-
 #>
 
 return Get-YSResult "system/capacity"
-
-
 
