@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.3
+.VERSION 1.0.9
 
 .GUID ba7e96d7-1170-4cc0-9e58-4062d6821790
 
@@ -8,33 +8,36 @@
 
 .COMPANYNAME Tectic
 
-.COPYRIGHT Copyright (c) Tectic 2024
+.COPYRIGHT Copyright (c) Tectic 2026
 
-.TAGS
+.TAGS 
 
-.LICENSEURI
+.LICENSEURI 
 
-.PROJECTURI
+.PROJECTURI 
 
-.ICONURI
+.ICONURI 
 
-.EXTERNALMODULEDEPENDENCIES
+.EXTERNALMODULEDEPENDENCIES 
 
-.REQUIREDSCRIPTS
+.REQUIREDSCRIPTS 
 
-.EXTERNALSCRIPTDEPENDENCIES
+.EXTERNALSCRIPTDEPENDENCIES 
 
 .RELEASENOTES
 
-#>
 
+.PRIVATEDATA
+
+
+#>
 <#
+
 .DESCRIPTION
 This will reset the current directory to the specified Git branch.
 
 .PARAMETER Branch
 The name of the branch to set to.
-
 .PARAMETER Path
 The location of the Git repository. Default to the current directory.
 #>
@@ -50,3 +53,9 @@ git fetch origin
 git checkout $Branch
 git reset --hard origin/$Branch
 Pop-Location
+
+
+
+
+
+

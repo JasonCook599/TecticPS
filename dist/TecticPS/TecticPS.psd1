@@ -12,7 +12,7 @@
 RootModule = 'TecticPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '1.1.216'
+ModuleVersion = '1.1.223'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -82,11 +82,11 @@ FunctionsToExport = 'ConvertTo-QueryString', 'Initialize-OneDrive', 'Install-GCP
                'Invoke-FmgJsonApi', 'Connect-Fmg', 'Disconnect-Fmg', 
                'Initialize-FmgConfig', 'Select-FmgAdom', 'Test-FmgSession', 
                'Get-FmgSwitchTemplate', 'Update-FmgSwitchTemplate', 'Get-FmgStatus', 
-               'New-Password', 'New-RandomCharacters', 'Remove-BlankLines', 
-               'Add-BluredPillarBars', 'Convert-Image', 'ConvertTo-OutputImages', 
-               'Get-Wallpaper', 'Remove-CachedWallpaper', 'Resize-Image', 
-               'Set-DefaultWallpapers', 'Set-Wallpaper', 'Test-Photo', 
-               'Get-IpamReservations', 'Import-Ipam', 
+               'New-GitVersionTag', 'Reset-GitBranch', 'New-Password', 
+               'New-RandomCharacters', 'Remove-BlankLines', 'Add-BluredPillarBars', 
+               'Convert-Image', 'ConvertTo-OutputImages', 'Get-Wallpaper', 
+               'Remove-CachedWallpaper', 'Resize-Image', 'Set-DefaultWallpapers', 
+               'Set-Wallpaper', 'Test-Photo', 'Get-IpamReservations', 'Import-Ipam', 
                'New-IpamDhcpReservationConfig', 'Get-ITGlueExports', 
                'Get-ITGlueExportZip', 'Export-AdUsersToAssetPanda', 'Get-MfpEmails', 
                'Sync-MailContacts', 'Update-UsersAcademyStudents', 
@@ -130,12 +130,12 @@ FunctionsToExport = 'ConvertTo-QueryString', 'Initialize-OneDrive', 'Install-GCP
                'Initialize-YSApiConnection', 'Test-YSAPIConnection', 'Get-YSResult', 
                'Get-YSInboundRoute', 'Get-YSSystemCapacity', 'Get-YSSystemInfo', 
                'Add-Path', 'Backup-MySql', 'ConvertTo-3CXRates', 
-               'Initialize-Workstation', 'Ping-Hosts', 'Reset-GitBranch', 
-               'Start-KioskApp', 'Start-PaperCutClient', 'Test-IpAddressInSubnet', 
-               'Test-VoipMs', 'Update-MerakiSwitchPortNames', 'Update-PKI', 'AuthN', 
-               'CimSession', 'GetAADPendingGuests', 'GetAADSignIns', 
-               'GetAADUserSignInActivity', 'InstallModule', 'LoadDefaults', 
-               'ParseGuid', 'Progress', 'Requires', 'SelectPackage'
+               'Initialize-Workstation', 'Ping-Hosts', 'Start-KioskApp', 
+               'Start-PaperCutClient', 'Test-IpAddressInSubnet', 'Test-VoipMs', 
+               'Update-MerakiSwitchPortNames', 'Update-PKI', 'AuthN', 'CimSession', 
+               'GetAADPendingGuests', 'GetAADSignIns', 'GetAADUserSignInActivity', 
+               'InstallModule', 'LoadDefaults', 'ParseGuid', 'Progress', 'Requires', 
+               'SelectPackage'
 
 # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
 CmdletsToExport = @()
