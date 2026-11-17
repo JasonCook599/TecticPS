@@ -52,7 +52,7 @@ param(
 if ($Path) { Push-Location -Path $Path }
 
 If ($PSCmdlet.ShouldProcess("$Version")) {
-  if ( $Branch) { git switch [string]$Branch }
+  if ( $Branch) { git switch $([string]$Branch) }
   if (-not $SkipPull) { git pull }
   git tag -a "v$Version" -m "Release version $Version"
   if (-not $SkipPush) { git push origin "v$Version" }
