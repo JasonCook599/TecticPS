@@ -26,9 +26,7 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
-
 
 #>
 <#
@@ -40,6 +38,4 @@ Get PBX Information
 https://help.yeastar.com/en/p-series-software-edition/developer-guide/query-pbx-information.html
 #>
 return [bool]$YSApiConnection.Connected
-
-
 

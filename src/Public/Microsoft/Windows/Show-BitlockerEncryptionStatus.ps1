@@ -48,7 +48,7 @@ Get-BitLockerVolume
 while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
   $Result = Get-BitLockerVolume  | Where-Object { $_.VolumeStatus -ne "FullyEncrypted" -and $_.VolumeStatus -ne "FullyDecrypted" } | Format-Table
   Clear-Host
-    (Get-Date).DateTime
+  (Get-Date).DateTime
   $Result
   Start-Sleep -Seconds $Sleep
 }

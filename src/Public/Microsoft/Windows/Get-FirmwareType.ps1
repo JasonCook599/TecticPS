@@ -101,7 +101,7 @@ Administrators by default.  Because we don't actually read any variables this pe
 
 Function IsUEFI {
 
-  <#
+   <#
 .Synopsis
    Determines underlying firmware (BIOS) type and returns True for UEFI or False for legacy BIOS.
 .DESCRIPTION
@@ -114,10 +114,10 @@ Function IsUEFI {
    Determines underlying system firmware type
 #>
 
-  [OutputType([Bool])]
-  param()
+   [OutputType([Bool])]
+   param()
 
-  Add-Type -Language CSharp -TypeDefinition @'
+   Add-Type -Language CSharp -TypeDefinition @'
 
     using System;
     using System.Runtime.InteropServices;
@@ -147,7 +147,7 @@ Function IsUEFI {
     }
 '@
 
-  [CheckUEFI]::IsUEFI()
+   [CheckUEFI]::IsUEFI()
 }
 
 <#
@@ -172,7 +172,7 @@ just returns an unsigned int.
 # Windows 8/Server 2012 or above:
 Function Get-BiosType {
 
-  <#
+   <#
 .Synopsis
    Determines underlying firmware (BIOS) type and returns an integer indicating UEFI, Legacy BIOS or Unknown.
    Supported on Windows 8/Server 2012 or later
@@ -192,10 +192,10 @@ Function Get-BiosType {
    Determines underlying system firmware type
 #>
 
-  [OutputType([UInt32])]
-  Param()
+   [OutputType([UInt32])]
+   Param()
 
-  Add-Type -Language CSharp -TypeDefinition @'
+   Add-Type -Language CSharp -TypeDefinition @'
 
     using System;
     using System.Runtime.InteropServices;
@@ -216,7 +216,7 @@ Function Get-BiosType {
     }
 '@
 
-  [FirmwareType]::GetFirmwareType()
+   [FirmwareType]::GetFirmwareType()
 }
 
 # An electron is pulled-up for speeding. The policeman says, "Sir, do you realise you were travelling at 130mph?" The electron says, "Oh great, now I'm lost."

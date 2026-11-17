@@ -26,9 +26,7 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
-
 
 #>
 <#
@@ -45,6 +43,4 @@ if ([int]$ID) {
 else {
   return Get-YSResult "inbound_route/list"
 }
-
-
 

@@ -149,7 +149,7 @@ if ($Vendor -eq "Canon") {
 # SubAddressBookName: Cambridge Users
 # DB Version: 0x010a
 "
-            (Get-Content $Path -Raw) -replace "`"", ""
+        (Get-Content $Path -Raw) -replace "`"", ""
       ) | Out-File $Path -Encoding UTF8
     }
   }

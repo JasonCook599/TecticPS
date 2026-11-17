@@ -26,9 +26,7 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
-
 
 #>
 <#
@@ -91,6 +89,4 @@ process {
     Write-Output $QueryString.ToString()
   }
 }
-
-
 

@@ -26,9 +26,7 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
-
 
 #>
 <#
@@ -65,6 +63,4 @@ if ((-not ($global:YSApiConnection)) -or $Overwrite) {
 else {
   Write-Verbose "YSApiConnection hashtable already exists"
 }
-
-
 

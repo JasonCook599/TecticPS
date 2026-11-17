@@ -26,9 +26,7 @@
 
 .RELEASENOTES
 
-
 .PRIVATEDATA
-
 
 #>
 <#
@@ -67,7 +65,6 @@ param (
   [ValidateNotNullOrEmpty()]
   [string]$URI,
 
-
   [switch]$Refresh,
   [switch]$Revoke
 )
@@ -101,8 +98,6 @@ if ($null -eq $Credential -and $null -ne $YSApiConnection.Credential) {
   Write-Verbose "Credential not specified. Using existing session credential."
   $Credential = $YSApiConnection.Credential 
 }
-
-
 
 if ($Revoke) {
   Write-Verbose "Revoking the token."
