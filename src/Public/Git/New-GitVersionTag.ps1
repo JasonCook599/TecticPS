@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.6
+.VERSION 1.0.7
 
 .GUID 69467669-0324-4e1a-88bb-671624f015ff
 
@@ -51,12 +51,12 @@ param(
 if ($Path) { Push-Location -Path $Path }
 
 If ($PSCmdlet.ShouldProcess("$Version")) {
-  return $Version
   git tag -a "v$Version" -m "Release version $Version"
   if (-not $SkipPush) { git push origin "v$Version" }
 }
 
 if ($Path) { Pop-Location }
+
 
 
 
