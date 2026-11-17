@@ -3725,6 +3725,124 @@ param (
 Write-Verbose "Getting FortiManager System Status"
 return Invoke-FmgJsonApi -url "/sys/status" -SkipConnectionCheck:$SkipConnectionCheck
 }
+function New-GitVersionTag {
+<#PSScriptInfo
+
+.VERSION 1.0.6
+
+.GUID 69467669-0324-4e1a-88bb-671624f015ff
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2026
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+<#
+
+.DESCRIPTION
+Creates a new git version tag
+
+.PARAMETER Version
+The version name specified.
+.PARAMETER Path
+The location of the Git repository. Default to the current directory.
+#>
+[CmdletBinding(SupportsShouldProcess = $true)]
+param(
+  [string]$Module = (Get-Command -Name $MyInvocation.MyCommand.Name).Source,
+  [version]$Version = [version](Test-ModuleManifest ./dist/$Module/$Module.psd1).Version,
+  [switch]$SkipPush
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
+if ($Path) { Push-Location -Path $Path }
+
+If ($PSCmdlet.ShouldProcess("$Version")) {
+  return $Version
+  git tag -a "v$Version" -m "Release version $Version"
+  if (-not $SkipPush) { git push origin "v$Version" }
+}
+
+if ($Path) { Pop-Location }
+}
+function Reset-GitBranch {
+<#PSScriptInfo
+
+.VERSION 1.0.9
+
+.GUID ba7e96d7-1170-4cc0-9e58-4062d6821790
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2026
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+<#
+
+.DESCRIPTION
+This will reset the current directory to the specified Git branch.
+
+.PARAMETER Branch
+The name of the branch to set to.
+.PARAMETER Path
+The location of the Git repository. Default to the current directory.
+#>
+
+param(
+  [string]$Branch = "master",
+  [ValidateScript( { Test-Path $_ -PathType Container })][string]$Path
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
+if ($Path) { Push-Location -Path $Path }
+git clean -fd
+git fetch origin
+git checkout $Branch
+git reset --hard origin/$Branch
+Pop-Location
+}
 function New-Password {
 <#PSScriptInfo
 
@@ -15083,62 +15201,6 @@ while ($true) {
   Start-Sleep -Seconds 4
   Clear-Host
 }
-}
-function Reset-GitBranch {
-<#PSScriptInfo
-
-.VERSION 1.0.3
-
-.GUID ba7e96d7-1170-4cc0-9e58-4062d6821790
-
-.AUTHOR Jason Cook
-
-.COMPANYNAME Tectic
-
-.COPYRIGHT Copyright (c) Tectic 2024
-
-.TAGS
-
-.LICENSEURI
-
-.PROJECTURI
-
-.ICONURI
-
-.EXTERNALMODULEDEPENDENCIES
-
-.REQUIREDSCRIPTS
-
-.EXTERNALSCRIPTDEPENDENCIES
-
-.RELEASENOTES
-
-#>
-
-<#
-.DESCRIPTION
-This will reset the current directory to the specified Git branch.
-
-.PARAMETER Branch
-The name of the branch to set to.
-
-.PARAMETER Path
-The location of the Git repository. Default to the current directory.
-#>
-
-param(
-  [string]$Branch = "master",
-  [ValidateScript( { Test-Path $_ -PathType Container })][string]$Path
-)
-
-try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
-
-if ($Path) { Push-Location -Path $Path }
-git clean -fd
-git fetch origin
-git checkout $Branch
-git reset --hard origin/$Branch
-Pop-Location
 }
 function Start-KioskApp {
 <#PSScriptInfo

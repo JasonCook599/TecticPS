@@ -1,0 +1,29 @@
+name: Tests
+
+on:
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  pester:
+    name: Run Pester Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Test
+        shell: pwsh
+        run: Invoke-Pester -CI -Passthru
+
+      - name: Results
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: testResults.xml
+          path: testResults.xml
