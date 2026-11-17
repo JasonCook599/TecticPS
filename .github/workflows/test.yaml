@@ -10,7 +10,7 @@ permissions:
 
 jobs:
   Test:
-    name: Run Pester Tests
+    name: Pester
     runs-on: ubuntu-latest
 
     steps:
