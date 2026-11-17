@@ -20,9 +20,8 @@ jobs:
         run: |
           Invoke-Pester -CI -Passthru
       - name: Zip
-        run: |
-          cd dist
-          zip -r "$GITHUB_WORKSPACE/Release.zip"
+        working-directory: ./dist
+        run: zip -r ../Release.zip .
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
