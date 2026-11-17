@@ -1,6 +1,6 @@
 <#PSScriptInfo
 
-.VERSION 1.0.7
+.VERSION 1.0.8
 
 .GUID 69467669-0324-4e1a-88bb-671624f015ff
 
@@ -45,17 +45,21 @@ The location of the Git repository. Default to the current directory.
 param(
   [string]$Module = (Get-Command -Name $MyInvocation.MyCommand.Name).Source,
   [version]$Version = [version](Test-ModuleManifest ./dist/$Module/$Module.psd1).Version,
-  [switch]$SkipPush
+  [string]$Branch = "main",
+  [switch]$SkipPull, [switch]$SkipPush
 )
 
 if ($Path) { Push-Location -Path $Path }
 
 If ($PSCmdlet.ShouldProcess("$Version")) {
+  if ( $Branch) { git switch [string]$Branch }
+  if (-not $SkipPull) { git pull }
   git tag -a "v$Version" -m "Release version $Version"
   if (-not $SkipPush) { git push origin "v$Version" }
 }
 
 if ($Path) { Pop-Location }
+
 
 
 
