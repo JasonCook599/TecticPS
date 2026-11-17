@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .DESCRIPTION
 Tests is a given registry key exists.

@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .DESCRIPTION
 Test that a photo meets the requrements.

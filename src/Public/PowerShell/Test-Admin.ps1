@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .SYNOPSIS
 This will test is the we are running as an addministrator.

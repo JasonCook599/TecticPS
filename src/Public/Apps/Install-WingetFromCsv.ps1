@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .DESCRIPTION
 Installs multiple apps using Winget

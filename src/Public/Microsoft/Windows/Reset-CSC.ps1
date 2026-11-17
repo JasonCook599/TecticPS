@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .DESCRIPTION
 This will reset the CSC (offline files) cache.

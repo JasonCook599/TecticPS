@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .DESCRIPTION
 Used to generate a config file for FortiClient VPN.

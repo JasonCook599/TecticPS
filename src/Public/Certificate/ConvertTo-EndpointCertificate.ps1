@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
     .SYNOPSIS
     This script will convert a PFX certificate for use with various services.

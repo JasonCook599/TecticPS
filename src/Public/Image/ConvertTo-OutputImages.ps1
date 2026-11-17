@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .DESCRIPTION
 This script will resize the specified logos, wordmarks and banner images to the spesifications of various third party services. It will pull data from a json file.

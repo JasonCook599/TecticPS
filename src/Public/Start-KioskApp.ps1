@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .SYNOPSIS
 This will run a kiosk app.

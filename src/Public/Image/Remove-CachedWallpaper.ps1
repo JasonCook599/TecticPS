@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .SYNOPSIS
 This script removes the caches wallpaper.

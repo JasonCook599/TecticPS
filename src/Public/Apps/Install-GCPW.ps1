@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .SYNOPSIS
 This script downloads Google Credential Provider for Windows from https://tools.google.com/dlpage/gcpw/, then installs and configures it. Windows administrator access is required to use the script.

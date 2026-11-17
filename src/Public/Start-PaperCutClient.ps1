@@ -30,10 +30,6 @@
 
 #> 
 
-
-
-
-
 <#
 .SYNOPSIS
 This script will run the PaperCut client.

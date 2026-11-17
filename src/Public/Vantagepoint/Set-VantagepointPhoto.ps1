@@ -30,17 +30,12 @@
 
 #> 
 
-
-
-
-
 <#
 .DESCRIPTION
 Set the photo for a Vantagepoint employee.
 #>
 
 return hello
-
 
 function Set-VantagepointEmployeeImage {
   param(
