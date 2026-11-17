@@ -3,7 +3,7 @@ try {
   $Function = ([System.IO.Path]::GetFileNameWithoutExtension($Invocation.MyCommand.Name) -replace "-", "")
   Write-Verbose "Loading defaults for $Function"
 
-(Get-Command -Name ($Invocation.InvocationName)).Parameters.Keys | Foreach-Object {
+  (Get-Command -Name ($Invocation.InvocationName)).Parameters.Keys | Foreach-Object {
     $Default = $TecticPS.$Function.$_
     if (-not $Invocation.BoundParameters.Keys.contains($_) -and $Default) {
       Write-Verbose "Setting `"$_`" to `"$Default`""
