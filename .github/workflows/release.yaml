@@ -1,0 +1,37 @@
+name: Release Specific Folder
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+      - name: Test
+        shell: pwsh
+        run: |
+          Invoke-Pester -CI -Passthru
+      - name: Zip
+        run: |
+          cd dist
+          zip -r "$GITHUB_WORKSPACE/Release.zip"
+      - name: Release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: Release.zip
+          generate_release_notes: true
+      - name: Publish
+        shell: pwsh
+        env:
+          API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
+        run: |
+          cd "$GITHUB_WORKSPACE"
+          Publish-Module -Path ./dist/TecticPS/ -NuGetApiKey $env:API_KEY -Verbose
