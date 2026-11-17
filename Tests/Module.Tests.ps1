@@ -1,5 +1,5 @@
 Describe 'Public Scripts' {
-  $Files = Get-ChildItem (Join-Path -Path $PSScriptRoot -ChildPath "../src/Public/") -Recurse
+  $Files = Get-ChildItem (Join-Path -Path $PSScriptRoot -ChildPath "../src/Public/") -Recurse -File
   $Script:PSScriptFileInfo = @()
   Context 'Test <_.Name>' -ForEach $Files {
     $Script:PSScriptFileInfo += (Get-PSScriptFileInfo -Path $_)
