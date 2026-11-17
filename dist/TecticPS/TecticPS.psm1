@@ -3728,7 +3728,7 @@ return Invoke-FmgJsonApi -url "/sys/status" -SkipConnectionCheck:$SkipConnection
 function New-GitVersionTag {
 <#PSScriptInfo
 
-.VERSION 1.0.9
+.VERSION 1.0.10
 
 .GUID 69467669-0324-4e1a-88bb-671624f015ff
 
@@ -3775,17 +3775,22 @@ Don't push the tag after creation.
 #>
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-  [string]$Module = (Get-Command -Name $MyInvocation.MyCommand.Name).Source,
-  
-  [Parameter(Mandatory = $true)]
-  [version]$Version = [version](Test-ModuleManifest ./dist/$Module/$Module.psd1).Version,
-  
+  [version]$Version,
   [string]$Branch = "main",
-
+  [string]$Module,
   [switch]$SkipPull, [switch]$SkipPush
 )
 
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
+if (-not [version]$Version) {
+  Write-Verbose "Version not specified. Generating from module."
+  if (-not [string]$Module) { [string]$Module = (Get-Command -Name $MyInvocation.MyCommand.Name).Source }
+  [version]$Version = [version](Test-ModuleManifest ./dist/$Module/$Module.psd1).Version 
+  $Version = $null
+}
+
+if (-not [version]$Version) { throw "No valid version." }
 
 if ($Path) { Push-Location -Path $Path }
 
