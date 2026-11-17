@@ -1,4 +1,4 @@
-name: Tests
+name: Code Testing
 
 on:
   pull_request:
@@ -9,19 +9,19 @@ permissions:
   contents: write
 
 jobs:
-  pester:
+  Test:
     name: Run Pester Tests
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v7
 
-      - name: Test
+      - name: Invoke Pester
         shell: pwsh
         run: Invoke-Pester -CI -Passthru
 
-      - name: Results
+      - name: Upload Artifact
         if: always()
         uses: actions/upload-artifact@v7
         with:

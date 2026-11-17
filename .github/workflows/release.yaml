@@ -2,6 +2,8 @@ name: Release Module
 
 on:
   push:
+    branches:
+      - main
     tags:
       - "v*"
   workflow_dispatch:
@@ -10,23 +12,27 @@ permissions:
   contents: write
 
 jobs:
-  build-and-release:
+  Release:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Repository
         uses: actions/checkout@v7
-      - name: Test
+
+      - name: Invoke Pester
         shell: pwsh
         run: Invoke-Pester -CI -Passthru
-      - name: Zip
+
+      - name: Create Zip
         working-directory: ./dist
         run: zip -r ../TecticPS.${{ github.ref_name }}.zip
-      - name: Release
+
+      - name: Create Release
         uses: softprops/action-gh-release@v2
         with:
           files: TecticPS.${{ github.ref_name }}.zip
           generate_release_notes: true
-      - name: Publish
+
+      - name: Publish Module
         shell: pwsh
         env:
           API_KEY: ${{ secrets.PSGALLERY_API_KEY }}
