@@ -438,9 +438,6 @@ function ParseGuid {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -897,9 +894,6 @@ function Install-GCPW {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .SYNOPSIS
@@ -1012,9 +1006,6 @@ function Install-MicrosoftOffice {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .SYNOPSIS
@@ -1308,9 +1299,6 @@ function Install-WingetFromCsv {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -1626,9 +1614,6 @@ function ConvertTo-EndpointCertificate {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
     .SYNOPSIS
@@ -2014,9 +1999,6 @@ function Initialize-BiosUsbKey {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -2204,9 +2186,6 @@ function Set-Owner {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .SYNOPSIS
@@ -2451,9 +2430,6 @@ function Export-FortiClientConfig {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -2653,9 +2629,6 @@ function Import-FortiClientConfig {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -2718,9 +2691,6 @@ function New-FortiClientConfig {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -2744,10 +2714,10 @@ The end of the XML file, after all the connections are created.
 
 [CmdletBinding(SupportsShouldProcess = $true)]
 param(
-  [Parameter(ValueFromPipeline = $true)][string]$Path,
-  [Parameter(ValueFromPipeline = $true)][hashtable]$Locations,
-  [Parameter(ValueFromPipeline = $true)][string]$AllGateways,
-  $Start = '
+    [Parameter(ValueFromPipeline = $true)][string]$Path,
+    [Parameter(ValueFromPipeline = $true)][hashtable]$Locations,
+    [Parameter(ValueFromPipeline = $true)][string]$AllGateways,
+    $Start = '
 <?xml version="1.0" encoding="UTF-8" ?>
 <forticlient_configuration>
     <forticlient_version>6.0.10.297</forticlient_version>
@@ -2947,7 +2917,7 @@ param(
                 <disallow_invalid_server_certificate>0</disallow_invalid_server_certificate>
             </options>
             <connections>',
-  $End = '
+    $End = '
             </connections>
         </sslvpn>
         <ipsecvpn>
@@ -2976,11 +2946,11 @@ param(
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 function BuildConfig {
-  Param(
-    [ValidateLength(1, 31)][string]$Name,
-    [ValidatePattern('(?m)^(?:\w|.)*:[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]')][string]$Gateway
-  )
-  return "
+    Param(
+        [ValidateLength(1, 31)][string]$Name,
+        [ValidatePattern('(?m)^(?:\w|.)*:[1-9][0-9]{0,3}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5]')][string]$Gateway
+    )
+    return "
     <connection>
         <name>$Name</name>
         <description />
@@ -4306,9 +4276,6 @@ function ConvertTo-OutputImages {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -4441,9 +4408,6 @@ function Remove-CachedWallpaper {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .SYNOPSIS
@@ -4698,9 +4662,6 @@ function Set-Wallpaper {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -4811,9 +4772,6 @@ function Test-Photo {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -5003,7 +4961,7 @@ param(
 try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
 
 if ($Actions -contains "Subnet" -or $Actions -contains "Range") {
-    (Import-Csv -Path $Path) | Foreach-object {
+  (Import-Csv -Path $Path) | Foreach-object {
 
     if ($Actions -contains "Subnet") {
       Write-Output "$($_.Name): Creating Subnet"
@@ -5018,7 +4976,7 @@ if ($Actions -contains "Subnet" -or $Actions -contains "Range") {
 }
 
 if ($Actions -contains "Addresses") {
-    (Import-Csv $Path) | ForEach-Object {
+  (Import-Csv $Path) | ForEach-Object {
     Write-Output "$($_.IpAddress): Adding IP $($_.DeviceName)"
     Add-IpamAddress  -CimSession (CimSession $ComputerName) -IpAddress $_.IpAddress -MacAddress $_.MacAddress -DeviceType $_.DeviceType -IpAddressState $_.AddressState -AssignmentType $_.AssignmentType -Description $_.Description -DeviceName $_.DeviceName -ForwardLookupZone $_.ForwardLookupZone -ForwardLookupPrimaryServer $_.ForwardLookupPrimaryServer -ReverseLookupZone $_.ReverseLookupZone -ReverseLookupPrimaryServer $_.ReverseLookupPrimaryServer -ManagedByService $_.ManagedByService -ServiceInstance $_.ServiceInstance -CustomConfiguration $_.CustomConfiguration
   }
@@ -5148,9 +5106,6 @@ function Get-ITGlueExports {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .SYNOPSIS
@@ -5234,9 +5189,6 @@ function Get-ITGlueExportZip {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .SYNOPSIS
@@ -5532,7 +5484,7 @@ if ($Vendor -eq "Canon") {
       $(
         "# Canon AddressBook CSV version: 0x0002
 "
-            (Get-Content $Path -Raw) -replace "`"", ""
+        (Get-Content $Path -Raw) -replace "`"", ""
       ) | Out-File $Path -Encoding UTF8
     }
   }
@@ -5647,9 +5599,6 @@ function Sync-MailContacts {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -5779,9 +5728,6 @@ function Update-UsersAcademyStudents {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -5883,9 +5829,6 @@ function Update-UsersStaff {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -6573,9 +6516,6 @@ function Get-GroupMembershipReport {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -6774,9 +6714,6 @@ function Get-OrphanedGPO {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -7314,7 +7251,6 @@ function Repair-AdAttributes {
 .PRIVATEDATA
 
 #> 
-
 
 <#
 .DESCRIPTION
@@ -9375,9 +9311,6 @@ function Set-RoomCalendarPermissions {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -10016,9 +9949,6 @@ function Disable-NetbiosTcpIp {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .SYNOPSIS
@@ -10318,7 +10248,7 @@ Administrators by default.  Because we don't actually read any variables this pe
 
 Function IsUEFI {
 
-  <#
+   <#
 .Synopsis
    Determines underlying firmware (BIOS) type and returns True for UEFI or False for legacy BIOS.
 .DESCRIPTION
@@ -10331,10 +10261,10 @@ Function IsUEFI {
    Determines underlying system firmware type
 #>
 
-  [OutputType([Bool])]
-  param()
+   [OutputType([Bool])]
+   param()
 
-  Add-Type -Language CSharp -TypeDefinition @'
+   Add-Type -Language CSharp -TypeDefinition @'
 
     using System;
     using System.Runtime.InteropServices;
@@ -10364,7 +10294,7 @@ Function IsUEFI {
     }
 '@
 
-  [CheckUEFI]::IsUEFI()
+   [CheckUEFI]::IsUEFI()
 }
 
 <#
@@ -10388,7 +10318,7 @@ just returns an unsigned int.
 
 Function Get-BiosType {
 
-  <#
+   <#
 .Synopsis
    Determines underlying firmware (BIOS) type and returns an integer indicating UEFI, Legacy BIOS or Unknown.
    Supported on Windows 8/Server 2012 or later
@@ -10408,10 +10338,10 @@ Function Get-BiosType {
    Determines underlying system firmware type
 #>
 
-  [OutputType([UInt32])]
-  Param()
+   [OutputType([UInt32])]
+   Param()
 
-  Add-Type -Language CSharp -TypeDefinition @'
+   Add-Type -Language CSharp -TypeDefinition @'
 
     using System;
     using System.Runtime.InteropServices;
@@ -10432,7 +10362,7 @@ Function Get-BiosType {
     }
 '@
 
-  [FirmwareType]::GetFirmwareType()
+   [FirmwareType]::GetFirmwareType()
 }
 }
 function Get-MemoryType {
@@ -11318,9 +11248,6 @@ function Reset-CSC {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -11835,7 +11762,7 @@ Get-BitLockerVolume
 while (Get-BitLockerVolume | Where-Object  EncryptionPercentage -ne 100) {
   $Result = Get-BitLockerVolume  | Where-Object { $_.VolumeStatus -ne "FullyEncrypted" -and $_.VolumeStatus -ne "FullyDecrypted" } | Format-Table
   Clear-Host
-    (Get-Date).DateTime
+  (Get-Date).DateTime
   $Result
   Start-Sleep -Seconds $Sleep
 }
@@ -11945,9 +11872,6 @@ function Sync-Nps {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -12054,9 +11978,6 @@ function Test-DmaDevices {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -12306,9 +12227,6 @@ function Test-RegistryValue {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -12765,8 +12683,6 @@ function Get-NetboxReservations {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -12809,7 +12725,6 @@ $DhcpMacAddressesVMs = Get-NetboxResult -baseUrl $baseUrl -token $Token -Endpoin
 } | Where-Object mac_address -ne $null
 
 $DhcpMacAddresses = $DhcpMacAddressesDevices + $DhcpMacAddressesVMs
-
 
 $Results = @()
 foreach ($Prefix in $DhcpPrefixes ) {
@@ -12976,9 +12891,6 @@ function Invoke-CommandSimple {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -13409,9 +13321,6 @@ function Test-Admin {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .SYNOPSIS
@@ -13636,9 +13545,6 @@ function Disable-VantagepointEmployee {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -13791,9 +13697,6 @@ function Get-VantagepointEmployeeImage {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -14057,9 +13960,6 @@ function Set-VantagepointPhoto {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
@@ -14245,7 +14145,6 @@ if ($null -eq $Credential -and $null -ne $YSApiConnection.Credential) {
   Write-Verbose "Credential not specified. Using existing session credential."
   $Credential = $YSApiConnection.Credential 
 }
-
 
 if ($Revoke) {
   Write-Verbose "Revoking the token."
@@ -15250,9 +15149,6 @@ function Start-KioskApp {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .SYNOPSIS
@@ -15323,9 +15219,6 @@ function Start-PaperCutClient {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .SYNOPSIS
@@ -15398,8 +15291,6 @@ function Test-IpAddressInSubnet {
 .PRIVATEDATA
 
 #> 
-
-
 
 <#
 .DESCRIPTION
@@ -15711,9 +15602,6 @@ function Update-PKI {
 .PRIVATEDATA
 
 #> 
-
-
-
 
 <#
 .DESCRIPTION
