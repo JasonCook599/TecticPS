@@ -14,15 +14,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repository
-        uses: actions/checkout@v7
+        uses: actions/checkout@v7/
+
+      - name: Create Zip
+        working-directory: ./dist/TecticPS/
+        run: |
+          pwd
+          ls
+          ls ../../
+          zip -r ../../TecticPS.${{ github.ref_name }}.zip
 
       - name: Invoke Pester
         shell: pwsh
         run: Invoke-Pester -CI -Passthru
-
-      - name: Create Zip
-        working-directory: ./dist/TecticPS/
-        run: zip -r ../../TecticPS.${{ github.ref_name }}.zip
 
       - name: Create Release
         uses: softprops/action-gh-release@v2
