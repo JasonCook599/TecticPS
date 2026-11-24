@@ -12859,6 +12859,89 @@ do {
 } while ($null -ne $Uri)
 return $Results
 }
+function ConvertTo-PsCredential {
+<#PSScriptInfo
+
+.VERSION 1.0.8
+
+.GUID 7e5f0eae-b0a0-4a32-b318-fe51695f9de3
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2026
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+<#
+
+.DESCRIPTION
+Converts to a PSCredential.
+
+.PARAMETER JSON
+A JSON string with the credentials.
+.PARAMETER JsonSecureString
+A SecureString which contains a JSON string with the credentials.
+.PARAMETER UsernameKey
+The key that contains the username value.
+.PARAMETER PasswordKey
+The key that contains the password value.
+#>
+[Diagnostics.CodeAnalysis.SuppressMessageAttribute('PSAvoidUsingPlainTextForPassword', '', Justification = 'The PasswordKey variable is used to store the password key, not the password itself.')]
+param (
+  [Parameter(Mandatory, ParameterSetName = 'Json', Position = 0)]
+  [ValidateScript(
+    { Test-Json -Json $_ },
+    ErrorMessage = "The provided string is not valid JSON."
+  )]
+  [string]$Json,
+
+  [Parameter(Mandatory, ParameterSetName = 'JsonSecureString', Position = 0)]
+  [securestring]$JsonSecureString,
+
+  [string]$UsernameKey = "Username",
+  [string]$PasswordKey = "Password"
+)
+
+if ($JsonSecureString) { 
+  Write-Debug "Converting JsonSecureString to Json"
+  [string]$Json = ConvertFrom-SecureString -AsPlainText $JsonSecureString 
+}
+if ($Json) {
+  Write-Debug "Converting JsonSecureString to Json"
+  [hashtable]$Data = $Json | ConvertFrom-Json -AsHashtable
+  
+  Write-Debug "Getting username"
+  [string]$Username = $Data.$UsernameKey
+  
+  Write-Debug "Getting password"
+  [securestring]$Password = $Data.$PasswordKey | ConvertTo-SecureString -AsPlainText
+  
+  Write-Debug "Returning credential"
+  return [pscredential]::new($Username, $Password)
+}
+else {
+  throw "Invalid input data"
+}
+}
 function Invoke-CommandSimple {
 <#PSScriptInfo
 
@@ -13458,6 +13541,81 @@ write-output "foo: $foo"
 write-output "bar: $bar"
 write-output "baz: $baz"
 write-output "test: $test"
+}
+function Update-AllModules {
+<#PSScriptInfo
+
+.VERSION 1.0.5
+
+.GUID b38a21f3-9578-45aa-88ca-7e8e4cb442ec
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2026
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+<#
+
+.DESCRIPTION
+Converts to a PSCredential.
+
+.PARAMETER JSON
+A JSON string with the credentials.
+.PARAMETER JsonSecureString
+A SecureString which contains a JSON string with the credentials.
+.PARAMETER UsernameKey
+The key that contains the username value.
+.PARAMETER PasswordKey
+The key that contains the password value.
+#>
+[CmdletBinding()]
+param (
+  [switch]$SkipRemoval, [switch]$SkipUpdate,
+  [switch]$ForceUpdate, [switch]$DoNotForceRemoval
+)
+
+
+if (-not $SkipUpdate) {
+  # Write-Output "Updating all modules."
+  $Modules = Get-InstalledModule
+  foreach ($Module in $Modules) {
+    $count++ ; Progress -Index $count -Total $Modules.count -Activity "Updating modules." -Name $Module.Name
+    $Module | Update-Module -Force:$ForceUpdate -Verbose:$VerbosePreference
+  }
+  Remove-Variable count
+}
+
+if (-not $SkipRemoval) {
+  [bool]$ForceRemoval = !$DoNotForceRemoval
+  $Modules = Get-InstalledModule
+  foreach ($Module in $Modules) {
+    $count++ ; Progress -Index $count -Total $Modules.count -Activity "Checking for old versions." -Name $Module.Name
+    Get-InstalledModule -Name $Module.Name -AllVersions | 
+    Where-Object { $_.Version -ne $Module.Version } | 
+    Uninstall-Module -Force:$ForceRemoval
+  }
+  Remove-Variable count
+}
 }
 function Wait-ForKey {
 <#PSScriptInfo
@@ -14440,6 +14598,142 @@ if ([int]$ID) {
 else {
   return Get-YSResult "inbound_route/list"
 }
+}
+function Get-YSDid {
+<#PSScriptInfo
+
+.VERSION 1.0.5
+
+.GUID a72f4122-dc81-4116-8a77-aef370fbbb3d
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2026
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+<#
+
+.DESCRIPTION
+Get all DIDs in use.
+
+#>
+
+Write-Verbose "Getting Yeastar DIDs."
+[array]$InboundRoutes = Get-YSInboundRoute
+[array]$InboundRouteInfo = @()
+foreach ($Route in $InboundRoutes) { $InboundRouteInfo += Get-YSInboundRoute -ID $Route.ID }
+
+[array]$YeastarDIDs = ($InboundRouteInfo.did_pattern_to_ext_list.did_pattern + $InboundRouteInfo.did_pattern_list.did_pattern) | Select-Object -Unique
+
+return [array]$YeastarDIDs
+}
+function Select-YSDid {
+<#PSScriptInfo
+
+.VERSION 1.0.5
+
+.GUID 0f64ca03-8cc9-4411-8244-ea14fbec10bf
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2026
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+<#
+
+.DESCRIPTION
+Select an available Yeastar DID.
+
+#>
+
+[CmdletBinding(
+  SupportsShouldProcess = $true
+)]
+param(
+  $OwnedDIDs,
+  [string]$NormalizeMatch = "^([2-9]\d{2}[2-9]\d{6})$",
+  [int]$NormalizeGroup = 1,
+  [string]$NormalizePrefix = "+1",
+  [string]$NormalizeSuffix,
+
+  [string]$NumberKey = "number",
+  [string]$RateCentreKey = "Description"
+)
+
+try { . (LoadDefaults -Invocation $MyInvocation) -Invocation $MyInvocation } catch { Write-Warning "Failed to load defaults for $($MyInvocation.MyCommand.Name). Is the module loaded?" }
+
+[array]$YeastarDIDs = Get-YSDid
+  
+Write-Verbose "Getting VoIP.ms DIDs."
+
+if ($NormalizeMatch) {
+  Write-Verbose "Normalizing VoIP.ms DIDs."
+  foreach ($DID in $OwnedDIDs) {
+    if ($DID.($NumberKey) -match $NormalizeMatch) {
+      $DID.($NumberKey) = "$NormalizePrefix$($Matches[$NormalizeGroup])$NormalizeSuffix"
+    }
+  }
+}
+
+Write-Verbose "Selecting a rate centre."
+[string]$RateCentre = $OwnedDIDs.($RateCentreKey) | Select-Object -Unique | Out-ConsoleGridView -Title 'Rate Centre' -OutputMode Single
+
+Write-Verbose "[$RateCentre] Selecting a DID."
+$RateCentreDIDs = $OwnedDIDs | Where-Object ($RateCentreKey) -eq $RateCentre
+
+Write-Verbose "[$RateCentre] Finding available DIDs."
+[array]$RateCentreDIDsFiltered = @()
+foreach ($DID in $RateCentreDIDs) {
+  if ($DID.($NumberKey) -notin $YeastarDIDs) { $RateCentreDIDsFiltered += $DID }
+}
+
+if ([int]$RateCentreDIDsFiltered.Count -le 0) {
+  Write-Warning "[$RateCentre] No DIDs available in chosen rate centre."
+  return 
+}
+[string]$SelectedDID = $RateCentreDIDsFiltered.($NumberKey) | Select-Object -Unique | Out-ConsoleGridView -Title 'DID' -OutputMode Single
+
+return $SelectedDID
 }
 function Get-YSSystemCapacity {
 <#PSScriptInfo
