@@ -12651,6 +12651,151 @@ $Path | ForEach-Object {
   }
 }
 }
+function Get-NBDNSRecords {
+<#PSScriptInfo
+
+.VERSION 1.0.2
+
+.GUID 8f99a11e-688e-4aab-a593-9fcf2958c0f6
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2026
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+<#
+
+.DESCRIPTION
+Get DNS records from the netbox-dns plugin
+
+#>
+
+param (
+  [int]$ID,
+  [string]$View,
+  [string[]]$Fields,
+  [hashtable]$Body
+)
+
+$Endpoint = "plugins/netbox-dns/records"
+if ($ID) { $Endpoint += "/$ID" }
+
+if (-not $Body) {
+  [hashtable]$Body = @{}
+  if ($View) { $Body.view = $View }
+  if ($Fields) { [string]$Body.fields = $Fields -join "," }
+}
+
+return Get-NetboxResult -baseUrl $baseUrl -token $Token -Endpoint $Endpoint -Body $Body
+}
+function Get-NBDNSViews {
+<#PSScriptInfo
+
+.VERSION 1.0.2
+
+.GUID d0ca1948-69a0-44b5-839a-b2f3b8962f40
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2026
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+<#
+
+.DESCRIPTION
+Get DNS views from the netbox-dns plugin
+
+#>
+
+param ([int]$ID)
+$Endpoint = "plugins/netbox-dns/views"
+if ($ID) { $Endpoint += "/$ID" }
+Get-NetboxResult -baseUrl $baseUrl -token $Token -Endpoint $Endpoint
+}
+function Get-NBDNSZones {
+<#PSScriptInfo
+
+.VERSION 1.0.2
+
+.GUID 046374a2-9109-46ad-963f-3b63de149fc0
+
+.AUTHOR Jason Cook
+
+.COMPANYNAME Tectic
+
+.COPYRIGHT Copyright (c) Tectic 2026
+
+.TAGS 
+
+.LICENSEURI 
+
+.PROJECTURI 
+
+.ICONURI 
+
+.EXTERNALMODULEDEPENDENCIES 
+
+.REQUIREDSCRIPTS 
+
+.EXTERNALSCRIPTDEPENDENCIES 
+
+.RELEASENOTES
+
+.PRIVATEDATA
+
+#>
+<#
+
+.DESCRIPTION
+Get DNS zone from the netbox-dns plugin
+
+#>
+
+param ([int]$ID)
+$Endpoint = "plugins/netbox-dns/zones"
+if ($ID) { $Endpoint += "/$ID" }
+Get-NetboxResult -baseUrl $baseUrl -token $Token -Endpoint $Endpoint
+}
 function Get-NetboxReservations {
 <#PSScriptInfo
 

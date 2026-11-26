@@ -12,7 +12,7 @@
 RootModule = 'TecticPS.psm1'
 
 # Version number of this module.
-ModuleVersion = '2.0.8'
+ModuleVersion = '2.0.10'
 
 # Supported PSEditions
 # CompatiblePSEditions = @()
@@ -117,7 +117,8 @@ FunctionsToExport = 'ConvertTo-QueryString', 'Initialize-OneDrive', 'Install-GCP
                'Show-BitlockerEncryptionStatus', 'Start-WindowsActivation', 
                'Sync-Nps', 'Test-DmaDevices', 'Test-PendingFileRename', 
                'Test-PendingReboot', 'Test-RegistryValue', 'Connect-Office365', 
-               'Test-CVE202134470', 'Update-OfficeCache', 'Get-NetboxReservations', 
+               'Test-CVE202134470', 'Update-OfficeCache', 'Get-NBDNSRecords', 
+               'Get-NBDNSViews', 'Get-NBDNSZones', 'Get-NetboxReservations', 
                'Get-NetboxResult', 'ConvertTo-PsCredential', 'Invoke-CommandSimple', 
                'Measure-AverageDuration', 'Read-IfUnset', 'Read-SelectionFromUser', 
                'Remove-OldModuleVersions', 'Save-Password', 'Stop-ForKey', 
