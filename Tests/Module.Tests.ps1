@@ -27,7 +27,7 @@ Describe 'Public Scripts' {
 Describe 'Module' {
   It 'Should import without errors' {
     $ModuleManifest = Test-ModuleManifest (Join-Path -Path $PSScriptRoot -ChildPath "../dist/TecticPS/TecticPS.psd1")
-    { Import-Module -Name $ModuleManifest.Path -ErrorAction Stop } | Should -Not -Throw 
+    { Import-Module -Name $ModuleManifest.Path -Force -ErrorAction Stop } | Should -Not -Throw 
     Get-Module -Name $ModuleManifest.Name | Should -Not -BeNullOrEmpty
   }
   It 'Should have more than 180 commands' {
